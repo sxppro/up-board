@@ -18,13 +18,13 @@ const categories: {
   color: Color;
 }[] = [
   {
-    title: 'In',
+    title: 'Income',
     metric: '$ 23,456,456',
     icon: TicketIcon,
     color: 'indigo',
   },
   {
-    title: 'Out',
+    title: 'Spending',
     metric: '$ 13,123',
     icon: CashIcon,
     color: 'fuchsia',

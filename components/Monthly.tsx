@@ -4,19 +4,19 @@ import { BarChart, Card, Text, Title } from '@tremor/react';
 const data = [
   {
     Month: 'Jan 21',
-    In: 2890,
-    Out: 2400,
+    Income: 2890,
+    Spending: 2400,
   },
   {
     Month: 'Feb 21',
-    In: 1890,
-    Out: 1398,
+    Income: 1890,
+    Spending: 1398,
   },
   // ...
   {
     Month: 'Jan 22',
-    In: 3890,
-    Out: 2980,
+    Income: 3890,
+    Spending: 2980,
   },
 ];
 
@@ -24,12 +24,12 @@ const Monthly = () => {
   return (
     <Card>
       <Title>Performance</Title>
-      <Text>Comparison between Money In and Out</Text>
+      <Text>Comparison between Money Income and Spending</Text>
       <BarChart
         className="mt-4 h-80"
         data={data}
         index="Month"
-        categories={['In', 'Out']}
+        categories={['Income', 'Spending']}
         colors={['indigo', 'fuchsia']}
         stack={false}
         yAxisWidth={60}
