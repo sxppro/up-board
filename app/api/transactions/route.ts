@@ -1,4 +1,5 @@
 import { paths } from '@/types/up-api';
+import { insertTransactions } from '@/utils/db';
 import { NextRequest, NextResponse } from 'next/server';
 import createClient from 'openapi-fetch';
 
@@ -48,11 +49,21 @@ export async function GET(request: NextRequest) {
     },
   });
 
-  return data && data?.links?.next
-    ? NextResponse.json({
-        data: data.data.concat(await getNextPage(data.links.next)),
-      })
-    : data
-    ? NextResponse.json(data)
-    : NextResponse.json(error);
+  if (data && data?.links?.next) {
+    const transactions = data.data.concat(await getNextPage(data.links.next));
+    const insert = await insertTransactions(transactions);
+    console.log(`Inserted: ${insert?.insertedCount} documents`);
+    return NextResponse.json({
+      data: transactions,
+    });
+  } else if (data) {
+    const transactions = data.data;
+    const insert = await insertTransactions(transactions);
+    console.log(`Inserted: ${insert?.insertedCount} documents`);
+    return NextResponse.json({
+      data: data.data,
+    });
+  } else {
+    return NextResponse.json(error);
+  }
 }
