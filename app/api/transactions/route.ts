@@ -1,4 +1,10 @@
+import { paths } from '@/types/up-api';
 import { NextRequest, NextResponse } from 'next/server';
+import createClient from 'openapi-fetch';
+
+const { GET: upGET } = createClient<paths>({
+  baseUrl: 'https://api.up.com.au/api/v1',
+});
 
 /**
  * Retrieves next page according to Up API pagination
@@ -12,7 +18,6 @@ const getNextPage = async (link: string, store = []): Promise<never[]> => {
     headers: { Authorization: `Bearer ${process.env.UP_TOKEN}` },
   });
   console.log(res.status);
-  console.log(link);
   const data = await res.json();
 
   if (res.ok && data?.links?.next) {
@@ -30,25 +35,24 @@ const getNextPage = async (link: string, store = []): Promise<never[]> => {
  * ! May run into rate-limit issues
  */
 export async function GET(request: NextRequest) {
-  const res = await fetch(
-    `https://api.up.com.au/api/v1/accounts/${
-      process.env.UP_TRANS_ACC
-    }/transactions?${new URLSearchParams({
-      'filter[since]': request.nextUrl.searchParams.get('start') || '',
-      'filter[until]': request.nextUrl.searchParams.get('end') || '',
-    })}`,
-    {
-      headers: {
-        Authorization: `Bearer ${process.env.UP_TOKEN}`,
+  const { data, error } = await upGET('/accounts/{accountId}/transactions', {
+    params: {
+      path: { accountId: process.env.UP_TRANS_ACC || '' },
+      query: {
+        'filter[since]': request.nextUrl.searchParams.get('start') || undefined,
+        'filter[until]': request.nextUrl.searchParams.get('end') || undefined,
       },
-    }
-  );
+    },
+    headers: {
+      Authorization: `Bearer ${process.env.UP_TOKEN}`,
+    },
+  });
 
-  const data = await res.json();
-
-  return res.ok && data?.links?.next
+  return data && data?.links?.next
     ? NextResponse.json({
         data: data.data.concat(await getNextPage(data.links.next)),
       })
-    : NextResponse.json(data);
+    : data
+    ? NextResponse.json(data)
+    : NextResponse.json(error);
 }
