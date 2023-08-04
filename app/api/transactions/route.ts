@@ -1,5 +1,5 @@
+import { insertTransactions } from '@/db';
 import { paths } from '@/types/up-api';
-import { insertTransactions } from '@/utils/db';
 import { NextRequest, NextResponse } from 'next/server';
 import createClient from 'openapi-fetch';
 

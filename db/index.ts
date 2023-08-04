@@ -2,6 +2,7 @@ import { CustomTransactionResource } from '@/types/custom';
 import { components } from '@/types/up-api';
 import { UUID } from 'bson';
 import { MongoBulkWriteError, MongoClient } from 'mongodb';
+import { monthlyStatsPipeline } from './pipelines';
 
 const DB_URI = `mongodb+srv://${process.env.DB_USER}:${encodeURIComponent(
   process.env.DB_PASS || ''
@@ -74,4 +75,18 @@ const insertTransactions = async (
   }
 };
 
-export { insertTransactions };
+/**
+ * Generates monthly transaction statistics between 2 dates
+ * @param start start date
+ * @param end end date
+ * @returns list of stats for each month
+ */
+const monthlyStats = async (start: Date, end: Date) => {
+  const db = client.db('up');
+  const transactions = db.collection<CustomTransactionResource>('transactions');
+  const cursor = transactions.aggregate(monthlyStatsPipeline(start, end));
+  const results = await cursor.toArray();
+  return results;
+};
+
+export { insertTransactions, monthlyStats };
