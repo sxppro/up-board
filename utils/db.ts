@@ -33,15 +33,24 @@ const insertTransactions = async (
     const transactions =
       db.collection<CustomTransactionResource>('transactions');
     /**
-     * Remaps id to _id as BSON UUID
-     * for better query performance
+     * Remaps id to _id as BSON UUID & ISO date strings
+     * to BSON dates for better query performance
      * @see https://mongodb.github.io/node-mongodb-native/5.1/classes/BSON.UUID.html
      */
     const parsedData: CustomTransactionResource[] = data.map(
-      ({ id, ...rest }) => ({
-        ...rest,
-        _id: new UUID(id).toBinary(),
-      })
+      ({ id, attributes, ...rest }) => {
+        const { createdAt, settledAt } = attributes;
+        const newAttributes = {
+          ...attributes,
+          createdAt: new Date(createdAt),
+          settledAt: settledAt ? new Date(settledAt) : null,
+        };
+        return {
+          _id: new UUID(id).toBinary(),
+          attributes: newAttributes,
+          ...rest,
+        };
+      }
     );
     const insert = await transactions.insertMany(parsedData);
     return insert;
