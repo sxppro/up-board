@@ -25,6 +25,7 @@ interface MonthlyMetric {
   Year: number;
   Income: number;
   Expenses: number;
+  Transactions: number;
 }
 
 export type { CustomTransactionResource, MonthlyMetric };

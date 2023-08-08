@@ -90,7 +90,7 @@ const monthlyStatsPipeline = (start: Date, end: Date) => [
       Year: '$_id.year',
       Income: { $toDouble: '$income' },
       Expenses: { $multiply: [{ $toDouble: '$expense' }, -1] },
-      Transactions: 1,
+      Transactions: '$transactions',
     },
   },
   // Sort the results by month
