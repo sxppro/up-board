@@ -62,7 +62,7 @@ const monthlyStatsPipeline = (start: Date, end: Date) => [
   {
     $group: {
       _id: {
-        month: '$month',
+        month: { $subtract: ['$month', 1] },
         year: '$year',
       },
       income: {
@@ -86,18 +86,18 @@ const monthlyStatsPipeline = (start: Date, end: Date) => [
   {
     $project: {
       _id: 0, // Exclude the default _id field from the result
-      month: '$_id.month',
-      year: '$_id.year',
-      income: '$income',
-      expense: '$expense',
-      transactions: 1,
+      Month: '$_id.month',
+      Year: '$_id.year',
+      Income: { $toDouble: '$income' },
+      Expenses: { $multiply: [{ $toDouble: '$expense' }, -1] },
+      Transactions: 1,
     },
   },
   // Sort the results by month
   {
     $sort: {
-      year: 1,
-      month: 1,
+      Year: 1,
+      Month: 1,
     },
   },
 ];

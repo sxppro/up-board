@@ -20,4 +20,11 @@ interface CustomTransactionResource
   attributes: TransactionResourceAttributes;
 }
 
-export type { CustomTransactionResource };
+interface MonthlyMetric {
+  Month: number;
+  Year: number;
+  Income: number;
+  Expenses: number;
+}
+
+export type { CustomTransactionResource, MonthlyMetric };

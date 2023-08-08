@@ -1,34 +1,66 @@
-import { endOfMonth } from 'date-fns';
 import startOfMonth from 'date-fns/startOfMonth';
 import subYears from 'date-fns/subYears';
 
-const getTransactionsByYear = async (date: Date) => {
-  const MONTHS_IN_YEAR = 12;
-  let currentDate = subYears(date, 1);
+import type { components } from '@/types/up-api';
+import useSWR from 'swr';
 
-  for (let i = 0; i < MONTHS_IN_YEAR; i++) {
-    // TODO: fetch for each month up to current month
-    try {
-      const data = await getTransactionsByMonth(currentDate);
-    } catch (err) {
-      console.error(err);
-    }
+const fetcher = (input: RequestInfo, init?: RequestInit) =>
+  fetch(input, init).then((res) => res.json());
+/**
+ * Retrieves past 12 months of transactions to date
+ * @param date
+ */
+const getTransactionsByYear = async (date: Date) => {
+  const startDate = startOfMonth(subYears(date, 1));
+
+  try {
+    const data = await getTransactionsByDates(startDate, date);
+    return data?.data;
+  } catch (err) {
+    console.error(err);
   }
 };
 
-const getTransactionsByMonth = async (date: Date) => {
+/**
+ * Retrieves transactions between start and end dates
+ * @param start start date
+ * @param end end date
+ * @returns list of transactions or error
+ */
+const getTransactionsByDates = async (start: Date, end: Date) => {
   const res = await fetch(
     '/api/transactions?' +
       new URLSearchParams({
-        start: startOfMonth(date).toISOString(),
-        end: endOfMonth(date).toISOString(),
+        start: start.toISOString(),
+        end: end.toISOString(),
       })
   );
   if (res.ok) {
-    return await res.json();
+    const json: {
+      data?: components['schemas']['TransactionResource'][];
+      error?: components['schemas']['ErrorObject'][];
+    } = await res.json();
+    return json;
   } else {
     throw new Error(`${res.status} — ${res.statusText}`);
   }
 };
 
-export { getTransactionsByMonth, getTransactionsByYear };
+const useYearlyTransactions = (date: Date) => {
+  const { data, error, isLoading } = useSWR(
+    '/api/metrics?' +
+      new URLSearchParams({
+        start: startOfMonth(subYears(date, 1)).toISOString(),
+        end: date.toISOString(),
+      }),
+    fetcher
+  );
+
+  return {
+    data: data?.data,
+    isLoading,
+    isError: error,
+  };
+};
+
+export { getTransactionsByDates, getTransactionsByYear, useYearlyTransactions };
