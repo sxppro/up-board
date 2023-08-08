@@ -46,7 +46,7 @@ const getTransactionsByDates = async (start: Date, end: Date) => {
   }
 };
 
-const useYearlyTransactions = (date: Date) => {
+const useMonthlyMetrics = (date: Date) => {
   const { data, error, isLoading } = useSWR(
     '/api/metrics?' +
       new URLSearchParams({
@@ -63,4 +63,4 @@ const useYearlyTransactions = (date: Date) => {
   };
 };
 
-export { getTransactionsByDates, getTransactionsByYear, useYearlyTransactions };
+export { getTransactionsByDates, getTransactionsByYear, useMonthlyMetrics };
