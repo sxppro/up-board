@@ -1,4 +1,6 @@
 'use client';
+import { MonthlyMetric } from '@/types/custom';
+import { useYearlyTransactions } from '@/utils/fetch';
 import { BarChart, Card, Text, Title } from '@tremor/react';
 
 const data = [
@@ -9,27 +11,41 @@ const data = [
   },
   {
     Month: 'Feb 21',
-    Income: 1890,
-    Spending: 1398,
+    income: 1890,
+    spending: 1398,
   },
   // ...
   {
     Month: 'Jan 22',
-    Income: 3890,
-    Spending: 2980,
+    income: 3890,
+    spending: 2980,
   },
 ];
 
 const Monthly = () => {
+  const currentDate = new Date('2022-12-31T12:59:59.999Z');
+  const { data, isLoading } = useYearlyTransactions(currentDate);
+
+  const metrics =
+    !isLoading &&
+    data &&
+    data.map(({ Month, Year, ...rest }: MonthlyMetric) => ({
+      ...rest,
+      Year,
+      Month: `${new Date(Year, Month).toLocaleDateString('default', {
+        month: 'long',
+      })} ${Year}`,
+    }));
+
   return (
     <Card>
       <Title>Performance</Title>
-      <Text>Comparison between Money Income and Spending</Text>
+      <Text>Comparison between Money Income and Expenses</Text>
       <BarChart
         className="mt-4 h-80"
-        data={data}
+        data={metrics}
         index="Month"
-        categories={['Income', 'Spending']}
+        categories={['Income', 'Expenses']}
         colors={['indigo', 'fuchsia']}
         stack={false}
         yAxisWidth={60}

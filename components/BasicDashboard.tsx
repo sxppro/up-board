@@ -10,17 +10,10 @@ import {
   Text,
   Title,
 } from '@tremor/react';
-import useSWR, { Fetcher } from 'swr';
 import MainMetrics from './MainMetrics';
 import Monthly from './Monthly';
 
-const fetcher: Fetcher = (input: RequestInfo, init?: RequestInit) =>
-  fetch(input, init).then((res) => res.json());
-
 const BasicDashboard = () => {
-  const { data, error, isLoading } = useSWR('/api/transactions', fetcher);
-  if (data) console.log(data);
-
   return (
     <main className="max-w-screen-2xl m-auto py-4 px-4 md:px-8">
       <Title>Dashboard</Title>
