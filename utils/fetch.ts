@@ -46,18 +46,18 @@ const getTransactionsByDates = async (start: Date, end: Date) => {
   }
 };
 
-const useMonthlyMetrics = (date: Date) => {
+const useMonthlyMetrics = (start: Date, end: Date) => {
   const { data, error, isLoading } = useSWR(
     '/api/metrics?' +
       new URLSearchParams({
-        start: startOfMonth(subYears(date, 1)).toISOString(),
-        end: date.toISOString(),
+        start: start.toISOString(),
+        end: end.toISOString(),
       }),
     fetcher
   );
 
   return {
-    data: data?.data,
+    data: data?.data || data,
     isLoading,
     isError: error,
   };

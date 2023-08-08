@@ -3,6 +3,7 @@ import { MonthlyMetric } from '@/types/custom';
 import { useMonthlyMetrics } from '@/utils/fetch';
 import { formatCurrency } from '@/utils/helpers';
 import { BarChart, Card, Text, Title } from '@tremor/react';
+import { startOfMonth, subYears } from 'date-fns';
 
 const data = [
   {
@@ -26,7 +27,10 @@ const data = [
 const currentDate = new Date();
 
 const Monthly = () => {
-  const { data, isLoading } = useMonthlyMetrics(currentDate);
+  const { data, isLoading } = useMonthlyMetrics(
+    startOfMonth(subYears(currentDate, 1)),
+    currentDate
+  );
 
   const metrics =
     !isLoading &&
