@@ -2,6 +2,8 @@
 
 import {
   Card,
+  Col,
+  Grid,
   Tab,
   TabGroup,
   TabList,
@@ -10,6 +12,7 @@ import {
   Text,
   Title,
 } from '@tremor/react';
+import Categories from './Categories';
 import MainMetrics from './MainMetrics';
 import Monthly from './Monthly';
 
@@ -21,15 +24,20 @@ const BasicDashboard = () => {
 
       <TabGroup className="mt-6">
         <TabList>
-          <Tab>Page 1</Tab>
-          <Tab>Page 2</Tab>
+          <Tab>Monthly Recap</Tab>
+          <Tab>Transactions</Tab>
         </TabList>
         <TabPanels>
           <TabPanel>
             <MainMetrics />
-            <div className="mt-6">
-              <Monthly />
-            </div>
+            <Grid numItemsMd={2} numItemsLg={3} className="gap-6 mt-6">
+              <Col numColSpanMd={1} numColSpanLg={2}>
+                <Monthly />
+              </Col>
+              <Col numColSpanMd={1}>
+                <Categories />
+              </Col>
+            </Grid>
           </TabPanel>
           <TabPanel>
             <div className="mt-6">
