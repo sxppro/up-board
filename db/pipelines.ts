@@ -159,6 +159,12 @@ const categoriesPipeline = (start: Date, end: Date) => [
       transactions: 1,
     },
   },
+  {
+    $sort: {
+      transactions: -1,
+      total: -1,
+    },
+  },
 ];
 
 export { categoriesPipeline, monthlyStatsPipeline };
