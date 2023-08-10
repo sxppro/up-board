@@ -50,6 +50,7 @@ const useMonthlyMetrics = (start: Date, end: Date) => {
   const { data, error, isLoading } = useSWR(
     '/api/metrics?' +
       new URLSearchParams({
+        type: 'monthly',
         start: start.toISOString(),
         end: end.toISOString(),
       }),
@@ -63,4 +64,27 @@ const useMonthlyMetrics = (start: Date, end: Date) => {
   };
 };
 
-export { getTransactionsByDates, getTransactionsByYear, useMonthlyMetrics };
+const useCategoryMetrics = (start: Date, end: Date) => {
+  const { data, error, isLoading } = useSWR(
+    '/api/metrics?' +
+      new URLSearchParams({
+        type: 'category',
+        start: start.toISOString(),
+        end: end.toISOString(),
+      }),
+    fetcher
+  );
+
+  return {
+    data: data?.data || data,
+    isLoading,
+    isError: error,
+  };
+};
+
+export {
+  getTransactionsByDates,
+  getTransactionsByYear,
+  useCategoryMetrics,
+  useMonthlyMetrics,
+};

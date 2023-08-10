@@ -22,6 +22,7 @@ const monthlyStatsPipeline = (start: Date, end: Date) => [
         $regex:
           '^(?!(Transfer from|Auto Transfer from|Transfer to|Auto Transfer to|Forward to)).+',
       },
+      // 'attributes.isCategorizable': true,
     },
   },
   // Project only the necessary fields for further processing
@@ -102,4 +103,62 @@ const monthlyStatsPipeline = (start: Date, end: Date) => [
   },
 ];
 
-export { monthlyStatsPipeline };
+/**
+ * Pipeline for calculating number of transacrtions
+ * and total spending per transaction category
+ * @param start
+ * @param end
+ * @returns aggregation pipeline definition
+ */
+const categoriesPipeline = (start: Date, end: Date) => [
+  /**
+   * Match documents within the desired date range
+   * and filter transfers
+   */
+  {
+    $match: {
+      'attributes.createdAt': {
+        $gte: start,
+        $lte: end,
+      },
+      'attributes.isCategorizable': true,
+    },
+  },
+  // Project only the necessary fields for further processing
+  {
+    $project: {
+      category: {
+        $ifNull: ['$relationships.category.data.id', 'uncategorised'],
+      },
+      amount: {
+        $toDecimal: '$attributes.amount.value',
+      },
+    },
+  },
+  // Group documents by month and type and calculate the total amount and count
+  {
+    $group: {
+      _id: '$category',
+      total: {
+        $sum: '$amount',
+      },
+      transactions: {
+        $sum: 1,
+      },
+    },
+  },
+  // Project the final result
+  {
+    $project: {
+      _id: 0,
+      // Exclude the default _id field from the result
+      category: '$_id',
+      total: {
+        $toDouble: '$total',
+      },
+      transactions: 1,
+    },
+  },
+];
+
+export { categoriesPipeline, monthlyStatsPipeline };
