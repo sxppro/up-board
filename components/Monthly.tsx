@@ -59,7 +59,7 @@ const Monthly = () => {
         colors={['indigo', 'fuchsia']}
         stack={false}
         yAxisWidth={60}
-        valueFormatter={(number: number) => formatCurrency(number)}
+        valueFormatter={(number: number) => formatCurrency(number, false)}
       />
     </Card>
   );
