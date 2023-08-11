@@ -1,5 +1,5 @@
-import { useState } from 'react';
-
+import { useCategoryMetrics } from '@/utils/fetch';
+import { CurrencyCircleDollar, ListNumbers } from '@phosphor-icons/react';
 import {
   BarList,
   Bold,
@@ -11,34 +11,30 @@ import {
   Text,
   Title,
 } from '@tremor/react';
-
-import { CodeIcon, TableIcon } from '@heroicons/react/solid';
+import { startOfMonth } from 'date-fns';
+import { useState } from 'react';
 
 const categories = [
-  { key: 'developers', name: 'Developers', icon: CodeIcon },
-  { key: 'analysts', name: 'Analysts', icon: TableIcon },
+  { key: 'amount', name: 'Amount', icon: CurrencyCircleDollar },
+  { key: 'count', name: 'Count', icon: ListNumbers },
 ];
 
-const developerVisits = [
-  { name: '/home', value: 652 },
-  { name: '/about', value: 134 },
-  { name: '/docs', value: 542 },
-  { name: '/tempates', value: 234 },
-  { name: '/terms', value: 12 },
-];
-
-const analystVisits = [
-  { name: '/home', value: 456 },
-  { name: '/about', value: 271 },
-  { name: '/docs', value: 46 },
-  { name: '/templates', value: 191 },
-  { name: '/terms', value: 82 },
-  { name: '/refund', value: 15 },
-];
-
-const visits: { [key: string]: any } = {
-  developers: developerVisits,
-  analysts: analystVisits,
+// Sorry idk how to type swr yet
+const parseData = (data: any) => {
+  return {
+    amount: sortData(
+      data.map(({ category, amount }: any) => ({
+        name: category,
+        value: amount,
+      }))
+    ).slice(0, 5),
+    count: sortData(
+      data.map(({ category, transactions }: any) => ({
+        name: category,
+        value: transactions,
+      }))
+    ).slice(0, 5),
+  };
 };
 
 const sortData = (data: any[]) =>
@@ -48,13 +44,20 @@ const sortData = (data: any[]) =>
     return 0;
   });
 
+const currentDate = new Date();
+
 const Categories = () => {
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const selectedCategory = selectedIndex === 0 ? 'developers' : 'analysts';
+  const selectedCategory = selectedIndex === 0 ? 'amount' : 'count';
+
+  const { data, isLoading } = useCategoryMetrics(
+    startOfMonth(currentDate),
+    currentDate
+  );
 
   return (
     <Card className="max-w-md h-full mx-auto">
-      <Title>Page Visits by Audience</Title>
+      <Title>Transaction Categories</Title>
       <TabGroup
         index={selectedIndex}
         onIndexChange={setSelectedIndex}
@@ -70,14 +73,14 @@ const Categories = () => {
       </TabGroup>
       <Flex className="mt-6">
         <Text>
-          <Bold>Site</Bold>
+          <Bold>Category</Bold>
         </Text>
         <Text>
-          <Bold>Visits</Bold>
+          <Bold>Amount</Bold>
         </Text>
       </Flex>
       <BarList
-        data={sortData(visits[selectedCategory])}
+        data={data && parseData(data)[selectedCategory]}
         showAnimation={false}
         className="mt-4"
       />

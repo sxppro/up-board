@@ -22,7 +22,7 @@ const MainMetrics = () => {
     startOfMonth(currentDate),
     currentDate
   );
-  console.log(data);
+
   const categories = ({
     Income,
     Expenses,

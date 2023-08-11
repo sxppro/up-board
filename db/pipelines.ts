@@ -139,7 +139,7 @@ const categoriesPipeline = (start: Date, end: Date) => [
   {
     $group: {
       _id: '$category',
-      total: {
+      amount: {
         $sum: '$amount',
       },
       transactions: {
@@ -153,8 +153,8 @@ const categoriesPipeline = (start: Date, end: Date) => [
       _id: 0,
       // Exclude the default _id field from the result
       category: '$_id',
-      total: {
-        $toDouble: '$total',
+      amount: {
+        $abs: { $toDouble: '$amount' },
       },
       transactions: 1,
     },
@@ -162,7 +162,7 @@ const categoriesPipeline = (start: Date, end: Date) => [
   {
     $sort: {
       transactions: -1,
-      total: -1,
+      amount: -1,
     },
   },
 ];
