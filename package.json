@@ -12,6 +12,7 @@
   "dependencies": {
     "@headlessui/tailwindcss": "^0.2.0",
     "@heroicons/react": "^1.0.6",
+    "@phosphor-icons/react": "^2.0.10",
     "@tremor/react": "^3.5.0",
     "@types/node": "20.4.5",
     "@types/react": "18.2.17",
@@ -22,7 +23,7 @@
     "eslint": "8.46.0",
     "eslint-config-next": "13.4.12",
     "mongodb": "^5.7.0",
-    "next": "13.4.12",
+    "next": "13.4.13",
     "openapi-fetch": "^0.7.1",
     "postcss": "8.4.27",
     "react": "18.2.0",
