@@ -53,29 +53,34 @@ const MainMetrics = () => {
     },
   ];
 
-  return (
-    <Grid numItemsSm={2} numItemsLg={3} className="gap-6 mt-6">
-      {categories(data ? data[0] : {}).map((item) => (
-        <Card key={item.title} decoration="top" decorationColor={item.color}>
-          <Flex justifyContent="start" className="space-x-4">
-            <Icon
-              icon={item.icon}
-              variant="light"
-              size="xl"
-              color={item.color}
-            />
-            <div className="truncate flex-1">
-              <Flex alignItems="start" justifyContent="between">
-                <Text>{item.title}</Text>
-                <BadgeDelta deltaType="moderateIncrease">{'10.2%'}</BadgeDelta>
-              </Flex>
-              <Metric className="truncate">{item.metric || '—'}</Metric>
-            </div>
-          </Flex>
-        </Card>
-      ))}
-    </Grid>
-  );
+  if (Array.isArray(data) && data.length > 0)
+    return (
+      <Grid numItemsSm={2} numItemsLg={3} className="gap-6 mt-6">
+        {categories(data ? data[0] : {}).map((item) => (
+          <Card key={item.title} decoration="top" decorationColor={item.color}>
+            <Flex justifyContent="start" className="space-x-4">
+              <Icon
+                icon={item.icon}
+                variant="light"
+                size="xl"
+                color={item.color}
+              />
+              <div className="truncate flex-1">
+                <Flex alignItems="start" justifyContent="between">
+                  <Text>{item.title}</Text>
+                  <BadgeDelta deltaType="moderateIncrease">
+                    {'10.2%'}
+                  </BadgeDelta>
+                </Flex>
+                <Metric className="truncate">{item.metric || '—'}</Metric>
+              </div>
+            </Flex>
+          </Card>
+        ))}
+      </Grid>
+    );
+
+  return <></>;
 };
 
 export default MainMetrics;
