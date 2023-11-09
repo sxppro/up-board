@@ -105,4 +105,16 @@ const categoryStats = async (start: Date, end: Date) => {
   return results;
 };
 
-export { categoryStats, insertTransactions, monthlyStats };
+/**
+ * Retrieves transaction data by id
+ * @param id transaction id
+ * @returns transaction document
+ */
+const findTransactionById = async (id: string) => {
+  const db = client.db('up');
+  const transactions = db.collection<CustomTransactionResource>('transactions');
+  const results = await transactions.findOne({ _id: new UUID(id).toBinary() });
+  return results;
+};
+
+export { categoryStats, findTransactionById, insertTransactions, monthlyStats };
