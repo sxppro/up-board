@@ -1,3 +1,6 @@
+import { clsx, type ClassValue } from 'clsx';
+import { twMerge } from 'tailwind-merge';
+
 /**
  * Currency formatter for numbers
  * @param number
@@ -12,5 +15,9 @@ const formatCurrency = (number: number, decimals: boolean = true) =>
   })
     .format(number)
     .toString();
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
 
 export { formatCurrency };
