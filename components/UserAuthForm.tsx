@@ -6,12 +6,16 @@ import { Label } from '@/components/ui/label';
 import { cn } from '@/utils/helpers';
 import { GoogleLogo } from '@phosphor-icons/react';
 import { Loader2 } from 'lucide-react';
+import { signIn } from 'next-auth/react';
 import { HTMLAttributes, SyntheticEvent, useState } from 'react';
 
 interface UserAuthFormProps extends HTMLAttributes<HTMLDivElement> {}
 
 export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const signInWithGoogle = async () => {
+    await signIn('google');
+  };
 
   async function onSubmit(event: SyntheticEvent) {
     event.preventDefault();
@@ -56,7 +60,12 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
           </span>
         </div>
       </div>
-      <Button variant="outline" type="button" disabled={isLoading}>
+      <Button
+        variant="outline"
+        type="button"
+        onClick={signInWithGoogle}
+        disabled={isLoading}
+      >
         {isLoading ? (
           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
         ) : (
