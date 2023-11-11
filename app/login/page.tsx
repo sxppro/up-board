@@ -1,14 +1,14 @@
+import { UserAuthForm } from '@/components/UserAuthForm';
+import { buttonVariants } from '@/components/ui/button';
+import { cn } from '@/utils/helpers';
+import { ArrowLeft } from 'lucide-react';
 import { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 
-import { UserAuthForm } from '@/components/UserAuthForm';
-import { buttonVariants } from '@/components/ui/button';
-import { cn } from '@/utils/helpers';
-
 export const metadata: Metadata = {
-  title: 'Authentication',
-  description: 'Authentication forms built using the components.',
+  title: 'Up Dashboard — Login',
+  description: 'Smart transaction analysis by Soppro',
 };
 
 export default function AuthenticationPage() {
@@ -32,13 +32,14 @@ export default function AuthenticationPage() {
       </div>
       <div className="container relative hidden h-[800px] max-h-screen flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-2 lg:px-0">
         <Link
-          href="/examples/authentication"
+          href="/"
           className={cn(
             buttonVariants({ variant: 'ghost' }),
             'absolute right-4 top-4 md:right-8 md:top-8'
           )}
         >
-          Login
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          Go back
         </Link>
         <div className="relative hidden h-full flex-col bg-muted p-10 text-white dark:border-r lg:flex">
           <div className="absolute inset-0 bg-zinc-900" />
@@ -72,10 +73,10 @@ export default function AuthenticationPage() {
           <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
             <div className="flex flex-col space-y-2 text-center">
               <h1 className="text-2xl font-semibold tracking-tight">
-                Create an account
+                Sign in to Soppro Dashboard
               </h1>
               <p className="text-sm text-muted-foreground">
-                Enter your email below to create your account
+                Enter your email below to sign in
               </p>
             </div>
             <UserAuthForm />

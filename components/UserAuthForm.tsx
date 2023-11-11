@@ -4,7 +4,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/utils/helpers';
-import { Github, Loader2 } from 'lucide-react';
+import { GoogleLogo } from '@phosphor-icons/react';
+import { Loader2 } from 'lucide-react';
 import { HTMLAttributes, SyntheticEvent, useState } from 'react';
 
 interface UserAuthFormProps extends HTMLAttributes<HTMLDivElement> {}
@@ -59,9 +60,9 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
         {isLoading ? (
           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
         ) : (
-          <Github className="mr-2 h-4 w-4" />
+          <GoogleLogo weight="bold" className="mr-2 h-4 w-4" />
         )}{' '}
-        Github
+        Google
       </Button>
     </div>
   );
