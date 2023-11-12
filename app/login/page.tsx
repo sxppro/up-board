@@ -1,4 +1,4 @@
-import { UserAuthForm } from '@/components/UserAuthForm';
+import { UserAuthForm } from '@/components/core/UserAuthForm';
 import { buttonVariants } from '@/components/ui/button';
 import { cn } from '@/utils/helpers';
 import { ArrowLeft } from 'lucide-react';
