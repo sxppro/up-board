@@ -66,12 +66,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
         onClick={signInWithGoogle}
         disabled={isLoading}
       >
-        {isLoading ? (
-          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-        ) : (
-          <GoogleLogo weight="bold" className="mr-2 h-4 w-4" />
-        )}{' '}
-        Google
+        <GoogleLogo weight="bold" className="mr-2 h-4 w-4" /> Google
       </Button>
     </div>
   );
