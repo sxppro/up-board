@@ -9,8 +9,6 @@ import {
   TabList,
   TabPanel,
   TabPanels,
-  Text,
-  Title,
 } from '@tremor/react';
 import Categories from './Categories';
 import MainMetrics from './MainMetrics';
@@ -19,8 +17,7 @@ import Monthly from './Monthly';
 const BasicDashboard = () => {
   return (
     <main className="max-w-screen-2xl m-auto py-4 px-4 md:px-8">
-      <Title>Dashboard</Title>
-      <Text>Lorem ipsum dolor sit amet, consetetur sadipscing elitr.</Text>
+      <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
 
       <TabGroup className="mt-6">
         <TabList>
