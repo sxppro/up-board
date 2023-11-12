@@ -1,5 +1,3 @@
-import { MainNav } from '@/components/core/MainNav';
-import { UserNav } from '@/components/core/UserNav';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
@@ -11,7 +9,7 @@ export const metadata: Metadata = {
   description: 'Smart transaction analysis by Soppro',
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -19,17 +17,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       {/* className={inter.className} */}
-      <body>
-        <div className="border-b">
-          <div className="flex h-16 items-center px-4 md:px-8">
-            <MainNav />
-            <div className="ml-auto flex items-center space-x-4">
-              <UserNav />
-            </div>
-          </div>
-        </div>
-        {children}
-      </body>
+      <body>{children}</body>
     </html>
   );
 }
