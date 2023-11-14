@@ -4,8 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/utils/helpers';
-import { GoogleLogo } from '@phosphor-icons/react';
-import { Loader2 } from 'lucide-react';
+import { CircleNotch, GoogleLogo } from '@phosphor-icons/react';
 import { signIn } from 'next-auth/react';
 import { HTMLAttributes, SyntheticEvent, useState } from 'react';
 
@@ -14,7 +13,9 @@ interface UserAuthFormProps extends HTMLAttributes<HTMLDivElement> {}
 export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const signInWithGoogle = async () => {
-    await signIn('google');
+    await signIn('google', {
+      callbackUrl: '/a',
+    });
   };
 
   async function onSubmit(event: SyntheticEvent) {
@@ -45,7 +46,12 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
             />
           </div>
           <Button disabled={isLoading}>
-            {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            {isLoading && (
+              <CircleNotch
+                weight="bold"
+                className="mr-2 h-4 w-4 animate-spin"
+              />
+            )}
             Sign In with Email
           </Button>
         </div>
