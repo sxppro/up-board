@@ -22,8 +22,8 @@ const BasicDashboard = () => {
         <h1 className="text-2xl font-bold tracking-tight">Overview</h1>
         <TabGroup>
           <TabList>
-            <Tab>Monthly Recap</Tab>
-            <Tab>Transactions</Tab>
+            <Tab>Month to Date</Tab>
+            <Tab>Year to Date</Tab>
           </TabList>
           <TabPanels>
             <TabPanel>
