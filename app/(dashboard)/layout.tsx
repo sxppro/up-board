@@ -1,8 +1,7 @@
 import { MainNav } from '@/components/core/MainNav';
 import { UserNav } from '@/components/core/UserNav';
-import { authOptions } from '@/utils/auth';
+import { getCurrentUser } from '@/utils/session';
 import { Metadata } from 'next';
-import { getServerSession } from 'next-auth/next';
 import { redirect } from 'next/navigation';
 
 export const metadata: Metadata = {
@@ -15,9 +14,9 @@ export default async function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const session = await getServerSession(authOptions);
+  const user = await getCurrentUser();
 
-  if (!session || !session.user) {
+  if (!user) {
     redirect('/login');
   }
 
@@ -27,7 +26,7 @@ export default async function DashboardLayout({
         <div className="flex h-16 items-center px-4 md:px-8">
           <MainNav />
           <div className="ml-auto flex items-center space-x-4">
-            <UserNav user={session.user} />
+            <UserNav user={user} />
           </div>
         </div>
       </div>

@@ -1,12 +1,11 @@
 import { categoryStats, monthlyStats } from '@/db';
-import { authOptions } from '@/utils/auth';
+import { getCurrentUser } from '@/utils/session';
 import { endOfMonth } from 'date-fns';
-import { getServerSession } from 'next-auth';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {
-  const session = await getServerSession(authOptions);
-  if (!session) {
+  const user = await getCurrentUser();
+  if (!user) {
     return NextResponse.json(
       {
         error: 'Unauthorised',

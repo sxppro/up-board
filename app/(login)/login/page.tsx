@@ -1,10 +1,9 @@
 import { UserAuthForm } from '@/components/core/UserAuthForm';
 import { buttonVariants } from '@/components/ui/button';
-import { authOptions } from '@/utils/auth';
 import { cn } from '@/utils/helpers';
+import { getCurrentUser } from '@/utils/session';
 import { ArrowLeft } from 'lucide-react';
 import { Metadata } from 'next';
-import { getServerSession } from 'next-auth';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -14,7 +13,7 @@ export const metadata: Metadata = {
 };
 
 export default async function AuthenticationPage() {
-  const session = await getServerSession(authOptions);
+  const user = await getCurrentUser();
 
   return (
     <>
@@ -35,7 +34,7 @@ export default async function AuthenticationPage() {
         />
       </div>
       <div className="container relative hidden h-[800px] max-h-screen flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-2 lg:px-0">
-        {session ? (
+        {user ? (
           <Link
             href="/"
             className={cn(
