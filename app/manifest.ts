@@ -4,7 +4,7 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: 'Soppro Dashboard',
     short_name: 'Soppro Dashboard',
-    description: 'Smart financial analysis by Soppro',
+    description: 'Smart transaction analysis by Soppro',
     display: 'standalone',
     background_color: '#fff',
     theme_color: '#fff',
