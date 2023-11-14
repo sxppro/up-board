@@ -1,8 +1,19 @@
 import { categoryStats, monthlyStats } from '@/db';
+import { authOptions } from '@/utils/auth';
 import { endOfMonth } from 'date-fns';
+import { getServerSession } from 'next-auth';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {
+  const session = await getServerSession(authOptions);
+  if (!session) {
+    return NextResponse.json(
+      {
+        error: 'Unauthorised',
+      },
+      { status: 403 }
+    );
+  }
   if (
     request.nextUrl.searchParams.has('type') &&
     request.nextUrl.searchParams.has('start') &&
