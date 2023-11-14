@@ -6,7 +6,7 @@ import { twMerge } from 'tailwind-merge';
  * @param number
  * @returns number formatted in AUD
  */
-const formatCurrency = (number: number, decimals: boolean = true) =>
+export const formatCurrency = (number: number, decimals: boolean = true) =>
   Intl.NumberFormat('default', {
     style: 'currency',
     currency: 'AUD',
@@ -16,8 +16,11 @@ const formatCurrency = (number: number, decimals: boolean = true) =>
     .format(number)
     .toString();
 
+/**
+ * Merges HTML class names
+ * @param inputs array of class names
+ * @returns
+ */
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
-
-export { formatCurrency };
