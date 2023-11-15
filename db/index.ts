@@ -53,7 +53,9 @@ const insertTransactions = async (
         };
       }
     );
-    const insert = await transactions.insertMany(parsedData);
+    const insert = await transactions.insertMany(parsedData, {
+      ordered: false,
+    });
     return insert;
   } catch (err) {
     // Catch duplicate key errors
