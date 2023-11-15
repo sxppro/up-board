@@ -1,5 +1,6 @@
 import { insertTransactions } from '@/db';
 import { paths } from '@/types/up-api';
+import { getCurrentUser } from '@/utils/session';
 import { NextRequest, NextResponse } from 'next/server';
 import createClient from 'openapi-fetch';
 
@@ -36,6 +37,16 @@ const getNextPage = async (link: string, store = []): Promise<never[]> => {
  * ! May run into rate-limit issues
  */
 export async function GET(request: NextRequest) {
+  const user = await getCurrentUser();
+  if (!user) {
+    return NextResponse.json(
+      {
+        error: 'Unauthorised',
+      },
+      { status: 403 }
+    );
+  }
+
   const { data, error } = await upGET('/accounts/{accountId}/transactions', {
     params: {
       path: { accountId: process.env.UP_TRANS_ACC || '' },
