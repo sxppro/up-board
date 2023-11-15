@@ -2,11 +2,13 @@
  * Creates pipeline for calculating total income,
  * expenditure and number of transactions per month
  * between start and end dates (excluding transfers)
+ * for specified account
  * @param start
  * @param end
+ * @param account account ID
  * @returns aggregation pipeline definition
  */
-const monthlyStatsPipeline = (start: Date, end: Date) => [
+const monthlyStatsPipeline = (start: Date, end: Date, account: string) => [
   /**
    * Match documents within the desired date range
    * and filter transfers
@@ -22,6 +24,7 @@ const monthlyStatsPipeline = (start: Date, end: Date) => [
         $regex:
           '^(?!(Transfer from|Auto Transfer from|Transfer to|Auto Transfer to|Forward to)).+',
       },
+      'relationships.account.data.id': account,
       // 'attributes.isCategorizable': true,
     },
   },
@@ -105,12 +108,14 @@ const monthlyStatsPipeline = (start: Date, end: Date) => [
 
 /**
  * Pipeline for calculating number of transacrtions
- * and total spending per transaction category
+ * and total spending per transaction category for
+ * specified account
  * @param start
  * @param end
+ * @param account account ID
  * @returns aggregation pipeline definition
  */
-const categoriesPipeline = (start: Date, end: Date) => [
+const categoriesPipeline = (start: Date, end: Date, account: string) => [
   /**
    * Match documents within the desired date range
    * and filter transfers
@@ -122,6 +127,7 @@ const categoriesPipeline = (start: Date, end: Date) => [
         $lte: end,
       },
       'attributes.isCategorizable': true,
+      'relationships.account.data.id': account,
     },
   },
   // Project only the necessary fields for further processing

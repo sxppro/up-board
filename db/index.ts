@@ -85,9 +85,15 @@ const insertTransactions = async (
  * @returns list of stats for each month
  */
 const monthlyStats = async (start: Date, end: Date) => {
+  if (!process.env.UP_TRANS_ACC) {
+    throw new Error('Up transaction account not defined');
+  }
+
   const db = client.db('up');
   const transactions = db.collection<CustomTransactionResource>('transactions');
-  const cursor = transactions.aggregate(monthlyStatsPipeline(start, end));
+  const cursor = transactions.aggregate(
+    monthlyStatsPipeline(start, end, process.env.UP_TRANS_ACC)
+  );
   const results = await cursor.toArray();
   return results;
 };
@@ -100,9 +106,15 @@ const monthlyStats = async (start: Date, end: Date) => {
  * @returns list of stats for each category
  */
 const categoryStats = async (start: Date, end: Date) => {
+  if (!process.env.UP_TRANS_ACC) {
+    throw new Error('Up transaction account not defined');
+  }
+
   const db = client.db('up');
   const transactions = db.collection<CustomTransactionResource>('transactions');
-  const cursor = transactions.aggregate(categoriesPipeline(start, end));
+  const cursor = transactions.aggregate(
+    categoriesPipeline(start, end, process.env.UP_TRANS_ACC)
+  );
   const results = await cursor.toArray();
   return results;
 };
