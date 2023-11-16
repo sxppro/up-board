@@ -1,3 +1,4 @@
+import ThemeProvider from '@/components/ThemeProvider';
 import { Toaster } from '@/components/ui/toaster';
 import { Analytics } from '@vercel/analytics/react';
 import type { Metadata } from 'next';
@@ -36,9 +37,11 @@ export default async function RootLayout({
     <html lang="en">
       {/* className={inter.className} */}
       <body>
-        {children}
-        <Toaster />
-        <Analytics />
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          {children}
+          <Toaster />
+          <Analytics />
+        </ThemeProvider>
       </body>
     </html>
   );
