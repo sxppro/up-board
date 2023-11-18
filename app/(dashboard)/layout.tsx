@@ -1,4 +1,5 @@
 import { MainNav } from '@/components/core/MainNav';
+import ThemeToggle from '@/components/core/ThemeToggle';
 import { UserNav } from '@/components/core/UserNav';
 import { getCurrentUser } from '@/utils/session';
 import { Metadata } from 'next';
@@ -26,6 +27,7 @@ export default async function DashboardLayout({
         <div className="flex h-16 items-center px-4 md:px-8">
           <MainNav />
           <div className="ml-auto flex items-center space-x-4">
+            <ThemeToggle />
             <UserNav user={user} />
           </div>
         </div>
