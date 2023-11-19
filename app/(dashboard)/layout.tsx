@@ -2,6 +2,7 @@ import { MainNav } from '@/components/core/MainNav';
 import ThemeToggle from '@/components/core/ThemeToggle';
 import { UserNav } from '@/components/core/UserNav';
 import { getCurrentUser } from '@/utils/session';
+import { Flex } from '@tremor/react';
 import { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 
@@ -32,7 +33,11 @@ export default async function DashboardLayout({
           </div>
         </div>
       </div>
-      {children}
+      <main className="max-w-screen-2xl m-auto py-4 px-4 md:px-8">
+        <Flex className="gap-2" flexDirection="col" alignItems="start">
+          {children}
+        </Flex>
+      </main>
     </>
   );
 }
