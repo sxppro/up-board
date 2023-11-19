@@ -1,3 +1,4 @@
+import { FilteredTransactionResource } from '@/types/custom';
 import type { components } from '@/types/up-api';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
@@ -34,7 +35,7 @@ export function cn(...inputs: ClassValue[]) {
  */
 export const filterTransactionFields = (
   transactions: components['schemas']['TransactionResource'][]
-) => {
+): FilteredTransactionResource[] => {
   return transactions.map((transaction) => {
     const { id, attributes } = transaction;
     return {
@@ -42,6 +43,7 @@ export const filterTransactionFields = (
       description: attributes.description,
       amount: attributes.amount.value,
       time: attributes.createdAt,
+      status: attributes.status,
     };
   });
 };

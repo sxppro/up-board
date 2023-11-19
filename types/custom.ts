@@ -28,4 +28,16 @@ interface MonthlyMetric {
   Transactions: number;
 }
 
-export type { CustomTransactionResource, MonthlyMetric };
+interface FilteredTransactionResource {
+  id: string;
+  description: string;
+  amount: string;
+  time: string;
+  status: string;
+}
+
+export type {
+  CustomTransactionResource,
+  FilteredTransactionResource,
+  MonthlyMetric,
+};
