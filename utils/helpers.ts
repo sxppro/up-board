@@ -1,3 +1,4 @@
+import type { components } from '@/types/up-api';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
@@ -24,3 +25,23 @@ export const formatCurrency = (number: number, decimals: boolean = true) =>
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
+
+/**
+ * Filters properties from raw transaction
+ * object to be returned to client
+ * @param transactions array of raw transaction objects
+ * @returns
+ */
+export const filterTransactionFields = (
+  transactions: components['schemas']['TransactionResource'][]
+) => {
+  return transactions.map((transaction) => {
+    const { id, attributes } = transaction;
+    return {
+      id,
+      description: attributes.description,
+      amount: attributes.amount.value,
+      time: attributes.createdAt,
+    };
+  });
+};

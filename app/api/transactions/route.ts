@@ -1,5 +1,6 @@
 import { insertTransactions } from '@/db';
 import { paths } from '@/types/up-api';
+import { filterTransactionFields } from '@/utils/helpers';
 import { getCurrentUser } from '@/utils/session';
 import { NextRequest, NextResponse } from 'next/server';
 import createClient from 'openapi-fetch';
@@ -47,6 +48,7 @@ export async function GET(request: NextRequest) {
     );
   }
 
+  // TODO: Retrieve transactions from other accounts
   const { data, error } = await upGET('/accounts/{accountId}/transactions', {
     params: {
       path: { accountId: process.env.UP_TRANS_ACC || '' },
@@ -65,14 +67,14 @@ export async function GET(request: NextRequest) {
     const insert = await insertTransactions(transactions);
     console.log(`Inserted: ${insert?.insertedCount} documents`);
     return NextResponse.json({
-      data: transactions,
+      data: filterTransactionFields(transactions),
     });
   } else if (data) {
     const transactions = data.data;
     const insert = await insertTransactions(transactions);
     console.log(`Inserted: ${insert?.insertedCount} documents`);
     return NextResponse.json({
-      data: data.data,
+      data: filterTransactionFields(transactions),
     });
   } else {
     return NextResponse.json(error);
