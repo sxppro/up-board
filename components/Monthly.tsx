@@ -1,4 +1,5 @@
 'use client';
+
 import { MonthlyMetric } from '@/types/custom';
 import { useMonthlyMetrics } from '@/utils/fetch';
 import { formatCurrency } from '@/utils/helpers';
