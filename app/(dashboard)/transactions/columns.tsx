@@ -46,7 +46,14 @@ export const columns: ColumnDef<FilteredTransactionResource>[] = [
        * Defaulting to Australian date format
        * (unless you can find a way to detect locale server-side)
        */
-      const formattedTime = new Intl.DateTimeFormat('en-AU').format(time);
+      const formattedTime = new Intl.DateTimeFormat('en-AU', {
+        year: 'numeric',
+        month: 'numeric',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
+        hour12: false,
+      }).format(time);
       return formattedTime;
     },
   },
