@@ -6,6 +6,9 @@ import { Flex } from '@tremor/react';
 import { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 
+// Disable data cache for all dashboard pages
+export const revalidate = 0;
+
 export const metadata: Metadata = {
   title: 'Up Dashboard',
   description: 'Smart transaction analysis by Soppro',
