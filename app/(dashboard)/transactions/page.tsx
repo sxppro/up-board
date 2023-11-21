@@ -10,9 +10,7 @@ const TransactionsPage = async () => {
   return (
     <>
       <h1 className="text-2xl font-bold tracking-tight">Transactions</h1>
-      <div className="w-full py-4">
-        <DataTable columns={columns} data={data} />
-      </div>
+      <DataTable className="py-4" columns={columns} data={data} />
     </>
   );
 };
