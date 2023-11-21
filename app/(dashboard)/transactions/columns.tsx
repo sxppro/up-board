@@ -1,9 +1,33 @@
 'use client';
 
+import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { FilteredTransactionResource } from '@/types/custom';
 import { ColumnDef } from '@tanstack/react-table';
+import { MoreHorizontal } from 'lucide-react';
 
 export const columns: ColumnDef<FilteredTransactionResource>[] = [
+  {
+    accessorKey: 'time',
+    header: 'Time',
+    cell: ({ row }) => {
+      const time = Date.parse(row.getValue('time'));
+      if (isNaN(time)) return '—';
+      /**
+       * Defaulting to Australian date format
+       * (unless you can find a way to detect locale server-side)
+       */
+      const formattedTime = new Intl.DateTimeFormat('en-AU').format(time);
+      return formattedTime;
+    },
+  },
   {
     accessorKey: 'status',
     header: 'Status',
@@ -13,11 +37,42 @@ export const columns: ColumnDef<FilteredTransactionResource>[] = [
     header: 'Description',
   },
   {
-    accessorKey: 'time',
-    header: 'Time',
+    accessorKey: 'amount',
+    header: () => <div className="text-right">Amount</div>,
+    cell: ({ row }) => {
+      const amount = parseFloat(row.getValue('amount'));
+      const formatted = new Intl.NumberFormat('en-AU', {
+        style: 'currency',
+        currency: 'AUD',
+      }).format(amount);
+      return <div className="text-right font-medium">{formatted}</div>;
+    },
   },
   {
-    accessorKey: 'amount',
-    header: 'Amount',
+    id: 'actions',
+    cell: ({ row }) => {
+      const transaction = row.original;
+
+      return (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="h-8 w-8 p-0">
+              <span className="sr-only">Open menu</span>
+              <MoreHorizontal className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+            <DropdownMenuItem
+              onClick={() => navigator.clipboard.writeText(transaction.id)}
+            >
+              Copy transaction ID
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>View transaction details</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      );
+    },
   },
 ];

@@ -47,3 +47,13 @@ export const filterTransactionFields = (
     };
   });
 };
+
+/**
+ * Retrieve browser default locale
+ * (client-side only)
+ * @returns
+ */
+export const getLocale = () =>
+  navigator.languages && navigator.languages.length
+    ? navigator.languages[0]
+    : navigator.language;
