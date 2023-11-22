@@ -37,13 +37,16 @@ export const filterTransactionFields = (
   transactions: components['schemas']['TransactionResource'][]
 ): FilteredTransactionResource[] => {
   return transactions.map((transaction) => {
-    const { id, attributes } = transaction;
+    const { id, attributes, relationships } = transaction;
     return {
       id,
       description: attributes.description,
       amount: attributes.amount.value,
       time: attributes.createdAt,
       status: attributes.status,
+      category: relationships.category.data?.id ?? 'uncategorised',
+      parentCategory: relationships.parentCategory.data?.id ?? 'uncategorised',
+      tags: relationships.tags.data.map(({ id }) => id),
     };
   });
 };

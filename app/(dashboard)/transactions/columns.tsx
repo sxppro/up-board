@@ -1,5 +1,6 @@
 'use client';
 
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
@@ -67,12 +68,21 @@ export const columns: ColumnDef<FilteredTransactionResource>[] = [
     sortingFn: 'datetime',
   },
   {
-    accessorKey: 'status',
-    header: 'Status',
-  },
-  {
     accessorKey: 'description',
     header: 'Description',
+    cell: ({ row }) => {
+      const desc = row.getValue<string>('description');
+      return (
+        <div className="flex flex-row gap-2">
+          <Badge variant="outline">{row.original.status}</Badge>
+          <div className="font-medium">{desc}</div>
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: 'category',
+    header: 'Category',
   },
   {
     accessorKey: 'amount',

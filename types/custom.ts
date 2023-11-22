@@ -34,6 +34,9 @@ interface FilteredTransactionResource {
   amount: string;
   time: string;
   status: string;
+  category: string;
+  parentCategory: string;
+  tags: string[];
 }
 
 export type {
