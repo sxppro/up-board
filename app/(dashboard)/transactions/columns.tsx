@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { FilteredTransactionResource } from '@/types/custom';
 import { ColumnDef } from '@tanstack/react-table';
-import { MoreHorizontal } from 'lucide-react';
+import { ArrowUpDown, MoreHorizontal } from 'lucide-react';
 
 export const columns: ColumnDef<FilteredTransactionResource>[] = [
   {
@@ -38,7 +38,19 @@ export const columns: ColumnDef<FilteredTransactionResource>[] = [
   },
   {
     accessorKey: 'time',
-    header: 'Time',
+    header: ({ column, header }) => {
+      console.log(header.colSpan);
+      return (
+        <Button
+          className="-ml-4"
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Time
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
     cell: ({ row }) => {
       const time = Date.parse(row.getValue('time'));
       if (isNaN(time)) return '—';
@@ -47,15 +59,12 @@ export const columns: ColumnDef<FilteredTransactionResource>[] = [
        * (unless you can find a way to detect locale server-side)
        */
       const formattedTime = new Intl.DateTimeFormat('en-AU', {
-        year: 'numeric',
-        month: 'numeric',
-        day: 'numeric',
-        hour: 'numeric',
-        minute: 'numeric',
-        hour12: false,
+        dateStyle: 'medium',
+        timeStyle: 'short',
       }).format(time);
       return formattedTime;
     },
+    sortingFn: 'datetime',
   },
   {
     accessorKey: 'status',
