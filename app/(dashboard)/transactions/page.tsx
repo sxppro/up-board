@@ -3,6 +3,9 @@ import { endOfMonth, startOfMonth } from 'date-fns';
 import { columns } from './columns';
 import { DataTable } from './data-table';
 
+// Disable data cache for all dashboard pages
+export const revalidate = 0;
+
 const TransactionsPage = async () => {
   const now = new Date();
   const data = await getTransactionsByDate(startOfMonth(now), endOfMonth(now));
