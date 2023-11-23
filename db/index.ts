@@ -1,13 +1,9 @@
 import { CustomTransactionResource } from '@/types/custom';
 import { components } from '@/types/up-api';
 import { UUID } from 'bson';
-import { MongoBulkWriteError, MongoClient } from 'mongodb';
+import { MongoBulkWriteError } from 'mongodb';
+import { connectToDatabase } from './connect';
 import { categoriesPipeline, monthlyStatsPipeline } from './pipelines';
-
-const DB_URI = `mongodb+srv://${process.env.DB_USER}:${encodeURIComponent(
-  process.env.DB_PASS || ''
-)}@${process.env.DB_CLUSTER}/?retryWrites=true&w=majority`;
-const client = new MongoClient(DB_URI);
 
 /**
  * Converts BSON UUID to string
@@ -30,7 +26,7 @@ const insertTransactions = async (
     return;
   }
   try {
-    const db = client.db('up');
+    const { db } = await connectToDatabase('up');
     const transactions =
       db.collection<CustomTransactionResource>('transactions');
     /**
@@ -89,7 +85,7 @@ const monthlyStats = async (start: Date, end: Date) => {
     throw new Error('Up transaction account not defined');
   }
 
-  const db = client.db('up');
+  const { db } = await connectToDatabase('up');
   const transactions = db.collection<CustomTransactionResource>('transactions');
   const cursor = transactions.aggregate(
     monthlyStatsPipeline(start, end, process.env.UP_TRANS_ACC)
@@ -110,7 +106,7 @@ const categoryStats = async (start: Date, end: Date) => {
     throw new Error('Up transaction account not defined');
   }
 
-  const db = client.db('up');
+  const { db } = await connectToDatabase('up');
   const transactions = db.collection<CustomTransactionResource>('transactions');
   const cursor = transactions.aggregate(
     categoriesPipeline(start, end, process.env.UP_TRANS_ACC)
@@ -125,7 +121,7 @@ const categoryStats = async (start: Date, end: Date) => {
  * @returns transaction document
  */
 const findTransactionById = async (id: string) => {
-  const db = client.db('up');
+  const { db } = await connectToDatabase('up');
   const transactions = db.collection<CustomTransactionResource>('transactions');
   const results = await transactions.findOne({ _id: new UUID(id).toBinary() });
   return results;
