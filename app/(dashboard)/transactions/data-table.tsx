@@ -1,6 +1,7 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import {
   Table,
   TableBody,
@@ -12,9 +13,11 @@ import {
 import { cn } from '@/utils/helpers';
 import {
   ColumnDef,
+  ColumnFiltersState,
   SortingState,
   flexRender,
   getCoreRowModel,
+  getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
@@ -33,11 +36,14 @@ export const DataTable = <TData, TValue>({
   className,
 }: DataTableProps<TData, TValue>) => {
   const [sorting, setSorting] = useState<SortingState>([]);
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const table = useReactTable({
     data,
     columns,
+    onColumnFiltersChange: setColumnFilters,
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
     initialState: {
@@ -46,12 +52,25 @@ export const DataTable = <TData, TValue>({
       },
     },
     state: {
+      columnFilters,
       sorting,
     },
   });
 
   return (
     <div className={cn('w-full', className)}>
+      <div className="flex items-center pb-4">
+        <Input
+          className="max-w-sm"
+          placeholder="Filter transactions ..."
+          value={
+            (table.getColumn('description')?.getFilterValue() as string) ?? ''
+          }
+          onChange={(e) =>
+            table.getColumn('description')?.setFilterValue(e.target.value)
+          }
+        ></Input>
+      </div>
       <div className="rounded-md border">
         <Table>
           <TableHeader>

@@ -20,7 +20,10 @@ export const columns: ColumnDef<FilteredTransactionResource>[] = [
     id: 'select',
     header: ({ table }) => (
       <Checkbox
-        checked={table.getIsAllPageRowsSelected()}
+        checked={
+          table.getIsAllPageRowsSelected() ||
+          (table.getIsSomePageRowsSelected() && 'indeterminate')
+        }
         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
         aria-label="Select all"
         className="translate-y-[2px]"
