@@ -1,3 +1,4 @@
+import NavProgress from '@/components/NavProgress';
 import { MainNav } from '@/components/core/MainNav';
 import ThemeToggle from '@/components/core/ThemeToggle';
 import { UserNav } from '@/components/core/UserNav';
@@ -24,6 +25,7 @@ export default async function DashboardLayout({
 
   return (
     <>
+      <NavProgress />
       <div className="border-b">
         <div className="flex h-16 items-center px-4 md:px-8">
           <MainNav />
