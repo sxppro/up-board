@@ -43,7 +43,6 @@ export const columns: ColumnDef<FilteredTransactionResource>[] = [
   {
     accessorKey: 'time',
     header: ({ column, header }) => {
-      console.log(header.colSpan);
       return (
         <Button
           className="-ml-4"
@@ -65,6 +64,7 @@ export const columns: ColumnDef<FilteredTransactionResource>[] = [
       const formattedTime = new Intl.DateTimeFormat('en-AU', {
         dateStyle: 'medium',
         timeStyle: 'short',
+        timeZone: 'Australia/Melbourne',
       }).format(time);
       return formattedTime;
     },
@@ -78,7 +78,7 @@ export const columns: ColumnDef<FilteredTransactionResource>[] = [
       return (
         <div className="flex flex-row gap-2">
           <Badge variant="outline">{row.original.status}</Badge>
-          <div className="font-medium">{desc}</div>
+          <div className="max-w-[500px] truncate font-medium">{desc}</div>
         </div>
       );
     },

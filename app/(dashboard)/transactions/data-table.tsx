@@ -1,7 +1,6 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import {
   Table,
   TableBody,
@@ -23,6 +22,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import { useState } from 'react';
+import { DataTableToolbar } from './data-table-toolbar';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -58,19 +58,8 @@ export const DataTable = <TData, TValue>({
   });
 
   return (
-    <div className={cn('w-full', className)}>
-      <div className="flex items-center pb-4">
-        <Input
-          className="max-w-sm"
-          placeholder="Filter transactions ..."
-          value={
-            (table.getColumn('description')?.getFilterValue() as string) ?? ''
-          }
-          onChange={(e) =>
-            table.getColumn('description')?.setFilterValue(e.target.value)
-          }
-        ></Input>
-      </div>
+    <div className={cn('w-full space-y-4', className)}>
+      <DataTableToolbar table={table} />
       <div className="rounded-md border">
         <Table>
           <TableHeader>
