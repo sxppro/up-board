@@ -3,7 +3,11 @@ import { components } from '@/types/up-api';
 import { UUID } from 'bson';
 import { MongoBulkWriteError } from 'mongodb';
 import { connectToDatabase } from './connect';
-import { categoriesPipeline, monthlyStatsPipeline } from './pipelines';
+import {
+  categoriesPipeline,
+  monthlyStatsPipeline,
+  transactionsByTagsPipeline,
+} from './pipelines';
 
 /**
  * Converts BSON UUID to string
@@ -120,11 +124,29 @@ const categoryStats = async (start: Date, end: Date) => {
  * @param id transaction id
  * @returns transaction document
  */
-const findTransactionById = async (id: string) => {
+const getTransactionById = async (id: string) => {
   const { db } = await connectToDatabase('up');
   const transactions = db.collection<CustomTransactionResource>('transactions');
   const results = await transactions.findOne({ _id: new UUID(id).toBinary() });
   return results;
 };
 
-export { categoryStats, findTransactionById, insertTransactions, monthlyStats };
+/**
+ * Retrieves transactions by tags
+ * @returns
+ */
+const getTransactionsByTag = async () => {
+  const { db } = await connectToDatabase('up');
+  const transactions = db.collection<CustomTransactionResource>('transactions');
+  const cursor = transactions.aggregate(transactionsByTagsPipeline());
+  const results = await cursor.toArray();
+  return results;
+};
+
+export {
+  categoryStats,
+  getTransactionById,
+  getTransactionsByTag,
+  insertTransactions,
+  monthlyStats,
+};

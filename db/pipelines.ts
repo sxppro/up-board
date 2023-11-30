@@ -173,4 +173,48 @@ const categoriesPipeline = (start: Date, end: Date, account: string) => [
   },
 ];
 
-export { categoriesPipeline, monthlyStatsPipeline };
+/**
+ * Pipeline for retrieving transaction
+ * IDs grouped by tag
+ * @returns
+ */
+const transactionsByTagsPipeline = () => [
+  /**
+   * Match only documents that have a tag
+   */
+  {
+    $match: {
+      'relationships.tags.data.0': {
+        $exists: true,
+      },
+    },
+  },
+  {
+    $project: {
+      tags: '$relationships.tags.data',
+    },
+  },
+  {
+    $unwind: {
+      path: '$tags',
+      preserveNullAndEmptyArrays: false,
+    },
+  },
+  {
+    $group: {
+      _id: '$tags.id',
+      transactions: {
+        $addToSet: '$_id',
+      },
+    },
+  },
+  {
+    $project: {
+      _id: 0,
+      tag: '$_id',
+      transactions: '$transactions',
+    },
+  },
+];
+
+export { categoriesPipeline, monthlyStatsPipeline, transactionsByTagsPipeline };
