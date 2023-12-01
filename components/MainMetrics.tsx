@@ -23,7 +23,14 @@ const MainMetrics = () => {
     startOfMonth(currentDate),
     currentDate
   );
+  console.log(data);
 
+  /**
+   * Remaps API data into form consumable
+   * by component
+   * @param param0
+   * @returns
+   */
   const categories = ({
     Income,
     Expenses,
@@ -36,13 +43,13 @@ const MainMetrics = () => {
   }[] => [
     {
       title: 'Income',
-      metric: Income && formatCurrency(Income),
+      metric: formatCurrency(Income),
       icon: Plus,
       color: 'indigo',
     },
     {
       title: 'Expenses',
-      metric: Expenses && formatCurrency(Expenses),
+      metric: formatCurrency(Expenses),
       icon: Minus,
       color: 'fuchsia',
     },
@@ -54,17 +61,19 @@ const MainMetrics = () => {
     },
   ];
 
+  const parsedCategories = categories(
+    Array.isArray(data) && data.length > 0
+      ? data[0]
+      : {
+          Income: 0,
+          Expenses: 0,
+          Transactions: 0,
+        }
+  );
+
   return (
     <Grid numItemsSm={2} numItemsLg={3} className="gap-6 mt-6">
-      {categories(
-        Array.isArray(data) && data.length > 0
-          ? data[0]
-          : {
-              Income: 0,
-              Expenses: 0,
-              Transactions: 0,
-            }
-      ).map((item) => (
+      {parsedCategories.map((item) => (
         <Card key={item.title} decoration="top" decorationColor={item.color}>
           <Flex justifyContent="start" className="space-x-4">
             <Icon
@@ -78,7 +87,9 @@ const MainMetrics = () => {
                 <Text>{item.title}</Text>
                 <BadgeDelta deltaType="moderateIncrease">{'10.2%'}</BadgeDelta>
               </Flex>
-              <Metric className="truncate">{item.metric || '—'}</Metric>
+              <Metric className="truncate">
+                {isLoading ? '—' : item.metric}
+              </Metric>
             </div>
           </Flex>
         </Card>
