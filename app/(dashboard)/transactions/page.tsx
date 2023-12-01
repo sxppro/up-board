@@ -1,5 +1,5 @@
 import { getTransactionsByDate } from '@/utils/data';
-import { endOfMonth, startOfMonth } from 'date-fns';
+import { subMonths } from 'date-fns';
 import { columns } from './columns';
 import { DataTable } from './data-table';
 
@@ -8,7 +8,7 @@ export const revalidate = 0;
 
 const TransactionsPage = async () => {
   const now = new Date();
-  const data = await getTransactionsByDate(startOfMonth(now), endOfMonth(now));
+  const data = await getTransactionsByDate(subMonths(now, 1), now);
 
   return (
     <>

@@ -86,6 +86,7 @@ export const columns: ColumnDef<FilteredTransactionResource>[] = [
   {
     accessorKey: 'category',
     header: 'Category',
+    filterFn: (row, id, value) => value.includes(row.getValue(id)),
   },
   {
     accessorKey: 'amount',

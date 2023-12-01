@@ -1,5 +1,6 @@
 import { Input } from '@/components/ui/input';
 import { Table } from '@tanstack/react-table';
+import { DataTableFacetedFilter } from './data-table-faceted-filter';
 import { DataTableViewOptions } from './data-table-view-options';
 
 interface DataTableToolbarProps<TData> {
@@ -22,6 +23,13 @@ export function DataTableToolbar<TData>({
             table.getColumn('description')?.setFilterValue(e.target.value)
           }
         />
+        {table.getColumn('category') && (
+          <DataTableFacetedFilter
+            column={table.getColumn('category')}
+            title="Category"
+            options={[{ value: 'uncategorised', label: 'Uncategorised' }]}
+          />
+        )}
       </div>
       <DataTableViewOptions table={table} />
     </div>
