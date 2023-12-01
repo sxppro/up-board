@@ -3,7 +3,6 @@
 import { MonthlyMetric } from '@/types/custom';
 import { useMonthlyMetrics } from '@/utils/fetch';
 import { formatCurrency } from '@/utils/helpers';
-import { CashIcon, TicketIcon, UserGroupIcon } from '@heroicons/react/solid';
 import {
   BadgeDelta,
   Card,
@@ -15,6 +14,7 @@ import {
   Text,
 } from '@tremor/react';
 import { startOfMonth } from 'date-fns';
+import { List, Minus, Plus } from 'lucide-react';
 
 const currentDate = new Date();
 
@@ -37,19 +37,19 @@ const MainMetrics = () => {
     {
       title: 'Income',
       metric: Income && formatCurrency(Income),
-      icon: TicketIcon,
+      icon: Plus,
       color: 'indigo',
     },
     {
       title: 'Expenses',
       metric: Expenses && formatCurrency(Expenses),
-      icon: CashIcon,
+      icon: Minus,
       color: 'fuchsia',
     },
     {
       title: 'Transactions',
       metric: Transactions,
-      icon: UserGroupIcon,
+      icon: List,
       color: 'amber',
     },
   ];
