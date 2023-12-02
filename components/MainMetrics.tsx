@@ -15,6 +15,7 @@ import {
 } from '@tremor/react';
 import { startOfMonth } from 'date-fns';
 import { List, Minus, Plus } from 'lucide-react';
+import { Skeleton } from './ui/skeleton';
 
 const currentDate = new Date();
 
@@ -87,9 +88,11 @@ const MainMetrics = () => {
                 <Text>{item.title}</Text>
                 <BadgeDelta deltaType="moderateIncrease">{'10.2%'}</BadgeDelta>
               </Flex>
-              <Metric className="truncate">
-                {isLoading ? '—' : item.metric}
-              </Metric>
+              {isLoading ? (
+                <Skeleton className="h-9 max-w-[150px]" />
+              ) : (
+                <Metric className="truncate">{item.metric}</Metric>
+              )}
             </div>
           </Flex>
         </Card>
