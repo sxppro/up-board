@@ -15,6 +15,7 @@ import {
 } from '@tremor/react';
 import { startOfMonth } from 'date-fns';
 import { useState } from 'react';
+import Loader from './core/Loader';
 
 const categories = [
   { key: 'amount', name: 'Amount', icon: CurrencyCircleDollar },
@@ -58,7 +59,7 @@ const Categories = () => {
   );
 
   return (
-    <Card className="max-w-md h-full mx-auto">
+    <Card className="h-full max-w-md mx-auto flex flex-col">
       <Title>Transaction Categories</Title>
       <TabGroup
         index={selectedIndex}
@@ -81,11 +82,15 @@ const Categories = () => {
           <Bold>Amount</Bold>
         </Text>
       </Flex>
-      <BarList
-        data={data && parseData(data)[selectedCategory]}
-        showAnimation={false}
-        className="mt-4"
-      />
+      {isLoading ? (
+        <Loader />
+      ) : (
+        <BarList
+          data={data && parseData(data)[selectedCategory]}
+          showAnimation={false}
+          className="mt-4"
+        />
+      )}
     </Card>
   );
 };
