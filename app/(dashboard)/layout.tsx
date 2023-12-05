@@ -27,7 +27,7 @@ export default async function DashboardLayout({
     <>
       <NavProgress />
       <div className="border-b">
-        <div className="flex h-16 items-center px-4 md:px-8">
+        <div className="max-w-screen-2xl m-auto flex h-16 items-center px-4 md:px-8">
           <MainNav />
           <div className="ml-auto flex items-center space-x-4">
             <ThemeToggle />
