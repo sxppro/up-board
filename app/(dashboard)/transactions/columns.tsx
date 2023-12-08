@@ -66,7 +66,7 @@ export const columns: ColumnDef<FilteredTransactionResource>[] = [
         timeStyle: 'short',
         timeZone: 'Australia/Melbourne',
       }).format(time);
-      return formattedTime;
+      return <div className="max-w-[200px]">{formattedTime}</div>;
     },
     sortingFn: 'datetime',
   },
@@ -97,7 +97,11 @@ export const columns: ColumnDef<FilteredTransactionResource>[] = [
         style: 'currency',
         currency: 'AUD',
       }).format(amount);
-      return <div className="text-right font-medium">{formatted}</div>;
+      return (
+        <div className="max-w-[100px] truncate text-right font-medium">
+          {formatted}
+        </div>
+      );
     },
   },
   {
