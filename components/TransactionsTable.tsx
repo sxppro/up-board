@@ -1,6 +1,6 @@
 import { columns } from '@/app/(dashboard)/transactions/columns';
 import { DataTable } from '@/app/(dashboard)/transactions/data-table';
-import { getTransactionsByDate } from '@/utils/data';
+import { getTransactionsByDate } from '@/utils/server';
 import { subMonths } from 'date-fns';
 
 const TransactionsTable = async () => {

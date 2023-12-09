@@ -1,6 +1,6 @@
 'use client';
 
-import { useCategoryMetrics } from '@/utils/fetch';
+import { useCategoryMetrics } from '@/utils/client';
 import { CurrencyCircleDollar, ListNumbers } from '@phosphor-icons/react';
 import {
   BarList,

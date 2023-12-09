@@ -1,4 +1,4 @@
-import { getTransactionsByDate } from '@/utils/data';
+import { getTransactionsByDate } from '@/utils/server';
 import { getCurrentUser } from '@/utils/session';
 import { NextRequest, NextResponse } from 'next/server';
 
