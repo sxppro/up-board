@@ -66,31 +66,33 @@ export const columns: ColumnDef<FilteredTransactionResource>[] = [
         timeStyle: 'short',
         timeZone: 'Australia/Melbourne',
       }).format(time);
-      return <div className="max-w-[200px]">{formattedTime}</div>;
+      return <div className="w-[175px]">{formattedTime}</div>;
     },
     sortingFn: 'datetime',
   },
   {
     accessorKey: 'description',
     header: 'Description',
-    cell: ({ row }) => {
-      const desc = row.getValue<string>('description');
-      return (
-        <div className="flex flex-row gap-2">
-          <Badge variant="outline">{row.original.status}</Badge>
-          <div className="max-w-[500px] truncate font-medium">{desc}</div>
+    cell: ({ row }) => (
+      <div className="flex gap-2">
+        <Badge variant="outline">{row.original.status}</Badge>
+        <div className="sm:w-[300px] md:w-[400px] lg:w-[500px] max-w-[500px] truncate font-medium">
+          {row.getValue('description')}
         </div>
-      );
-    },
+      </div>
+    ),
   },
   {
     accessorKey: 'category',
     header: 'Category',
+    cell: ({ row }) => (
+      <div className="w-[100px] truncate">{row.getValue('category')}</div>
+    ),
     filterFn: (row, id, value) => value.includes(row.getValue(id)),
   },
   {
     accessorKey: 'amount',
-    header: () => <div className="text-right">Amount</div>,
+    header: () => <div className="text-end">Amount</div>,
     cell: ({ row }) => {
       const amount = parseFloat(row.getValue('amount'));
       const formatted = new Intl.NumberFormat('en-AU', {
@@ -98,7 +100,7 @@ export const columns: ColumnDef<FilteredTransactionResource>[] = [
         currency: 'AUD',
       }).format(amount);
       return (
-        <div className="max-w-[100px] truncate text-right font-medium">
+        <div className="w-[100px] float-right text-end font-medium">
           {formatted}
         </div>
       );
