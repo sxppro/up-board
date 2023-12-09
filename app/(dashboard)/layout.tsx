@@ -1,7 +1,9 @@
+import NavProgress from '@/components/NavProgress';
 import { MainNav } from '@/components/core/MainNav';
 import ThemeToggle from '@/components/core/ThemeToggle';
 import { UserNav } from '@/components/core/UserNav';
 import { getCurrentUser } from '@/utils/session';
+import { Flex } from '@tremor/react';
 import { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 
@@ -23,8 +25,9 @@ export default async function DashboardLayout({
 
   return (
     <>
+      <NavProgress />
       <div className="border-b">
-        <div className="flex h-16 items-center px-4 md:px-8">
+        <div className="max-w-screen-2xl m-auto flex h-16 items-center px-4 md:px-8">
           <MainNav />
           <div className="ml-auto flex items-center space-x-4">
             <ThemeToggle />
@@ -32,7 +35,11 @@ export default async function DashboardLayout({
           </div>
         </div>
       </div>
-      {children}
+      <main className="max-w-screen-2xl m-auto py-4 px-4 md:px-8">
+        <Flex className="gap-2" flexDirection="col" alignItems="start">
+          {children}
+        </Flex>
+      </main>
     </>
   );
 }

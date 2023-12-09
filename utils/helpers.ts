@@ -1,3 +1,5 @@
+import { FilteredTransactionResource } from '@/types/custom';
+import type { components } from '@/types/up-api';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
@@ -24,3 +26,37 @@ export const formatCurrency = (number: number, decimals: boolean = true) =>
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
+
+/**
+ * Filters properties from raw transaction
+ * object to be returned to client
+ * @param transactions array of raw transaction objects
+ * @returns
+ */
+export const filterTransactionFields = (
+  transactions: components['schemas']['TransactionResource'][]
+): FilteredTransactionResource[] => {
+  return transactions.map((transaction) => {
+    const { id, attributes, relationships } = transaction;
+    return {
+      id,
+      description: attributes.description,
+      amount: attributes.amount.value,
+      time: attributes.createdAt,
+      status: attributes.status,
+      category: relationships.category.data?.id ?? 'uncategorised',
+      parentCategory: relationships.parentCategory.data?.id ?? 'uncategorised',
+      tags: relationships.tags.data.map(({ id }) => id),
+    };
+  });
+};
+
+/**
+ * Retrieve browser default locale
+ * (client-side only)
+ * @returns
+ */
+export const getLocale = () =>
+  navigator.languages && navigator.languages.length
+    ? navigator.languages[0]
+    : navigator.language;

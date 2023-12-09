@@ -1,3 +1,7 @@
+/**
+ * Client-side data fetching
+ */
+
 import startOfMonth from 'date-fns/startOfMonth';
 import subYears from 'date-fns/subYears';
 
