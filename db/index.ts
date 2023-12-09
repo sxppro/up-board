@@ -1,4 +1,4 @@
-import { CustomTransactionResource } from '@/types/custom';
+import { CategoryOption, CustomTransactionResource } from '@/types/custom';
 import { components } from '@/types/up-api';
 import { UUID } from 'bson';
 import { MongoBulkWriteError } from 'mongodb';
@@ -143,8 +143,40 @@ const getTransactionsByTag = async () => {
   return results;
 };
 
+/**
+ * Retrieves child categories
+ * @returns
+ */
+const getChildCategories = async () => {
+  const { db } = await connectToDatabase('up');
+  const categories = db.collection('categories');
+  const cursor = categories
+    .find({
+      'relationships.parent.data': { $ne: null },
+    })
+    .project({ _id: 0, value: '$_id', name: '$attributes.name' });
+  const results = (await cursor.toArray()) as CategoryOption[];
+  return results;
+};
+
+/**
+ * Retrieves parent categories
+ * @returns
+ */
+const getParentCategories = async () => {
+  const { db } = await connectToDatabase('up');
+  const categories = db.collection('categories');
+  const cursor = categories
+    .find({ 'relationships.parent.data': null })
+    .project({ _id: 0, value: '$_id', name: '$attributes.name' });
+  const results = (await cursor.toArray()) as CategoryOption[];
+  return results;
+};
+
 export {
   categoryStats,
+  getChildCategories,
+  getParentCategories,
   getTransactionById,
   getTransactionsByTag,
   insertTransactions,

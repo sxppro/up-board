@@ -1,14 +1,17 @@
 import { Input } from '@/components/ui/input';
+import { CategoryOption } from '@/types/custom';
 import { Table } from '@tanstack/react-table';
 import { DataTableFacetedFilter } from './data-table-faceted-filter';
 import { DataTableViewOptions } from './data-table-view-options';
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>;
+  options: CategoryOption[];
 }
 
 export function DataTableToolbar<TData>({
   table,
+  options,
 }: DataTableToolbarProps<TData>) {
   return (
     <div className="flex flex-col sm:flex-row items-center justify-between gap-2">
@@ -27,7 +30,7 @@ export function DataTableToolbar<TData>({
           <DataTableFacetedFilter
             column={table.getColumn('category')}
             title="Category"
-            options={[{ value: 'uncategorised', label: 'Uncategorised' }]}
+            options={options}
           />
         )}
       </div>
