@@ -11,8 +11,8 @@ export function DataTableToolbar<TData>({
   table,
 }: DataTableToolbarProps<TData>) {
   return (
-    <div className="flex items-center justify-between">
-      <div className="flex flex-1 items-center space-x-2">
+    <div className="flex flex-col sm:flex-row items-center justify-between gap-2">
+      <div className="flex flex-1 items-center space-x-2 w-full">
         <Input
           className="h-8 md:w-[250px]"
           placeholder="Filter transactions ..."
