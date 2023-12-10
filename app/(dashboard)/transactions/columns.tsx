@@ -11,8 +11,16 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import { FilteredTransactionResource } from '@/types/custom';
 import { ColumnDef } from '@tanstack/react-table';
+import { formatDistanceToNow } from 'date-fns';
+import { enAU } from 'date-fns/locale';
 import { ArrowUpDown, MoreHorizontal } from 'lucide-react';
 
 export const columns: ColumnDef<FilteredTransactionResource>[] = [
@@ -66,7 +74,24 @@ export const columns: ColumnDef<FilteredTransactionResource>[] = [
         timeStyle: 'short',
         timeZone: 'Australia/Melbourne',
       }).format(time);
-      return <div className="w-[175px]">{formattedTime}</div>;
+      return (
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div className="w-[100px]">
+                {formatDistanceToNow(time, {
+                  addSuffix: true,
+                  includeSeconds: true,
+                  locale: enAU,
+                })}
+              </div>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>{formattedTime}</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      );
     },
     sortingFn: 'datetime',
   },
