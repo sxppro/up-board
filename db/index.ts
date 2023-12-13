@@ -10,19 +10,16 @@ import {
 } from './pipelines';
 
 /**
- * Converts BSON UUID to string
- * @param uuid to be converted
- * @returns uuid as string
+ * Remaps db transaction document
+ * to be returned in API endpoint
  */
-const uuidToString = (uuid: UUID) =>
-  uuid
-    .toString('hex')
-    .replace(/^(.{8})(.{4})(.{4})(.{4})(.{12})$/, '$1-$2-$3-$4-$5');
-
-/**
- * Remaps _id to id for apis
- */
-const outputData = () => {};
+const outputData = (transaction: DbTransactionResource) => {
+  const { _id, ...rest } = transaction;
+  return {
+    id: _id.toString(),
+    ...rest,
+  };
+};
 
 /**
  * Inserts transactions to db
@@ -127,7 +124,9 @@ const getTransactionsByCategory = async (category: string) => {
   const { db } = await connectToDatabase('up');
   const transactions = db.collection<DbTransactionResource>('transactions');
   const cursor = transactions.find({ $text: { $search: category } });
-  const results = await cursor.toArray();
+  const results = (await cursor.toArray()).map((transaction) =>
+    outputData(transaction)
+  );
   await cursor.close();
   return results;
 };
@@ -140,8 +139,8 @@ const getTransactionsByCategory = async (category: string) => {
 const getTransactionById = async (id: string) => {
   const { db } = await connectToDatabase('up');
   const transactions = db.collection<DbTransactionResource>('transactions');
-  const results = await transactions.findOne({ _id: new UUID(id).toBinary() });
-  return results;
+  const result = await transactions.findOne({ _id: new UUID(id).toBinary() });
+  return result ? outputData(result) : result;
 };
 
 /**

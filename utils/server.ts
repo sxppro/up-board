@@ -2,7 +2,10 @@
  * Server-side data fetching
  */
 
-import { insertTransactions } from '@/db';
+import {
+  getTransactionsByCategory as getDbTransactionsByCategory,
+  insertTransactions,
+} from '@/db';
 import { paths } from '@/types/up-api';
 import createClient from 'openapi-fetch';
 import { filterTransactionFields } from './helpers';
@@ -64,4 +67,14 @@ export const getTransactionsByDate = async (start: Date, end: Date) => {
   const insert = await insertTransactions(transactions);
   console.log(`Inserted: ${insert?.insertedCount} documents`);
   return filterTransactionFields(transactions);
+};
+
+/**
+ * Retrieves transactions in a category
+ * @param category transaction category
+ * @returns list of transactions
+ */
+export const getTransactionsByCategory = async (category: string) => {
+  const transactions = await getDbTransactionsByCategory(category);
+  return transactions;
 };
