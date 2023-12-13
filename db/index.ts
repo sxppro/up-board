@@ -61,11 +61,6 @@ const insertTransactions = async (
     // Catch duplicate key errors
     if (err instanceof MongoBulkWriteError && err.code === 11000) {
       const { insertedCount, insertedIds } = err;
-      // console.log(
-      //   Object.keys(insertedIds).map((id) =>
-      //     uuidToString(insertedIds[parseInt(id)])
-      //   )
-      // );
       return {
         acknowledged: true,
         insertedCount,
@@ -154,6 +149,7 @@ const getChildCategories = async () => {
     .find({
       'relationships.parent.data': { $ne: null },
     })
+    .sort({ 'attributes.name': 1 })
     .project({ _id: 0, value: '$_id', name: '$attributes.name' });
   const results = (await cursor.toArray()) as CategoryOption[];
   return results;
