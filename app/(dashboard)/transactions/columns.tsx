@@ -4,16 +4,17 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import { FilteredTransactionResource } from '@/types/custom';
 import { ColumnDef } from '@tanstack/react-table';
-import { ArrowUpDown, MoreHorizontal } from 'lucide-react';
+import { formatDistanceToNow } from 'date-fns';
+import { enAU } from 'date-fns/locale';
+import { ArrowUpDown } from 'lucide-react';
+import DataTableRowActions from './data-table-row-actions';
 
 export const columns: ColumnDef<FilteredTransactionResource>[] = [
   {
@@ -66,7 +67,24 @@ export const columns: ColumnDef<FilteredTransactionResource>[] = [
         timeStyle: 'short',
         timeZone: 'Australia/Melbourne',
       }).format(time);
-      return <div className="w-[175px]">{formattedTime}</div>;
+      return (
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div className="w-[100px]">
+                {formatDistanceToNow(time, {
+                  addSuffix: true,
+                  includeSeconds: true,
+                  locale: enAU,
+                })}
+              </div>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>{formattedTime}</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      );
     },
     sortingFn: 'datetime',
   },
@@ -108,29 +126,6 @@ export const columns: ColumnDef<FilteredTransactionResource>[] = [
   },
   {
     id: 'actions',
-    cell: ({ row }) => {
-      const transaction = row.original;
-
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(transaction.id)}
-            >
-              Copy transaction ID
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>View transaction details</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      );
-    },
+    cell: ({ row }) => <DataTableRowActions row={row} />,
   },
 ];

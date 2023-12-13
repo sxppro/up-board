@@ -8,6 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { CategoryOption } from '@/types/custom';
 import { cn } from '@/utils/helpers';
 import {
   ColumnDef,
@@ -27,12 +28,14 @@ import { DataTableToolbar } from './data-table-toolbar';
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  options: CategoryOption[];
   className?: string;
 }
 
 export const DataTable = <TData, TValue>({
   data,
   columns,
+  options,
   className,
 }: DataTableProps<TData, TValue>) => {
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -59,7 +62,7 @@ export const DataTable = <TData, TValue>({
 
   return (
     <div className={cn('w-full space-y-4', className)}>
-      <DataTableToolbar table={table} />
+      <DataTableToolbar table={table} options={options} />
       <div className="rounded-md border">
         <Table>
           <TableHeader>

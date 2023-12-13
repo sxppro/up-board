@@ -23,7 +23,7 @@ interface DataTableFacetedFilter<TData, TValue> {
   column?: Column<TData, TValue>;
   title?: string;
   options: {
-    label: string;
+    name: string;
     value: string;
     icon?: React.ComponentType<{ className?: string }>;
   }[];
@@ -64,13 +64,13 @@ export const DataTableFacetedFilter = <TData, TValue>({
                 ) : (
                   options
                     .filter((option) => selectedValues.has(option.value))
-                    .map((option) => (
+                    .map(({ value, name }) => (
                       <Badge
-                        key={option.value}
+                        key={value}
                         variant="secondary"
                         className="rounded-sm px-1 font-normal"
                       >
-                        {option.label}
+                        {name}
                       </Badge>
                     ))
                 )}
@@ -115,7 +115,7 @@ export const DataTableFacetedFilter = <TData, TValue>({
                     {option.icon && (
                       <option.icon className="mr-2 h-4 w-4 text-muted-foreground" />
                     )}
-                    <span>{option.label}</span>
+                    <span>{option.name}</span>
                     {facets?.get(option.value) && (
                       <span className="ml-auto flex h-4 w-4 items-center justify-center font-mono text-xs">
                         {facets.get(option.value)}

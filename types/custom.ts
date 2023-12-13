@@ -11,7 +11,7 @@ interface TransactionResourceAttributes
   settledAt: Date | null;
 }
 
-interface CustomTransactionResource
+export interface CustomTransactionResource
   extends Omit<
     components['schemas']['TransactionResource'],
     'id' | 'attributes'
@@ -20,7 +20,7 @@ interface CustomTransactionResource
   attributes: TransactionResourceAttributes;
 }
 
-interface MonthlyMetric {
+export interface MonthlyMetric {
   Month: number;
   Year: number;
   Income: number;
@@ -28,7 +28,7 @@ interface MonthlyMetric {
   Transactions: number;
 }
 
-interface FilteredTransactionResource {
+export interface FilteredTransactionResource {
   id: string;
   description: string;
   amount: string;
@@ -39,8 +39,7 @@ interface FilteredTransactionResource {
   tags: string[];
 }
 
-export type {
-  CustomTransactionResource,
-  FilteredTransactionResource,
-  MonthlyMetric,
-};
+export interface CategoryOption {
+  value: string;
+  name: string;
+}
