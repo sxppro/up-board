@@ -136,6 +136,7 @@ const getTransactionsByDate = async (start: Date, end: Date) => {
   const transactions = db.collection<DbTransactionResource>('transactions');
   const cursor = transactions.find({
     'attributes.createdAt': { $gte: start, $lte: end },
+    'attributes.isCategorizable': true,
   });
   const results = (await cursor.toArray()).map((transaction) =>
     outputData(transaction)
