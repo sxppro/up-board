@@ -14,9 +14,16 @@ import {
  * to be returned in API endpoint
  */
 const outputData = (transaction: DbTransactionResource) => {
-  const { _id, ...rest } = transaction;
+  const { _id, attributes, ...rest } = transaction;
+  const { createdAt, settledAt } = attributes;
+  const newAttributes = {
+    ...attributes,
+    settledAt: settledAt ? settledAt.toISOString() : settledAt,
+    createdAt: createdAt ? createdAt.toISOString() : createdAt,
+  };
   return {
     id: _id.toString(),
+    attributes: newAttributes,
     ...rest,
   };
 };
@@ -116,6 +123,28 @@ const categoryStats = async (start: Date, end: Date) => {
 };
 
 /**
+ * Retrieves transactions between dates
+ * @param start
+ * @param end
+ * @returns
+ */
+const getTransactionsByDate = async (start: Date, end: Date) => {
+  if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+    throw new Error('invalid date(s)');
+  }
+  const { db } = await connectToDatabase('up');
+  const transactions = db.collection<DbTransactionResource>('transactions');
+  const cursor = transactions.find({
+    'attributes.createdAt': { $gte: start, $lte: end },
+  });
+  const results = (await cursor.toArray()).map((transaction) =>
+    outputData(transaction)
+  );
+  await cursor.close();
+  return results;
+};
+
+/**
  * Retrieves transactions by category
  * @param category category id
  * @returns list of transactions
@@ -193,6 +222,7 @@ export {
   getParentCategories,
   getTransactionById,
   getTransactionsByCategory,
+  getTransactionsByDate,
   getTransactionsByTag,
   insertTransactions,
   monthlyStats,
