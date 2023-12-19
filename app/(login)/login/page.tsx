@@ -1,7 +1,7 @@
 import { UserAuthForm } from '@/components/core/UserAuthForm';
 import { buttonVariants } from '@/components/ui/button';
+import { getCurrentUser } from '@/utils/auth';
 import { cn } from '@/utils/helpers';
-import { getCurrentUser } from '@/utils/session';
 import { ArrowLeft } from 'lucide-react';
 import { Metadata } from 'next';
 import Link from 'next/link';

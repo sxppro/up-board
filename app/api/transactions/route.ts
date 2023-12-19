@@ -1,6 +1,6 @@
 import { getTransactionsByDate } from '@/db';
+import { getCurrentUser } from '@/utils/auth';
 import { filterTransactionFields } from '@/utils/helpers';
-import { getCurrentUser } from '@/utils/session';
 import { NextRequest, NextResponse } from 'next/server';
 
 /**

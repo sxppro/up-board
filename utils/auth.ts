@@ -1,4 +1,4 @@
-import { NextAuthOptions } from 'next-auth';
+import { NextAuthOptions, getServerSession } from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
 
 if (
@@ -30,3 +30,13 @@ export const authOptions: NextAuthOptions = {
     error: '/e',
   },
 };
+
+/**
+ * Gets logged-in user info
+ * @returns user info or undefined
+ */
+
+export async function getCurrentUser() {
+  const session = await getServerSession(authOptions);
+  return session?.user;
+}
