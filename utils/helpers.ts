@@ -1,4 +1,7 @@
-import { FilteredTransactionResource } from '@/types/custom';
+import {
+  DbTransactionResource,
+  FilteredTransactionResource,
+} from '@/types/custom';
 import type { components } from '@/types/up-api';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
@@ -52,11 +55,20 @@ export const filterTransactionFields = (
 };
 
 /**
- * Retrieve browser default locale
- * (client-side only)
- * @returns
+ * Remaps db transaction document
+ * to be returned in API endpoint
  */
-export const getLocale = () =>
-  navigator.languages && navigator.languages.length
-    ? navigator.languages[0]
-    : navigator.language;
+export const outputTransactionFields = (transaction: DbTransactionResource) => {
+  const { _id, attributes, ...rest } = transaction;
+  const { createdAt, settledAt } = attributes;
+  const newAttributes = {
+    ...attributes,
+    settledAt: settledAt ? settledAt.toISOString() : settledAt,
+    createdAt: createdAt ? createdAt.toISOString() : createdAt,
+  };
+  return {
+    id: _id.toString(),
+    attributes: newAttributes,
+    ...rest,
+  };
+};

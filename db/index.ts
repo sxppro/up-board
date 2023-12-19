@@ -1,5 +1,6 @@
 import { CategoryOption, DbTransactionResource } from '@/types/custom';
 import { components } from '@/types/up-api';
+import { outputTransactionFields } from '@/utils/helpers';
 import { UUID } from 'bson';
 import { MongoBulkWriteError } from 'mongodb';
 import { connectToDatabase } from './connect';
@@ -8,25 +9,6 @@ import {
   monthlyStatsPipeline,
   transactionsByTagsPipeline,
 } from './pipelines';
-
-/**
- * Remaps db transaction document
- * to be returned in API endpoint
- */
-const outputData = (transaction: DbTransactionResource) => {
-  const { _id, attributes, ...rest } = transaction;
-  const { createdAt, settledAt } = attributes;
-  const newAttributes = {
-    ...attributes,
-    settledAt: settledAt ? settledAt.toISOString() : settledAt,
-    createdAt: createdAt ? createdAt.toISOString() : createdAt,
-  };
-  return {
-    id: _id.toString(),
-    attributes: newAttributes,
-    ...rest,
-  };
-};
 
 /**
  * Inserts transactions to db
@@ -139,7 +121,7 @@ const getTransactionsByDate = async (start: Date, end: Date) => {
     'attributes.isCategorizable': true,
   });
   const results = (await cursor.toArray()).map((transaction) =>
-    outputData(transaction)
+    outputTransactionFields(transaction)
   );
   await cursor.close();
   return results;
@@ -155,7 +137,7 @@ const getTransactionsByCategory = async (category: string) => {
   const transactions = db.collection<DbTransactionResource>('transactions');
   const cursor = transactions.find({ $text: { $search: category } });
   const results = (await cursor.toArray()).map((transaction) =>
-    outputData(transaction)
+    outputTransactionFields(transaction)
   );
   await cursor.close();
   return results;
@@ -170,7 +152,7 @@ const getTransactionById = async (id: string) => {
   const { db } = await connectToDatabase('up');
   const transactions = db.collection<DbTransactionResource>('transactions');
   const result = await transactions.findOne({ _id: new UUID(id).toBinary() });
-  return result ? outputData(result) : result;
+  return result ? outputTransactionFields(result) : result;
 };
 
 /**

@@ -1,5 +1,5 @@
 /**
- * Server-side data fetching
+ * Data retrieval from Up endpoints
  */
 
 import {
