@@ -1,4 +1,4 @@
-import { getCurrentUser } from '@/utils/session';
+import { getCurrentUser } from '@/utils/auth';
 import { X } from 'lucide-react';
 import { NextPage } from 'next';
 import { redirect } from 'next/navigation';

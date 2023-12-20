@@ -11,7 +11,7 @@ interface TransactionResourceAttributes
   settledAt: Date | null;
 }
 
-export interface CustomTransactionResource
+export interface DbTransactionResource
   extends Omit<
     components['schemas']['TransactionResource'],
     'id' | 'attributes'

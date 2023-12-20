@@ -2,7 +2,7 @@ import NavProgress from '@/components/NavProgress';
 import { MainNav } from '@/components/core/MainNav';
 import ThemeToggle from '@/components/core/ThemeToggle';
 import { UserNav } from '@/components/core/UserNav';
-import { getCurrentUser } from '@/utils/session';
+import { getCurrentUser } from '@/utils/auth';
 import { Flex } from '@tremor/react';
 import { Metadata } from 'next';
 import { redirect } from 'next/navigation';

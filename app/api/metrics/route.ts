@@ -1,5 +1,5 @@
 import { categoryStats, monthlyStats } from '@/db';
-import { getCurrentUser } from '@/utils/session';
+import { getCurrentUser } from '@/utils/auth';
 import { endOfMonth } from 'date-fns';
 import { NextRequest, NextResponse } from 'next/server';
 

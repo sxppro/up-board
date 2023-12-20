@@ -1,5 +1,6 @@
-import { getTransactionsByDate } from '@/utils/server';
-import { getCurrentUser } from '@/utils/session';
+import { getTransactionsByDate } from '@/db';
+import { getCurrentUser } from '@/utils/auth';
+import { filterTransactionFields } from '@/utils/helpers';
 import { NextRequest, NextResponse } from 'next/server';
 
 /**
@@ -33,10 +34,12 @@ export async function GET(request: NextRequest) {
     );
   }
 
+  const transactions = await getTransactionsByDate(
+    new Date(request.nextUrl.searchParams.get('start') as string),
+    new Date(request.nextUrl.searchParams.get('end') as string)
+  );
+
   return NextResponse.json({
-    data: await getTransactionsByDate(
-      new Date(request.nextUrl.searchParams.get('start') as string),
-      new Date(request.nextUrl.searchParams.get('end') as string)
-    ),
+    data: filterTransactionFields(transactions),
   });
 }

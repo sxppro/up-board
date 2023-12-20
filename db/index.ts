@@ -1,5 +1,6 @@
-import { CategoryOption, CustomTransactionResource } from '@/types/custom';
+import { CategoryOption, DbTransactionResource } from '@/types/custom';
 import { components } from '@/types/up-api';
+import { outputTransactionFields } from '@/utils/helpers';
 import { UUID } from 'bson';
 import { MongoBulkWriteError } from 'mongodb';
 import { connectToDatabase } from './connect';
@@ -8,16 +9,6 @@ import {
   monthlyStatsPipeline,
   transactionsByTagsPipeline,
 } from './pipelines';
-
-/**
- * Converts BSON UUID to string
- * @param uuid to be converted
- * @returns uuid as string
- */
-const uuidToString = (uuid: UUID) =>
-  uuid
-    .toString('hex')
-    .replace(/^(.{8})(.{4})(.{4})(.{4})(.{12})$/, '$1-$2-$3-$4-$5');
 
 /**
  * Inserts transactions to db
@@ -31,14 +22,13 @@ const insertTransactions = async (
   }
   try {
     const { db } = await connectToDatabase('up');
-    const transactions =
-      db.collection<CustomTransactionResource>('transactions');
+    const transactions = db.collection<DbTransactionResource>('transactions');
     /**
      * Remaps id to _id as BSON UUID & ISO date strings
      * to BSON dates for better query performance
      * @see https://mongodb.github.io/node-mongodb-native/5.1/classes/BSON.UUID.html
      */
-    const parsedData: CustomTransactionResource[] = data.map(
+    const parsedData: DbTransactionResource[] = data.map(
       ({ id, attributes, ...rest }) => {
         const { createdAt, settledAt } = attributes;
         const newAttributes = {
@@ -85,7 +75,7 @@ const monthlyStats = async (start: Date, end: Date) => {
   }
 
   const { db } = await connectToDatabase('up');
-  const transactions = db.collection<CustomTransactionResource>('transactions');
+  const transactions = db.collection<DbTransactionResource>('transactions');
   const cursor = transactions.aggregate(
     monthlyStatsPipeline(start, end, process.env.UP_TRANS_ACC)
   );
@@ -106,11 +96,50 @@ const categoryStats = async (start: Date, end: Date) => {
   }
 
   const { db } = await connectToDatabase('up');
-  const transactions = db.collection<CustomTransactionResource>('transactions');
+  const transactions = db.collection<DbTransactionResource>('transactions');
   const cursor = transactions.aggregate(
     categoriesPipeline(start, end, process.env.UP_TRANS_ACC)
   );
   const results = await cursor.toArray();
+  return results;
+};
+
+/**
+ * Retrieves transactions between dates
+ * @param start
+ * @param end
+ * @returns
+ */
+const getTransactionsByDate = async (start: Date, end: Date) => {
+  if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+    throw new Error('invalid date(s)');
+  }
+  const { db } = await connectToDatabase('up');
+  const transactions = db.collection<DbTransactionResource>('transactions');
+  const cursor = transactions.find({
+    'attributes.createdAt': { $gte: start, $lte: end },
+    'attributes.isCategorizable': true,
+  });
+  const results = (await cursor.toArray()).map((transaction) =>
+    outputTransactionFields(transaction)
+  );
+  await cursor.close();
+  return results;
+};
+
+/**
+ * Retrieves transactions by category
+ * @param category category id
+ * @returns list of transactions
+ */
+const getTransactionsByCategory = async (category: string) => {
+  const { db } = await connectToDatabase('up');
+  const transactions = db.collection<DbTransactionResource>('transactions');
+  const cursor = transactions.find({ $text: { $search: category } });
+  const results = (await cursor.toArray()).map((transaction) =>
+    outputTransactionFields(transaction)
+  );
+  await cursor.close();
   return results;
 };
 
@@ -121,9 +150,9 @@ const categoryStats = async (start: Date, end: Date) => {
  */
 const getTransactionById = async (id: string) => {
   const { db } = await connectToDatabase('up');
-  const transactions = db.collection<CustomTransactionResource>('transactions');
-  const results = await transactions.findOne({ _id: new UUID(id).toBinary() });
-  return results;
+  const transactions = db.collection<DbTransactionResource>('transactions');
+  const result = await transactions.findOne({ _id: new UUID(id).toBinary() });
+  return result ? outputTransactionFields(result) : result;
 };
 
 /**
@@ -132,9 +161,10 @@ const getTransactionById = async (id: string) => {
  */
 const getTransactionsByTag = async () => {
   const { db } = await connectToDatabase('up');
-  const transactions = db.collection<CustomTransactionResource>('transactions');
+  const transactions = db.collection<DbTransactionResource>('transactions');
   const cursor = transactions.aggregate(transactionsByTagsPipeline());
   const results = await cursor.toArray();
+  await cursor.close();
   return results;
 };
 
@@ -174,6 +204,8 @@ export {
   getChildCategories,
   getParentCategories,
   getTransactionById,
+  getTransactionsByCategory,
+  getTransactionsByDate,
   getTransactionsByTag,
   insertTransactions,
   monthlyStats,
