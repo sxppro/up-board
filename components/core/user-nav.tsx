@@ -18,7 +18,7 @@ interface UserAccountNavProps extends React.HTMLAttributes<HTMLDivElement> {
   user: Pick<User, 'name' | 'image' | 'email'>;
 }
 
-export async function UserNav({ user }: UserAccountNavProps) {
+const UserNav = ({ user }: UserAccountNavProps) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -58,4 +58,6 @@ export async function UserNav({ user }: UserAccountNavProps) {
       </DropdownMenuContent>
     </DropdownMenu>
   );
-}
+};
+
+export default UserNav;

@@ -76,7 +76,7 @@ export const columns: ColumnDef<FilteredTransactionResource>[] = [
                   addSuffix: true,
                   includeSeconds: true,
                   locale: enAU,
-                })}
+                }).replace(/^about /, '')}
               </div>
             </TooltipTrigger>
             <TooltipContent>

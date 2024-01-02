@@ -1,10 +1,10 @@
 import { cn } from '@/utils/helpers';
-import ActiveLink from './ActiveLink';
+import ActiveLink from './active-link';
 
-export function MainNav({
+const MainNav = ({
   className,
   ...props
-}: React.HTMLAttributes<HTMLElement>) {
+}: React.HTMLAttributes<HTMLElement>) => {
   return (
     <nav
       className={cn('flex items-center space-x-4 lg:space-x-6', className)}
@@ -14,4 +14,6 @@ export function MainNav({
       <ActiveLink href="/transactions">Transactions</ActiveLink>
     </nav>
   );
-}
+};
+
+export default MainNav;
