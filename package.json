@@ -47,6 +47,7 @@
     "openapi-fetch": "^0.7.1",
     "postcss": "8.4.27",
     "react": "18.2.0",
+    "react-day-picker": "^8.10.0",
     "react-dom": "18.2.0",
     "swr": "^2.2.0",
     "tailwind-merge": "^2.0.0",
