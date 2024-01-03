@@ -15,7 +15,7 @@ import {
 } from '@tremor/react';
 import { startOfMonth } from 'date-fns';
 import { useState } from 'react';
-import Loader from './core/Loader';
+import Loader from './core/loader';
 
 const categories = [
   { key: 'amount', name: 'Amount', icon: CurrencyCircleDollar },

@@ -1,3 +1,5 @@
+'use client';
+
 import {
   Card,
   Col,
@@ -11,11 +13,16 @@ import {
 import Categories from './Categories';
 import MainMetrics from './MainMetrics';
 import Monthly from './Monthly';
+import { DatePickerWithRange } from './core/date-range-picker';
+import DateProvider from './providers/date-provider';
 
 const BasicDashboard = () => {
   return (
-    <>
-      <h1 className="text-2xl font-bold tracking-tight">Overview</h1>
+    <DateProvider>
+      <div className="w-full flex flex-col md:flex-row justify-between gap-2">
+        <h1 className="text-2xl font-bold tracking-tight">Overview</h1>
+        <DatePickerWithRange />
+      </div>
       <TabGroup>
         <TabList>
           <Tab>Month to Date</Tab>
@@ -42,7 +49,7 @@ const BasicDashboard = () => {
           </TabPanel>
         </TabPanels>
       </TabGroup>
-    </>
+    </DateProvider>
   );
 };
 

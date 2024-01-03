@@ -1,6 +1,5 @@
 import { categoryStats, monthlyStats } from '@/db';
 import { getCurrentUser } from '@/utils/auth';
-import { endOfMonth } from 'date-fns';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {
@@ -22,7 +21,6 @@ export async function GET(request: NextRequest) {
       const type = request.nextUrl.searchParams.get('type') || '';
       const start = new Date(request.nextUrl.searchParams.get('start') || '');
       const end = new Date(request.nextUrl.searchParams.get('end') || '');
-      console.log(endOfMonth(end));
       if (type === 'monthly') {
         const data = await monthlyStats(start, end);
         return NextResponse.json({ data });

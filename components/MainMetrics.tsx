@@ -24,7 +24,6 @@ const MainMetrics = () => {
     startOfMonth(currentDate),
     currentDate
   );
-  console.log(data);
 
   /**
    * Remaps API data into form consumable
