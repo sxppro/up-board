@@ -1,18 +1,9 @@
 'use client';
 
+import { DateContext } from '@/utils/contexts';
 import { startOfMonth } from 'date-fns';
-import { PropsWithChildren, createContext, useState } from 'react';
+import { PropsWithChildren, useState } from 'react';
 import { DateRange } from 'react-day-picker';
-
-type DateContext = {
-  date: DateRange | undefined;
-  setDate: (date: DateRange | undefined) => void;
-};
-
-const DateContext = createContext<DateContext>({
-  date: undefined,
-  setDate: () => {},
-});
 
 const DateProvider = ({ children }: PropsWithChildren) => {
   const currentDate = new Date();

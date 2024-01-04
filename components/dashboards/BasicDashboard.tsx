@@ -10,11 +10,11 @@ import {
   TabPanel,
   TabPanels,
 } from '@tremor/react';
-import Categories from './Categories';
-import MainMetrics from './MainMetrics';
-import Monthly from './Monthly';
-import { DatePickerWithRange } from './core/date-range-picker';
-import DateProvider from './providers/date-provider';
+import Categories from '../Categories';
+import MainMetrics from '../MainMetrics';
+import Monthly from '../Monthly';
+import { DatePickerWithRange } from '../core/date-range-picker';
+import DateProvider from '../providers/date-provider';
 
 const BasicDashboard = () => {
   return (

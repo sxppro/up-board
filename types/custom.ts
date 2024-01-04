@@ -1,6 +1,7 @@
 import { components } from './up-api';
 
 import type { Binary } from 'bson';
+import type { DateRange } from 'react-day-picker';
 
 interface TransactionResourceAttributes
   extends Omit<
@@ -43,3 +44,8 @@ export interface CategoryOption {
   value: string;
   name: string;
 }
+
+export type DateRangeContext = {
+  date: DateRange | undefined;
+  setDate: (date: DateRange | undefined) => void;
+};
