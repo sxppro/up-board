@@ -1,8 +1,7 @@
 'use client';
 
-import { format } from 'date-fns';
+import { endOfDay, format, startOfDay } from 'date-fns';
 import { Calendar as CalendarIcon } from 'lucide-react';
-import { useContext } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
@@ -11,13 +10,15 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { DateContext } from '@/utils/contexts';
 import { cn } from '@/utils/helpers';
+import { useDate } from '@/utils/hooks';
+
+const currentDate = new Date();
 
 export function DatePickerWithRange({
   className,
 }: React.HTMLAttributes<HTMLDivElement>) {
-  const { date, setDate } = useContext(DateContext);
+  const { date, setDate } = useDate();
 
   return (
     <div className={cn('grid gap-2', className)}>
@@ -52,7 +53,14 @@ export function DatePickerWithRange({
             mode="range"
             defaultMonth={date?.from}
             selected={date}
-            onSelect={setDate}
+            onSelect={(dateRange) =>
+              setDate(
+                dateRange || {
+                  from: startOfDay(currentDate),
+                  to: endOfDay(currentDate),
+                }
+              )
+            }
           />
         </PopoverContent>
       </Popover>

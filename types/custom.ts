@@ -46,6 +46,6 @@ export interface CategoryOption {
 }
 
 export type DateRangeContext = {
-  date: DateRange | undefined;
-  setDate: (date: DateRange | undefined) => void;
+  date: DateRange;
+  setDate: (date: DateRange) => void;
 };

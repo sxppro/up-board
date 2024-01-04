@@ -7,7 +7,7 @@ import { DateRange } from 'react-day-picker';
 
 const DateProvider = ({ children }: PropsWithChildren) => {
   const currentDate = new Date();
-  const [date, setDate] = useState<DateRange | undefined>({
+  const [date, setDate] = useState<DateRange>({
     from: startOfMonth(currentDate),
     to: currentDate,
   });
