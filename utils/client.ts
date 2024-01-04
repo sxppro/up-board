@@ -6,9 +6,8 @@ import startOfMonth from 'date-fns/startOfMonth';
 import subYears from 'date-fns/subYears';
 
 import type { components } from '@/types/up-api';
-import useSWR from 'swr';
 
-const fetcher = (input: RequestInfo, init?: RequestInit) =>
+export const fetcher = (input: RequestInfo, init?: RequestInit) =>
   fetch(input, init).then((res) => res.json());
 /**
  * Retrieves past 12 months of transactions to date
@@ -50,45 +49,4 @@ const getTransactionsByDates = async (start: Date, end: Date) => {
   }
 };
 
-const useMonthlyMetrics = (start: Date, end: Date) => {
-  const { data, error, isLoading } = useSWR(
-    '/api/metrics?' +
-      new URLSearchParams({
-        type: 'monthly',
-        start: start.toISOString(),
-        end: end.toISOString(),
-      }),
-    fetcher
-  );
-
-  return {
-    data: data?.data || data,
-    isLoading,
-    isError: error,
-  };
-};
-
-const useCategoryMetrics = (start: Date, end: Date) => {
-  const { data, error, isLoading } = useSWR(
-    '/api/metrics?' +
-      new URLSearchParams({
-        type: 'category',
-        start: start.toISOString(),
-        end: end.toISOString(),
-      }),
-    fetcher
-  );
-
-  return {
-    data: data?.data || data,
-    isLoading,
-    isError: error,
-  };
-};
-
-export {
-  getTransactionsByDates,
-  getTransactionsByYear,
-  useCategoryMetrics,
-  useMonthlyMetrics,
-};
+export { getTransactionsByDates, getTransactionsByYear };

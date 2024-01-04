@@ -1,8 +1,8 @@
 'use client';
 
 import { MonthlyMetric } from '@/types/custom';
-import { useMonthlyMetrics } from '@/utils/client';
 import { formatCurrency } from '@/utils/helpers';
+import { useMonthlyMetrics } from '@/utils/hooks';
 import { BarChart, Card, Text, Title } from '@tremor/react';
 import { startOfMonth, subYears } from 'date-fns';
 
