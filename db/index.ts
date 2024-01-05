@@ -90,7 +90,11 @@ const monthlyStats = async (start: Date, end: Date) => {
  * @param end
  * @returns list of stats for each category
  */
-const categoryStats = async (start: Date, end: Date) => {
+const categoryStats = async (
+  start: Date,
+  end: Date,
+  type: 'child' | 'parent'
+) => {
   if (!process.env.UP_TRANS_ACC) {
     throw new Error('Up transaction account not defined');
   }
@@ -98,7 +102,7 @@ const categoryStats = async (start: Date, end: Date) => {
   const { db } = await connectToDatabase('up');
   const transactions = db.collection<DbTransactionResource>('transactions');
   const cursor = transactions.aggregate(
-    categoriesPipeline(start, end, process.env.UP_TRANS_ACC)
+    categoriesPipeline(start, end, process.env.UP_TRANS_ACC, type)
   );
   const results = await cursor.toArray();
   return results;

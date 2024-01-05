@@ -45,6 +45,7 @@ export const filterTransactionFields = (
       id,
       description: attributes.description,
       amount: attributes.amount.value,
+      amountRaw: attributes.amount.valueInBaseUnits / 100,
       time: attributes.createdAt,
       status: attributes.status,
       category: relationships.category.data?.id ?? 'uncategorised',

@@ -25,7 +25,10 @@ export async function GET(request: NextRequest) {
         const data = await monthlyStats(start, end);
         return NextResponse.json({ data });
       } else if (type === 'category') {
-        const data = await categoryStats(start, end);
+        const data = await categoryStats(start, end, 'child');
+        return NextResponse.json({ data });
+      } else if (type === 'parentCategory') {
+        const data = await categoryStats(start, end, 'parent');
         return NextResponse.json({ data });
       } else {
         return NextResponse.json({ error: 'Not found' }, { status: 404 });

@@ -2,7 +2,7 @@
 
 import { MonthlyMetric } from '@/types/custom';
 import { formatCurrency } from '@/utils/helpers';
-import { useMonthlyMetrics } from '@/utils/hooks';
+import { useDate, useMonthlyMetrics } from '@/utils/hooks';
 import {
   BadgeDelta,
   Card,
@@ -13,16 +13,17 @@ import {
   Metric,
   Text,
 } from '@tremor/react';
-import { startOfMonth } from 'date-fns';
+import { endOfDay, startOfDay } from 'date-fns';
 import { List, Minus, Plus } from 'lucide-react';
 import { Skeleton } from './ui/skeleton';
 
 const currentDate = new Date();
 
 const MainMetrics = () => {
+  const { date } = useDate();
   const { data, isLoading } = useMonthlyMetrics(
-    startOfMonth(currentDate),
-    currentDate
+    date?.from ? startOfDay(date.from) : startOfDay(currentDate),
+    date?.to ? endOfDay(date.to) : endOfDay(currentDate)
   );
 
   /**

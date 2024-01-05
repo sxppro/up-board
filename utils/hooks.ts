@@ -1,4 +1,4 @@
-import { endOfDay } from 'date-fns';
+import { endOfDay, startOfDay } from 'date-fns';
 import { useContext } from 'react';
 import useSWR from 'swr';
 import { fetcher } from './client';
@@ -22,13 +22,18 @@ export const useMonthlyMetrics = (start: Date, end: Date) => {
   };
 };
 
-export const useCategoryMetrics = (start: Date, end: Date) => {
+export const useCategoryMetrics = (
+  start: Date | undefined,
+  end: Date | undefined,
+  type: 'child' | 'parent'
+) => {
+  const now = new Date();
   const { data, error, isLoading } = useSWR(
     '/api/metrics?' +
       new URLSearchParams({
-        type: 'category',
-        start: start.toISOString(),
-        end: end.toISOString(),
+        type: type === 'parent' ? 'parentCategory' : 'category',
+        start: start?.toISOString() || startOfDay(now).toISOString(),
+        end: end?.toISOString() || endOfDay(now).toISOString(),
       }),
     fetcher
   );
@@ -42,7 +47,7 @@ export const useCategoryMetrics = (start: Date, end: Date) => {
 
 export const useDate = () => {
   const { date, setDate } = useContext(DateContext);
-  if (date.from && !date.to) {
+  if (date && date.from && !date.to) {
     setDate({ ...date, to: endOfDay(date.from) });
   }
   return { date, setDate };

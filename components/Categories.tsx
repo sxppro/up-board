@@ -55,7 +55,8 @@ const Categories = () => {
 
   const { data, isLoading } = useCategoryMetrics(
     startOfMonth(currentDate),
-    currentDate
+    currentDate,
+    'child'
   );
 
   return (

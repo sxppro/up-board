@@ -115,26 +115,40 @@ const monthlyStatsPipeline = (start: Date, end: Date, account: string) => [
  * @param account account ID
  * @returns aggregation pipeline definition
  */
-const categoriesPipeline = (start: Date, end: Date, account: string) => [
+const categoriesPipeline = (
+  start: Date,
+  end: Date,
+  account: string,
+  type: 'child' | 'parent'
+) => [
   /**
    * Match documents within the desired date range
    * and filter transfers
    */
   {
     $match: {
+      'relationships.account.data.id': account,
       'attributes.createdAt': {
         $gte: start,
         $lte: end,
       },
       'attributes.isCategorizable': true,
-      'relationships.account.data.id': account,
+      // Only expenses
+      'attributes.amount.valueInBaseUnits': {
+        $lt: 0,
+      },
     },
   },
   // Project only the necessary fields for further processing
   {
     $project: {
       category: {
-        $ifNull: ['$relationships.category.data.id', 'uncategorised'],
+        $ifNull: [
+          type === 'parent'
+            ? '$relationships.parentCategory.data.id'
+            : '$relationships.category.data.id',
+          'uncategorised',
+        ],
       },
       amount: {
         $toDecimal: '$attributes.amount.value',
@@ -153,22 +167,41 @@ const categoriesPipeline = (start: Date, end: Date, account: string) => [
       },
     },
   },
+  {
+    $lookup: {
+      from: 'categories',
+      localField: '_id',
+      foreignField: '_id',
+      as: 'category',
+    },
+  },
+  {
+    $unwind:
+      // So unnecessary!
+      {
+        path: '$category',
+        preserveNullAndEmptyArrays: false,
+      },
+  },
   // Project the final result
   {
     $project: {
       _id: 0,
-      // Exclude the default _id field from the result
-      category: '$_id',
+      category: {
+        $ifNull: ['$category.attributes.name', 'Uncategorised'],
+      },
       amount: {
-        $abs: { $toDouble: '$amount' },
+        $abs: {
+          $toDouble: '$amount',
+        },
       },
       transactions: 1,
     },
   },
   {
     $sort: {
-      transactions: -1,
       amount: -1,
+      transactions: -1,
     },
   },
 ];
