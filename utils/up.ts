@@ -65,3 +65,31 @@ export const getTransactionsByDate = async (start: Date, end: Date) => {
   console.log(`Inserted: ${insert?.insertedCount} documents`);
   return filterTransactionFields(transactions);
 };
+
+/**
+ * Retrieves all transactions for an account
+ * Useful for syncing data to db
+ * @param accountId account ID
+ * @returns list of transactions
+ */
+export const getTransactionByAccount = async (accountId: string) => {
+  const { data, error } = await upGET('/accounts/{accountId}/transactions', {
+    params: {
+      path: { accountId },
+    },
+    headers: {
+      Authorization: `Bearer ${process.env.UP_TOKEN}`,
+    },
+  });
+
+  if (error || !data) {
+    throw new Error('unable to retrieve data');
+  }
+
+  const transactions = data.links.next
+    ? data.data.concat(await getNextPage(data.links.next))
+    : data.data;
+  const insert = await insertTransactions(transactions);
+  console.log(`Inserted: ${insert?.insertedCount} documents`);
+  return filterTransactionFields(transactions);
+};
