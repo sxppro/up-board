@@ -1,30 +1,30 @@
 /**
  * Creates pipeline for calculating total income,
  * expenditure and number of transactions per month
- * between start and end dates (excluding transfers)
+ * between from and to dates (excluding transfers)
  * for specified account
- * @param start
- * @param end
- * @param account account ID
+ * @param from
+ * @param to
+ * @param accountId account ID
  * @returns aggregation pipeline definition
  */
-const monthlyStatsPipeline = (start: Date, end: Date, account: string) => [
+const monthlyStatsPipeline = (from: Date, to: Date, accountId: string) => [
   /**
    * Match documents within the desired date range
    * and filter transfers
    */
   {
     $match: {
+      'relationships.account.data.id': accountId,
       'attributes.createdAt': {
-        $gte: start,
-        $lte: end,
+        $gte: from,
+        $lte: to,
       },
       'attributes.description': {
         // Match those NOT starting with ...
         $regex:
           '^(?!(Transfer from|Auto Transfer from|Transfer to|Auto Transfer to|Forward to)).+',
       },
-      'relationships.account.data.id': account,
       // 'attributes.isCategorizable': true,
     },
   },
@@ -110,15 +110,16 @@ const monthlyStatsPipeline = (start: Date, end: Date, account: string) => [
  * Pipeline for calculating number of transacrtions
  * and total spending per transaction category for
  * specified account
- * @param start
- * @param end
- * @param account account ID
+ * @param from
+ * @param to
+ * @param accountId account ID
+ * @param type category type
  * @returns aggregation pipeline definition
  */
 const categoriesPipeline = (
-  start: Date,
-  end: Date,
-  account: string,
+  from: Date,
+  to: Date,
+  accountId: string,
   type: 'child' | 'parent'
 ) => [
   /**
@@ -127,10 +128,10 @@ const categoriesPipeline = (
    */
   {
     $match: {
-      'relationships.account.data.id': account,
+      'relationships.account.data.id': accountId,
       'attributes.createdAt': {
-        $gte: start,
-        $lte: end,
+        $gte: from,
+        $lte: to,
       },
       'attributes.isCategorizable': true,
       // Only expenses
@@ -250,4 +251,60 @@ const transactionsByTagsPipeline = () => [
   },
 ];
 
-export { categoriesPipeline, monthlyStatsPipeline, transactionsByTagsPipeline };
+const accountBalancePipeline = (from: Date, to: Date, accountId: string) => [
+  {
+    $match: {
+      'relationships.account.data.id': accountId,
+      'attributes.createdAt': {
+        $gte: from,
+        $lte: to,
+      },
+    },
+  },
+  {
+    $group: {
+      _id: {
+        $dateToString: {
+          date: '$attributes.createdAt',
+          timezone: 'Australia/Melbourne',
+          format: '%Y-%m-%d',
+        },
+      },
+      amount: {
+        $sum: {
+          $toDouble: '$attributes.amount.value',
+        },
+      },
+    },
+  },
+  {
+    $setWindowFields: {
+      sortBy: {
+        _id: 1,
+      },
+      output: {
+        amountCumulative: {
+          $sum: '$amount',
+          window: {
+            documents: ['unbounded', 'current'],
+          },
+        },
+      },
+    },
+  },
+  {
+    $project: {
+      _id: 0,
+      Timestamp: '$_id',
+      Amount: '$amount',
+      Balance: '$amountCumulative',
+    },
+  },
+];
+
+export {
+  accountBalancePipeline,
+  categoriesPipeline,
+  monthlyStatsPipeline,
+  transactionsByTagsPipeline,
+};
