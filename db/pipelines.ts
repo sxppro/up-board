@@ -25,10 +25,8 @@ const monthlyStatsPipeline = (from: Date, to: Date, accountId: string) => [
         $regex:
           '^(?!(Transfer from|Auto Transfer from|Transfer to|Auto Transfer to|Forward to)).+',
       },
-      // 'attributes.isCategorizable': true,
     },
   },
-  // Project only the necessary fields for further processing
   {
     $project: {
       month: {
@@ -43,18 +41,11 @@ const monthlyStatsPipeline = (from: Date, to: Date, accountId: string) => [
           timezone: 'Australia/Melbourne',
         },
       },
-      amount: {
-        $toDecimal: '$attributes.amount.value',
-      },
+      amount: '$attributes.amount.valueInBaseUnits',
       type: {
         $cond: [
           {
-            $lt: [
-              {
-                $toDecimal: '$attributes.amount.value',
-              },
-              0,
-            ],
+            $lt: ['$attributes.amount.valueInBaseUnits', 0],
           },
           'expense',
           'income',
@@ -62,42 +53,56 @@ const monthlyStatsPipeline = (from: Date, to: Date, accountId: string) => [
       },
     },
   },
-  // Group documents by month and type and calculate the total amount and count
+  // Group documents by month-year and type, calculate grouped income, expenses and number of transactions
   {
     $group: {
       _id: {
-        month: { $subtract: ['$month', 1] },
+        month: '$month',
         year: '$year',
       },
       income: {
         $sum: {
-          $cond: [{ $eq: ['$type', 'income'] }, '$amount', { $toDecimal: '0' }],
+          $cond: [
+            {
+              $eq: ['$type', 'income'],
+            },
+            '$amount',
+            0,
+          ],
         },
       },
       expense: {
         $sum: {
           $cond: [
-            { $eq: ['$type', 'expense'] },
+            {
+              $eq: ['$type', 'expense'],
+            },
             '$amount',
-            { $toDecimal: '0' },
+            0,
           ],
         },
       },
-      transactions: { $sum: 1 },
+      transactions: {
+        $sum: 1,
+      },
     },
   },
-  // Project the final result
   {
     $project: {
-      _id: 0, // Exclude the default _id field from the result
-      Month: '$_id.month',
+      _id: 0,
       Year: '$_id.year',
-      Income: { $toDouble: '$income' },
-      Expenses: { $multiply: [{ $toDouble: '$expense' }, -1] },
+      Month: '$_id.month',
+      Income: {
+        $divide: ['$income', 100],
+      },
+      Expenses: {
+        $abs: {
+          $divide: ['$expense', 100],
+        },
+      },
       Transactions: '$transactions',
     },
   },
-  // Sort the results by month
   {
     $sort: {
       Year: 1,
