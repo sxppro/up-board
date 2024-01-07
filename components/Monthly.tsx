@@ -6,25 +6,6 @@ import { useMonthlyMetrics } from '@/utils/hooks';
 import { BarChart, Card, Text, Title } from '@tremor/react';
 import { startOfMonth, subYears } from 'date-fns';
 
-const data = [
-  {
-    Month: 'Jan 21',
-    Income: 2890,
-    Expenses: 2400,
-  },
-  {
-    Month: 'Feb 21',
-    Income: 1890,
-    Expenses: 1398,
-  },
-  // ...
-  {
-    Month: 'Jan 22',
-    Income: 3890,
-    Expenses: 2980,
-  },
-];
-
 const currentDate = new Date();
 
 const Monthly = () => {
@@ -61,6 +42,7 @@ const Monthly = () => {
         stack={false}
         yAxisWidth={60}
         valueFormatter={(number: number) => formatCurrency(number, false)}
+        showAnimation
       />
     </Card>
   );
