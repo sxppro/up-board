@@ -251,29 +251,55 @@ const transactionsByTagsPipeline = () => [
   },
 ];
 
+/**
+ * Account balance over time
+ * ! Note: timezone is currently hard-coded
+ * @param from
+ * @param to
+ * @param accountId
+ * @returns
+ */
 const accountBalancePipeline = (from: Date, to: Date, accountId: string) => [
   {
     $match: {
       'relationships.account.data.id': accountId,
-      'attributes.createdAt': {
-        $gte: from,
-        $lte: to,
-      },
     },
   },
   {
     $group: {
       _id: {
-        $dateToString: {
+        $dateTrunc: {
           date: '$attributes.createdAt',
-          timezone: 'Australia/Melbourne',
-          format: '%Y-%m-%d',
+          unit: 'day',
+          // Change to 'Australia/Melbourne' if/when $densify accounts for DST
+          timezone: '+10:00',
         },
       },
       amount: {
-        $sum: {
-          $toDouble: '$attributes.amount.value',
-        },
+        $sum: '$attributes.amount.valueInBaseUnits',
+      },
+    },
+  },
+  {
+    $densify: {
+      field: '_id',
+      range: {
+        step: 1,
+        unit: 'day',
+        bounds: 'full',
+      },
+    },
+  },
+  {
+    $addFields: {
+      amount: {
+        $cond: [
+          {
+            $not: ['$amount'],
+          },
+          0,
+          '$amount',
+        ],
       },
     },
   },
@@ -296,8 +322,34 @@ const accountBalancePipeline = (from: Date, to: Date, accountId: string) => [
     $project: {
       _id: 0,
       Timestamp: '$_id',
+      Year: {
+        $year: {
+          date: '$_id',
+          timezone: 'Australia/Melbourne',
+        },
+      },
+      Month: {
+        $month: {
+          date: '$_id',
+          timezone: 'Australia/Melbourne',
+        },
+      },
+      Day: {
+        $dayOfMonth: {
+          date: '$_id',
+          timezone: 'Australia/Melbourne',
+        },
+      },
       Amount: '$amount',
       Balance: '$amountCumulative',
+    },
+  },
+  {
+    $match: {
+      Timestamp: {
+        $gte: from,
+        $lt: to,
+      },
     },
   },
 ];

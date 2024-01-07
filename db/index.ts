@@ -5,6 +5,7 @@ import { UUID } from 'bson';
 import { MongoBulkWriteError } from 'mongodb';
 import { connectToDatabase } from './connect';
 import {
+  accountBalancePipeline,
   categoriesPipeline,
   monthlyStatsPipeline,
   transactionsByTagsPipeline,
@@ -63,8 +64,7 @@ const insertTransactions = async (
 };
 
 /**
- * Generates monthly transaction statistics
- * between 2 dates
+ * Monthly transaction statistics between 2 dates
  * @param start start date
  * @param end end date
  * @returns list of stats for each month
@@ -109,7 +109,7 @@ const categoryStats = async (
 };
 
 /**
- * Retrieves transactions between dates
+ * Retrieves transactions between 2 dates
  * @param start
  * @param end
  * @returns
@@ -203,8 +203,37 @@ const getParentCategories = async () => {
   return results;
 };
 
+/**
+ * Retrieves account balance between 2 dates
+ * @param start
+ * @param end
+ * @param accountId
+ * @returns
+ */
+const getAccountBalance = async (
+  start: Date,
+  end: Date,
+  account: 'transactional' | 'savings'
+) => {
+  const { db } = await connectToDatabase('up');
+  const transactions = db.collection<DbTransactionResource>('transactions');
+  const cursor = transactions.aggregate(
+    accountBalancePipeline(
+      start,
+      end,
+      (account === 'transactional'
+        ? process.env.UP_TRANS_ACC
+        : process.env.UP_SAVINGS_ACC) || ''
+    )
+  );
+  const results = await cursor.toArray();
+  await cursor.close();
+  return results;
+};
+
 export {
   categoryStats,
+  getAccountBalance,
   getChildCategories,
   getParentCategories,
   getTransactionById,

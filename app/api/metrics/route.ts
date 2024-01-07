@@ -1,6 +1,20 @@
-import { categoryStats, monthlyStats } from '@/db';
+import { categoryStats, getAccountBalance, monthlyStats } from '@/db';
 import { getCurrentUser } from '@/utils/auth';
 import { NextRequest, NextResponse } from 'next/server';
+
+const checkSearchParams = (params: URLSearchParams) => {
+  const mainParams =
+    params.has('type') && params.has('start') && params.has('end');
+
+  if (params.get('type') === 'accountBalance') {
+    return (
+      mainParams &&
+      (params.get('account') === 'transactional' ||
+        params.get('account') === 'savings')
+    );
+  }
+  return mainParams;
+};
 
 export async function GET(request: NextRequest) {
   const user = await getCurrentUser();
@@ -12,11 +26,8 @@ export async function GET(request: NextRequest) {
       { status: 403 }
     );
   }
-  if (
-    request.nextUrl.searchParams.has('type') &&
-    request.nextUrl.searchParams.has('start') &&
-    request.nextUrl.searchParams.has('end')
-  ) {
+
+  if (checkSearchParams(request.nextUrl.searchParams)) {
     try {
       const type = request.nextUrl.searchParams.get('type') || '';
       const start = new Date(request.nextUrl.searchParams.get('start') || '');
@@ -29,6 +40,15 @@ export async function GET(request: NextRequest) {
         return NextResponse.json({ data });
       } else if (type === 'parentCategory') {
         const data = await categoryStats(start, end, 'parent');
+        return NextResponse.json({ data });
+      } else if (type === 'accountBalance') {
+        const data = await getAccountBalance(
+          start,
+          end,
+          (request.nextUrl.searchParams.get('account') as
+            | 'transactional'
+            | 'savings') || 'transactional'
+        );
         return NextResponse.json({ data });
       } else {
         return NextResponse.json({ error: 'Not found' }, { status: 404 });
