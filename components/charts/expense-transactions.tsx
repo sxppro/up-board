@@ -1,17 +1,17 @@
 import {
-  Card,
   Table,
   TableHead,
   TableHeaderCell,
   TableRow,
   Title,
 } from '@tremor/react';
+import DashboardCard from '../core/dashboard-card';
 
 const ExpenseTransactions = () => {
   return (
-    <Card>
+    <DashboardCard>
       <Title>Expenses</Title>
-      <Table>
+      <Table className="w-full">
         <TableHead>
           <TableRow>
             <TableHeaderCell>Description</TableHeaderCell>
@@ -19,7 +19,7 @@ const ExpenseTransactions = () => {
           </TableRow>
         </TableHead>
       </Table>
-    </Card>
+    </DashboardCard>
   );
 };
 

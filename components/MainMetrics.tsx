@@ -22,8 +22,8 @@ const currentDate = new Date();
 const MainMetrics = () => {
   const { date } = useDate();
   const { data, isLoading } = useMonthlyMetrics(
-    date?.from ? startOfDay(date.from) : startOfDay(currentDate),
-    date?.to ? endOfDay(date.to) : endOfDay(currentDate)
+    date?.from ? date.from : startOfDay(currentDate),
+    date?.to ? date.to : endOfDay(currentDate)
   );
 
   /**

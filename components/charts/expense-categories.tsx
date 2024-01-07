@@ -1,8 +1,9 @@
 import { formatCurrency } from '@/utils/helpers';
 import { useCategoryMetrics, useDate } from '@/utils/hooks';
-import { Card, DonutChart, Legend, Title } from '@tremor/react';
+import { DonutChart, Legend, Title } from '@tremor/react';
+import DashboardCard from '../core/dashboard-card';
 
-const Categories = () => {
+const ExpenseCategories = () => {
   const { date } = useDate();
   const { data, isLoading } = useCategoryMetrics(
     date?.from,
@@ -11,7 +12,7 @@ const Categories = () => {
   );
 
   return (
-    <Card className="h-84">
+    <DashboardCard>
       <Title>Expense Categories</Title>
       <Legend
         categories={
@@ -21,7 +22,7 @@ const Categories = () => {
         }
       />
       <DonutChart
-        className="mt-4 h-80"
+        className="h-80"
         data={data}
         category="amount"
         index="category"
@@ -29,8 +30,8 @@ const Categories = () => {
         onValueChange={(v) => console.log(v?.category)}
         showAnimation
       />
-    </Card>
+    </DashboardCard>
   );
 };
 
-export default Categories;
+export default ExpenseCategories;

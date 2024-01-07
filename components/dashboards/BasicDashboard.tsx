@@ -12,7 +12,9 @@ import {
 } from '@tremor/react';
 import MainMetrics from '../MainMetrics';
 import Monthly from '../Monthly';
-import Categories from '../charts/Categories';
+import AccountBalanceHistorical from '../charts/account-balance-historical';
+import ExpenseCategories from '../charts/expense-categories';
+import ExpenseTransactions from '../charts/expense-transactions';
 import { DatePickerWithRange } from '../core/date-range-picker';
 import DateProvider from '../providers/date-provider';
 
@@ -32,8 +34,14 @@ const BasicDashboard = () => {
           <TabPanel>
             <MainMetrics />
             <Grid numItemsMd={2} numItemsLg={3} className="gap-6 mt-6">
-              <Col numColSpanMd={1} numColSpanLg={2}>
-                <Categories />
+              <Col numColSpanMd={1}>
+                <AccountBalanceHistorical />
+              </Col>
+              <Col numColSpanMd={1}>
+                <ExpenseCategories />
+              </Col>
+              <Col numColSpanMd={1}>
+                <ExpenseTransactions />
               </Col>
             </Grid>
             <Grid numItemsMd={2} numItemsLg={3} className="gap-6 mt-6">
