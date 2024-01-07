@@ -45,6 +45,29 @@ export const useCategoryMetrics = (
   };
 };
 
+export const useAccountBalanceHistorical = (
+  start: Date | undefined,
+  end: Date | undefined,
+  account: 'transactional' | 'savings'
+) => {
+  const { data, error, isLoading } = useSWR(
+    '/api/metrics?' +
+      new URLSearchParams({
+        type: 'accountBalance',
+        start: start?.toISOString() || '',
+        end: end?.toISOString() || '',
+        account,
+      }),
+    fetcher
+  );
+
+  return {
+    data: data?.data || data,
+    isLoading,
+    isError: error,
+  };
+};
+
 export const useDate = () => {
   const { date, setDate } = useContext(DateContext);
   if (date && date.from && !date.to) {

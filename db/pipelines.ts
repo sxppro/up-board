@@ -340,8 +340,12 @@ const accountBalancePipeline = (from: Date, to: Date, accountId: string) => [
           timezone: 'Australia/Melbourne',
         },
       },
-      Amount: '$amount',
-      Balance: '$amountCumulative',
+      Amount: {
+        $divide: ['$amount', 100],
+      },
+      Balance: {
+        $divide: ['$amountCumulative', 100],
+      },
     },
   },
   {
