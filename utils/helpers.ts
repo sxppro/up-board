@@ -1,6 +1,8 @@
 import {
+  AccountBalanceHistory,
   DbTransactionResource,
   FilteredTransactionResource,
+  MonthlyMetric,
 } from '@/types/custom';
 import type { components } from '@/types/up-api';
 import { clsx, type ClassValue } from 'clsx';
@@ -8,7 +10,8 @@ import { twMerge } from 'tailwind-merge';
 
 /**
  * Currency formatter for numbers
- * @param number
+ * @param number number to format
+ * @param decimals include decimals
  * @returns number formatted in AUD
  */
 export const formatCurrency = (number: number, decimals: boolean = true) =>
@@ -20,6 +23,37 @@ export const formatCurrency = (number: number, decimals: boolean = true) =>
   })
     .format(number)
     .toString();
+
+/**
+ * Adds property `FormattedDate`, date string from day, month, year values
+ * @param data
+ * @returns
+ */
+export const formatDateFromNums = (
+  data: MonthlyMetric[] | AccountBalanceHistory[] | undefined
+) => {
+  return data
+    ? data.map(({ Day, Month, Year, ...rest }) => {
+        if (Day) {
+          const date = new Date(Year, Month - 1, Day);
+          return {
+            ...rest,
+            FormattedDate: date.toLocaleDateString('default', {
+              dateStyle: 'medium',
+            }) as string,
+          };
+        } else {
+          const date = new Date(Year, Month - 1);
+          return {
+            ...rest,
+            FormattedDate: `${date.toLocaleDateString('default', {
+              month: 'short',
+            })} ${date.toLocaleDateString('default', { year: '2-digit' })}`,
+          };
+        }
+      })
+    : [];
+};
 
 /**
  * Merges HTML class names

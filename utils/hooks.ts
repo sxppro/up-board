@@ -3,6 +3,7 @@ import { useContext } from 'react';
 import useSWR from 'swr';
 import { fetcher } from './client';
 import { DateContext } from './contexts';
+import { formatDateFromNums } from './helpers';
 
 export const useMonthlyMetrics = (start: Date, end: Date) => {
   const { data, error, isLoading } = useSWR(
@@ -62,7 +63,7 @@ export const useAccountBalanceHistorical = (
   );
 
   return {
-    data: data?.data || data,
+    data: formatDateFromNums(data?.data || data),
     isLoading,
     isError: error,
   };

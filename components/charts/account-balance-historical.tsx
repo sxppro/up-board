@@ -1,5 +1,6 @@
 'use client';
 
+import { formatCurrency } from '@/utils/helpers';
 import { useAccountBalanceHistorical, useDate } from '@/utils/hooks';
 import { AreaChart, Title } from '@tremor/react';
 import DashboardCard from '../core/dashboard-card';
@@ -14,8 +15,9 @@ const AccountBalanceHistorical = () => {
       <AreaChart
         className="flex-1"
         data={data}
-        index={data ? `${data.Day}-${data.Month}` || '' : ''}
+        index="FormattedDate"
         categories={['Balance']}
+        valueFormatter={(number: number) => formatCurrency(number, false)}
         showAnimation
       />
     </DashboardCard>
