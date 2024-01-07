@@ -1,3 +1,5 @@
+'use client';
+
 import { useAccountBalanceHistorical, useDate } from '@/utils/hooks';
 import { AreaChart, Title } from '@tremor/react';
 import DashboardCard from '../core/dashboard-card';

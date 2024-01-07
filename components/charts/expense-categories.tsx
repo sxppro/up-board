@@ -1,3 +1,5 @@
+'use client';
+
 import { formatCurrency } from '@/utils/helpers';
 import { useCategoryMetrics, useDate } from '@/utils/hooks';
 import { DonutChart, Legend, Title } from '@tremor/react';
