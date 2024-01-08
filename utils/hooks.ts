@@ -95,9 +95,5 @@ export const useTransactions = (
 };
 
 export const useDate = () => {
-  const { date, setDate } = useContext(DateContext);
-  if (date && date.from && !date.to) {
-    setDate({ ...date, to: endOfDay(date.from) });
-  }
-  return { date, setDate };
+  return useContext(DateContext);
 };
