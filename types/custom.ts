@@ -25,6 +25,7 @@ export interface FilteredTransactionResource {
   id: string;
   description: string;
   amount: string;
+  amountRaw: number;
   time: string;
   status: string;
   category: string;

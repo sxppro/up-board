@@ -7,7 +7,10 @@ import { subMonths } from 'date-fns';
 const TransactionsTable = async () => {
   const now = new Date();
   const data = filterTransactionFields(
-    await getTransactionsByDate(subMonths(now, 1), now)
+    await getTransactionsByDate(
+      { from: subMonths(now, 1), to: now },
+      { sort: 'time', sortDir: 'desc' }
+    )
   );
   const categories = await getChildCategories();
 

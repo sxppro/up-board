@@ -3,6 +3,7 @@ import { components } from '@/types/up-api';
 import { outputTransactionFields } from '@/utils/helpers';
 import { UUID } from 'bson';
 import { MongoBulkWriteError } from 'mongodb';
+import { DateRange } from 'react-day-picker';
 import { connectToDatabase } from './connect';
 import {
   accountBalancePipeline,
@@ -114,16 +115,23 @@ const categoryStats = async (
  * @param end
  * @returns
  */
-const getTransactionsByDate = async (start: Date, end: Date) => {
-  if (isNaN(start.getTime()) || isNaN(end.getTime())) {
-    throw new Error('invalid date(s)');
-  }
+const getTransactionsByDate = async (
+  date: DateRange,
+  sortOptions: { sort: 'time' | 'amount'; sortDir: 'asc' | 'desc' }
+) => {
   const { db } = await connectToDatabase('up');
   const transactions = db.collection<DbTransactionResource>('transactions');
-  const cursor = transactions.find({
-    'attributes.createdAt': { $gte: start, $lte: end },
-    'attributes.isCategorizable': true,
-  });
+  const cursor = transactions
+    .find({
+      'attributes.createdAt': { $gte: date.from, $lte: date.to },
+      'attributes.isCategorizable': true,
+    })
+    .sort(
+      sortOptions.sort === 'time'
+        ? 'attributes.createdAt'
+        : 'attributes.amount.valueInBaseUnits',
+      sortOptions.sortDir === 'asc' ? 1 : -1
+    );
   const results = (await cursor.toArray()).map((transaction) =>
     outputTransactionFields(transaction)
   );

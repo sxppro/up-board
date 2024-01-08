@@ -69,6 +69,31 @@ export const useAccountBalanceHistorical = (
   };
 };
 
+export const useTransactions = (
+  start: Date | undefined,
+  end: Date | undefined,
+  sort: string,
+  sortDir: string
+) => {
+  const now = new Date();
+  const { data, error, isLoading } = useSWR(
+    '/api/transactions?' +
+      new URLSearchParams({
+        start: start?.toISOString() || startOfDay(now).toISOString(),
+        end: end?.toISOString() || endOfDay(now).toISOString(),
+        sort,
+        sortDir,
+      }),
+    fetcher
+  );
+
+  return {
+    data: data?.data || data,
+    isLoading,
+    isError: error,
+  };
+};
+
 export const useDate = () => {
   const { date, setDate } = useContext(DateContext);
   if (date && date.from && !date.to) {

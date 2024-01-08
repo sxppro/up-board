@@ -3,16 +3,7 @@
 import { MonthlyMetric } from '@/types/custom';
 import { formatCurrency } from '@/utils/helpers';
 import { useDate, useMonthlyMetrics } from '@/utils/hooks';
-import {
-  BadgeDelta,
-  Card,
-  Color,
-  Flex,
-  Grid,
-  Icon,
-  Metric,
-  Text,
-} from '@tremor/react';
+import { Card, Color, Flex, Grid, Icon, Metric, Text } from '@tremor/react';
 import { endOfDay, startOfDay } from 'date-fns';
 import { List, Minus, Plus } from 'lucide-react';
 import { Skeleton } from './ui/skeleton';
@@ -86,7 +77,6 @@ const MainMetrics = () => {
             <div className="truncate flex-1">
               <Flex alignItems="start" justifyContent="between">
                 <Text>{item.title}</Text>
-                <BadgeDelta deltaType="moderateIncrease">{'10.2%'}</BadgeDelta>
               </Flex>
               {isLoading ? (
                 <Skeleton className="h-9 max-w-[150px]" />

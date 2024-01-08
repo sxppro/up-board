@@ -35,8 +35,14 @@ export async function GET(request: NextRequest) {
   }
 
   const transactions = await getTransactionsByDate(
-    new Date(request.nextUrl.searchParams.get('start') as string),
-    new Date(request.nextUrl.searchParams.get('end') as string)
+    {
+      from: new Date(request.nextUrl.searchParams.get('start') as string),
+      to: new Date(request.nextUrl.searchParams.get('end') as string),
+    },
+    {
+      sort: request.nextUrl.searchParams.get('sort') as 'time' | 'amount',
+      sortDir: request.nextUrl.searchParams.get('sortDir') as 'asc' | 'desc',
+    }
   );
 
   return NextResponse.json({
