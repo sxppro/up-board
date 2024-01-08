@@ -17,7 +17,7 @@ const TableSkeleton = ({ cols, rows }: { cols: number; rows: number }) => {
       </TableCaption>
       <TableHeader>
         <TableRow>
-          {[...Array(cols)].map((i) => (
+          {[...Array(cols).keys()].map((i) => (
             <TableHead key={i}>
               <Skeleton className="w-full h-4" />
             </TableHead>
@@ -25,10 +25,10 @@ const TableSkeleton = ({ cols, rows }: { cols: number; rows: number }) => {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {[...Array(rows)].map((i) => (
+        {[...Array(rows).keys()].map((i) => (
           <TableRow key={i}>
-            {[...Array(cols)].map((i) => (
-              <TableCell key={i}>
+            {[...Array(cols).keys()].map((j) => (
+              <TableCell key={j}>
                 <Skeleton className="w-full h-2" />
               </TableCell>
             ))}

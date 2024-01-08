@@ -1,6 +1,6 @@
 'use client';
 
-import { format } from 'date-fns';
+import { endOfDay, format } from 'date-fns';
 import { Calendar as CalendarIcon } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -53,7 +53,12 @@ export function DatePickerWithRange({
             mode="range"
             defaultMonth={date?.from}
             selected={date}
-            onSelect={(dateRange) => setDate(dateRange)}
+            // If selecting a single day, set 'to' to end of the day
+            onSelect={(dateRange) =>
+              dateRange && dateRange.from && !dateRange.to
+                ? setDate({ ...dateRange, to: endOfDay(dateRange?.from) })
+                : setDate(dateRange)
+            }
           />
         </PopoverContent>
       </Popover>
