@@ -6,6 +6,7 @@ import {
 } from '@/types/custom';
 import type { components } from '@/types/up-api';
 import { clsx, type ClassValue } from 'clsx';
+import { format } from 'date-fns';
 import { twMerge } from 'tailwind-merge';
 
 /**
@@ -38,17 +39,13 @@ export const formatDateFromNums = (
           const date = new Date(Year, Month - 1, Day);
           return {
             ...rest,
-            FormattedDate: date.toLocaleDateString('default', {
-              dateStyle: 'medium',
-            }) as string,
+            FormattedDate: format(date, 'dd LLL yy'),
           };
         } else {
           const date = new Date(Year, Month - 1);
           return {
             ...rest,
-            FormattedDate: `${date.toLocaleDateString('default', {
-              month: 'short',
-            })} ${date.toLocaleDateString('default', { year: '2-digit' })}`,
+            FormattedDate: format(date, 'LLL yy'),
           };
         }
       })

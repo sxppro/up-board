@@ -20,7 +20,7 @@ const ExpenseTransactions = () => {
   const { data, isLoading } = useTransactions(
     date?.from,
     date?.to,
-    'amount',
+    'time',
     'desc'
   );
 

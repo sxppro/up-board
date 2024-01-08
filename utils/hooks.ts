@@ -95,5 +95,9 @@ export const useTransactions = (
 };
 
 export const useDate = () => {
-  return useContext(DateContext);
+  const context = useContext(DateContext);
+  if (context === undefined) {
+    throw new Error('useDate must be used within DateProvider');
+  }
+  return context;
 };
