@@ -2,7 +2,7 @@
 
 import { DateContext } from '@/utils/contexts';
 import { startOfMonth } from 'date-fns';
-import { PropsWithChildren, useState } from 'react';
+import { PropsWithChildren, useMemo, useState } from 'react';
 import { DateRange } from 'react-day-picker';
 
 const DateProvider = ({ children }: PropsWithChildren) => {
@@ -11,11 +11,10 @@ const DateProvider = ({ children }: PropsWithChildren) => {
     from: startOfMonth(currentDate),
     to: currentDate,
   });
+  const dateContext = useMemo(() => ({ date, setDate }), [date]);
 
   return (
-    <DateContext.Provider value={{ date, setDate }}>
-      {children}
-    </DateContext.Provider>
+    <DateContext.Provider value={dateContext}>{children}</DateContext.Provider>
   );
 };
 
