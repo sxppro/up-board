@@ -4,7 +4,7 @@ import { getChildCategories, getTransactionsByDate } from '@/db';
 import { filterTransactionFields } from '@/utils/helpers';
 import { subMonths } from 'date-fns';
 
-const TransactionsTable = async () => {
+const TransactionTable = async () => {
   const now = new Date();
   const data = filterTransactionFields(
     await getTransactionsByDate(
@@ -17,4 +17,4 @@ const TransactionsTable = async () => {
   return <DataTable columns={columns} data={data} options={categories} />;
 };
 
-export default TransactionsTable;
+export default TransactionTable;

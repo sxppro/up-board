@@ -1,5 +1,5 @@
 import TableSkeleton from '@/components/TableSkeleton';
-import TransactionsTable from '@/components/TransactionsTable';
+import TransactionTable from '@/components/tables/transaction-table';
 import { Suspense } from 'react';
 
 // Disable data cache for all dashboard pages
@@ -10,7 +10,7 @@ const TransactionsPage = async () => {
     <>
       <h1 className="text-2xl font-bold tracking-tight">Transactions</h1>
       <Suspense fallback={<TableSkeleton cols={4} rows={10} />}>
-        <TransactionsTable />
+        <TransactionTable />
       </Suspense>
     </>
   );
