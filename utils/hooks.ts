@@ -72,8 +72,8 @@ export const useAccountBalanceHistorical = (
 export const useTransactions = (
   start: Date | undefined,
   end: Date | undefined,
-  sort: string,
-  sortDir: string
+  sort: 'time' | 'amount',
+  sortDir: 'asc' | 'desc'
 ) => {
   const now = new Date();
   const { data, error, isLoading } = useSWR(
@@ -87,6 +87,15 @@ export const useTransactions = (
     fetcher
   );
 
+  return {
+    data: data?.data || data,
+    isLoading,
+    isError: error,
+  };
+};
+
+export const useTransaction = (id: string) => {
+  const { data, isLoading, error } = useSWR(`/api/transaction/${id}`, fetcher);
   return {
     data: data?.data || data,
     isLoading,
