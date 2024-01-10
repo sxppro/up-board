@@ -59,8 +59,8 @@ const TransactionDetails = ({ transactionId }: TransactionDetailsProps) => {
             {Array.isArray(data.tags) && data.tags.length > 0 ? (
               data.tags.map((tag: string) => <Badge key={tag}>{tag}</Badge>)
             ) : (
-              <Button size="sm" variant="outline">
-                <Plus className="mr-2 h-4 w-4" /> Add tag
+              <Button size="sm" variant="outline" className="h-6 text-xs">
+                <Plus className="mr-1 h-3 w-3" /> Add tag
               </Button>
             )}
           </TableCell>

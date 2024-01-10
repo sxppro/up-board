@@ -16,7 +16,7 @@ import ExpenseTransactions from '../charts/expense-transactions';
 import { DatePickerWithRange } from '../core/date-range-picker';
 import DateProvider from '../providers/date-provider';
 
-const BasicDashboard = () => {
+const OverviewDashboard = () => {
   return (
     <DateProvider>
       <div className="w-full flex flex-col md:flex-row justify-between gap-2">
@@ -62,4 +62,4 @@ const BasicDashboard = () => {
   );
 };
 
-export default BasicDashboard;
+export default OverviewDashboard;
