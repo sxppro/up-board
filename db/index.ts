@@ -1,4 +1,8 @@
-import { CategoryOption, DbTransactionResource } from '@/types/custom';
+import {
+  CategoryOption,
+  DbTransactionResource,
+  TransactionSortOptions,
+} from '@/types/custom';
 import { components } from '@/types/up-api';
 import { outputTransactionFields } from '@/utils/helpers';
 import { UUID } from 'bson';
@@ -117,7 +121,7 @@ const categoryStats = async (
  */
 const getTransactionsByDate = async (
   date: DateRange,
-  sortOptions: { sort: 'time' | 'amount'; sortDir: 'asc' | 'desc' }
+  sortOptions: TransactionSortOptions
 ) => {
   const { db } = await connectToDatabase('up');
   const transactions = db.collection<DbTransactionResource>('transactions');

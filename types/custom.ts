@@ -38,11 +38,6 @@ export interface CategoryOption {
   name: string;
 }
 
-export type DateRangeContext = {
-  date: DateRange | undefined;
-  setDate: (date: DateRange | undefined) => void;
-};
-
 export interface MonthlyMetric {
   Year: number;
   Month: number;
@@ -60,3 +55,18 @@ export interface AccountBalanceHistory {
   Amount: number;
   Balance: number;
 }
+
+export type DateRangeContext = {
+  date: DateRange | undefined;
+  setDate: (date: DateRange | undefined) => void;
+};
+
+export type PageProps = {
+  params: { slug: string };
+  searchParams: { [key: string]: string | string[] | undefined };
+};
+
+export type TransactionSortOptions = {
+  sort: 'time' | 'amount';
+  sortDir: 'asc' | 'desc';
+};

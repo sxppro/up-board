@@ -1,5 +1,7 @@
+import { TransactionSortOptions } from '@/types/custom';
 import { endOfDay, startOfDay } from 'date-fns';
 import { useContext } from 'react';
+import { DateRange } from 'react-day-picker';
 import useSWR from 'swr';
 import { fetcher } from './client';
 import { DateContext } from './contexts';
@@ -70,17 +72,18 @@ export const useAccountBalanceHistorical = (
 };
 
 export const useTransactions = (
-  start: Date | undefined,
-  end: Date | undefined,
-  sort: 'time' | 'amount',
-  sortDir: 'asc' | 'desc'
+  dateRange: DateRange | undefined,
+  sortOptions: TransactionSortOptions,
+  type: 'transfers' | undefined = undefined
 ) => {
   const now = new Date();
+  const { sort, sortDir } = sortOptions;
   const { data, error, isLoading } = useSWR(
     '/api/transactions?' +
       new URLSearchParams({
-        start: start?.toISOString() || startOfDay(now).toISOString(),
-        end: end?.toISOString() || endOfDay(now).toISOString(),
+        start: dateRange?.from?.toISOString() || startOfDay(now).toISOString(),
+        end: dateRange?.to?.toISOString() || endOfDay(now).toISOString(),
+        ...(type && { type }),
         sort,
         sortDir,
       }),
