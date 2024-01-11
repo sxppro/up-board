@@ -20,42 +20,42 @@ const TransactionDetails = ({ transactionId }: TransactionDetailsProps) => {
   const { data, isLoading } = useTransaction(transactionId);
 
   return isLoading || !data ? (
-    <TableSkeleton cols={2} rows={6} />
+    <TableSkeleton cols={2} rows={7} />
   ) : (
     <Table>
       <TableCaption>{`Transaction ID: ${data.id}`}</TableCaption>
       <TableBody>
         <TableRow>
           <TableCell className="font-medium">Description</TableCell>
-          <TableCell className="text-right">{data.description}</TableCell>
+          <TableCell className="text-end">{data.description}</TableCell>
         </TableRow>
         <TableRow>
           <TableCell className="font-medium">Amount</TableCell>
-          <TableCell className="text-right">
+          <TableCell className="text-end">
             {formatCurrency(data.amountRaw)}
           </TableCell>
         </TableRow>
         <TableRow>
           <TableCell className="font-medium">Time</TableCell>
-          <TableCell className="text-right">
+          <TableCell className="text-end">
             {new Date(data.time).toLocaleString()}
           </TableCell>
         </TableRow>
         <TableRow>
           <TableCell className="font-medium">Category</TableCell>
-          <TableCell className="text-right">{data.category}</TableCell>
+          <TableCell className="text-end">{data.category}</TableCell>
         </TableRow>
         <TableRow>
           <TableCell className="font-medium">Parent Category</TableCell>
-          <TableCell className="text-right">{data.parentCategory}</TableCell>
+          <TableCell className="text-end">{data.parentCategory}</TableCell>
         </TableRow>
         <TableRow>
           <TableCell className="font-medium">Status</TableCell>
-          <TableCell className="text-right">{data.status}</TableCell>
+          <TableCell className="text-end">{data.status}</TableCell>
         </TableRow>
         <TableRow>
           <TableCell className="font-medium">Tags</TableCell>
-          <TableCell className="text-right">
+          <TableCell className="text-end">
             {Array.isArray(data.tags) && data.tags.length > 0 ? (
               data.tags.map((tag: string) => <Badge key={tag}>{tag}</Badge>)
             ) : (

@@ -1,4 +1,4 @@
-import { getTransactionsByDate } from '@/db';
+import { getTransactionsByDate, getTransfers } from '@/db';
 import { getCurrentUser } from '@/utils/auth';
 import { filterTransactionFields } from '@/utils/helpers';
 import { NextRequest, NextResponse } from 'next/server';
@@ -34,18 +34,27 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  const transactions = await getTransactionsByDate(
-    {
+  if (request.nextUrl.searchParams.get('type') === 'transfers') {
+    const transactions = await getTransfers({
       from: new Date(request.nextUrl.searchParams.get('start') as string),
       to: new Date(request.nextUrl.searchParams.get('end') as string),
-    },
-    {
-      sort: request.nextUrl.searchParams.get('sort') as 'time' | 'amount',
-      sortDir: request.nextUrl.searchParams.get('sortDir') as 'asc' | 'desc',
-    }
-  );
-
-  return NextResponse.json({
-    data: filterTransactionFields(transactions),
-  });
+    });
+    return NextResponse.json({
+      data: filterTransactionFields(transactions),
+    });
+  } else {
+    const transactions = await getTransactionsByDate(
+      {
+        from: new Date(request.nextUrl.searchParams.get('start') as string),
+        to: new Date(request.nextUrl.searchParams.get('end') as string),
+      },
+      {
+        sort: request.nextUrl.searchParams.get('sort') as 'time' | 'amount',
+        sortDir: request.nextUrl.searchParams.get('sortDir') as 'asc' | 'desc',
+      }
+    );
+    return NextResponse.json({
+      data: filterTransactionFields(transactions),
+    });
+  }
 }

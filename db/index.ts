@@ -212,6 +212,31 @@ const getParentCategories = async () => {
 };
 
 /**
+ * Retrieves bank transfers by account and date range
+ * @param accountId
+ * @param from
+ * @param to
+ * @returns
+ */
+const getTransfers = async (dateRange: DateRange) => {
+  const { db } = await connectToDatabase('up');
+  const transactions = db.collection<DbTransactionResource>('transactions');
+  const cursor = transactions.find({
+    'relationships.account.data.id': process.env.UP_TRANS_ACC,
+    'attributes.isCategorizable': false,
+    'attributes.createdAt': {
+      $gte: dateRange.from,
+      $lt: dateRange.to,
+    },
+  });
+  const results = (await cursor.toArray()).map((transaction) =>
+    outputTransactionFields(transaction)
+  );
+  await cursor.close();
+  return results;
+};
+
+/**
  * Retrieves account balance between 2 dates
  * @param start
  * @param end
@@ -248,6 +273,7 @@ export {
   getTransactionsByCategory,
   getTransactionsByDate,
   getTransactionsByTag,
+  getTransfers,
   insertTransactions,
   monthlyStats,
 };

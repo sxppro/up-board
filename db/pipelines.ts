@@ -20,11 +20,7 @@ const monthlyStatsPipeline = (from: Date, to: Date, accountId: string) => [
         $gte: from,
         $lte: to,
       },
-      'attributes.description': {
-        // Match those NOT starting with ...
-        $regex:
-          '^(?!(Transfer from|Auto Transfer from|Transfer to|Auto Transfer to|Forward to)).+',
-      },
+      'attributes.isCategorizable': true,
     },
   },
   {
