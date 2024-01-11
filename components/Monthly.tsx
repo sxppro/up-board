@@ -3,8 +3,9 @@
 import { MonthlyMetric } from '@/types/custom';
 import { formatCurrency } from '@/utils/helpers';
 import { useMonthlyMetrics } from '@/utils/hooks';
-import { BarChart, Card, Text, Title } from '@tremor/react';
+import { BarChart, Text, Title } from '@tremor/react';
 import { startOfMonth, subYears } from 'date-fns';
+import DashboardCard from './core/dashboard-card';
 
 const currentDate = new Date();
 
@@ -30,11 +31,13 @@ const Monthly = () => {
     });
 
   return (
-    <Card>
-      <Title>Monthly Comparison</Title>
-      <Text>Total income and expenses by month</Text>
+    <DashboardCard>
+      <div>
+        <Title>Monthly Comparison</Title>
+        <Text>Total income and expenses by month</Text>
+      </div>
       <BarChart
-        className="mt-4 h-80"
+        className="flex-1"
         data={metrics}
         index="Time"
         categories={['Income', 'Expenses']}
@@ -44,7 +47,7 @@ const Monthly = () => {
         valueFormatter={(number: number) => formatCurrency(number, false)}
         showAnimation
       />
-    </Card>
+    </DashboardCard>
   );
 };
 

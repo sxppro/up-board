@@ -45,7 +45,9 @@ const ExpenseTransactions = () => {
                   amountRaw,
                 }: FilteredTransactionResource) => (
                   <TableRow key={id}>
-                    <TableCell>{description}</TableCell>
+                    <TableCell className="max-w-[225px] truncate">
+                      {description}
+                    </TableCell>
                     <TableCell className="text-end">
                       {formatCurrency(amountRaw)}
                     </TableCell>

@@ -12,9 +12,10 @@ import MainMetrics from '../MainMetrics';
 import Monthly from '../Monthly';
 import AccountBalanceHistorical from '../charts/account-balance-historical';
 import ExpenseCategories from '../charts/expense-categories';
-import ExpenseTransactions from '../charts/expense-transactions';
 import { DatePickerWithRange } from '../core/date-range-picker';
 import DateProvider from '../providers/date-provider';
+import Payments from '../tables/payments';
+import RecentTransactions from '../tables/recent-transactions';
 
 const OverviewDashboard = () => {
   return (
@@ -39,14 +40,16 @@ const OverviewDashboard = () => {
                 <ExpenseCategories />
               </Col>
               <Col numColSpanMd={1}>
-                <ExpenseTransactions />
+                <RecentTransactions />
               </Col>
             </Grid>
             <Grid numItemsMd={2} numItemsLg={3} className="gap-6 mt-6">
               <Col numColSpanMd={1} numColSpanLg={2}>
                 <Monthly />
               </Col>
-              <Col numColSpanMd={1}></Col>
+              <Col numColSpanMd={1}>
+                <Payments />
+              </Col>
             </Grid>
           </TabPanel>
           <TabPanel>
