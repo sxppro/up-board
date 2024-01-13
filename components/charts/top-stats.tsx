@@ -6,11 +6,11 @@ import { useDate, useMonthlyMetrics } from '@/utils/hooks';
 import { Card, Color, Flex, Grid, Icon, Metric, Text } from '@tremor/react';
 import { endOfDay, startOfDay } from 'date-fns';
 import { List, Minus, Plus } from 'lucide-react';
-import { Skeleton } from './ui/skeleton';
+import { Skeleton } from '../ui/skeleton';
 
 const currentDate = new Date();
 
-const MainMetrics = () => {
+const TopStats = () => {
   const { date } = useDate();
   const { data, isLoading } = useMonthlyMetrics(
     date?.from ? date.from : startOfDay(currentDate),
@@ -18,8 +18,7 @@ const MainMetrics = () => {
   );
 
   /**
-   * Remaps API data into form consumable
-   * by component
+   * Remaps data to shape consumable by component
    * @param param0
    * @returns
    */
@@ -60,6 +59,9 @@ const MainMetrics = () => {
           Income: 0,
           Expenses: 0,
           Transactions: 0,
+          Year: 0,
+          Month: 0,
+          Day: undefined,
         }
   );
 
@@ -91,4 +93,4 @@ const MainMetrics = () => {
   );
 };
 
-export default MainMetrics;
+export default TopStats;
