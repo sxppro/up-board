@@ -12,7 +12,7 @@ import AccountBalanceHistorical from '../charts/account-balance-historical';
 import ExpenseCategories from '../charts/expense-categories';
 import MonthlyInOut from '../charts/monthly-in-out';
 import TopStats from '../charts/top-stats';
-import { DatePickerWithRange } from '../core/date-range-picker';
+import DateRangePicker from '../core/date-range-picker';
 import DateProvider from '../providers/date-provider';
 import Payments from '../tables/payments';
 import RecentTransactions from '../tables/recent-transactions';
@@ -22,7 +22,7 @@ const OverviewDashboard = () => {
     <DateProvider>
       <div className="w-full flex flex-col md:flex-row justify-between gap-2">
         <h1 className="text-2xl font-bold tracking-tight">Overview</h1>
-        <DatePickerWithRange />
+        <DateRangePicker />
       </div>
       <TabGroup>
         <TabList>
