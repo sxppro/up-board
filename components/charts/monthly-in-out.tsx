@@ -1,34 +1,20 @@
 'use client';
 
-import { MonthlyMetric } from '@/types/custom';
-import { formatCurrency } from '@/utils/helpers';
+import { formatCurrency, formatDateFromNums } from '@/utils/helpers';
 import { useMonthlyMetrics } from '@/utils/hooks';
 import { BarChart, Text, Title } from '@tremor/react';
 import { startOfMonth, subYears } from 'date-fns';
-import DashboardCard from './core/dashboard-card';
+import DashboardCard from '../core/dashboard-card';
 
 const currentDate = new Date();
 
-const Monthly = () => {
+const MonthlyInOut = () => {
   const { data, isLoading } = useMonthlyMetrics(
     startOfMonth(subYears(currentDate, 1)),
     currentDate
   );
 
-  const metrics =
-    !isLoading &&
-    data &&
-    data.map(({ Month, Year, ...rest }: MonthlyMetric) => {
-      const date = new Date(Year, Month);
-      return {
-        ...rest,
-        Time: `${date.toLocaleDateString('default', {
-          month: 'short',
-        })} ${date.toLocaleDateString('default', {
-          year: '2-digit',
-        })}`,
-      };
-    });
+  const metrics = !isLoading && data && formatDateFromNums(data);
 
   return (
     <DashboardCard>
@@ -38,8 +24,8 @@ const Monthly = () => {
       </div>
       <BarChart
         className="flex-1"
-        data={metrics}
-        index="Time"
+        data={metrics ? metrics : []}
+        index="FormattedDate"
         categories={['Income', 'Expenses']}
         colors={['indigo', 'fuchsia']}
         stack={false}
@@ -51,4 +37,4 @@ const Monthly = () => {
   );
 };
 
-export default Monthly;
+export default MonthlyInOut;

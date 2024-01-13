@@ -1,4 +1,4 @@
-import { TransactionSortOptions } from '@/types/custom';
+import { MonthlyMetric, TransactionSortOptions } from '@/types/custom';
 import { endOfDay, startOfDay } from 'date-fns';
 import { useContext } from 'react';
 import { DateRange } from 'react-day-picker';
@@ -19,7 +19,7 @@ export const useMonthlyMetrics = (start: Date, end: Date) => {
   );
 
   return {
-    data: data?.data || data,
+    data: (data?.data || data) as MonthlyMetric[],
     isLoading,
     isError: error,
   };
