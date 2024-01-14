@@ -1,3 +1,5 @@
+import { TransactionSortOptions } from '@/types/custom';
+
 /**
  * Creates pipeline for calculating total income,
  * expenditure and number of transactions per month
@@ -209,50 +211,6 @@ const categoriesPipeline = (
 ];
 
 /**
- * Pipeline for retrieving transaction
- * IDs grouped by tag
- * @returns
- */
-const transactionsByTagsPipeline = () => [
-  /**
-   * Match only documents that have a tag
-   */
-  {
-    $match: {
-      'relationships.tags.data.0': {
-        $exists: true,
-      },
-    },
-  },
-  {
-    $project: {
-      tags: '$relationships.tags.data',
-    },
-  },
-  {
-    $unwind: {
-      path: '$tags',
-      preserveNullAndEmptyArrays: false,
-    },
-  },
-  {
-    $group: {
-      _id: '$tags.id',
-      transactions: {
-        $addToSet: '$_id',
-      },
-    },
-  },
-  {
-    $project: {
-      _id: 0,
-      tag: '$_id',
-      transactions: '$transactions',
-    },
-  },
-];
-
-/**
  * Account balance over time
  * ! Note: timezone is currently hard-coded
  * @param from
@@ -359,9 +317,115 @@ const accountBalancePipeline = (from: Date, to: Date, accountId: string) => [
   },
 ];
 
+/**
+ * Retrieves transactions between dates, with sorting
+ * @param from
+ * @param to
+ * @param sortOptions
+ * @returns
+ */
+const transactionsByDatePipeline = (
+  from: Date,
+  to: Date,
+  sortOptions: TransactionSortOptions
+) => {
+  const { sort, sortDir } = sortOptions;
+  const sortBy =
+    sort === 'amount'
+      ? 'attributes.amount.valueInBaseUnits'
+      : 'attributes.createdAt';
+  const dir = sortDir === 'asc' ? 1 : -1;
+  return [
+    {
+      $match: {
+        'attributes.createdAt': {
+          $gte: from,
+          $lt: to,
+        },
+      },
+    },
+    {
+      $sort: {
+        [sortBy]: dir,
+      },
+    },
+  ];
+};
+
+/**
+ * Pipeline for retrieving transaction
+ * IDs grouped by tag
+ * @returns
+ */
+const transactionsByTagsPipeline = () => [
+  /**
+   * Match only documents that have a tag
+   */
+  {
+    $match: {
+      'relationships.tags.data.0': {
+        $exists: true,
+      },
+    },
+  },
+  {
+    $project: {
+      tags: '$relationships.tags.data',
+    },
+  },
+  {
+    $unwind: {
+      path: '$tags',
+      preserveNullAndEmptyArrays: false,
+    },
+  },
+  {
+    $group: {
+      _id: '$tags.id',
+      transactions: {
+        $addToSet: '$_id',
+      },
+    },
+  },
+  {
+    $project: {
+      _id: 0,
+      tag: '$_id',
+      transactions: '$transactions',
+    },
+  },
+];
+
+/**
+ * Retrieves transactions based on search term
+ * using Atlas Search
+ * @param searchTerm
+ * @returns
+ */
+const searchTransactionsPipeline = (searchTerm: string) => [
+  {
+    $search: {
+      index: 'transactions-index',
+      text: {
+        query: searchTerm,
+        path: {
+          wildcard: '*',
+        },
+      },
+    },
+  },
+  {
+    $sort: {
+      'attributes.createdAt': -1,
+    },
+  },
+];
+
 export {
   accountBalancePipeline,
   categoriesPipeline,
   monthlyStatsPipeline,
+  searchTransactionsPipeline,
+  transactionsByDatePipeline,
   transactionsByTagsPipeline,
 };

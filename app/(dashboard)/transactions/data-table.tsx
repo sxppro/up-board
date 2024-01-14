@@ -30,6 +30,7 @@ interface DataTableProps<TData, TValue> {
   data: TData[];
   options: CategoryOption[];
   className?: string;
+  search?: string;
 }
 
 export const DataTable = <TData, TValue>({

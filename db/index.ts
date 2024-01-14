@@ -13,6 +13,7 @@ import {
   accountBalancePipeline,
   categoriesPipeline,
   monthlyStatsPipeline,
+  searchTransactionsPipeline,
   transactionsByTagsPipeline,
 } from './pipelines';
 
@@ -85,6 +86,7 @@ const monthlyStats = async (start: Date, end: Date) => {
     monthlyStatsPipeline(start, end, process.env.UP_TRANS_ACC)
   );
   const results = await cursor.toArray();
+  await cursor.close();
   return results;
 };
 
@@ -110,6 +112,25 @@ const categoryStats = async (
     categoriesPipeline(start, end, process.env.UP_TRANS_ACC, type)
   );
   const results = await cursor.toArray();
+  await cursor.close();
+  return results;
+};
+
+/**
+ * Search transactions
+ * @param search
+ * @returns
+ */
+const searchTransactions = async (search: string) => {
+  const { db } = await connectToDatabase('up');
+  const transactions = db.collection<DbTransactionResource>('transactions');
+  const cursor = transactions.aggregate<DbTransactionResource>(
+    searchTransactionsPipeline(search)
+  );
+  const results = (await cursor.toArray()).map((transaction) =>
+    outputTransactionFields(transaction)
+  );
+  await cursor.close();
   return results;
 };
 
@@ -280,4 +301,5 @@ export {
   getTransfers,
   insertTransactions,
   monthlyStats,
+  searchTransactions,
 };
