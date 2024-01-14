@@ -3,9 +3,11 @@ import { endOfDay, startOfDay } from 'date-fns';
 import { useContext } from 'react';
 import { DateRange } from 'react-day-picker';
 import useSWR from 'swr';
-import { fetcher } from './client';
 import { DateContext } from './contexts';
 import { formatDateFromNums } from './helpers';
+
+const fetcher = (input: RequestInfo, init?: RequestInit) =>
+  fetch(input, init).then((res) => res.json());
 
 export const useMonthlyMetrics = (start: Date, end: Date) => {
   const { data, error, isLoading } = useSWR(

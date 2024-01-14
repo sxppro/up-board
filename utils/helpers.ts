@@ -10,6 +10,23 @@ import { format } from 'date-fns';
 import { twMerge } from 'tailwind-merge';
 
 /**
+ * Debounces a callback
+ * @param callback
+ * @param wait
+ * @returns
+ */
+export const debounce = (callback: Function, wait: number) => {
+  let timeoutId: number | undefined;
+
+  return (...args: any[]) => {
+    window.clearTimeout(timeoutId);
+    timeoutId = window.setTimeout(() => {
+      callback(...args);
+    }, wait);
+  };
+};
+
+/**
  * Currency formatter for numbers
  * @param number number to format
  * @param decimals include decimals
