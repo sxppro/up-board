@@ -54,7 +54,16 @@ const TopStats = () => {
 
   const parsedCategories = categories(
     Array.isArray(data) && data.length > 0
-      ? data[0]
+      ? data.reduce((prev, current) => {
+          return {
+            Income: prev.Income + current.Income,
+            Expenses: prev.Expenses + current.Expenses,
+            Transactions: prev.Transactions + current.Transactions,
+            Year: 0,
+            Month: 0,
+            Day: undefined,
+          };
+        })
       : {
           Income: 0,
           Expenses: 0,
