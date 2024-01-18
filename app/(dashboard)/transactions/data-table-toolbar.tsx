@@ -27,7 +27,7 @@ export function DataTableToolbar<TData>({
       <div className="flex flex-1 items-center space-x-2 w-full">
         <DataTableSearch
           className="h-8 md:w-[250px]"
-          placeholder="Search transactions"
+          placeholder="Search transactions ..."
           value={
             (table.getColumn('description')?.getFilterValue() as string) ?? ''
           }
