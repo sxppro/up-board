@@ -5,6 +5,7 @@ import {
 } from '@/types/custom';
 import { components } from '@/types/up-api';
 import { outputTransactionFields } from '@/utils/helpers';
+import { getTransactionById as getUpTransactionById } from '@/utils/up';
 import { UUID } from 'bson';
 import { MongoBulkWriteError } from 'mongodb';
 import { DateRange } from 'react-day-picker';
@@ -16,6 +17,28 @@ import {
   searchTransactionsPipeline,
   transactionsByTagsPipeline,
 } from './pipelines';
+
+/**
+ * Remaps transaction attributes from Up to be inserted to db
+ * @param param0
+ * @returns
+ */
+export const convertUpToDbTransaction = (
+  transaction: components['schemas']['TransactionResource']
+): DbTransactionResource => {
+  const { id, attributes, ...rest } = transaction;
+  const { createdAt, settledAt } = attributes;
+  const newAttributes = {
+    ...attributes,
+    createdAt: new Date(createdAt),
+    settledAt: settledAt ? new Date(settledAt) : null,
+  };
+  return {
+    _id: new UUID(id).toBinary(),
+    attributes: newAttributes,
+    ...rest,
+  };
+};
 
 /**
  * Inserts transactions to db
@@ -67,6 +90,33 @@ const insertTransactions = async (
       console.error(err);
     }
   }
+};
+
+/**
+ * Replaces transactions in db by their ids
+ * with data from Up
+ * @param transactionIds array of transaction IDs
+ * @returns number of transactions replaced
+ */
+const replaceTransactions = async (transactionIds: string[]) => {
+  const { db } = await connectToDatabase('up');
+  const transactions = db.collection('transactions');
+  let replacedTransactions = 0;
+  await Promise.all(
+    transactionIds.map(async (id) => {
+      const data = await getUpTransactionById(id);
+      const replace = await transactions.replaceOne(
+        {
+          _id: new UUID(id).toBinary(),
+        },
+        convertUpToDbTransaction(data.data)
+      );
+      if (replace.acknowledged) {
+        replacedTransactions += replace.modifiedCount;
+      }
+    })
+  );
+  return replacedTransactions;
 };
 
 /**
@@ -301,5 +351,6 @@ export {
   getTransfers,
   insertTransactions,
   monthlyStats,
+  replaceTransactions,
   searchTransactions,
 };

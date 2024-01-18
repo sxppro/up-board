@@ -161,3 +161,27 @@ export const getTransactionByAccount = async (accountId: string) => {
   console.log(`Inserted: ${insert?.insertedCount} documents`);
   return filterTransactionFields(transactions);
 };
+
+/**
+ * Retrieves transaction by id
+ * @param transactionId
+ * @returns
+ */
+export const getTransactionById = async (transactionId: string) => {
+  const { data, error } = await upGET('/transactions/{id}', {
+    params: {
+      path: {
+        id: transactionId,
+      },
+    },
+    headers: {
+      Authorization: `Bearer ${process.env.UP_TOKEN}`,
+    },
+  });
+
+  if (error || !data) {
+    throw new Error('unable to retrieve transaction details from Up');
+  }
+
+  return data;
+};
