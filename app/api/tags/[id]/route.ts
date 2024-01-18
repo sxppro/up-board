@@ -1,3 +1,4 @@
+import { replaceTransactions } from '@/db';
 import { getCurrentUser } from '@/utils/auth';
 import { addTags, deleteTags } from '@/utils/up';
 import { NextRequest, NextResponse } from 'next/server';
@@ -27,10 +28,11 @@ export async function POST(
   const { id } = params;
   if (id && validateTags(tags)) {
     // Add tag(s) to transaction
-    const { data, error, response } = await addTags(id, tags);
-    console.log(data);
-    console.log(error);
-    return response.ok
+    const { error, response } = await addTags(id, tags);
+    error && console.error(error);
+    const res = await replaceTransactions([id]);
+    console.log(res);
+    return response.ok && res > 0
       ? NextResponse.json({}, { status: 200 })
       : NextResponse.json({}, { status: 500 });
   } else {
@@ -62,10 +64,10 @@ export async function DELETE(
   const { id } = params;
   if (id && validateTags(tags)) {
     // Delete tag from transaction
-    const { data, error, response } = await deleteTags(id, tags);
-    console.log(data);
-    console.log(error);
-    return response.ok
+    const { error, response } = await deleteTags(id, tags);
+    error && console.error(error);
+    const res = await replaceTransactions([id]);
+    return response.ok && res > 0
       ? NextResponse.json({}, { status: 200 })
       : NextResponse.json({}, { status: 500 });
   } else {
