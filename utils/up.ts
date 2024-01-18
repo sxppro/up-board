@@ -7,7 +7,11 @@ import { paths } from '@/types/up-api';
 import createClient from 'openapi-fetch';
 import { filterTransactionFields } from './helpers';
 
-const { GET: upGET } = createClient<paths>({
+const {
+  GET: upGET,
+  POST: upPOST,
+  DELETE: upDELETE,
+} = createClient<paths>({
   baseUrl: 'https://api.up.com.au/api/v1',
 });
 
@@ -32,6 +36,70 @@ const getNextPage = async (link: string, store = []): Promise<never[]> => {
   } else {
     return store.concat(data);
   }
+};
+
+/**
+ * Retrieves all tags
+ * @returns array of tags
+ */
+export const getTags = async () => {
+  const { data, error } = await upGET('/tags', {
+    params: {},
+    headers: {
+      Authorization: `Bearer ${process.env.UP_TOKEN}`,
+    },
+  });
+
+  if (error || !data) {
+    throw new Error('unable to retrieve tags information from Up');
+  }
+
+  const tags = data.links.next
+    ? data.data.concat(await getNextPage(data.links.next))
+    : data.data;
+  return tags;
+};
+
+/**
+ * Modifies tags for a transaction
+ * @param id
+ * @param tags array of tag ids (maximum of 6)
+ * @see https://developer.up.com.au/#post_transactions_transactionId_relationships_tags
+ */
+export const addTags = async (id: string, tags: string[]) => {
+  const body = { data: tags.map((tag) => ({ type: 'tags', id: tag })) };
+  return await upPOST('/transactions/{transactionId}/relationships/tags', {
+    params: {
+      path: {
+        transactionId: id,
+      },
+    },
+    headers: {
+      Authorization: `Bearer ${process.env.UP_TOKEN}`,
+    },
+    body,
+  });
+};
+
+/**
+ * Deletes tags from a transaction
+ * @param id
+ * @param tags
+ * @see https://developer.up.com.au/#delete_transactions_transactionId_relationships_tags
+ */
+export const deleteTags = async (id: string, tags: string[]) => {
+  const body = { data: tags.map((tag) => ({ type: 'tags', id: tag })) };
+  return await upDELETE('/transactions/{transactionId}/relationships/tags', {
+    params: {
+      path: {
+        transactionId: id,
+      },
+    },
+    headers: {
+      Authorization: `Bearer ${process.env.UP_TOKEN}`,
+    },
+    body,
+  });
 };
 
 /**

@@ -1,4 +1,8 @@
-import { MonthlyMetric, TransactionSortOptions } from '@/types/custom';
+import {
+  FilteredTransactionResource,
+  MonthlyMetric,
+  TransactionSortOptions,
+} from '@/types/custom';
 import { endOfDay, startOfDay } from 'date-fns';
 import { useContext } from 'react';
 import { DateRange } from 'react-day-picker';
@@ -102,7 +106,7 @@ export const useTransactions = (
 export const useTransaction = (id: string) => {
   const { data, isLoading, error } = useSWR(`/api/transaction/${id}`, fetcher);
   return {
-    data: data?.data || data,
+    data: (data?.data || data) as FilteredTransactionResource,
     isLoading,
     isError: error,
   };
@@ -114,4 +118,13 @@ export const useDate = () => {
     throw new Error('useDate must be used within DateProvider');
   }
   return context;
+};
+
+export const useTags = () => {
+  const { data, isLoading, error } = useSWR('/api/tags', fetcher);
+  return {
+    data: data?.data || data,
+    isLoading,
+    isError: error,
+  };
 };
