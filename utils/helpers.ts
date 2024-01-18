@@ -5,6 +5,7 @@ import {
   MonthlyMetric,
 } from '@/types/custom';
 import type { components } from '@/types/up-api';
+import { UUID } from 'bson';
 import { clsx, type ClassValue } from 'clsx';
 import { format } from 'date-fns';
 import { twMerge } from 'tailwind-merge';
@@ -23,6 +24,28 @@ export const debounce = (callback: Function, wait: number) => {
     timeoutId = window.setTimeout(() => {
       callback(...args);
     }, wait);
+  };
+};
+
+/**
+ * Remaps transaction attributes from Up to be inserted to db
+ * @param param0
+ * @returns
+ */
+export const convertUpToDbTransaction = (
+  transaction: components['schemas']['TransactionResource']
+): DbTransactionResource => {
+  const { id, attributes, ...rest } = transaction;
+  const { createdAt, settledAt } = attributes;
+  const newAttributes = {
+    ...attributes,
+    createdAt: new Date(createdAt),
+    settledAt: settledAt ? new Date(settledAt) : null,
+  };
+  return {
+    _id: new UUID(id).toBinary(),
+    attributes: newAttributes,
+    ...rest,
   };
 };
 
