@@ -34,7 +34,7 @@ export async function POST(
     const res = await replaceTransactions([id]);
     return response.ok && res > 0
       ? NextResponse.json({}, { status: 200 })
-      : NextResponse.json({}, { status: 500 });
+      : NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   } else {
     return NextResponse.json(
       {
@@ -69,7 +69,7 @@ export async function DELETE(
     const res = await replaceTransactions([id]);
     return response.ok && res > 0
       ? NextResponse.json({}, { status: 200 })
-      : NextResponse.json({}, { status: 500 });
+      : NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   } else {
     return NextResponse.json(
       {

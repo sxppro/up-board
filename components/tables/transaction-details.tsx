@@ -2,7 +2,7 @@
 
 import { formatCurrency } from '@/utils/helpers';
 import { useTags, useTransaction } from '@/utils/hooks';
-import TableSkeleton from '../TableSkeleton';
+import TableSkeleton from '../core/table-skeleton';
 import TransactionTagsCombobox from '../core/transaction-tags-combobox';
 import { Badge } from '../ui/badge';
 import {

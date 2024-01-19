@@ -1,4 +1,4 @@
-import { Skeleton } from './ui/skeleton';
+import { Skeleton } from '../ui/skeleton';
 import {
   Table,
   TableBody,
@@ -7,7 +7,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from './ui/table';
+} from '../ui/table';
 
 const TableSkeleton = ({ cols, rows }: { cols: number; rows: number }) => {
   return (

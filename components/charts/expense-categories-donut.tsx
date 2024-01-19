@@ -6,7 +6,7 @@ import { DonutChart, Legend, Title } from '@tremor/react';
 import DashboardCard from '../core/dashboard-card';
 import { Skeleton } from '../ui/skeleton';
 
-const ExpenseCategories = () => {
+const ExpenseCategoriesDonut = () => {
   const { date } = useDate();
   const { data, isLoading } = useCategoryMetrics(
     date?.from,
@@ -42,4 +42,4 @@ const ExpenseCategories = () => {
   );
 };
 
-export default ExpenseCategories;
+export default ExpenseCategoriesDonut;

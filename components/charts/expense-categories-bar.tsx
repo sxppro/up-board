@@ -15,7 +15,7 @@ import {
 } from '@tremor/react';
 import { startOfMonth } from 'date-fns';
 import { useState } from 'react';
-import Loader from './core/loader';
+import Loader from '../core/loader';
 
 const categories = [
   { key: 'amount', name: 'Amount', icon: CurrencyCircleDollar },
@@ -49,7 +49,7 @@ const sortData = (data: any[]) =>
 
 const currentDate = new Date();
 
-const Categories = () => {
+const ExpenseCategoriesBar = () => {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const selectedCategory = selectedIndex === 0 ? 'amount' : 'count';
 
@@ -96,4 +96,4 @@ const Categories = () => {
   );
 };
 
-export default Categories;
+export default ExpenseCategoriesBar;

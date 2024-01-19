@@ -12,8 +12,8 @@ import {
   TableRow,
   Title,
 } from '@tremor/react';
-import TableSkeleton from '../TableSkeleton';
 import DashboardCard from '../core/dashboard-card';
+import TableSkeleton from '../core/table-skeleton';
 
 const ExpenseTransactions = () => {
   const { date } = useDate();

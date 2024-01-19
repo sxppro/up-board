@@ -5,7 +5,7 @@ import { useAccountBalanceHistorical, useDate } from '@/utils/hooks';
 import { AreaChart, Title } from '@tremor/react';
 import DashboardCard from '../core/dashboard-card';
 
-const AccountBalanceHistorical = () => {
+const AccountBalanceHistoricalArea = () => {
   const { date } = useDate();
   const { data } = useAccountBalanceHistorical(date?.from, date?.to, 'savings');
 
@@ -24,4 +24,4 @@ const AccountBalanceHistorical = () => {
   );
 };
 
-export default AccountBalanceHistorical;
+export default AccountBalanceHistoricalArea;

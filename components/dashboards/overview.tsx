@@ -8,8 +8,8 @@ import {
   TabPanel,
   TabPanels,
 } from '@tremor/react';
-import AccountBalanceHistorical from '../charts/account-balance-historical';
-import ExpenseCategories from '../charts/expense-categories';
+import AccountBalanceHistoricalArea from '../charts/account-balance-historical-area';
+import ExpenseCategoriesDonut from '../charts/expense-categories-donut';
 import MonthlyInOut from '../charts/monthly-in-out';
 import TopStats from '../charts/top-stats';
 import DateRangePicker from '../core/date-range-picker';
@@ -34,10 +34,10 @@ const OverviewDashboard = () => {
             <TopStats />
             <Grid numItemsMd={2} numItemsLg={3} className="gap-6 mt-6">
               <Col numColSpanMd={1}>
-                <AccountBalanceHistorical />
+                <AccountBalanceHistoricalArea />
               </Col>
               <Col numColSpanMd={1}>
-                <ExpenseCategories />
+                <ExpenseCategoriesDonut />
               </Col>
               <Col numColSpanMd={1}>
                 <RecentTransactions />

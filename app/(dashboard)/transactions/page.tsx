@@ -1,4 +1,4 @@
-import TableSkeleton from '@/components/TableSkeleton';
+import TableSkeleton from '@/components/core/table-skeleton';
 import TransactionTable from '@/components/tables/transaction-table';
 import { PageProps } from '@/types/custom';
 import { Suspense } from 'react';
