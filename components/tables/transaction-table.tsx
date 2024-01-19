@@ -18,6 +18,7 @@ const TransactionTable = async ({ search }: TransactionTableProps) => {
     search
       ? await searchTransactions(search)
       : await getTransactionsByDate(
+          process.env.UP_TRANS_ACC || '',
           { from: subMonths(now, 1), to: now },
           { sort: 'time', sortDir: 'desc' }
         )

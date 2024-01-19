@@ -1,8 +1,9 @@
 import { categoryStats, getAccountBalance, monthlyStats } from '@/db';
+import { TransactionAccountType } from '@/types/custom';
 import { getCurrentUser } from '@/utils/auth';
 import { NextRequest, NextResponse } from 'next/server';
 
-const checkSearchParams = (params: URLSearchParams) => {
+const validateSearchParams = (params: URLSearchParams) => {
   const mainParams =
     params.has('type') && params.has('start') && params.has('end');
 
@@ -27,7 +28,7 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  if (checkSearchParams(request.nextUrl.searchParams)) {
+  if (validateSearchParams(request.nextUrl.searchParams)) {
     try {
       const type = request.nextUrl.searchParams.get('type') || '';
       const start = new Date(request.nextUrl.searchParams.get('start') || '');
@@ -45,9 +46,9 @@ export async function GET(request: NextRequest) {
         const data = await getAccountBalance(
           start,
           end,
-          (request.nextUrl.searchParams.get('account') as
-            | 'transactional'
-            | 'savings') || 'transactional'
+          (request.nextUrl.searchParams.get(
+            'account'
+          ) as TransactionAccountType) || 'transactional'
         );
         return NextResponse.json({ data });
       } else {

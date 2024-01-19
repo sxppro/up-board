@@ -1,7 +1,8 @@
 import {
   FilteredTransactionResource,
   MonthlyMetric,
-  TransactionSortOptions,
+  TransactionAccountType,
+  TransactionRetrievalOptions,
 } from '@/types/custom';
 import { endOfDay, startOfDay } from 'date-fns';
 import { useContext } from 'react';
@@ -57,7 +58,7 @@ export const useCategoryMetrics = (
 export const useAccountBalanceHistorical = (
   start: Date | undefined,
   end: Date | undefined,
-  account: 'transactional' | 'savings'
+  account: TransactionAccountType
 ) => {
   const { data, error, isLoading } = useSWR(
     '/api/metrics?' +
@@ -79,19 +80,22 @@ export const useAccountBalanceHistorical = (
 
 export const useTransactions = (
   dateRange: DateRange | undefined,
-  sortOptions: TransactionSortOptions,
+  options: TransactionRetrievalOptions,
+  account: TransactionAccountType,
   type: 'transfers' | undefined = undefined
 ) => {
   const now = new Date();
-  const { sort, sortDir } = sortOptions;
+  const { sort, sortDir, limit } = options;
   const { data, error, isLoading } = useSWR(
     '/api/transactions?' +
       new URLSearchParams({
         start: dateRange?.from?.toISOString() || startOfDay(now).toISOString(),
         end: dateRange?.to?.toISOString() || endOfDay(now).toISOString(),
         ...(type && { type }),
+        account,
         sort,
         sortDir,
+        ...(limit ? { limit: limit.toString() } : {}),
       }),
     fetcher
   );

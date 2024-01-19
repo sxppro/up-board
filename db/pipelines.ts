@@ -1,4 +1,4 @@
-import { TransactionSortOptions } from '@/types/custom';
+import { DateRangeNoUndef, TransactionRetrievalOptions } from '@/types/custom';
 
 /**
  * Creates pipeline for calculating total income,
@@ -319,17 +319,17 @@ const accountBalancePipeline = (from: Date, to: Date, accountId: string) => [
 
 /**
  * Retrieves transactions between dates, with sorting
- * @param from
- * @param to
- * @param sortOptions
+ * and readable category names
+ * @param dateRange
+ * @param options
  * @returns
  */
 const transactionsByDatePipeline = (
-  from: Date,
-  to: Date,
-  sortOptions: TransactionSortOptions
+  accountId: string,
+  dateRange: DateRangeNoUndef,
+  options: TransactionRetrievalOptions
 ) => {
-  const { sort, sortDir } = sortOptions;
+  const { sort, sortDir } = options;
   const sortBy =
     sort === 'amount'
       ? 'attributes.amount.valueInBaseUnits'
@@ -338,10 +338,78 @@ const transactionsByDatePipeline = (
   return [
     {
       $match: {
+        'relationships.account.data.id': accountId,
         'attributes.createdAt': {
-          $gte: from,
-          $lt: to,
+          $gte: dateRange.from,
+          $lt: dateRange.to,
         },
+        'attributes.isCategorizable': true,
+      },
+    },
+    {
+      $fill: {
+        output: {
+          'relationships.category.data.type': {
+            value: 'categories',
+          },
+          'relationships.category.data.id': {
+            value: 'uncategorised',
+          },
+          'relationships.parentCategory.data.type': {
+            value: 'categories',
+          },
+          'relationships.parentCategory.data.id': {
+            value: 'uncategorised',
+          },
+        },
+      },
+    },
+    {
+      $lookup: {
+        from: 'categories',
+        localField: 'relationships.category.data.id',
+        foreignField: '_id',
+        as: 'categoryNames',
+        pipeline: [
+          {
+            $lookup: {
+              from: 'categories',
+              localField: 'relationships.parent.data.id',
+              foreignField: '_id',
+              as: 'parent',
+            },
+          },
+          {
+            $unwind: {
+              path: '$parent',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          {
+            $project: {
+              _id: 0,
+              category: '$attributes.name',
+              parentCategory: '$parent.attributes.name',
+            },
+          },
+        ],
+      },
+    },
+    {
+      $unwind: {
+        path: '$categoryNames',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $addFields: {
+        'relationships.category.data.id': '$categoryNames.category',
+        'relationships.parentCategory.data.id': '$categoryNames.parentCategory',
+      },
+    },
+    {
+      $project: {
+        categoryNames: 0,
       },
     },
     {
@@ -349,6 +417,7 @@ const transactionsByDatePipeline = (
         [sortBy]: dir,
       },
     },
+    ...(options.limit ? [{ $limit: options.limit }] : []),
   ];
 };
 

@@ -17,10 +17,14 @@ import DashboardCard from '../core/dashboard-card';
 
 const ExpenseTransactions = () => {
   const { date } = useDate();
-  const { data, isLoading } = useTransactions(date, {
-    sort: 'time',
-    sortDir: 'desc',
-  });
+  const { data, isLoading } = useTransactions(
+    date,
+    {
+      sort: 'time',
+      sortDir: 'desc',
+    },
+    'transactional'
+  );
 
   return (
     <DashboardCard>

@@ -1,7 +1,9 @@
 import {
   CategoryOption,
+  DateRangeNoUndef,
   DbTransactionResource,
-  TransactionSortOptions,
+  TransactionAccountType,
+  TransactionRetrievalOptions,
 } from '@/types/custom';
 import { components } from '@/types/up-api';
 import { outputTransactionFields } from '@/utils/helpers';
@@ -15,6 +17,7 @@ import {
   categoriesPipeline,
   monthlyStatsPipeline,
   searchTransactionsPipeline,
+  transactionsByDatePipeline,
   transactionsByTagsPipeline,
 } from './pipelines';
 
@@ -186,27 +189,20 @@ const searchTransactions = async (search: string) => {
 
 /**
  * Retrieves transactions between 2 dates
- * @param start
- * @param end
+ * @param dateRange
+ * @param options
  * @returns
  */
 const getTransactionsByDate = async (
-  date: DateRange,
-  sortOptions: TransactionSortOptions
+  account: string,
+  dateRange: DateRangeNoUndef,
+  options: TransactionRetrievalOptions
 ) => {
   const { db } = await connectToDatabase('up');
   const transactions = db.collection<DbTransactionResource>('transactions');
-  const cursor = transactions
-    .find({
-      'attributes.createdAt': { $gte: date.from, $lte: date.to },
-      'attributes.isCategorizable': true,
-    })
-    .sort(
-      sortOptions.sort === 'time'
-        ? 'attributes.createdAt'
-        : 'attributes.amount.valueInBaseUnits',
-      sortOptions.sortDir === 'asc' ? 1 : -1
-    );
+  const cursor = transactions.aggregate<DbTransactionResource>(
+    transactionsByDatePipeline(account, dateRange, options)
+  );
   const results = (await cursor.toArray()).map((transaction) =>
     outputTransactionFields(transaction)
   );
@@ -321,7 +317,7 @@ const getTransfers = async (dateRange: DateRange) => {
 const getAccountBalance = async (
   start: Date,
   end: Date,
-  account: 'transactional' | 'savings'
+  account: TransactionAccountType
 ) => {
   const { db } = await connectToDatabase('up');
   const transactions = db.collection<DbTransactionResource>('transactions');

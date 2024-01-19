@@ -66,7 +66,15 @@ export type PageProps = {
   searchParams: { [key: string]: string | string[] | undefined };
 };
 
-export type TransactionSortOptions = {
+export type TransactionRetrievalOptions = {
   sort: 'time' | 'amount';
   sortDir: 'asc' | 'desc';
+  limit?: number;
 };
+
+export type DateRangeNoUndef = {
+  from: Date;
+  to: Date;
+};
+
+export type TransactionAccountType = 'transactional' | 'savings';

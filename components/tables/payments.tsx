@@ -23,6 +23,7 @@ const Payments = () => {
       sort: 'time',
       sortDir: 'desc',
     },
+    'transactional',
     'transfers'
   );
 
