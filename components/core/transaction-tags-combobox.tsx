@@ -62,7 +62,6 @@ const TransactionTagsCombobox = ({
       }),
     });
     mutate(`/api/transaction/${id}`);
-    mutate('/api/tags');
   };
 
   const handleTagSelect = async (value: string) => {
