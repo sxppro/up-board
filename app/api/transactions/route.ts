@@ -86,7 +86,7 @@ export async function GET(request: NextRequest) {
           (request.nextUrl.searchParams.get('sortDir') as 'asc' | 'desc') ||
           'desc',
         // @ts-expect-error
-        limit: request.nextUrl.searchParams.get('sortDir'),
+        limit: request.nextUrl.searchParams.get('limit'),
       }
     );
     return NextResponse.json({

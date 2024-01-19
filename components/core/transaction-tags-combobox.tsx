@@ -131,6 +131,9 @@ const TransactionTagsCombobox = ({
                 );
               })}
             </CommandGroup>
+            {/* Flickers when input has a space at the end
+             * @see https://github.com/pacocoursey/cmdk/issues/75
+             */}
             {input && (
               <CommandGroup heading="Create tag">
                 <CommandItem
