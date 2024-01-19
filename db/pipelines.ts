@@ -1,6 +1,81 @@
 import { DateRangeNoUndef, TransactionRetrievalOptions } from '@/types/custom';
 
 /**
+ * Pipeline stages to lookup transaction category ids to
+ * prettify category names
+ * @returns
+ * @requires previous stages to output unmodified transaction documents
+ */
+const lookupTransactionCategories = () => [
+  {
+    $fill: {
+      output: {
+        'relationships.category.data.type': {
+          value: 'categories',
+        },
+        'relationships.category.data.id': {
+          value: 'uncategorised',
+        },
+        'relationships.parentCategory.data.type': {
+          value: 'categories',
+        },
+        'relationships.parentCategory.data.id': {
+          value: 'uncategorised',
+        },
+      },
+    },
+  },
+  {
+    $lookup: {
+      from: 'categories',
+      localField: 'relationships.category.data.id',
+      foreignField: '_id',
+      as: 'categoryNames',
+      pipeline: [
+        {
+          $lookup: {
+            from: 'categories',
+            localField: 'relationships.parent.data.id',
+            foreignField: '_id',
+            as: 'parent',
+          },
+        },
+        {
+          $unwind: {
+            path: '$parent',
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+        {
+          $project: {
+            _id: 0,
+            category: '$attributes.name',
+            parentCategory: '$parent.attributes.name',
+          },
+        },
+      ],
+    },
+  },
+  {
+    $unwind: {
+      path: '$categoryNames',
+      preserveNullAndEmptyArrays: true,
+    },
+  },
+  {
+    $addFields: {
+      'relationships.category.data.id': '$categoryNames.category',
+      'relationships.parentCategory.data.id': '$categoryNames.parentCategory',
+    },
+  },
+  {
+    $project: {
+      categoryNames: 0,
+    },
+  },
+];
+
+/**
  * Creates pipeline for calculating total income,
  * expenditure and number of transactions per month
  * between from and to dates (excluding transfers)
@@ -346,72 +421,7 @@ const transactionsByDatePipeline = (
         'attributes.isCategorizable': true,
       },
     },
-    {
-      $fill: {
-        output: {
-          'relationships.category.data.type': {
-            value: 'categories',
-          },
-          'relationships.category.data.id': {
-            value: 'uncategorised',
-          },
-          'relationships.parentCategory.data.type': {
-            value: 'categories',
-          },
-          'relationships.parentCategory.data.id': {
-            value: 'uncategorised',
-          },
-        },
-      },
-    },
-    {
-      $lookup: {
-        from: 'categories',
-        localField: 'relationships.category.data.id',
-        foreignField: '_id',
-        as: 'categoryNames',
-        pipeline: [
-          {
-            $lookup: {
-              from: 'categories',
-              localField: 'relationships.parent.data.id',
-              foreignField: '_id',
-              as: 'parent',
-            },
-          },
-          {
-            $unwind: {
-              path: '$parent',
-              preserveNullAndEmptyArrays: true,
-            },
-          },
-          {
-            $project: {
-              _id: 0,
-              category: '$attributes.name',
-              parentCategory: '$parent.attributes.name',
-            },
-          },
-        ],
-      },
-    },
-    {
-      $unwind: {
-        path: '$categoryNames',
-        preserveNullAndEmptyArrays: true,
-      },
-    },
-    {
-      $addFields: {
-        'relationships.category.data.id': '$categoryNames.category',
-        'relationships.parentCategory.data.id': '$categoryNames.parentCategory',
-      },
-    },
-    {
-      $project: {
-        categoryNames: 0,
-      },
-    },
+    ...lookupTransactionCategories(),
     {
       $sort: {
         [sortBy]: dir,
@@ -483,6 +493,7 @@ const searchTransactionsPipeline = (searchTerm: string) => [
       },
     },
   },
+  ...lookupTransactionCategories(),
   {
     $sort: {
       'attributes.createdAt': -1,
