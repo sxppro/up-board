@@ -263,7 +263,7 @@ const getChildCategories = async () => {
       'relationships.parent.data': { $ne: null },
     })
     .sort({ 'attributes.name': 1 })
-    .project({ _id: 0, value: '$_id', name: '$attributes.name' });
+    .project({ _id: 0, value: '$attributes.name', name: '$attributes.name' });
   const results = (await cursor.toArray()) as CategoryOption[];
   return results;
 };

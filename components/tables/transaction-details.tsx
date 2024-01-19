@@ -24,7 +24,7 @@ const TransactionDetails = ({ transactionId }: TransactionDetailsProps) => {
     txDetails && Array.isArray(txDetails.tags) && txDetails.tags.length > 0;
 
   return isLoading || !txDetails ? (
-    <TableSkeleton cols={2} rows={7} />
+    <TableSkeleton cols={2} rows={8} />
   ) : (
     <Table>
       <TableCaption>{`Transaction ID: ${txDetails.id}`}</TableCaption>
@@ -36,7 +36,7 @@ const TransactionDetails = ({ transactionId }: TransactionDetailsProps) => {
         <TableRow>
           <TableCell className="font-medium">Raw Text</TableCell>
           <TableCell className="font-mono text-end">
-            {txDetails.rawText}
+            {txDetails.rawText ?? '—'}
           </TableCell>
         </TableRow>
         <TableRow>
