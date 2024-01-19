@@ -92,6 +92,7 @@ export const filterTransactionFields = (
     return {
       id,
       description: attributes.description,
+      rawText: attributes.rawText,
       amount: attributes.amount.value,
       amountRaw: attributes.amount.valueInBaseUnits / 100,
       time: attributes.createdAt,

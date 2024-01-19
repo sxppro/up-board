@@ -24,6 +24,7 @@ export interface DbTransactionResource
 export interface FilteredTransactionResource {
   id: string;
   description: string;
+  rawText: string | null;
   amount: string;
   amountRaw: number;
   time: string;

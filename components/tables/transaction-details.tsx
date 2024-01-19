@@ -34,6 +34,12 @@ const TransactionDetails = ({ transactionId }: TransactionDetailsProps) => {
           <TableCell className="text-end">{txDetails.description}</TableCell>
         </TableRow>
         <TableRow>
+          <TableCell className="font-medium">Raw Text</TableCell>
+          <TableCell className="font-mono text-end">
+            {txDetails.rawText}
+          </TableCell>
+        </TableRow>
+        <TableRow>
           <TableCell className="font-medium">Amount</TableCell>
           <TableCell className="text-end">
             {formatCurrency(txDetails.amountRaw)}
