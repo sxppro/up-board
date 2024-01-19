@@ -1,34 +1,24 @@
 'use client';
 
 import { MonthlyMetric } from '@/types/custom';
-import { useMonthlyMetrics } from '@/utils/client';
 import { formatCurrency } from '@/utils/helpers';
-import {
-  BadgeDelta,
-  Card,
-  Color,
-  Flex,
-  Grid,
-  Icon,
-  Metric,
-  Text,
-} from '@tremor/react';
-import { startOfMonth } from 'date-fns';
+import { useDate, useMonthlyMetrics } from '@/utils/hooks';
+import { Card, Color, Flex, Grid, Icon, Metric, Text } from '@tremor/react';
+import { endOfDay, startOfDay } from 'date-fns';
 import { List, Minus, Plus } from 'lucide-react';
-import { Skeleton } from './ui/skeleton';
+import { Skeleton } from '../ui/skeleton';
 
 const currentDate = new Date();
 
-const MainMetrics = () => {
+const TopStats = () => {
+  const { date } = useDate();
   const { data, isLoading } = useMonthlyMetrics(
-    startOfMonth(currentDate),
-    currentDate
+    date?.from ? date.from : startOfDay(currentDate),
+    date?.to ? date.to : endOfDay(currentDate)
   );
-  console.log(data);
 
   /**
-   * Remaps API data into form consumable
-   * by component
+   * Remaps data to shape consumable by component
    * @param param0
    * @returns
    */
@@ -64,11 +54,23 @@ const MainMetrics = () => {
 
   const parsedCategories = categories(
     Array.isArray(data) && data.length > 0
-      ? data[0]
+      ? data.reduce((prev, current) => {
+          return {
+            Income: prev.Income + current.Income,
+            Expenses: prev.Expenses + current.Expenses,
+            Transactions: prev.Transactions + current.Transactions,
+            Year: 0,
+            Month: 0,
+            Day: undefined,
+          };
+        })
       : {
           Income: 0,
           Expenses: 0,
           Transactions: 0,
+          Year: 0,
+          Month: 0,
+          Day: undefined,
         }
   );
 
@@ -86,7 +88,6 @@ const MainMetrics = () => {
             <div className="truncate flex-1">
               <Flex alignItems="start" justifyContent="between">
                 <Text>{item.title}</Text>
-                <BadgeDelta deltaType="moderateIncrease">{'10.2%'}</BadgeDelta>
               </Flex>
               {isLoading ? (
                 <Skeleton className="h-9 max-w-[150px]" />
@@ -101,4 +102,4 @@ const MainMetrics = () => {
   );
 };
 
-export default MainMetrics;
+export default TopStats;

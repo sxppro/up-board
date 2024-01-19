@@ -1,7 +1,21 @@
-import { categoryStats, monthlyStats } from '@/db';
+import { categoryStats, getAccountBalance, monthlyStats } from '@/db';
+import { TransactionAccountType } from '@/types/custom';
 import { getCurrentUser } from '@/utils/auth';
-import { endOfMonth } from 'date-fns';
 import { NextRequest, NextResponse } from 'next/server';
+
+const validateSearchParams = (params: URLSearchParams) => {
+  const mainParams =
+    params.has('type') && params.has('start') && params.has('end');
+
+  if (params.get('type') === 'accountBalance') {
+    return (
+      mainParams &&
+      (params.get('account') === 'transactional' ||
+        params.get('account') === 'savings')
+    );
+  }
+  return mainParams;
+};
 
 export async function GET(request: NextRequest) {
   const user = await getCurrentUser();
@@ -13,21 +27,29 @@ export async function GET(request: NextRequest) {
       { status: 403 }
     );
   }
-  if (
-    request.nextUrl.searchParams.has('type') &&
-    request.nextUrl.searchParams.has('start') &&
-    request.nextUrl.searchParams.has('end')
-  ) {
+
+  if (validateSearchParams(request.nextUrl.searchParams)) {
     try {
       const type = request.nextUrl.searchParams.get('type') || '';
       const start = new Date(request.nextUrl.searchParams.get('start') || '');
       const end = new Date(request.nextUrl.searchParams.get('end') || '');
-      console.log(endOfMonth(end));
       if (type === 'monthly') {
         const data = await monthlyStats(start, end);
         return NextResponse.json({ data });
       } else if (type === 'category') {
-        const data = await categoryStats(start, end);
+        const data = await categoryStats(start, end, 'child');
+        return NextResponse.json({ data });
+      } else if (type === 'parentCategory') {
+        const data = await categoryStats(start, end, 'parent');
+        return NextResponse.json({ data });
+      } else if (type === 'accountBalance') {
+        const data = await getAccountBalance(
+          start,
+          end,
+          (request.nextUrl.searchParams.get(
+            'account'
+          ) as TransactionAccountType) || 'transactional'
+        );
         return NextResponse.json({ data });
       } else {
         return NextResponse.json({ error: 'Not found' }, { status: 404 });

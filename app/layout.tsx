@@ -1,4 +1,4 @@
-import ThemeProvider from '@/components/ThemeProvider';
+import ThemeProvider from '@/components/core/theme-provider';
 import { Toaster } from '@/components/ui/toaster';
 import { Analytics } from '@vercel/analytics/react';
 import type { Metadata } from 'next';

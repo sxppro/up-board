@@ -2,8 +2,8 @@
 
 import NextTopLoader from 'nextjs-toploader';
 
-const NavProgress = () => {
+const PageProgressBar = () => {
   return <NextTopLoader easing="cubic-bezier(.16,1,.3,1)" />;
 };
 
-export default NavProgress;
+export default PageProgressBar;

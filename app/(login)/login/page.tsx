@@ -1,4 +1,4 @@
-import { UserAuthForm } from '@/components/core/UserAuthForm';
+import UserAuthForm from '@/components/core/user-auth-form';
 import { buttonVariants } from '@/components/ui/button';
 import { getCurrentUser } from '@/utils/auth';
 import { cn } from '@/utils/helpers';

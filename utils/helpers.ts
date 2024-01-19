@@ -1,14 +1,35 @@
 import {
+  AccountBalanceHistory,
   DbTransactionResource,
   FilteredTransactionResource,
+  MonthlyMetric,
 } from '@/types/custom';
 import type { components } from '@/types/up-api';
 import { clsx, type ClassValue } from 'clsx';
+import { format } from 'date-fns';
 import { twMerge } from 'tailwind-merge';
 
 /**
+ * Debounces a callback
+ * @param callback
+ * @param wait
+ * @returns
+ */
+export const debounce = (callback: Function, wait: number) => {
+  let timeoutId: number | undefined;
+
+  return (...args: any[]) => {
+    window.clearTimeout(timeoutId);
+    timeoutId = window.setTimeout(() => {
+      callback(...args);
+    }, wait);
+  };
+};
+
+/**
  * Currency formatter for numbers
- * @param number
+ * @param number number to format
+ * @param decimals include decimals
  * @returns number formatted in AUD
  */
 export const formatCurrency = (number: number, decimals: boolean = true) =>
@@ -20,6 +41,33 @@ export const formatCurrency = (number: number, decimals: boolean = true) =>
   })
     .format(number)
     .toString();
+
+/**
+ * Adds property `FormattedDate`, date string from day, month, year values
+ * @param data
+ * @returns
+ */
+export const formatDateFromNums = (
+  data: MonthlyMetric[] | AccountBalanceHistory[] | undefined
+) => {
+  return data
+    ? data.map(({ Day, Month, Year, ...rest }) => {
+        if (Day) {
+          const date = new Date(Year, Month - 1, Day);
+          return {
+            ...rest,
+            FormattedDate: format(date, 'dd LLL yy'),
+          };
+        } else {
+          const date = new Date(Year, Month - 1);
+          return {
+            ...rest,
+            FormattedDate: format(date, 'LLL yy'),
+          };
+        }
+      })
+    : [];
+};
 
 /**
  * Merges HTML class names
@@ -44,7 +92,9 @@ export const filterTransactionFields = (
     return {
       id,
       description: attributes.description,
+      rawText: attributes.rawText,
       amount: attributes.amount.value,
+      amountRaw: attributes.amount.valueInBaseUnits / 100,
       time: attributes.createdAt,
       status: attributes.status,
       category: relationships.category.data?.id ?? 'uncategorised',

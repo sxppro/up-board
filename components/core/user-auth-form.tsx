@@ -10,7 +10,7 @@ import { HTMLAttributes, SyntheticEvent, useState } from 'react';
 
 interface UserAuthFormProps extends HTMLAttributes<HTMLDivElement> {}
 
-export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
+const UserAuthForm = ({ className, ...props }: UserAuthFormProps) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const signInWithGoogle = async () => {
     await signIn('google', {
@@ -76,4 +76,6 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
       </Button>
     </div>
   );
-}
+};
+
+export default UserAuthForm;

@@ -76,7 +76,7 @@ export const columns: ColumnDef<FilteredTransactionResource>[] = [
                   addSuffix: true,
                   includeSeconds: true,
                   locale: enAU,
-                })}
+                }).replace(/^about /, '')}
               </div>
             </TooltipTrigger>
             <TooltipContent>
@@ -101,10 +101,24 @@ export const columns: ColumnDef<FilteredTransactionResource>[] = [
     ),
   },
   {
+    accessorKey: 'tags',
+    header: 'Tags',
+    cell: ({ row }) => (
+      <div className="flex flex-wrap sm:w-[150px] gap-2">
+        {(row.getValue('tags') as string[]).map((tag) => (
+          // TODO: Truncated tags look kinda funky
+          <Badge className="truncate" key={tag}>
+            {tag}
+          </Badge>
+        ))}
+      </div>
+    ),
+  },
+  {
     accessorKey: 'category',
     header: 'Category',
     cell: ({ row }) => (
-      <div className="w-[100px] truncate">{row.getValue('category')}</div>
+      <div className="w-[150px] truncate">{row.getValue('category')}</div>
     ),
     filterFn: (row, id, value) => value.includes(row.getValue(id)),
   },
