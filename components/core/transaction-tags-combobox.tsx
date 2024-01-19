@@ -16,6 +16,7 @@ import {
 } from '@/components/ui/popover';
 import { cn } from '@/utils/helpers';
 import { CheckIcon, PlusCircleIcon } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { mutate } from 'swr';
 
@@ -41,6 +42,7 @@ const TransactionTagsCombobox = ({
   );
   const [input, setInput] = useState<string>('');
   const selectedValues = new Set<string>(filterValues);
+  const router = useRouter();
 
   const addTags = async (id: string, tags: string[]) => {
     await fetch(`/api/tags/${id}`, {
@@ -73,10 +75,12 @@ const TransactionTagsCombobox = ({
     }
     const filterValues = Array.from(selectedValues);
     setFilterValues(filterValues.length ? filterValues : []);
+    router.refresh();
   };
   const handleClearTags = async () => {
     await deleteTags(txId, Array.from(selectedValues));
     setFilterValues([]);
+    router.refresh();
   };
 
   return (
@@ -97,6 +101,7 @@ const TransactionTagsCombobox = ({
             placeholder={title}
             value={input}
             onValueChange={(input) => setInput(input)}
+            maxLength={30}
           />
           <CommandList>
             <CommandGroup>

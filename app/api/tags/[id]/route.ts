@@ -4,7 +4,8 @@ import { addTags, deleteTags } from '@/utils/up';
 import { NextRequest, NextResponse } from 'next/server';
 
 const validateTags = (tags: any) =>
-  Array.isArray(tags) && tags.every((tag) => typeof tag === 'string');
+  Array.isArray(tags) &&
+  tags.every((tag) => typeof tag === 'string' && tag.length <= 30);
 
 /**
  * Returns specific transaction
@@ -31,7 +32,6 @@ export async function POST(
     const { error, response } = await addTags(id, tags);
     error && console.error(error);
     const res = await replaceTransactions([id]);
-    console.log(res);
     return response.ok && res > 0
       ? NextResponse.json({}, { status: 200 })
       : NextResponse.json({}, { status: 500 });
