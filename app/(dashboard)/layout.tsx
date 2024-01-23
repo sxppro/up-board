@@ -2,6 +2,7 @@ import MainNav from '@/components/core/main-nav';
 import PageProgressBar from '@/components/core/page-progress-bar';
 import ThemeToggle from '@/components/core/theme-toggle';
 import UserNav from '@/components/core/user-nav';
+import QueryProvider from '@/components/providers/query-provider';
 import { getCurrentUser } from '@/utils/auth';
 import { Flex } from '@tremor/react';
 import { Metadata } from 'next';
@@ -24,7 +25,7 @@ export default async function DashboardLayout({
   }
 
   return (
-    <>
+    <QueryProvider>
       <PageProgressBar />
       <div className="border-b">
         <div className="max-w-screen-2xl m-auto flex h-16 items-center px-4 md:px-8">
@@ -40,6 +41,6 @@ export default async function DashboardLayout({
           {children}
         </Flex>
       </main>
-    </>
+    </QueryProvider>
   );
 }

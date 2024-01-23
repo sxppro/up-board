@@ -9,6 +9,17 @@ import { clsx, type ClassValue } from 'clsx';
 import { format } from 'date-fns';
 import { twMerge } from 'tailwind-merge';
 
+export const getBaseUrl = () => {
+  if (typeof window !== 'undefined')
+    // browser should use relative path
+    return '';
+  if (process.env.VERCEL_URL)
+    // vercel
+    return `https://${process.env.VERCEL_URL}`;
+  // localhost
+  return `http://localhost:${process.env.PORT ?? 3000}`;
+};
+
 /**
  * Debounces a callback
  * @param callback
