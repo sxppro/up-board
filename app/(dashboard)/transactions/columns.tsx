@@ -93,12 +93,15 @@ export const columns: ColumnDef<FilteredTransactionResource>[] = [
     header: 'Description',
     cell: ({ row }) => (
       <div className="flex gap-2">
-        <Badge variant="outline">{row.original.status}</Badge>
+        <Badge className="hidden sm:inline-flex" variant="outline">
+          {row.original.status}
+        </Badge>
         <div className="sm:w-[300px] md:w-[400px] lg:w-[500px] max-w-[500px] truncate font-medium">
           {row.getValue('description')}
         </div>
       </div>
     ),
+    filterFn: () => true,
   },
   {
     accessorKey: 'tags',
