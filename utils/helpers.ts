@@ -2,7 +2,6 @@ import {
   AccountBalanceHistory,
   DbTransactionResource,
   FilteredTransactionResource,
-  MonthlyMetric,
 } from '@/types/custom';
 import type { components } from '@/types/up-api';
 import { clsx, type ClassValue } from 'clsx';
@@ -59,23 +58,15 @@ export const formatCurrency = (number: number, decimals: boolean = true) =>
  * @returns
  */
 export const formatDateFromNums = (
-  data: MonthlyMetric[] | AccountBalanceHistory[] | undefined
+  data: AccountBalanceHistory[] | undefined
 ) => {
   return data
     ? data.map(({ Day, Month, Year, ...rest }) => {
-        if (Day) {
-          const date = new Date(Year, Month - 1, Day);
-          return {
-            ...rest,
-            FormattedDate: format(date, 'dd LLL yy'),
-          };
-        } else {
-          const date = new Date(Year, Month - 1);
-          return {
-            ...rest,
-            FormattedDate: format(date, 'LLL yy'),
-          };
-        }
+        const date = new Date(Year, Month - 1, Day);
+        return {
+          ...rest,
+          FormattedDate: format(date, 'dd LLL yy'),
+        };
       })
     : [];
 };
