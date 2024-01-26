@@ -1,6 +1,7 @@
 import { getCategories, getCategoryInfo, getMonthlyInfo } from '@/db';
 import { z } from 'zod';
 import {
+  AccountMonthlyInfo,
   DateRange,
   TransactionCategoryInfo,
   TransactionCategoryType,
@@ -13,9 +14,12 @@ export const authedRouter = router({
     .query(async ({ input }) => {
       return await getCategories(input);
     }),
-  getMonthlyInfo: authedProcedure.input(DateRange).query(async ({ input }) => {
-    return await getMonthlyInfo(input);
-  }),
+  getMonthlyInfo: authedProcedure
+    .input(DateRange)
+    .output(z.array(AccountMonthlyInfo))
+    .query(async ({ input }) => {
+      return await getMonthlyInfo(input);
+    }),
   getCategoryInfo: authedProcedure
     .input(
       z.object({

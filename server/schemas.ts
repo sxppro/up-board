@@ -15,3 +15,12 @@ export const TransactionCategoryInfo = z.object({
   transactions: z.number(),
 });
 export type TransactionCategoryInfo = z.infer<typeof TransactionCategoryInfo>;
+
+export const AccountMonthlyInfo = z.object({
+  Year: z.number(),
+  Month: z.number(),
+  Income: z.number(),
+  Expenses: z.number(),
+  Transactions: z.number(),
+});
+export type AccountMonthlyInfo = z.infer<typeof AccountMonthlyInfo>;

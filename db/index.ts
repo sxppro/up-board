@@ -1,10 +1,13 @@
-import type { DateRange, TransactionCategoryInfo } from '@/server/schemas';
+import type {
+  AccountMonthlyInfo,
+  DateRange,
+  TransactionCategoryInfo,
+} from '@/server/schemas';
 import { TransactionCategoryType } from '@/server/schemas';
 import {
   CategoryOption,
   DateRangeNoUndef,
   DbTransactionResource,
-  MonthlyMetric,
   TransactionAccountType,
   TransactionRetrievalOptions,
 } from '@/types/custom';
@@ -154,7 +157,7 @@ export const getMonthlyInfo = async (dateRange: DateRange) => {
 
   const { db } = await connectToDatabase('up');
   const transactions = db.collection<DbTransactionResource>('transactions');
-  const cursor = transactions.aggregate<MonthlyMetric>(
+  const cursor = transactions.aggregate<AccountMonthlyInfo>(
     monthlyStatsPipeline(dateRange.from, dateRange.to, process.env.UP_TRANS_ACC)
   );
   const results = await cursor.toArray();

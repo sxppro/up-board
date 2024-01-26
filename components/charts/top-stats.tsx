@@ -1,6 +1,6 @@
 'use client';
 
-import { MonthlyMetric } from '@/types/custom';
+import { AccountMonthlyInfo } from '@/server/schemas';
 import { formatCurrency } from '@/utils/helpers';
 import { useDate } from '@/utils/hooks';
 import { trpc } from '@/utils/trpc';
@@ -27,7 +27,7 @@ const TopStats = () => {
     Income,
     Expenses,
     Transactions,
-  }: MonthlyMetric): {
+  }: AccountMonthlyInfo): {
     title: string;
     metric: string | number | undefined;
     icon: any;
