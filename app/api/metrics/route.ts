@@ -1,4 +1,4 @@
-import { categoryStats, getAccountBalance, getMonthlyStats } from '@/db';
+import { getAccountBalance, getCategoryInfo, getMonthlyInfo } from '@/db';
 import { TransactionAccountType } from '@/types/custom';
 import { getCurrentUser } from '@/utils/auth';
 import { NextRequest, NextResponse } from 'next/server';
@@ -34,13 +34,13 @@ export async function GET(request: NextRequest) {
       const from = new Date(request.nextUrl.searchParams.get('start') || '');
       const to = new Date(request.nextUrl.searchParams.get('end') || '');
       if (type === 'monthly') {
-        const data = await getMonthlyStats({ from, to });
+        const data = await getMonthlyInfo({ from, to });
         return NextResponse.json({ data });
       } else if (type === 'category') {
-        const data = await categoryStats(from, to, 'child');
+        const data = await getCategoryInfo({ from, to }, 'child');
         return NextResponse.json({ data });
       } else if (type === 'parentCategory') {
-        const data = await categoryStats(from, to, 'parent');
+        const data = await getCategoryInfo({ from, to }, 'parent');
         return NextResponse.json({ data });
       } else if (type === 'accountBalance') {
         const data = await getAccountBalance(

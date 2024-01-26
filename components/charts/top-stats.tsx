@@ -2,7 +2,8 @@
 
 import { MonthlyMetric } from '@/types/custom';
 import { formatCurrency } from '@/utils/helpers';
-import { useDate, useMonthlyMetrics } from '@/utils/hooks';
+import { useDate } from '@/utils/hooks';
+import { trpc } from '@/utils/trpc';
 import { Card, Color, Flex, Grid, Icon, Metric, Text } from '@tremor/react';
 import { endOfDay, startOfDay } from 'date-fns';
 import { List, Minus, Plus } from 'lucide-react';
@@ -12,10 +13,10 @@ const currentDate = new Date();
 
 const TopStats = () => {
   const { date } = useDate();
-  const { data, isLoading } = useMonthlyMetrics(
-    date?.from ? date.from : startOfDay(currentDate),
-    date?.to ? date.to : endOfDay(currentDate)
-  );
+  const { data, isLoading } = trpc.user.getMonthlyInfo.useQuery({
+    from: date?.from ? date.from : startOfDay(currentDate),
+    to: date?.to ? date.to : endOfDay(currentDate),
+  });
 
   /**
    * Remaps data to shape consumable by component
@@ -70,7 +71,6 @@ const TopStats = () => {
           Transactions: 0,
           Year: 0,
           Month: 0,
-          Day: undefined,
         }
   );
 

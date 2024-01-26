@@ -1,4 +1,4 @@
-import type { DateRange } from '@/server/schemas';
+import type { DateRange, TransactionCategoryInfo } from '@/server/schemas';
 import { TransactionCategoryType } from '@/server/schemas';
 import {
   CategoryOption,
@@ -147,7 +147,7 @@ export const searchTransactions = async (search: string) => {
  * @param dateRange
  * @returns list of stats for each month
  */
-export const getMonthlyStats = async (dateRange: DateRange) => {
+export const getMonthlyInfo = async (dateRange: DateRange) => {
   if (!process.env.UP_TRANS_ACC) {
     throw new Error('Up transaction account not defined');
   }
@@ -169,10 +169,9 @@ export const getMonthlyStats = async (dateRange: DateRange) => {
  * @param end
  * @returns list of stats for each category
  */
-const categoryStats = async (
-  start: Date,
-  end: Date,
-  type: 'child' | 'parent'
+export const getCategoryInfo = async (
+  dateRange: DateRange,
+  type: TransactionCategoryType
 ) => {
   if (!process.env.UP_TRANS_ACC) {
     throw new Error('Up transaction account not defined');
@@ -180,8 +179,13 @@ const categoryStats = async (
 
   const { db } = await connectToDatabase('up');
   const transactions = db.collection<DbTransactionResource>('transactions');
-  const cursor = transactions.aggregate(
-    categoriesPipeline(start, end, process.env.UP_TRANS_ACC, type)
+  const cursor = transactions.aggregate<TransactionCategoryInfo>(
+    categoriesPipeline(
+      dateRange.from,
+      dateRange.to,
+      process.env.UP_TRANS_ACC,
+      type
+    )
   );
   const results = await cursor.toArray();
   await cursor.close();
@@ -328,7 +332,6 @@ const getAccountBalance = async (
 };
 
 export {
-  categoryStats,
   getAccountBalance,
   getTransactionById,
   getTransactionsByCategory,
