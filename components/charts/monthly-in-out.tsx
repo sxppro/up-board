@@ -1,20 +1,28 @@
 'use client';
 
-import { formatCurrency, formatDateFromNums } from '@/utils/helpers';
-import { useMonthlyMetrics } from '@/utils/hooks';
+import { formatCurrency } from '@/utils/helpers';
+import { trpc } from '@/utils/trpc';
 import { BarChart, Text, Title } from '@tremor/react';
-import { startOfMonth, subYears } from 'date-fns';
+import { format, startOfMonth, subYears } from 'date-fns';
 import DashboardCard from '../core/dashboard-card';
 
 const currentDate = new Date();
 
 const MonthlyInOut = () => {
-  const { data, isLoading } = useMonthlyMetrics(
-    startOfMonth(subYears(currentDate, 1)),
-    currentDate
-  );
-
-  const metrics = !isLoading && data && formatDateFromNums(data);
+  const { data, isLoading } = trpc.user.getMonthlyStats.useQuery({
+    from: startOfMonth(subYears(currentDate, 1)),
+    to: currentDate,
+  });
+  const metrics =
+    !isLoading &&
+    data &&
+    data.map(({ Month, Year, ...rest }) => {
+      const date = new Date(Year, Month - 1);
+      return {
+        ...rest,
+        FormattedDate: format(date, 'LLL yy'),
+      };
+    });
 
   return (
     <DashboardCard>

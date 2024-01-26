@@ -1,4 +1,4 @@
-import { categoryStats, getAccountBalance, monthlyStats } from '@/db';
+import { categoryStats, getAccountBalance, getMonthlyStats } from '@/db';
 import { TransactionAccountType } from '@/types/custom';
 import { getCurrentUser } from '@/utils/auth';
 import { NextRequest, NextResponse } from 'next/server';
@@ -31,21 +31,21 @@ export async function GET(request: NextRequest) {
   if (validateSearchParams(request.nextUrl.searchParams)) {
     try {
       const type = request.nextUrl.searchParams.get('type') || '';
-      const start = new Date(request.nextUrl.searchParams.get('start') || '');
-      const end = new Date(request.nextUrl.searchParams.get('end') || '');
+      const from = new Date(request.nextUrl.searchParams.get('start') || '');
+      const to = new Date(request.nextUrl.searchParams.get('end') || '');
       if (type === 'monthly') {
-        const data = await monthlyStats(start, end);
+        const data = await getMonthlyStats({ from, to });
         return NextResponse.json({ data });
       } else if (type === 'category') {
-        const data = await categoryStats(start, end, 'child');
+        const data = await categoryStats(from, to, 'child');
         return NextResponse.json({ data });
       } else if (type === 'parentCategory') {
-        const data = await categoryStats(start, end, 'parent');
+        const data = await categoryStats(from, to, 'parent');
         return NextResponse.json({ data });
       } else if (type === 'accountBalance') {
         const data = await getAccountBalance(
-          start,
-          end,
+          from,
+          to,
           (request.nextUrl.searchParams.get(
             'account'
           ) as TransactionAccountType) || 'transactional'

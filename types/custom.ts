@@ -42,7 +42,6 @@ export interface CategoryOption {
 export interface MonthlyMetric {
   Year: number;
   Month: number;
-  Day: undefined;
   Income: number;
   Expenses: number;
   Transactions: number;

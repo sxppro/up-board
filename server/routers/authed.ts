@@ -1,10 +1,14 @@
-import { authedProcedure, publicProcedure, router } from '../trpc';
+import { getCategories, getMonthlyStats } from '@/db';
+import { DateRange, TransactionCategoryType } from '../schemas';
+import { authedProcedure, router } from '../trpc';
 
 export const authedRouter = router({
-  getSession: publicProcedure.query(({ ctx }) => {
-    return ctx.session;
-  }),
-  getSecret: authedProcedure.query(async () => {
-    return 'test auth';
+  getCategories: authedProcedure
+    .input(TransactionCategoryType)
+    .query(async ({ input }) => {
+      return await getCategories(input);
+    }),
+  getMonthlyStats: authedProcedure.input(DateRange).query(async ({ input }) => {
+    return await getMonthlyStats(input);
   }),
 });
