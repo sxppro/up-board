@@ -3,7 +3,11 @@ import {
   getCategories,
   getCategoryInfo,
   getMonthlyInfo,
+  getTransactionById,
 } from '@/db';
+import { filterTransactionFields } from '@/utils/helpers';
+import { getTags } from '@/utils/up';
+import { TRPCError } from '@trpc/server';
 import { format } from 'date-fns';
 import { z } from 'zod';
 import {
@@ -22,6 +26,9 @@ export const authedRouter = router({
     .query(async ({ input }) => {
       return await getCategories(input);
     }),
+  getTags: authedProcedure.query(async () =>
+    (await getTags()).map(({ id }) => ({ name: id, value: id }))
+  ),
   getMonthlyInfo: authedProcedure
     .input(DateRangeSchema)
     .output(z.array(AccountMonthlyInfoSchema))
@@ -61,5 +68,14 @@ export const authedRouter = router({
           FormattedDate: format(Timestamp, 'dd LLL yy'),
         };
       });
+    }),
+  getTransactionById: authedProcedure
+    .input(z.string().uuid())
+    .query(async ({ input }) => {
+      const transaction = await getTransactionById(input);
+      if (!transaction) {
+        throw new TRPCError({ code: 'NOT_FOUND' });
+      }
+      return filterTransactionFields([transaction])[0];
     }),
 });

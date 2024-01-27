@@ -5,17 +5,14 @@ import { formatCurrency } from '@/utils/helpers';
 import { useDate } from '@/utils/hooks';
 import { trpc } from '@/utils/trpc';
 import { Card, Color, Flex, Grid, Icon, Metric, Text } from '@tremor/react';
-import { endOfDay, startOfDay } from 'date-fns';
 import { List, Minus, Plus } from 'lucide-react';
 import { Skeleton } from '../ui/skeleton';
-
-const currentDate = new Date();
 
 const TopStats = () => {
   const { date } = useDate();
   const { data, isLoading } = trpc.user.getMonthlyInfo.useQuery({
-    from: date?.from ? date.from : startOfDay(currentDate),
-    to: date?.to ? date.to : endOfDay(currentDate),
+    from: date?.from,
+    to: date?.to,
   });
 
   /**

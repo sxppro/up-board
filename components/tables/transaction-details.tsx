@@ -1,7 +1,7 @@
 'use client';
 
 import { formatCurrency } from '@/utils/helpers';
-import { useTags, useTransaction } from '@/utils/hooks';
+import { trpc } from '@/utils/trpc';
 import TableSkeleton from '../core/table-skeleton';
 import TransactionTagsCombobox from '../core/transaction-tags-combobox';
 import { Badge } from '../ui/badge';
@@ -18,8 +18,9 @@ interface TransactionDetailsProps {
 }
 
 const TransactionDetails = ({ transactionId }: TransactionDetailsProps) => {
-  const { data: txDetails, isLoading } = useTransaction(transactionId);
-  const { data: tags } = useTags();
+  const { data: txDetails, isLoading } =
+    trpc.user.getTransactionById.useQuery(transactionId);
+  const { data: tags } = trpc.user.getTags.useQuery();
   const isTagged =
     txDetails && Array.isArray(txDetails.tags) && txDetails.tags.length > 0;
 

@@ -15,10 +15,10 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { cn } from '@/utils/helpers';
+import { trpc } from '@/utils/trpc';
 import { CheckIcon, PlusCircleIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { mutate } from 'swr';
 
 interface TxTagsComboboxProps {
   txId: string;
@@ -43,6 +43,7 @@ const TransactionTagsCombobox = ({
   const [input, setInput] = useState<string>('');
   const selectedValues = new Set<string>(filterValues);
   const router = useRouter();
+  const utils = trpc.useUtils();
 
   const addTags = async (id: string, tags: string[]) => {
     await fetch(`/api/tags/${id}`, {
@@ -51,8 +52,8 @@ const TransactionTagsCombobox = ({
         tags,
       }),
     });
-    mutate(`/api/transaction/${id}`);
-    mutate('/api/tags');
+    utils.user.getTransactionById.invalidate(txId);
+    utils.user.getTags.invalidate();
   };
   const deleteTags = async (id: string, tags: string[]) => {
     await fetch(`/api/tags/${id}`, {
@@ -61,7 +62,7 @@ const TransactionTagsCombobox = ({
         tags,
       }),
     });
-    mutate(`/api/transaction/${id}`);
+    utils.user.getTransactionById.invalidate(txId);
   };
 
   const handleTagSelect = async (value: string) => {

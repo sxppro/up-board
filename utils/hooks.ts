@@ -1,5 +1,4 @@
 import {
-  FilteredTransactionResource,
   TransactionAccountType,
   TransactionRetrievalOptions,
 } from '@/types/custom';
@@ -64,28 +63,10 @@ export const useTransactions = (
   };
 };
 
-export const useTransaction = (id: string) => {
-  const { data, isLoading, error } = useSWR(`/api/transaction/${id}`, fetcher);
-  return {
-    data: (data?.data || data) as FilteredTransactionResource,
-    isLoading,
-    isError: error,
-  };
-};
-
 export const useDate = () => {
   const context = useContext(DateContext);
   if (context === undefined) {
     throw new Error('useDate must be used within DateProvider');
   }
   return context;
-};
-
-export const useTags = () => {
-  const { data, isLoading, error } = useSWR('/api/tags', fetcher);
-  return {
-    data: data?.data || data,
-    isLoading,
-    isError: error,
-  };
 };
