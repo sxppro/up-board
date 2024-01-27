@@ -1,8 +1,17 @@
+import { endOfDay, startOfDay } from 'date-fns';
 import { z } from 'zod';
 
+const now = new Date();
+
 export const DateRangeSchema = z.object({
-  from: z.coerce.date(),
-  to: z.coerce.date(),
+  from: z.coerce
+    .date()
+    .optional()
+    .default(() => startOfDay(now)),
+  to: z.coerce
+    .date()
+    .optional()
+    .default(() => endOfDay(now)),
 });
 export type DateRange = z.infer<typeof DateRangeSchema>;
 
