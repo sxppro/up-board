@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import { CategoryOption } from '@/types/custom';
+import { TransactionCategoryOption } from '@/server/schemas';
 import { Table } from '@tanstack/react-table';
 import { X } from 'lucide-react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
@@ -9,7 +9,7 @@ import { DataTableViewOptions } from './data-table-view-options';
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>;
-  options: CategoryOption[];
+  options: TransactionCategoryOption[];
 }
 
 export function DataTableToolbar<TData>({
