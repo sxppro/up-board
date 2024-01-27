@@ -1,5 +1,5 @@
+import { AccountBalanceHistory } from '@/server/schemas';
 import {
-  AccountBalanceHistory,
   DbTransactionResource,
   FilteredTransactionResource,
 } from '@/types/custom';
@@ -57,9 +57,7 @@ export const formatCurrency = (number: number, decimals: boolean = true) =>
  * @param data
  * @returns
  */
-export const formatDateFromNums = (
-  data: AccountBalanceHistory[] | undefined
-) => {
+export const addFormattedDate = (data: AccountBalanceHistory[] | undefined) => {
   return data
     ? data.map(({ Day, Month, Year, ...rest }) => {
         const date = new Date(Year, Month - 1, Day);

@@ -1,5 +1,5 @@
 import { getAccountBalance, getCategoryInfo, getMonthlyInfo } from '@/db';
-import { TransactionAccountType } from '@/types/custom';
+import { TransactionAccountType } from '@/server/schemas';
 import { getCurrentUser } from '@/utils/auth';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -44,8 +44,7 @@ export async function GET(request: NextRequest) {
         return NextResponse.json({ data });
       } else if (type === 'accountBalance') {
         const data = await getAccountBalance(
-          from,
-          to,
+          { from, to },
           (request.nextUrl.searchParams.get(
             'account'
           ) as TransactionAccountType) || 'transactional'

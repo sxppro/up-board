@@ -1,6 +1,8 @@
 import type {
+  AccountBalanceHistory,
   AccountMonthlyInfo,
   DateRange,
+  TransactionAccountType,
   TransactionCategoryInfo,
   TransactionCategoryOption,
   TransactionCategoryType,
@@ -8,7 +10,6 @@ import type {
 import {
   DateRangeNoUndef,
   DbTransactionResource,
-  TransactionAccountType,
   TransactionRetrievalOptions,
 } from '@/types/custom';
 import { components } from '@/types/up-api';
@@ -314,16 +315,15 @@ const getTransfers = async (dateRange: DateRange) => {
  * @returns
  */
 const getAccountBalance = async (
-  start: Date,
-  end: Date,
+  dateRange: DateRange,
   account: TransactionAccountType
 ) => {
   const { db } = await connectToDatabase('up');
   const transactions = db.collection<DbTransactionResource>('transactions');
-  const cursor = transactions.aggregate(
+  const cursor = transactions.aggregate<AccountBalanceHistory>(
     accountBalancePipeline(
-      start,
-      end,
+      dateRange.from,
+      dateRange.to,
       (account === 'transactional'
         ? process.env.UP_TRANS_ACC
         : process.env.UP_SAVINGS_ACC) || ''

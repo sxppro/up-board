@@ -9,7 +9,7 @@ import { useContext } from 'react';
 import { DateRange } from 'react-day-picker';
 import useSWR from 'swr';
 import { DateContext } from './contexts';
-import { formatDateFromNums } from './helpers';
+import { addFormattedDate } from './helpers';
 
 const fetcher = (input: RequestInfo, init?: RequestInit) =>
   fetch(input, init).then((res) => res.json());
@@ -72,7 +72,7 @@ export const useAccountBalanceHistorical = (
   );
 
   return {
-    data: formatDateFromNums(data?.data || data),
+    data: addFormattedDate(data?.data || data),
     isLoading,
     isError: error,
   };

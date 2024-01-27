@@ -42,15 +42,6 @@ export interface MonthlyMetric {
   Transactions: number;
 }
 
-export interface AccountBalanceHistory {
-  Timestamp: string;
-  Year: number;
-  Month: number;
-  Day: number;
-  Amount: number;
-  Balance: number;
-}
-
 export type DateRangeContext = {
   date: DateRange | undefined;
   setDate: (date: DateRange | undefined) => void;

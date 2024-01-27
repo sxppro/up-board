@@ -15,6 +15,14 @@ export const DateRangeSchema = z.object({
 });
 export type DateRange = z.infer<typeof DateRangeSchema>;
 
+export const TransactionAccountTypeSchema = z.enum([
+  'transactional',
+  'savings',
+]);
+export type TransactionAccountType = z.infer<
+  typeof TransactionAccountTypeSchema
+>;
+
 export const TransactionCategoryOptionSchema = z.object({
   name: z.string(),
   value: z.string(),
@@ -45,3 +53,17 @@ export const AccountMonthlyInfoSchema = z.object({
   Transactions: z.number(),
 });
 export type AccountMonthlyInfo = z.infer<typeof AccountMonthlyInfoSchema>;
+
+/**
+ * ! Note: until you add a data transformer to the query client
+ * ! timestamp is an ISO string on the client
+ */
+export const AccountBalanceHistorySchema = z.object({
+  Timestamp: z.date(),
+  Year: z.number(),
+  Month: z.number(),
+  Day: z.number(),
+  Amount: z.number(),
+  Balance: z.number(),
+});
+export type AccountBalanceHistory = z.infer<typeof AccountBalanceHistorySchema>;
