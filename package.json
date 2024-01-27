@@ -32,7 +32,7 @@
     "@trpc/server": "11.0.0-next-beta.228",
     "@vercel/analytics": "^1.1.1",
     "autoprefixer": "10.4.14",
-    "bson": "^5.4.0",
+    "bson": "^6.2.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
     "cmdk": "^0.2.0",
