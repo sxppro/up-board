@@ -13,7 +13,7 @@ const MonthlyInOut = () => {
     from: startOfMonth(subYears(currentDate, 1)),
     to: currentDate,
   });
-  const metrics =
+  const dataWithFormattedDate =
     !isLoading &&
     data &&
     data.map(({ Month, Year, ...rest }) => {
@@ -32,7 +32,7 @@ const MonthlyInOut = () => {
       </div>
       <BarChart
         className="flex-1"
-        data={metrics ? metrics : []}
+        data={dataWithFormattedDate || []}
         index="FormattedDate"
         categories={['Income', 'Expenses']}
         colors={['indigo', 'fuchsia']}

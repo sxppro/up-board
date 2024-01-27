@@ -1,6 +1,5 @@
 import {
   FilteredTransactionResource,
-  MonthlyMetric,
   TransactionAccountType,
   TransactionRetrievalOptions,
 } from '@/types/custom';
@@ -9,28 +8,9 @@ import { useContext } from 'react';
 import { DateRange } from 'react-day-picker';
 import useSWR from 'swr';
 import { DateContext } from './contexts';
-import { addFormattedDate } from './helpers';
 
 const fetcher = (input: RequestInfo, init?: RequestInit) =>
   fetch(input, init).then((res) => res.json());
-
-export const useMonthlyMetrics = (start: Date, end: Date) => {
-  const { data, error, isLoading } = useSWR(
-    '/api/metrics?' +
-      new URLSearchParams({
-        type: 'monthly',
-        start: start.toISOString(),
-        end: end.toISOString(),
-      }),
-    fetcher
-  );
-
-  return {
-    data: (data?.data || data) as MonthlyMetric[],
-    isLoading,
-    isError: error,
-  };
-};
 
 export const useCategoryMetrics = (
   start: Date | undefined,
@@ -50,29 +30,6 @@ export const useCategoryMetrics = (
 
   return {
     data: data?.data || data,
-    isLoading,
-    isError: error,
-  };
-};
-
-export const useAccountBalanceHistorical = (
-  start: Date | undefined,
-  end: Date | undefined,
-  account: TransactionAccountType
-) => {
-  const { data, error, isLoading } = useSWR(
-    '/api/metrics?' +
-      new URLSearchParams({
-        type: 'accountBalance',
-        start: start?.toISOString() || '',
-        end: end?.toISOString() || '',
-        account,
-      }),
-    fetcher
-  );
-
-  return {
-    data: addFormattedDate(data?.data || data),
     isLoading,
     isError: error,
   };
