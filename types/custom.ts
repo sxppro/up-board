@@ -34,11 +34,6 @@ export interface FilteredTransactionResource {
   tags: string[];
 }
 
-export interface CategoryOption {
-  value: string;
-  name: string;
-}
-
 export interface MonthlyMetric {
   Year: number;
   Month: number;

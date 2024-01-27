@@ -2,10 +2,10 @@ import type {
   AccountMonthlyInfo,
   DateRange,
   TransactionCategoryInfo,
+  TransactionCategoryOption,
+  TransactionCategoryType,
 } from '@/server/schemas';
-import { TransactionCategoryType } from '@/server/schemas';
 import {
-  CategoryOption,
   DateRangeNoUndef,
   DbTransactionResource,
   TransactionAccountType,
@@ -272,7 +272,7 @@ export const getCategories = async (type: TransactionCategoryType) => {
       'relationships.parent.data': type === 'child' ? { $ne: null } : null,
     })
     .sort({ 'attributes.name': 1 })
-    .project<CategoryOption>({
+    .project<TransactionCategoryOption>({
       _id: 0,
       value: '$attributes.name',
       name: '$attributes.name',
