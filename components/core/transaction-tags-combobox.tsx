@@ -14,6 +14,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
+import { TransactionTagsModification } from '@/server/schemas';
 import { cn } from '@/utils/helpers';
 import { trpc } from '@/utils/trpc';
 import { CheckIcon, PlusCircleIcon } from 'lucide-react';
@@ -44,43 +45,51 @@ const TransactionTagsCombobox = ({
   const selectedValues = new Set<string>(filterValues);
   const router = useRouter();
   const utils = trpc.useUtils();
-  const addTags = trpc.user.addTag.useMutation();
+  const addTags = trpc.user.addTags.useMutation();
+  const deleteTags = trpc.user.deleteTags.useMutation();
 
-  const deleteTags = async (id: string, tags: string[]) => {
-    await fetch(`/api/tags/${id}`, {
-      method: 'DELETE',
-      body: JSON.stringify({
-        tags,
-      }),
-    });
-    utils.user.getTransactionById.invalidate(txId);
+  const invalidateQueries = (input: TransactionTagsModification) => {
+    const { transactionId } = input;
+    utils.user.getTransactionById.invalidate(transactionId);
+    utils.user.getTags.invalidate();
+    router.refresh();
   };
 
-  const handleTagSelect = async (value: string) => {
+  const handleSelectTag = async (value: string) => {
     if (selectedValues.has(value)) {
       selectedValues.delete(value);
-      await deleteTags(txId, [value]);
+      deleteTags.mutate(
+        { transactionId: txId, tags: [value] },
+        {
+          onSuccess: (_, input) => {
+            invalidateQueries(input);
+          },
+        }
+      );
     } else {
       selectedValues.add(value);
       addTags.mutate(
         { transactionId: txId, tags: Array.from(selectedValues) },
         {
           onSuccess: (_, input) => {
-            console.log(input);
-            utils.user.getTransactionById.invalidate(txId);
-            utils.user.getTags.invalidate();
+            invalidateQueries(input);
           },
         }
       );
     }
     const filterValues = Array.from(selectedValues);
     setFilterValues(filterValues.length ? filterValues : []);
-    router.refresh();
   };
-  const handleClearTags = async () => {
-    await deleteTags(txId, Array.from(selectedValues));
+  const handleRemoveAllTags = async () => {
+    deleteTags.mutate(
+      { transactionId: txId, tags: Array.from(selectedValues) },
+      {
+        onSuccess: (_, input) => {
+          invalidateQueries(input);
+        },
+      }
+    );
     setFilterValues([]);
-    router.refresh();
   };
 
   return (
@@ -111,7 +120,7 @@ const TransactionTagsCombobox = ({
                   <CommandItem
                     key={option.value}
                     onSelect={async () => {
-                      await handleTagSelect(option.value);
+                      await handleSelectTag(option.value);
                     }}
                   >
                     <div
@@ -139,7 +148,7 @@ const TransactionTagsCombobox = ({
               <CommandGroup heading="Create tag">
                 <CommandItem
                   value={input.trim()}
-                  onSelect={async () => await handleTagSelect(input)}
+                  onSelect={async () => await handleSelectTag(input)}
                 >
                   <div
                     className={cn(
@@ -160,7 +169,7 @@ const TransactionTagsCombobox = ({
                 <CommandSeparator />
                 <CommandGroup>
                   <CommandItem
-                    onSelect={() => handleClearTags()}
+                    onSelect={() => handleRemoveAllTags()}
                     className="justify-center text-center"
                   >
                     Clear all tags

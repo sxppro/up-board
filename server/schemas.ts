@@ -47,6 +47,19 @@ export type TransactionCategoryInfo = z.infer<
   typeof TransactionCategoryInfoSchema
 >;
 
+export const TransactionTagsModificationSchema = z.object({
+  transactionId: TransactionIdSchema,
+  tags: z
+    .string()
+    .max(30, {
+      message: 'Tag must be 30 characters or fewer',
+    })
+    .array(),
+});
+export type TransactionTagsModification = z.infer<
+  typeof TransactionTagsModificationSchema
+>;
+
 export const AccountMonthlyInfoSchema = z.object({
   Year: z.number(),
   Month: z.number(),
