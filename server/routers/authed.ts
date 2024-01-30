@@ -4,9 +4,10 @@ import {
   getCategoryInfo,
   getMonthlyInfo,
   getTransactionById,
+  replaceTransactions,
 } from '@/db';
 import { filterTransactionFields } from '@/utils/helpers';
-import { getTags } from '@/utils/up';
+import { addTags, getTags } from '@/utils/up';
 import { TRPCError } from '@trpc/server';
 import { format } from 'date-fns';
 import { z } from 'zod';
@@ -17,6 +18,7 @@ import {
   TransactionAccountTypeSchema,
   TransactionCategoryInfoSchema,
   TransactionCategoryTypeSchema,
+  TransactionIdSchema,
 } from '../schemas';
 import { authedProcedure, router } from '../trpc';
 
@@ -29,6 +31,30 @@ export const authedRouter = router({
   getTags: authedProcedure.query(async () =>
     (await getTags()).map(({ id }) => ({ name: id, value: id }))
   ),
+  addTag: authedProcedure
+    .input(
+      z.object({
+        transactionId: TransactionIdSchema,
+        tags: z
+          .string()
+          .max(30, {
+            message: 'Tag must be 30 characters or fewer',
+          })
+          .array(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const { transactionId, tags } = input;
+      const { error, response } = await addTags(transactionId, tags);
+      if (error) {
+        console.error(error);
+        throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' });
+      }
+      const res = await replaceTransactions([transactionId]);
+      if (!response.ok || res !== 1) {
+        throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' });
+      }
+    }),
   getMonthlyInfo: authedProcedure
     .input(DateRangeSchema)
     .output(z.array(AccountMonthlyInfoSchema))
@@ -44,7 +70,8 @@ export const authedRouter = router({
     )
     .output(z.array(TransactionCategoryInfoSchema))
     .query(async ({ input }) => {
-      return await getCategoryInfo(input.dateRange, input.type);
+      const { dateRange, type } = input;
+      return await getCategoryInfo(dateRange, type);
     }),
   getAccountBalance: authedProcedure
     .input(
@@ -57,10 +84,8 @@ export const authedRouter = router({
       z.array(AccountBalanceHistorySchema.extend({ FormattedDate: z.string() }))
     )
     .query(async ({ input }) => {
-      const accountBalance = await getAccountBalance(
-        input.dateRange,
-        input.account
-      );
+      const { dateRange, account } = input;
+      const accountBalance = await getAccountBalance(dateRange, account);
       return accountBalance.map(({ Timestamp, ...rest }) => {
         return {
           ...rest,
@@ -70,7 +95,7 @@ export const authedRouter = router({
       });
     }),
   getTransactionById: authedProcedure
-    .input(z.string().uuid())
+    .input(TransactionIdSchema)
     .query(async ({ input }) => {
       const transaction = await getTransactionById(input);
       if (!transaction) {

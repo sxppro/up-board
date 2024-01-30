@@ -15,6 +15,8 @@ export const DateRangeSchema = z.object({
 });
 export type DateRange = z.infer<typeof DateRangeSchema>;
 
+export const TransactionIdSchema = z.string().uuid();
+
 export const TransactionAccountTypeSchema = z.enum([
   'transactional',
   'savings',

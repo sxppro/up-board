@@ -44,17 +44,8 @@ const TransactionTagsCombobox = ({
   const selectedValues = new Set<string>(filterValues);
   const router = useRouter();
   const utils = trpc.useUtils();
+  const addTags = trpc.user.addTag.useMutation();
 
-  const addTags = async (id: string, tags: string[]) => {
-    await fetch(`/api/tags/${id}`, {
-      method: 'POST',
-      body: JSON.stringify({
-        tags,
-      }),
-    });
-    utils.user.getTransactionById.invalidate(txId);
-    utils.user.getTags.invalidate();
-  };
   const deleteTags = async (id: string, tags: string[]) => {
     await fetch(`/api/tags/${id}`, {
       method: 'DELETE',
@@ -71,7 +62,16 @@ const TransactionTagsCombobox = ({
       await deleteTags(txId, [value]);
     } else {
       selectedValues.add(value);
-      await addTags(txId, Array.from(selectedValues));
+      addTags.mutate(
+        { transactionId: txId, tags: Array.from(selectedValues) },
+        {
+          onSuccess: (_, input) => {
+            console.log(input);
+            utils.user.getTransactionById.invalidate(txId);
+            utils.user.getTags.invalidate();
+          },
+        }
+      );
     }
     const filterValues = Array.from(selectedValues);
     setFilterValues(filterValues.length ? filterValues : []);
