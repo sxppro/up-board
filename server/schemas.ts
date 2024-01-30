@@ -47,6 +47,24 @@ export type TransactionCategoryInfo = z.infer<
   typeof TransactionCategoryInfoSchema
 >;
 
+const TransactionStatusEnum = z.enum(['HELD', 'SETTLED']);
+
+export const TransactionResourceFilteredSchema = z.object({
+  id: z.string().uuid(),
+  description: z.string(),
+  rawText: z.string().nullable(),
+  amount: z.string(),
+  amountRaw: z.number(),
+  time: z.string().datetime(),
+  status: TransactionStatusEnum,
+  category: z.string(),
+  parentCategory: z.string(),
+  tags: z.string().array(),
+});
+export type TransactionResourceFiltered = z.infer<
+  typeof TransactionResourceFilteredSchema
+>;
+
 export const TransactionTagsModificationSchema = z.object({
   transactionId: TransactionIdSchema,
   tags: z

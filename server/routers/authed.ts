@@ -19,6 +19,7 @@ import {
   TransactionCategoryInfoSchema,
   TransactionCategoryTypeSchema,
   TransactionIdSchema,
+  TransactionResourceFilteredSchema,
   TransactionTagsModificationSchema,
 } from '../schemas';
 import { authedProcedure, router } from '../trpc';
@@ -101,6 +102,7 @@ export const authedRouter = router({
     }),
   getTransactionById: authedProcedure
     .input(TransactionIdSchema)
+    .output(TransactionResourceFilteredSchema)
     .query(async ({ input }) => {
       const transaction = await getTransactionById(input);
       if (!transaction) {

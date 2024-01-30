@@ -16,12 +16,12 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { useToast } from '@/components/ui/use-toast';
-import { FilteredTransactionResource } from '@/types/custom';
+import { TransactionResourceFiltered } from '@/server/schemas';
 import { Row } from '@tanstack/react-table';
 import { ClipboardCheck, MoreHorizontal } from 'lucide-react';
 
 interface DataTableRowActionsProps {
-  row: Row<FilteredTransactionResource>;
+  row: Row<TransactionResourceFiltered>;
 }
 
 const DataTableRowActions = ({ row }: DataTableRowActionsProps) => {

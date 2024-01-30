@@ -34,14 +34,6 @@ export interface FilteredTransactionResource {
   tags: string[];
 }
 
-export interface MonthlyMetric {
-  Year: number;
-  Month: number;
-  Income: number;
-  Expenses: number;
-  Transactions: number;
-}
-
 export type DateRangeContext = {
   date: DateRange | undefined;
   setDate: (date: DateRange | undefined) => void;

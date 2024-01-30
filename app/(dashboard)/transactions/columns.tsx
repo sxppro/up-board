@@ -9,14 +9,14 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
-import { FilteredTransactionResource } from '@/types/custom';
+import { TransactionResourceFiltered } from '@/server/schemas';
 import { ColumnDef } from '@tanstack/react-table';
 import { formatDistanceToNow } from 'date-fns';
 import { enAU } from 'date-fns/locale';
 import { ArrowUpDown } from 'lucide-react';
 import DataTableRowActions from './data-table-row-actions';
 
-export const columns: ColumnDef<FilteredTransactionResource>[] = [
+export const columns: ColumnDef<TransactionResourceFiltered>[] = [
   {
     id: 'select',
     header: ({ table }) => (

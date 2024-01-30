@@ -1,8 +1,8 @@
-import { AccountBalanceHistory } from '@/server/schemas';
 import {
-  DbTransactionResource,
-  FilteredTransactionResource,
-} from '@/types/custom';
+  AccountBalanceHistory,
+  TransactionResourceFiltered,
+} from '@/server/schemas';
+import { DbTransactionResource } from '@/types/custom';
 import type { components } from '@/types/up-api';
 import { clsx, type ClassValue } from 'clsx';
 import { format } from 'date-fns';
@@ -86,7 +86,7 @@ export function cn(...inputs: ClassValue[]) {
  */
 export const filterTransactionFields = (
   transactions: components['schemas']['TransactionResource'][]
-): FilteredTransactionResource[] => {
+): TransactionResourceFiltered[] => {
   return transactions.map((transaction) => {
     const { id, attributes, relationships } = transaction;
     return {
