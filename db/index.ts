@@ -284,9 +284,6 @@ export const getCategories = async (type: TransactionCategoryType) => {
 
 /**
  * Retrieves bank transfers by account and date range
- * @param accountId
- * @param from
- * @param to
  * @returns
  */
 const getTransfers = async (dateRange: DateRange) => {

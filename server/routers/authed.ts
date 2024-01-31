@@ -4,6 +4,8 @@ import {
   getCategoryInfo,
   getMonthlyInfo,
   getTransactionById,
+  getTransactionsByDate,
+  getTransfers,
   replaceTransactions,
 } from '@/db';
 import { filterTransactionFields } from '@/utils/helpers';
@@ -20,6 +22,7 @@ import {
   TransactionCategoryTypeSchema,
   TransactionIdSchema,
   TransactionResourceFilteredSchema,
+  TransactionRetrievalOptionsSchema,
   TransactionTagsModificationSchema,
 } from '../schemas';
 import { authedProcedure, router } from '../trpc';
@@ -99,6 +102,26 @@ export const authedRouter = router({
           FormattedDate: format(Timestamp, 'dd LLL yy'),
         };
       });
+    }),
+  getTransactionsByDate: authedProcedure
+    .input(TransactionRetrievalOptionsSchema)
+    .query(async ({ input }) => {
+      const { account, dateRange, type, ...options } = input;
+      if (type === 'transactions') {
+        const transactions = await getTransactionsByDate(
+          account === 'transactional'
+            ? process.env.UP_TRANS_ACC || ''
+            : account === 'savings'
+            ? process.env.UP_SAVINGS_ACC || ''
+            : '',
+          dateRange,
+          options
+        );
+        return filterTransactionFields(transactions);
+      } else if (type === 'transfers') {
+        const transfers = await getTransfers(dateRange);
+        return filterTransactionFields(transfers);
+      }
     }),
   getTransactionById: authedProcedure
     .input(TransactionIdSchema)

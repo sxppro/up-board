@@ -185,7 +185,7 @@ const monthlyStatsPipeline = (from: Date, to: Date, accountId: string) => [
 ];
 
 /**
- * Pipeline for calculating number of transacrtions
+ * Pipeline for calculating number of transactions
  * and total spending per transaction category for
  * specified account
  * @param from

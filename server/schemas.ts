@@ -49,6 +49,8 @@ export type TransactionCategoryInfo = z.infer<
 
 const TransactionStatusEnum = z.enum(['HELD', 'SETTLED']);
 
+const TransactionTypeEnum = z.enum(['transactions', 'transfers']);
+
 export const TransactionResourceFilteredSchema = z.object({
   id: z.string().uuid(),
   description: z.string(),
@@ -63,6 +65,18 @@ export const TransactionResourceFilteredSchema = z.object({
 });
 export type TransactionResourceFiltered = z.infer<
   typeof TransactionResourceFilteredSchema
+>;
+
+export const TransactionRetrievalOptionsSchema = z.object({
+  account: TransactionAccountTypeSchema,
+  dateRange: DateRangeSchema,
+  type: TransactionTypeEnum,
+  sort: z.enum(['time', 'amount']),
+  sortDir: z.enum(['asc', 'desc']),
+  limit: z.number().optional(),
+});
+export type TransactionRetrievalOptions = z.infer<
+  typeof TransactionRetrievalOptionsSchema
 >;
 
 export const TransactionTagsModificationSchema = z.object({
