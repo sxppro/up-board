@@ -1,10 +1,6 @@
 import { columns } from '@/app/(dashboard)/transactions/columns';
 import { DataTable } from '@/app/(dashboard)/transactions/data-table';
-import {
-  getChildCategories,
-  getTransactionsByDate,
-  searchTransactions,
-} from '@/db';
+import { getCategories, getTransactionsByDate, searchTransactions } from '@/db';
 import { filterTransactionFields } from '@/utils/helpers';
 import { subMonths } from 'date-fns';
 
@@ -23,7 +19,7 @@ const TransactionTable = async ({ search }: TransactionTableProps) => {
           { sort: 'time', sortDir: 'desc' }
         )
   );
-  const categories = await getChildCategories();
+  const categories = await getCategories('child');
 
   return (
     <DataTable

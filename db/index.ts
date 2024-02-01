@@ -1,8 +1,14 @@
-import {
-  CategoryOption,
-  DateRangeNoUndef,
-  DbTransactionResource,
+import type {
+  AccountBalanceHistory,
+  AccountMonthlyInfo,
+  DateRange,
   TransactionAccountType,
+  TransactionCategoryInfo,
+  TransactionCategoryOption,
+  TransactionCategoryType,
+} from '@/server/schemas';
+import {
+  DbTransactionResource,
   TransactionRetrievalOptions,
 } from '@/types/custom';
 import { components } from '@/types/up-api';
@@ -10,7 +16,6 @@ import { outputTransactionFields } from '@/utils/helpers';
 import { getTransactionById as getUpTransactionById } from '@/utils/up';
 import { UUID } from 'bson';
 import { MongoBulkWriteError } from 'mongodb';
-import { DateRange } from 'react-day-picker';
 import { connectToDatabase } from './connect';
 import {
   accountBalancePipeline,
@@ -47,7 +52,7 @@ export const convertUpToDbTransaction = (
  * Inserts transactions to db
  * @param data list of transactions
  */
-const insertTransactions = async (
+export const insertTransactions = async (
   data: components['schemas']['TransactionResource'][]
 ) => {
   if (data.length < 1) {
@@ -101,7 +106,7 @@ const insertTransactions = async (
  * @param transactionIds array of transaction IDs
  * @returns number of transactions replaced
  */
-const replaceTransactions = async (transactionIds: string[]) => {
+export const replaceTransactions = async (transactionIds: string[]) => {
   const { db } = await connectToDatabase('up');
   const transactions = db.collection('transactions');
   let replacedTransactions = 0;
@@ -123,58 +128,11 @@ const replaceTransactions = async (transactionIds: string[]) => {
 };
 
 /**
- * Monthly transaction statistics between 2 dates
- * @param start start date
- * @param end end date
- * @returns list of stats for each month
- */
-const monthlyStats = async (start: Date, end: Date) => {
-  if (!process.env.UP_TRANS_ACC) {
-    throw new Error('Up transaction account not defined');
-  }
-
-  const { db } = await connectToDatabase('up');
-  const transactions = db.collection<DbTransactionResource>('transactions');
-  const cursor = transactions.aggregate(
-    monthlyStatsPipeline(start, end, process.env.UP_TRANS_ACC)
-  );
-  const results = await cursor.toArray();
-  await cursor.close();
-  return results;
-};
-
-/**
- * Generates category stats for transactions
- * between 2 dates
- * @param start
- * @param end
- * @returns list of stats for each category
- */
-const categoryStats = async (
-  start: Date,
-  end: Date,
-  type: 'child' | 'parent'
-) => {
-  if (!process.env.UP_TRANS_ACC) {
-    throw new Error('Up transaction account not defined');
-  }
-
-  const { db } = await connectToDatabase('up');
-  const transactions = db.collection<DbTransactionResource>('transactions');
-  const cursor = transactions.aggregate(
-    categoriesPipeline(start, end, process.env.UP_TRANS_ACC, type)
-  );
-  const results = await cursor.toArray();
-  await cursor.close();
-  return results;
-};
-
-/**
  * Search transactions
  * @param search
  * @returns
  */
-const searchTransactions = async (search: string) => {
+export const searchTransactions = async (search: string) => {
   const { db } = await connectToDatabase('up');
   const transactions = db.collection<DbTransactionResource>('transactions');
   const cursor = transactions.aggregate<DbTransactionResource>(
@@ -188,6 +146,56 @@ const searchTransactions = async (search: string) => {
 };
 
 /**
+ * Monthly transaction statistics between 2 dates
+ * @param dateRange
+ * @returns list of stats for each month
+ */
+export const getMonthlyInfo = async (dateRange: DateRange) => {
+  if (!process.env.UP_TRANS_ACC) {
+    throw new Error('Up transaction account not defined');
+  }
+
+  const { db } = await connectToDatabase('up');
+  const transactions = db.collection<DbTransactionResource>('transactions');
+  const cursor = transactions.aggregate<AccountMonthlyInfo>(
+    monthlyStatsPipeline(dateRange.from, dateRange.to, process.env.UP_TRANS_ACC)
+  );
+  const results = await cursor.toArray();
+  await cursor.close();
+  return results;
+};
+
+/**
+ * Generates category stats for transactions
+ * between 2 dates
+ * @param start
+ * @param end
+ * @returns list of stats for each category
+ */
+export const getCategoryInfo = async (
+  dateRange: DateRange,
+  type: TransactionCategoryType
+) => {
+  if (!process.env.UP_TRANS_ACC) {
+    throw new Error('Up transaction account not defined');
+  }
+
+  const { db } = await connectToDatabase('up');
+  const transactions = db.collection<DbTransactionResource>('transactions');
+  const cursor = transactions.aggregate<TransactionCategoryInfo>(
+    categoriesPipeline(
+      dateRange.from,
+      dateRange.to,
+      process.env.UP_TRANS_ACC,
+      type
+    )
+  );
+  const results = await cursor.toArray();
+  await cursor.close();
+  return results;
+};
+
+/**
  * Retrieves transactions between 2 dates
  * @param dateRange
  * @param options
@@ -195,7 +203,7 @@ const searchTransactions = async (search: string) => {
  */
 const getTransactionsByDate = async (
   account: string,
-  dateRange: DateRangeNoUndef,
+  dateRange: DateRange,
   options: TransactionRetrievalOptions
 ) => {
   const { db } = await connectToDatabase('up');
@@ -252,41 +260,29 @@ const getTransactionsByTag = async () => {
 };
 
 /**
- * Retrieves child categories
+ * Retrieves category details
+ * @param type child or parent categories
  * @returns
  */
-const getChildCategories = async () => {
+export const getCategories = async (type: TransactionCategoryType) => {
   const { db } = await connectToDatabase('up');
   const categories = db.collection('categories');
   const cursor = categories
     .find({
-      'relationships.parent.data': { $ne: null },
+      'relationships.parent.data': type === 'child' ? { $ne: null } : null,
     })
     .sort({ 'attributes.name': 1 })
-    .project({ _id: 0, value: '$attributes.name', name: '$attributes.name' });
-  const results = (await cursor.toArray()) as CategoryOption[];
-  return results;
-};
-
-/**
- * Retrieves parent categories
- * @returns
- */
-const getParentCategories = async () => {
-  const { db } = await connectToDatabase('up');
-  const categories = db.collection('categories');
-  const cursor = categories
-    .find({ 'relationships.parent.data': null })
-    .project({ _id: 0, value: '$_id', name: '$attributes.name' });
-  const results = (await cursor.toArray()) as CategoryOption[];
+    .project<TransactionCategoryOption>({
+      _id: 0,
+      value: '$attributes.name',
+      name: '$attributes.name',
+    });
+  const results = await cursor.toArray();
   return results;
 };
 
 /**
  * Retrieves bank transfers by account and date range
- * @param accountId
- * @param from
- * @param to
  * @returns
  */
 const getTransfers = async (dateRange: DateRange) => {
@@ -315,16 +311,15 @@ const getTransfers = async (dateRange: DateRange) => {
  * @returns
  */
 const getAccountBalance = async (
-  start: Date,
-  end: Date,
+  dateRange: DateRange,
   account: TransactionAccountType
 ) => {
   const { db } = await connectToDatabase('up');
   const transactions = db.collection<DbTransactionResource>('transactions');
-  const cursor = transactions.aggregate(
+  const cursor = transactions.aggregate<AccountBalanceHistory>(
     accountBalancePipeline(
-      start,
-      end,
+      dateRange.from,
+      dateRange.to,
       (account === 'transactional'
         ? process.env.UP_TRANS_ACC
         : process.env.UP_SAVINGS_ACC) || ''
@@ -336,17 +331,10 @@ const getAccountBalance = async (
 };
 
 export {
-  categoryStats,
   getAccountBalance,
-  getChildCategories,
-  getParentCategories,
   getTransactionById,
   getTransactionsByCategory,
   getTransactionsByDate,
   getTransactionsByTag,
   getTransfers,
-  insertTransactions,
-  monthlyStats,
-  replaceTransactions,
-  searchTransactions,
 };

@@ -34,29 +34,6 @@ export interface FilteredTransactionResource {
   tags: string[];
 }
 
-export interface CategoryOption {
-  value: string;
-  name: string;
-}
-
-export interface MonthlyMetric {
-  Year: number;
-  Month: number;
-  Day: undefined;
-  Income: number;
-  Expenses: number;
-  Transactions: number;
-}
-
-export interface AccountBalanceHistory {
-  Timestamp: string;
-  Year: number;
-  Month: number;
-  Day: number;
-  Amount: number;
-  Balance: number;
-}
-
 export type DateRangeContext = {
   date: DateRange | undefined;
   setDate: (date: DateRange | undefined) => void;
@@ -71,11 +48,6 @@ export type TransactionRetrievalOptions = {
   sort: 'time' | 'amount';
   sortDir: 'asc' | 'desc';
   limit?: number;
-};
-
-export type DateRangeNoUndef = {
-  from: Date;
-  to: Date;
 };
 
 export type TransactionAccountType = 'transactional' | 'savings';

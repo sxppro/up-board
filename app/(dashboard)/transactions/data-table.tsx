@@ -8,7 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { CategoryOption } from '@/types/custom';
+import { TransactionCategoryOption } from '@/server/schemas';
 import { cn } from '@/utils/helpers';
 import {
   ColumnDef,
@@ -28,7 +28,7 @@ import { DataTableToolbar } from './data-table-toolbar';
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
-  options: CategoryOption[];
+  options: TransactionCategoryOption[];
   className?: string;
   search?: string;
 }
@@ -38,6 +38,7 @@ export const DataTable = <TData, TValue>({
   columns,
   options,
   className,
+  search,
 }: DataTableProps<TData, TValue>) => {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -54,6 +55,12 @@ export const DataTable = <TData, TValue>({
       pagination: {
         pageSize: 8,
       },
+      columnFilters: [
+        {
+          id: 'description',
+          value: search,
+        },
+      ],
     },
     state: {
       columnFilters,

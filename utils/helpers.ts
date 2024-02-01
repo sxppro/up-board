@@ -1,13 +1,23 @@
 import {
   AccountBalanceHistory,
-  DbTransactionResource,
-  FilteredTransactionResource,
-  MonthlyMetric,
-} from '@/types/custom';
+  TransactionResourceFiltered,
+} from '@/server/schemas';
+import { DbTransactionResource } from '@/types/custom';
 import type { components } from '@/types/up-api';
 import { clsx, type ClassValue } from 'clsx';
 import { format } from 'date-fns';
 import { twMerge } from 'tailwind-merge';
+
+export const getBaseUrl = () => {
+  if (typeof window !== 'undefined')
+    // browser should use relative path
+    return '';
+  if (process.env.VERCEL_URL)
+    // vercel
+    return `https://${process.env.VERCEL_URL}`;
+  // localhost
+  return `http://localhost:${process.env.PORT ?? 3000}`;
+};
 
 /**
  * Debounces a callback
@@ -47,24 +57,14 @@ export const formatCurrency = (number: number, decimals: boolean = true) =>
  * @param data
  * @returns
  */
-export const formatDateFromNums = (
-  data: MonthlyMetric[] | AccountBalanceHistory[] | undefined
-) => {
+export const addFormattedDate = (data: AccountBalanceHistory[] | undefined) => {
   return data
     ? data.map(({ Day, Month, Year, ...rest }) => {
-        if (Day) {
-          const date = new Date(Year, Month - 1, Day);
-          return {
-            ...rest,
-            FormattedDate: format(date, 'dd LLL yy'),
-          };
-        } else {
-          const date = new Date(Year, Month - 1);
-          return {
-            ...rest,
-            FormattedDate: format(date, 'LLL yy'),
-          };
-        }
+        const date = new Date(Year, Month - 1, Day);
+        return {
+          ...rest,
+          FormattedDate: format(date, 'dd LLL yy'),
+        };
       })
     : [];
 };
@@ -86,7 +86,7 @@ export function cn(...inputs: ClassValue[]) {
  */
 export const filterTransactionFields = (
   transactions: components['schemas']['TransactionResource'][]
-): FilteredTransactionResource[] => {
+): TransactionResourceFiltered[] => {
   return transactions.map((transaction) => {
     const { id, attributes, relationships } = transaction;
     return {

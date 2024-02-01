@@ -1,21 +1,19 @@
 'use client';
 
-import { MonthlyMetric } from '@/types/custom';
+import { AccountMonthlyInfo } from '@/server/schemas';
 import { formatCurrency } from '@/utils/helpers';
-import { useDate, useMonthlyMetrics } from '@/utils/hooks';
+import { useDate } from '@/utils/hooks';
+import { trpc } from '@/utils/trpc';
 import { Card, Color, Flex, Grid, Icon, Metric, Text } from '@tremor/react';
-import { endOfDay, startOfDay } from 'date-fns';
 import { List, Minus, Plus } from 'lucide-react';
 import { Skeleton } from '../ui/skeleton';
 
-const currentDate = new Date();
-
 const TopStats = () => {
   const { date } = useDate();
-  const { data, isLoading } = useMonthlyMetrics(
-    date?.from ? date.from : startOfDay(currentDate),
-    date?.to ? date.to : endOfDay(currentDate)
-  );
+  const { data, isLoading } = trpc.user.getMonthlyInfo.useQuery({
+    from: date?.from,
+    to: date?.to,
+  });
 
   /**
    * Remaps data to shape consumable by component
@@ -26,7 +24,7 @@ const TopStats = () => {
     Income,
     Expenses,
     Transactions,
-  }: MonthlyMetric): {
+  }: AccountMonthlyInfo): {
     title: string;
     metric: string | number | undefined;
     icon: any;
@@ -70,7 +68,6 @@ const TopStats = () => {
           Transactions: 0,
           Year: 0,
           Month: 0,
-          Day: undefined,
         }
   );
 

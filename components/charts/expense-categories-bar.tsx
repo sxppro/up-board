@@ -1,6 +1,8 @@
 'use client';
 
-import { useCategoryMetrics } from '@/utils/hooks';
+import { TransactionCategoryInfo } from '@/server/schemas';
+import { useDate } from '@/utils/hooks';
+import { trpc } from '@/utils/trpc';
 import { CurrencyCircleDollar, ListNumbers } from '@phosphor-icons/react';
 import {
   BarList,
@@ -13,7 +15,6 @@ import {
   Text,
   Title,
 } from '@tremor/react';
-import { startOfMonth } from 'date-fns';
 import { useState } from 'react';
 import Loader from '../core/loader';
 
@@ -22,17 +23,16 @@ const categories = [
   { key: 'count', name: 'Count', icon: ListNumbers },
 ];
 
-// Sorry idk how to type swr yet
-const parseData = (data: any) => {
+const parseData = (data: TransactionCategoryInfo[]) => {
   return {
     amount: sortData(
-      data.map(({ category, amount }: any) => ({
+      data.map(({ category, amount }) => ({
         name: category,
         value: amount,
       }))
     ).slice(0, 5),
     count: sortData(
-      data.map(({ category, transactions }: any) => ({
+      data.map(({ category, transactions }) => ({
         name: category,
         value: transactions,
       }))
@@ -47,17 +47,17 @@ const sortData = (data: any[]) =>
     return 0;
   });
 
-const currentDate = new Date();
-
 const ExpenseCategoriesBar = () => {
+  const { date } = useDate();
+  const { data, isLoading } = trpc.user.getCategoryInfo.useQuery({
+    dateRange: {
+      from: date?.from,
+      to: date?.to,
+    },
+    type: 'child',
+  });
   const [selectedIndex, setSelectedIndex] = useState(0);
   const selectedCategory = selectedIndex === 0 ? 'amount' : 'count';
-
-  const { data, isLoading } = useCategoryMetrics(
-    startOfMonth(currentDate),
-    currentDate,
-    'child'
-  );
 
   return (
     <Card className="h-full max-w-md mx-auto flex flex-col">
@@ -87,7 +87,7 @@ const ExpenseCategoriesBar = () => {
         <Loader />
       ) : (
         <BarList
-          data={data && parseData(data)[selectedCategory]}
+          data={(data && parseData(data)[selectedCategory]) || []}
           showAnimation={false}
           className="mt-4"
         />

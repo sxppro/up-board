@@ -9,14 +9,14 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
-import { FilteredTransactionResource } from '@/types/custom';
+import { TransactionResourceFiltered } from '@/server/schemas';
 import { ColumnDef } from '@tanstack/react-table';
 import { formatDistanceToNow } from 'date-fns';
 import { enAU } from 'date-fns/locale';
 import { ArrowUpDown } from 'lucide-react';
 import DataTableRowActions from './data-table-row-actions';
 
-export const columns: ColumnDef<FilteredTransactionResource>[] = [
+export const columns: ColumnDef<TransactionResourceFiltered>[] = [
   {
     id: 'select',
     header: ({ table }) => (
@@ -93,12 +93,15 @@ export const columns: ColumnDef<FilteredTransactionResource>[] = [
     header: 'Description',
     cell: ({ row }) => (
       <div className="flex gap-2">
-        <Badge variant="outline">{row.original.status}</Badge>
+        <Badge className="hidden sm:inline-flex" variant="outline">
+          {row.original.status}
+        </Badge>
         <div className="sm:w-[300px] md:w-[400px] lg:w-[500px] max-w-[500px] truncate font-medium">
           {row.getValue('description')}
         </div>
       </div>
     ),
+    filterFn: () => true,
   },
   {
     accessorKey: 'tags',

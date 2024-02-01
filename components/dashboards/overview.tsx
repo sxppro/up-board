@@ -33,7 +33,7 @@ const OverviewDashboard = () => {
           <TabPanel>
             <TopStats />
             <Grid numItemsMd={2} numItemsLg={3} className="gap-6 mt-6">
-              <Col numColSpanMd={1}>
+              <Col numColSpanMd={2} numColSpanLg={1}>
                 <AccountBalanceHistoricalArea />
               </Col>
               <Col numColSpanMd={1}>

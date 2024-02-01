@@ -2,7 +2,8 @@
 
 import { FilteredTransactionResource } from '@/types/custom';
 import { formatCurrency } from '@/utils/helpers';
-import { useDate, useTransactions } from '@/utils/hooks';
+import { useDate } from '@/utils/hooks';
+import { trpc } from '@/utils/trpc';
 import {
   Table,
   TableBody,
@@ -17,15 +18,13 @@ import TableSkeleton from '../core/table-skeleton';
 
 const Payments = () => {
   const { date } = useDate();
-  const { data, isLoading } = useTransactions(
-    date,
-    {
-      sort: 'time',
-      sortDir: 'desc',
-    },
-    'transactional',
-    'transfers'
-  );
+  const { data, isLoading } = trpc.user.getTransactionsByDate.useQuery({
+    dateRange: { from: date?.from, to: date?.to },
+    account: 'transactional',
+    type: 'transfers',
+    sort: 'time',
+    sortDir: 'desc',
+  });
 
   return (
     <DashboardCard>
