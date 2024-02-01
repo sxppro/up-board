@@ -8,7 +8,6 @@ import type {
   TransactionCategoryType,
 } from '@/server/schemas';
 import {
-  DateRangeNoUndef,
   DbTransactionResource,
   TransactionRetrievalOptions,
 } from '@/types/custom';
@@ -204,7 +203,7 @@ export const getCategoryInfo = async (
  */
 const getTransactionsByDate = async (
   account: string,
-  dateRange: DateRangeNoUndef,
+  dateRange: DateRange,
   options: TransactionRetrievalOptions
 ) => {
   const { db } = await connectToDatabase('up');

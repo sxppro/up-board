@@ -1,4 +1,5 @@
-import { DateRangeNoUndef, TransactionRetrievalOptions } from '@/types/custom';
+import { DateRange } from '@/server/schemas';
+import { TransactionRetrievalOptions } from '@/types/custom';
 
 /**
  * Pipeline stages to lookup transaction category ids to
@@ -401,7 +402,7 @@ const accountBalancePipeline = (from: Date, to: Date, accountId: string) => [
  */
 const transactionsByDatePipeline = (
   accountId: string,
-  dateRange: DateRangeNoUndef,
+  dateRange: DateRange,
   options: TransactionRetrievalOptions
 ) => {
   const { sort, sortDir } = options;

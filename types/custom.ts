@@ -50,9 +50,4 @@ export type TransactionRetrievalOptions = {
   limit?: number;
 };
 
-export type DateRangeNoUndef = {
-  from: Date;
-  to: Date;
-};
-
 export type TransactionAccountType = 'transactional' | 'savings';
