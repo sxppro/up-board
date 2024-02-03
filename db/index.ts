@@ -1,11 +1,12 @@
-import type {
-  AccountBalanceHistory,
-  AccountMonthlyInfo,
-  DateRange,
-  TransactionAccountType,
-  TransactionCategoryInfo,
-  TransactionCategoryOption,
-  TransactionCategoryType,
+import {
+  TagInfo,
+  type AccountBalanceHistory,
+  type AccountMonthlyInfo,
+  type DateRange,
+  type TransactionAccountType,
+  type TransactionCategoryInfo,
+  type TransactionCategoryOption,
+  type TransactionCategoryType,
 } from '@/server/schemas';
 import {
   DbTransactionResource,
@@ -22,6 +23,7 @@ import {
   categoriesPipeline,
   monthlyStatsPipeline,
   searchTransactionsPipeline,
+  tagInfoPipeline,
   transactionsByDatePipeline,
   transactionsByTagsPipeline,
 } from './pipelines';
@@ -190,6 +192,20 @@ export const getCategoryInfo = async (
       type
     )
   );
+  const results = await cursor.toArray();
+  await cursor.close();
+  return results;
+};
+
+/**
+ * Retrieves income and expense stats for a tag
+ * @param tag
+ * @returns
+ */
+export const getTagInfo = async (tag: string) => {
+  const { db } = await connectToDatabase('up');
+  const transactions = db.collection<DbTransactionResource>('transactions');
+  const cursor = transactions.aggregate<TagInfo>(tagInfoPipeline(tag));
   const results = await cursor.toArray();
   await cursor.close();
   return results;
