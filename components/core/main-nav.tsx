@@ -1,17 +1,28 @@
-import { cn } from '@/utils/helpers';
+'use client';
+
+import { Dispatch, SetStateAction } from 'react';
 import ActiveLink from './active-link';
 
+interface MainNavProps {
+  setOpen?: Dispatch<SetStateAction<boolean>>;
+}
+
 const MainNav = ({
+  setOpen,
   className,
   ...props
-}: React.HTMLAttributes<HTMLElement>) => {
+}: React.HTMLAttributes<HTMLElement> & MainNavProps) => {
   return (
-    <nav
-      className={cn('flex items-center space-x-4 lg:space-x-6', className)}
-      {...props}
-    >
-      <ActiveLink href="/">Overview</ActiveLink>
-      <ActiveLink href="/transactions">Transactions</ActiveLink>
+    <nav className={className} {...props}>
+      <ActiveLink href="/" onClick={() => setOpen && setOpen(false)}>
+        Overview
+      </ActiveLink>
+      <ActiveLink
+        href="/transactions"
+        onClick={() => setOpen && setOpen(false)}
+      >
+        Transactions
+      </ActiveLink>
     </nav>
   );
 };
