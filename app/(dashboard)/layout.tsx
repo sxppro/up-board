@@ -10,8 +10,7 @@ import { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 
 export const metadata: Metadata = {
-  title: 'Up Dashboard',
-  description: 'Smart transaction analysis by Soppro',
+  title: 'Dashboard',
 };
 
 export default async function DashboardLayout({

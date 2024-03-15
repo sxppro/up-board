@@ -9,6 +9,11 @@ import {
 } from '@/components/ui/table';
 import { getTags } from '@/db';
 import { X } from 'lucide-react';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Dashboard — Tags',
+};
 
 const TagPage = async () => {
   const data = await getTags();

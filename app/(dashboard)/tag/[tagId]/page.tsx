@@ -3,9 +3,23 @@ import TagDashboard from '@/components/dashboards/tag';
 import TransactionsByTag from '@/components/tables/tag-transactions';
 import { getTagInfo } from '@/db';
 import { X } from 'lucide-react';
+import { Metadata, ResolvingMetadata } from 'next';
 import { Suspense } from 'react';
 
-const TagPage = async ({ params }: { params: { tagId: string } }) => {
+type TagPageProps = {
+  params: { tagId: string };
+};
+
+export async function generateMetadata(
+  { params }: TagPageProps,
+  parent: ResolvingMetadata
+): Promise<Metadata> {
+  const { tagId } = params;
+  const decodedTagId = decodeURIComponent(tagId);
+  return { title: `Dashboard — ${decodedTagId}` };
+}
+
+const TagPage = async ({ params }: TagPageProps) => {
   const { tagId } = params;
   const decodedTagId = decodeURIComponent(tagId);
   const tagInfo = await getTagInfo(decodedTagId);
