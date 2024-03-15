@@ -7,6 +7,21 @@ interface MainNavProps {
   setOpen?: Dispatch<SetStateAction<boolean>>;
 }
 
+const links = [
+  {
+    page: 'Overview',
+    route: '/',
+  },
+  {
+    page: 'Transactions',
+    route: '/transactions',
+  },
+  {
+    page: 'Tags',
+    route: '/tags',
+  },
+];
+
 const MainNav = ({
   setOpen,
   className,
@@ -14,15 +29,15 @@ const MainNav = ({
 }: React.HTMLAttributes<HTMLElement> & MainNavProps) => {
   return (
     <nav className={className} {...props}>
-      <ActiveLink href="/" onClick={() => setOpen && setOpen(false)}>
-        Overview
-      </ActiveLink>
-      <ActiveLink
-        href="/transactions"
-        onClick={() => setOpen && setOpen(false)}
-      >
-        Transactions
-      </ActiveLink>
+      {links.map(({ page, route }) => (
+        <ActiveLink
+          key={route}
+          href={route}
+          onClick={() => setOpen && setOpen(false)}
+        >
+          {page}
+        </ActiveLink>
+      ))}
     </nav>
   );
 };
