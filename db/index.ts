@@ -208,7 +208,7 @@ export const getTagInfo = async (tag: string) => {
   const cursor = transactions.aggregate<TagInfo>(tagInfoPipeline(tag));
   const results = await cursor.toArray();
   await cursor.close();
-  return results;
+  return results[0];
 };
 
 /**
@@ -263,10 +263,26 @@ const getTransactionById = async (id: string) => {
 };
 
 /**
+ * Retrieves transactions by specific tag
+ * @param tag
+ * @returns
+ */
+export const getTransactionsByTag = async (tag: string) => {
+  const { db } = await connectToDatabase('up');
+  const transactions = db.collection<DbTransactionResource>('transactions');
+  const cursor = transactions.find({ 'relationships.tags.data.id': tag });
+  const results = (await cursor.toArray()).map((transaction) =>
+    outputTransactionFields(transaction)
+  );
+  await cursor.close();
+  return results;
+};
+
+/**
  * Retrieves transactions by tags
  * @returns
  */
-const getTransactionsByTag = async () => {
+export const getTransactionsByTags = async () => {
   const { db } = await connectToDatabase('up');
   const transactions = db.collection<DbTransactionResource>('transactions');
   const cursor = transactions.aggregate(transactionsByTagsPipeline());
@@ -351,6 +367,5 @@ export {
   getTransactionById,
   getTransactionsByCategory,
   getTransactionsByDate,
-  getTransactionsByTag,
   getTransfers,
 };
