@@ -26,6 +26,7 @@ import {
   tagInfoPipeline,
   transactionsByDatePipeline,
   transactionsByTagsPipeline,
+  uniqueTagsPipeline,
 } from './pipelines';
 
 /**
@@ -311,6 +312,20 @@ export const getCategories = async (type: TransactionCategoryType) => {
     });
   const results = await cursor.toArray();
   return results;
+};
+
+/**
+ * Retrieves all unique transaction tags
+ */
+export const getTags = async () => {
+  const { db } = await connectToDatabase('up');
+  const transactions = db.collection<DbTransactionResource>('transactions');
+  const cursor = transactions.aggregate<{ tags: string[] }>(
+    uniqueTagsPipeline()
+  );
+  const results = await cursor.toArray();
+  await cursor.close();
+  return results[0];
 };
 
 /**

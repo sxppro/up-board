@@ -207,6 +207,30 @@ const monthlyStatsPipeline = (from: Date, to: Date, accountId: string) => [
   },
 ];
 
+const uniqueTagsPipeline = () => [
+  {
+    $unwind: {
+      path: '$relationships.tags.data',
+    },
+  },
+  {
+    $group: {
+      _id: null,
+      tags: {
+        $addToSet: '$relationships.tags.data.id',
+      },
+    },
+  },
+  {
+    $project: {
+      _id: 0,
+      tags: {
+        $sortArray: { input: '$tags', sortBy: 1 },
+      },
+    },
+  },
+];
+
 const tagInfoPipeline = (tagId: string, monthly?: boolean) => [
   {
     $match: {
@@ -570,4 +594,5 @@ export {
   tagInfoPipeline,
   transactionsByDatePipeline,
   transactionsByTagsPipeline,
+  uniqueTagsPipeline,
 };
