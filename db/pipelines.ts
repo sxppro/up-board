@@ -207,6 +207,10 @@ const monthlyStatsPipeline = (from: Date, to: Date, accountId: string) => [
   },
 ];
 
+/**
+ * Retrieves all unique tags
+ * @returns
+ */
 const uniqueTagsPipeline = () => [
   {
     $unwind: {
@@ -231,6 +235,12 @@ const uniqueTagsPipeline = () => [
   },
 ];
 
+/**
+ * Generates stats for a specific tag
+ * @param tagId
+ * @param monthly
+ * @returns
+ */
 const tagInfoPipeline = (tagId: string, monthly?: boolean) => [
   {
     $match: {
