@@ -5,6 +5,7 @@ import {
   format,
   startOfDay,
   startOfMonth,
+  startOfWeek,
   startOfYear,
 } from 'date-fns';
 import { Calendar as CalendarIcon } from 'lucide-react';
@@ -28,6 +29,7 @@ import {
 
 enum DatePickerPresets {
   TODAY = 'today',
+  THIS_WEEK = 'thisWeek',
   THIS_MONTH = 'thisMonth',
   THIS_YEAR = 'thisYear',
 }
@@ -41,6 +43,8 @@ export default function DateRangePicker({
     const date = new Date();
     if (selection === DatePickerPresets.TODAY) {
       setDate({ from: startOfDay(date), to: endOfDay(date) });
+    } else if (selection === DatePickerPresets.THIS_WEEK) {
+      setDate({ from: startOfWeek(date), to: date });
     } else if (selection === DatePickerPresets.THIS_MONTH) {
       setDate({ from: startOfMonth(date), to: date });
     } else if (selection === DatePickerPresets.THIS_YEAR) {
@@ -88,6 +92,9 @@ export default function DateRangePicker({
             </SelectTrigger>
             <SelectContent>
               <SelectItem value={DatePickerPresets.TODAY}>Today</SelectItem>
+              <SelectItem value={DatePickerPresets.THIS_WEEK}>
+                This week
+              </SelectItem>
               <SelectItem value={DatePickerPresets.THIS_MONTH}>
                 This month
               </SelectItem>

@@ -13,9 +13,13 @@ const StatCard = ({ info }: StatCardProps) => {
       <Flex justifyContent="start" className="space-x-4">
         <Icon icon={icon} variant="light" size="xl" color={color} />
         <div className="truncate flex-1">
-          <Flex alignItems="start" justifyContent="between">
-            <Text>{title}</Text>
-          </Flex>
+          {title ? (
+            <Flex alignItems="start" justifyContent="between">
+              <Text>{title}</Text>
+            </Flex>
+          ) : (
+            ''
+          )}
           {isLoading ? (
             <Skeleton className="h-9 max-w-[150px]" />
           ) : (
