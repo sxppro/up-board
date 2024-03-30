@@ -54,7 +54,7 @@ export type TransactionRetrievalOptions = {
 export type TransactionAccountType = 'transactional' | 'savings';
 
 export type StatCardInfo = {
-  title: string;
+  title?: string;
   metric: string | number | undefined;
   icon: any;
   color: Color;
