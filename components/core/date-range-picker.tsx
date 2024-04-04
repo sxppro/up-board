@@ -17,6 +17,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
+import { DateRangeProps } from '@/types/custom';
 import { cn } from '@/utils/helpers';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -36,16 +37,11 @@ enum DatePickerPresets {
   THIS_YEAR = 'thisYear',
 }
 
-interface DateRangePicker extends React.HTMLAttributes<HTMLDivElement> {
-  start?: Date;
-  end?: Date;
-}
-
 export default function DateRangePicker({
   className,
   start,
   end,
-}: DateRangePicker) {
+}: DateRangeProps & React.HTMLAttributes<HTMLDivElement>) {
   const [date, setDate] = useState<DateRange | undefined>({
     from: start,
     to: end,

@@ -47,7 +47,14 @@ const DashboardPage = ({ searchParams }: PageProps) => {
               <Suspense fallback={<AccountsListLoading />}>
                 <AccountsList type="TRANSACTIONAL" colour="rose" />
               </Suspense>
-              <Suspense fallback={<AccountsListLoading />}>
+              <Suspense
+                fallback={
+                  <>
+                    <AccountsListLoading />
+                    <AccountsListLoading />
+                  </>
+                }
+              >
                 <AccountsList type="SAVER" colour="teal" />
               </Suspense>
             </div>
