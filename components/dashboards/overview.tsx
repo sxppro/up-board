@@ -1,8 +1,8 @@
 import { Col, Grid } from '@tremor/react';
 import AccountBalanceHistoricalArea from '../charts/account-balance-historical-area';
 import ExpenseCategoriesDonut from '../charts/expense-categories-donut';
+import IO from '../charts/io';
 import MonthlyInOut from '../charts/monthly-in-out';
-import TopStats from '../charts/top-stats';
 import DateRangePicker from '../core/date-range-picker';
 import DateProvider from '../providers/date-provider';
 import Payments from '../tables/payments';
@@ -16,7 +16,7 @@ const OverviewDashboard = () => {
         <DateRangePicker />
       </div>
       <div className="w-full">
-        <TopStats />
+        <IO accountId="" />
         <Grid numItemsMd={2} numItemsLg={3} className="gap-6 mt-6">
           <Col numColSpanMd={2} numColSpanLg={1}>
             <AccountBalanceHistoricalArea />

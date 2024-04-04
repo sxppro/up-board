@@ -1,12 +1,29 @@
+import IO from '@/components/charts/io';
 import DateRangePicker from '@/components/core/date-range-picker';
 import { getAccountById } from '@/db';
 import { PageProps } from '@/types/custom';
 import { getSearchParams } from '@/utils/helpers';
+import { Col, Grid } from '@tremor/react';
 import { X } from 'lucide-react';
+import { Metadata, ResolvingMetadata } from 'next';
 
 type AccountPageProps = {
   params: { accountId: string };
 } & PageProps;
+
+export async function generateMetadata(
+  { params }: AccountPageProps,
+  parent: ResolvingMetadata
+): Promise<Metadata> {
+  const { accountId } = params;
+  const accountInfo = await getAccountById(accountId);
+  if (accountInfo) {
+    const { displayName } = accountInfo;
+    return { title: `Dashboard — ${displayName}` };
+  } else {
+    return { title: `Dashboard` };
+  }
+}
 
 const AccountPage = async ({ params, searchParams }: AccountPageProps) => {
   const { accountId } = params;
@@ -36,6 +53,19 @@ const AccountPage = async ({ params, searchParams }: AccountPageProps) => {
           start={startDate ? new Date(startDate) : undefined}
           end={endDate ? new Date(endDate) : undefined}
         />
+      </div>
+      <div className="w-full mt-2">
+        <Grid numItemsMd={3} className="gap-4">
+          <IO
+            accountId={accountId}
+            start={startDate ? new Date(startDate) : undefined}
+            end={endDate ? new Date(endDate) : undefined}
+          />
+        </Grid>
+        <Grid numItemsMd={2} className="gap-4">
+          <Col></Col>
+          <Col></Col>
+        </Grid>
       </div>
     </>
   );

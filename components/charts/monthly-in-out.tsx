@@ -10,8 +10,11 @@ const currentDate = new Date();
 
 const MonthlyInOut = () => {
   const { data, isLoading } = trpc.user.getMonthlyInfo.useQuery({
-    from: startOfMonth(subYears(currentDate, 1)),
-    to: currentDate,
+    accountId: '',
+    dateRange: {
+      from: startOfMonth(subYears(currentDate, 1)),
+      to: currentDate,
+    },
   });
   const dataWithFormattedDate =
     !isLoading &&
