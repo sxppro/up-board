@@ -16,7 +16,7 @@ interface TransactionResourceAttributes
 // Account info as stored in db
 export interface AccountResource
   extends Omit<components['schemas']['AccountResource'], 'id'> {
-  _id: Binary;
+  _id: string;
 }
 
 // Account info returned to client

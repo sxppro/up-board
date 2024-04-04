@@ -21,7 +21,7 @@ const AccountsList = async ({ type, colour }: AccountsListProps) => {
           decoration="top"
           decorationColor={colour}
         >
-          <ActiveLink href={`/account/${id}`}>
+          <ActiveLink href={`/account/${id}`} keepQueryParams>
             <Flex className="p-6" alignItems="center" justifyContent="between">
               <Flex className="gap-1" flexDirection="col" alignItems="start">
                 <Badge className="font-semibold px-2.5 py-0.5 -m-1" size="xs">

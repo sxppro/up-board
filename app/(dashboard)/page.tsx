@@ -4,6 +4,7 @@ import TableSkeleton from '@/components/core/table-skeleton';
 import AccountsList from '@/components/tables/accounts-list';
 import TransactionCard from '@/components/tables/transaction-card';
 import { PageProps } from '@/types/custom';
+import { getSearchParams } from '@/utils/helpers';
 import { Col, Grid, Title } from '@tremor/react';
 import { Metadata } from 'next';
 import { redirect } from 'next/navigation';
@@ -15,8 +16,7 @@ export const metadata: Metadata = {
 
 const DashboardPage = ({ searchParams }: PageProps) => {
   const { start, end } = searchParams;
-  const startDate = Array.isArray(start) ? start[0] : start;
-  const endDate = Array.isArray(end) ? end[0] : end;
+  const [startDate, endDate] = getSearchParams(start, end);
 
   // Check date validity
   if (startDate || endDate) {

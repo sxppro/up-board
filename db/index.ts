@@ -391,6 +391,28 @@ const getAccountBalance = async (
   return results;
 };
 
+/**
+ * Retrieves specific account information
+ * @param accountId UUID string
+ * @returns
+ */
+export const getAccountById = async (accountId: string) => {
+  const { db } = await connectToDatabase('up');
+  const accounts = db.collection<AccountResource>('accounts');
+  const account = await accounts.findOne<AccountInfo>(
+    { _id: accountId },
+    {
+      projection: {
+        _id: 0,
+        id: '$_id',
+        displayName: '$attributes.displayName',
+        accountType: '$attributes.accountType',
+      },
+    }
+  );
+  return account;
+};
+
 export {
   getAccountBalance,
   getTransactionById,
