@@ -11,7 +11,11 @@ const StatCard = ({ info }: StatCardProps) => {
   return (
     <Card decoration="top" decorationColor={color}>
       <Flex justifyContent="start" className="space-x-4">
-        <Icon icon={icon} variant="light" size="xl" color={color} />
+        {icon ? (
+          <Icon icon={icon} variant="light" size="xl" color={color} />
+        ) : (
+          ''
+        )}
         <div className="truncate flex-1">
           {title ? (
             <Flex alignItems="start" justifyContent="between">

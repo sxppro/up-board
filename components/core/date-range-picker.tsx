@@ -18,7 +18,9 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { cn } from '@/utils/helpers';
-import { useDate } from '@/utils/hooks';
+import { usePathname, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { DateRange } from 'react-day-picker';
 import {
   Select,
   SelectContent,
@@ -34,10 +36,18 @@ enum DatePickerPresets {
   THIS_YEAR = 'thisYear',
 }
 
+interface DateRangePicker extends React.HTMLAttributes<HTMLDivElement> {
+  start?: Date;
+  end?: Date;
+}
+
 export default function DateRangePicker({
   className,
 }: React.HTMLAttributes<HTMLDivElement>) {
-  const { date, setDate } = useDate();
+  const [date, setDate] = useState<DateRange | undefined>();
+  const router = useRouter();
+  const { replace } = router;
+  const currentPath = usePathname();
 
   const changeDateRange = (selection: DatePickerPresets) => {
     const date = new Date();
@@ -51,6 +61,17 @@ export default function DateRangePicker({
       setDate({ from: startOfYear(date), to: date });
     }
   };
+
+  useEffect(() => {
+    date?.from &&
+      date.to &&
+      replace(
+        `${currentPath}?${new URLSearchParams({
+          start: date?.from.toISOString(),
+          end: date?.to.toISOString(),
+        })}`
+      );
+  }, [date, currentPath, replace]);
 
   return (
     <div className={cn('grid gap-2', className)}>

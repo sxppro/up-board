@@ -13,6 +13,19 @@ interface TransactionResourceAttributes
   settledAt: Date | null;
 }
 
+// Account info as stored in db
+export interface AccountResource
+  extends Omit<components['schemas']['AccountResource'], 'id'> {
+  _id: Binary;
+}
+
+// Account info returned to client
+export interface AccountInfo {
+  id: string;
+  displayName: string;
+  accountType: components['schemas']['AccountTypeEnum'];
+}
+
 export interface DbTransactionResource
   extends Omit<
     components['schemas']['TransactionResource'],
@@ -56,7 +69,7 @@ export type TransactionAccountType = 'transactional' | 'savings';
 export type StatCardInfo = {
   title?: string;
   metric: string | number | undefined;
-  icon: any;
+  icon?: any;
   color: Color;
   isLoading?: boolean;
 };

@@ -9,6 +9,8 @@ import {
   type TransactionCategoryType,
 } from '@/server/schemas';
 import {
+  AccountInfo,
+  AccountResource,
   DbTransactionResource,
   TransactionRetrievalOptions,
 } from '@/types/custom';
@@ -144,7 +146,6 @@ export const searchTransactions = async (search: string) => {
   const results = (await cursor.toArray()).map((transaction) =>
     outputTransactionFields(transaction)
   );
-  await cursor.close();
   return results;
 };
 
@@ -164,7 +165,6 @@ export const getMonthlyInfo = async (dateRange: DateRange) => {
     monthlyStatsPipeline(dateRange.from, dateRange.to, process.env.UP_TRANS_ACC)
   );
   const results = await cursor.toArray();
-  await cursor.close();
   return results;
 };
 
@@ -194,7 +194,6 @@ export const getCategoryInfo = async (
     )
   );
   const results = await cursor.toArray();
-  await cursor.close();
   return results;
 };
 
@@ -208,7 +207,6 @@ export const getTagInfo = async (tag: string) => {
   const transactions = db.collection<DbTransactionResource>('transactions');
   const cursor = transactions.aggregate<TagInfo>(tagInfoPipeline(tag));
   const results = await cursor.toArray();
-  await cursor.close();
   return results[0];
 };
 
@@ -231,7 +229,6 @@ const getTransactionsByDate = async (
   const results = (await cursor.toArray()).map((transaction) =>
     outputTransactionFields(transaction)
   );
-  await cursor.close();
   return results;
 };
 
@@ -247,7 +244,6 @@ const getTransactionsByCategory = async (category: string) => {
   const results = (await cursor.toArray()).map((transaction) =>
     outputTransactionFields(transaction)
   );
-  await cursor.close();
   return results;
 };
 
@@ -275,7 +271,6 @@ export const getTransactionsByTag = async (tag: string) => {
   const results = (await cursor.toArray()).map((transaction) =>
     outputTransactionFields(transaction)
   );
-  await cursor.close();
   return results;
 };
 
@@ -288,7 +283,6 @@ export const getTransactionsByTags = async () => {
   const transactions = db.collection<DbTransactionResource>('transactions');
   const cursor = transactions.aggregate(transactionsByTagsPipeline());
   const results = await cursor.toArray();
-  await cursor.close();
   return results;
 };
 
@@ -324,7 +318,6 @@ export const getTags = async () => {
     uniqueTagsPipeline()
   );
   const results = await cursor.toArray();
-  await cursor.close();
   return results[0];
 };
 
@@ -346,7 +339,29 @@ const getTransfers = async (dateRange: DateRange) => {
   const results = (await cursor.toArray()).map((transaction) =>
     outputTransactionFields(transaction)
   );
-  await cursor.close();
+  return results;
+};
+
+/**
+ * Retrieves list of accounts
+ * @param accountType transactional or saver
+ * @returns
+ */
+export const getAccounts = async (
+  accountType: components['schemas']['AccountTypeEnum']
+) => {
+  const { db } = await connectToDatabase('up');
+  const accounts = db.collection<AccountResource>('accounts');
+  const cursor = accounts
+    .find({ 'attributes.accountType': accountType })
+    .sort({ 'attributes.displayName': 1, 'attributes.accountType': 1 })
+    .project<AccountInfo>({
+      _id: 0,
+      id: '$_id',
+      displayName: '$attributes.displayName',
+      accountType: '$attributes.accountType',
+    });
+  const results = await cursor.toArray();
   return results;
 };
 
@@ -373,7 +388,6 @@ const getAccountBalance = async (
     )
   );
   const results = await cursor.toArray();
-  await cursor.close();
   return results;
 };
 
