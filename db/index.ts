@@ -11,6 +11,7 @@ import {
 import {
   AccountInfo,
   AccountResource,
+  DateRangeGroupBy,
   DbTransactionResource,
   TransactionRetrievalOptions,
 } from '@/types/custom';
@@ -22,8 +23,8 @@ import { MongoBulkWriteError } from 'mongodb';
 import clientPromise from './connect';
 import {
   accountBalancePipeline,
+  accountStatsPipeline,
   categoriesPipeline,
-  monthlyStatsPipeline,
   searchTransactionsPipeline,
   tagInfoPipeline,
   transactionsByDatePipeline,
@@ -163,15 +164,15 @@ export const searchTransactions = async (search: string) => {
  * @param dateRange
  * @returns list of stats for each month
  */
-export const getMonthlyInfo = async (dateRange: DateRange) => {
-  if (!process.env.UP_TRANS_ACC) {
-    throw new Error('Up transaction account not defined');
-  }
-
+export const getMonthlyInfo = async (
+  accountId: string,
+  dateRange: DateRange,
+  groupBy?: DateRangeGroupBy
+) => {
   const db = await connectToDatabase('up');
   const transactions = db.collection<DbTransactionResource>('transactions');
   const cursor = transactions.aggregate<AccountMonthlyInfo>(
-    monthlyStatsPipeline(dateRange.from, dateRange.to, process.env.UP_TRANS_ACC)
+    accountStatsPipeline(accountId, dateRange, groupBy)
   );
   const results = await cursor.toArray();
   return results;

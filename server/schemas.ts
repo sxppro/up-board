@@ -104,6 +104,7 @@ export const AccountMonthlyInfoSchema = z.object({
   Month: z.number(),
   Income: z.number(),
   Expenses: z.number(),
+  Net: z.number(),
   Transactions: z.number(),
 });
 export type AccountMonthlyInfo = z.infer<typeof AccountMonthlyInfoSchema>;

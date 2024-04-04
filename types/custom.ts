@@ -53,6 +53,13 @@ export type DateRangeContext = {
   setDate: (date: DateRange | undefined) => void;
 };
 
+export interface DateRangeProps {
+  start?: Date;
+  end?: Date;
+}
+
+export type DateRangeGroupBy = 'daily' | 'monthly' | 'yearly';
+
 export type PageProps = {
   params: { slug: string };
   searchParams: { [key: string]: string | string[] | undefined };
@@ -68,8 +75,8 @@ export type TransactionAccountType = 'transactional' | 'savings';
 
 export type StatCardInfo = {
   title?: string;
-  metric: string | number | undefined;
+  metric?: string | number | undefined;
   icon?: any;
-  color: Color;
+  color?: Color;
   isLoading?: boolean;
 };

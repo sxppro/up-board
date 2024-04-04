@@ -65,10 +65,13 @@ export const authedRouter = router({
       }
     }),
   getMonthlyInfo: authedProcedure
-    .input(DateRangeSchema)
+    .input(
+      z.object({ accountId: z.string().uuid(), dateRange: DateRangeSchema })
+    )
     .output(z.array(AccountMonthlyInfoSchema))
     .query(async ({ input }) => {
-      return await getMonthlyInfo(input);
+      const { accountId, dateRange } = input;
+      return await getMonthlyInfo(accountId, dateRange);
     }),
   getCategoryInfo: authedProcedure
     .input(
