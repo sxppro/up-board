@@ -1,7 +1,9 @@
 import DashboardCard from '@/components/core/dashboard-card';
 import DateRangePicker from '@/components/core/date-range-picker';
 import TableSkeleton from '@/components/core/table-skeleton';
-import AccountsList from '@/components/tables/accounts-list';
+import AccountsList, {
+  AccountsListLoading,
+} from '@/components/tables/accounts-list';
 import TransactionCard from '@/components/tables/transaction-card';
 import { PageProps } from '@/types/custom';
 import { getSearchParams } from '@/utils/helpers';
@@ -42,8 +44,12 @@ const DashboardPage = ({ searchParams }: PageProps) => {
         <Grid numItemsMd={2} numItemsLg={3} className="gap-6 mt-2">
           <Col>
             <div className="flex flex-col gap-4">
-              <AccountsList type="TRANSACTIONAL" colour="rose" />
-              <AccountsList type="SAVER" colour="teal" />
+              <Suspense fallback={<AccountsListLoading />}>
+                <AccountsList type="TRANSACTIONAL" colour="rose" />
+              </Suspense>
+              <Suspense fallback={<AccountsListLoading />}>
+                <AccountsList type="SAVER" colour="teal" />
+              </Suspense>
             </div>
           </Col>
           <Col>
