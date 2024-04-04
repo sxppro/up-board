@@ -2,6 +2,11 @@ import { TransactionRetrievalOptions } from '@/server/schemas';
 import { filterTransactionFields } from '@/utils/helpers';
 import { getTransactionsByDate, getTransfers } from '.';
 
+/**
+ * Retrieves transactions using various options
+ * @param retrievalOpts
+ * @returns
+ */
 export const getTransactions = async (
   retrievalOpts: TransactionRetrievalOptions
 ) => {

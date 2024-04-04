@@ -5,10 +5,9 @@ import {
   getMonthlyInfo,
   getTagInfo,
   getTransactionById,
-  getTransactionsByDate,
-  getTransfers,
   replaceTransactions,
 } from '@/db';
+import { getTransactions } from '@/db/helpers';
 import { filterTransactionFields } from '@/utils/helpers';
 import { addTags, deleteTags, getTags } from '@/utils/up';
 import { TRPCError } from '@trpc/server';
@@ -110,22 +109,7 @@ export const authedRouter = router({
   getTransactionsByDate: authedProcedure
     .input(TransactionRetrievalOptionsSchema)
     .query(async ({ input }) => {
-      const { account, dateRange, type, ...options } = input;
-      if (type === 'transactions') {
-        const transactions = await getTransactionsByDate(
-          account === 'transactional'
-            ? process.env.UP_TRANS_ACC || ''
-            : account === 'savings'
-            ? process.env.UP_SAVINGS_ACC || ''
-            : '',
-          dateRange,
-          options
-        );
-        return filterTransactionFields(transactions);
-      } else if (type === 'transfers') {
-        const transfers = await getTransfers(dateRange);
-        return filterTransactionFields(transfers);
-      }
+      return await getTransactions(input);
     }),
   getTransactionById: authedProcedure
     .input(TransactionIdSchema)

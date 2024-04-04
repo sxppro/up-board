@@ -19,7 +19,7 @@ import { outputTransactionFields } from '@/utils/helpers';
 import { getTransactionById as getUpTransactionById } from '@/utils/up';
 import { UUID } from 'bson';
 import { MongoBulkWriteError } from 'mongodb';
-import { connectToDatabase } from './connect';
+import clientPromise from './connect';
 import {
   accountBalancePipeline,
   categoriesPipeline,
@@ -30,6 +30,15 @@ import {
   transactionsByTagsPipeline,
   uniqueTagsPipeline,
 } from './pipelines';
+
+/**
+ * Creates a db instance
+ * @returns
+ */
+const connectToDatabase = async (db: string) => {
+  const client = await clientPromise;
+  return client.db(db);
+};
 
 /**
  * Remaps transaction attributes from Up to be inserted to db
@@ -64,7 +73,7 @@ export const insertTransactions = async (
     return;
   }
   try {
-    const { db } = await connectToDatabase('up');
+    const db = await connectToDatabase('up');
     const transactions = db.collection<DbTransactionResource>('transactions');
     /**
      * Remaps id to _id as BSON UUID & ISO date strings
@@ -112,7 +121,7 @@ export const insertTransactions = async (
  * @returns number of transactions replaced
  */
 export const replaceTransactions = async (transactionIds: string[]) => {
-  const { db } = await connectToDatabase('up');
+  const db = await connectToDatabase('up');
   const transactions = db.collection('transactions');
   let replacedTransactions = 0;
   await Promise.all(
@@ -138,7 +147,7 @@ export const replaceTransactions = async (transactionIds: string[]) => {
  * @returns
  */
 export const searchTransactions = async (search: string) => {
-  const { db } = await connectToDatabase('up');
+  const db = await connectToDatabase('up');
   const transactions = db.collection<DbTransactionResource>('transactions');
   const cursor = transactions.aggregate<DbTransactionResource>(
     searchTransactionsPipeline(search)
@@ -159,7 +168,7 @@ export const getMonthlyInfo = async (dateRange: DateRange) => {
     throw new Error('Up transaction account not defined');
   }
 
-  const { db } = await connectToDatabase('up');
+  const db = await connectToDatabase('up');
   const transactions = db.collection<DbTransactionResource>('transactions');
   const cursor = transactions.aggregate<AccountMonthlyInfo>(
     monthlyStatsPipeline(dateRange.from, dateRange.to, process.env.UP_TRANS_ACC)
@@ -183,7 +192,7 @@ export const getCategoryInfo = async (
     throw new Error('Up transaction account not defined');
   }
 
-  const { db } = await connectToDatabase('up');
+  const db = await connectToDatabase('up');
   const transactions = db.collection<DbTransactionResource>('transactions');
   const cursor = transactions.aggregate<TransactionCategoryInfo>(
     categoriesPipeline(
@@ -203,7 +212,7 @@ export const getCategoryInfo = async (
  * @returns
  */
 export const getTagInfo = async (tag: string) => {
-  const { db } = await connectToDatabase('up');
+  const db = await connectToDatabase('up');
   const transactions = db.collection<DbTransactionResource>('transactions');
   const cursor = transactions.aggregate<TagInfo>(tagInfoPipeline(tag));
   const results = await cursor.toArray();
@@ -221,7 +230,7 @@ const getTransactionsByDate = async (
   dateRange: DateRange,
   options: TransactionRetrievalOptions
 ) => {
-  const { db } = await connectToDatabase('up');
+  const db = await connectToDatabase('up');
   const transactions = db.collection<DbTransactionResource>('transactions');
   const cursor = transactions.aggregate<DbTransactionResource>(
     transactionsByDatePipeline(account, dateRange, options)
@@ -238,7 +247,7 @@ const getTransactionsByDate = async (
  * @returns list of transactions
  */
 const getTransactionsByCategory = async (category: string) => {
-  const { db } = await connectToDatabase('up');
+  const db = await connectToDatabase('up');
   const transactions = db.collection<DbTransactionResource>('transactions');
   const cursor = transactions.find({ $text: { $search: category } });
   const results = (await cursor.toArray()).map((transaction) =>
@@ -253,7 +262,7 @@ const getTransactionsByCategory = async (category: string) => {
  * @returns transaction document
  */
 const getTransactionById = async (id: string) => {
-  const { db } = await connectToDatabase('up');
+  const db = await connectToDatabase('up');
   const transactions = db.collection<DbTransactionResource>('transactions');
   const result = await transactions.findOne({ _id: new UUID(id).toBinary() });
   return result ? outputTransactionFields(result) : result;
@@ -265,7 +274,7 @@ const getTransactionById = async (id: string) => {
  * @returns
  */
 export const getTransactionsByTag = async (tag: string) => {
-  const { db } = await connectToDatabase('up');
+  const db = await connectToDatabase('up');
   const transactions = db.collection<DbTransactionResource>('transactions');
   const cursor = transactions.find({ 'relationships.tags.data.id': tag });
   const results = (await cursor.toArray()).map((transaction) =>
@@ -279,7 +288,7 @@ export const getTransactionsByTag = async (tag: string) => {
  * @returns
  */
 export const getTransactionsByTags = async () => {
-  const { db } = await connectToDatabase('up');
+  const db = await connectToDatabase('up');
   const transactions = db.collection<DbTransactionResource>('transactions');
   const cursor = transactions.aggregate(transactionsByTagsPipeline());
   const results = await cursor.toArray();
@@ -292,7 +301,7 @@ export const getTransactionsByTags = async () => {
  * @returns
  */
 export const getCategories = async (type: TransactionCategoryType) => {
-  const { db } = await connectToDatabase('up');
+  const db = await connectToDatabase('up');
   const categories = db.collection('categories');
   const cursor = categories
     .find({
@@ -312,7 +321,7 @@ export const getCategories = async (type: TransactionCategoryType) => {
  * Retrieves all unique transaction tags
  */
 export const getTags = async () => {
-  const { db } = await connectToDatabase('up');
+  const db = await connectToDatabase('up');
   const transactions = db.collection<DbTransactionResource>('transactions');
   const cursor = transactions.aggregate<{ tags: string[] }>(
     uniqueTagsPipeline()
@@ -326,7 +335,7 @@ export const getTags = async () => {
  * @returns
  */
 const getTransfers = async (dateRange: DateRange) => {
-  const { db } = await connectToDatabase('up');
+  const db = await connectToDatabase('up');
   const transactions = db.collection<DbTransactionResource>('transactions');
   const cursor = transactions.find({
     'relationships.account.data.id': process.env.UP_TRANS_ACC,
@@ -348,12 +357,12 @@ const getTransfers = async (dateRange: DateRange) => {
  * @returns
  */
 export const getAccounts = async (
-  accountType: components['schemas']['AccountTypeEnum']
+  accountType?: components['schemas']['AccountTypeEnum']
 ) => {
-  const { db } = await connectToDatabase('up');
+  const db = await connectToDatabase('up');
   const accounts = db.collection<AccountResource>('accounts');
   const cursor = accounts
-    .find({ 'attributes.accountType': accountType })
+    .find(accountType ? { 'attributes.accountType': accountType } : {})
     .sort({ 'attributes.displayName': 1, 'attributes.accountType': 1 })
     .project<AccountInfo>({
       _id: 0,
@@ -376,7 +385,7 @@ const getAccountBalance = async (
   dateRange: DateRange,
   account: TransactionAccountType
 ) => {
-  const { db } = await connectToDatabase('up');
+  const db = await connectToDatabase('up');
   const transactions = db.collection<DbTransactionResource>('transactions');
   const cursor = transactions.aggregate<AccountBalanceHistory>(
     accountBalancePipeline(
@@ -397,7 +406,7 @@ const getAccountBalance = async (
  * @returns
  */
 export const getAccountById = async (accountId: string) => {
-  const { db } = await connectToDatabase('up');
+  const db = await connectToDatabase('up');
   const accounts = db.collection<AccountResource>('accounts');
   const account = await accounts.findOne<AccountInfo>(
     { _id: accountId },
