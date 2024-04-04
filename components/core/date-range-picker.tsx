@@ -43,8 +43,13 @@ interface DateRangePicker extends React.HTMLAttributes<HTMLDivElement> {
 
 export default function DateRangePicker({
   className,
-}: React.HTMLAttributes<HTMLDivElement>) {
-  const [date, setDate] = useState<DateRange | undefined>();
+  start,
+  end,
+}: DateRangePicker) {
+  const [date, setDate] = useState<DateRange | undefined>({
+    from: start,
+    to: end,
+  });
   const router = useRouter();
   const { replace } = router;
   const currentPath = usePathname();

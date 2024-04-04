@@ -33,7 +33,10 @@ const DashboardPage = ({ searchParams }: PageProps) => {
     <>
       <div className="w-full flex flex-col md:flex-row justify-between gap-2">
         <h1 className="text-2xl font-bold tracking-tight">Accounts</h1>
-        <DateRangePicker />
+        <DateRangePicker
+          start={startDate ? new Date(startDate) : undefined}
+          end={endDate ? new Date(endDate) : undefined}
+        />
       </div>
       <div className="w-full">
         <Grid numItemsMd={2} numItemsLg={3} className="gap-6 mt-2">
