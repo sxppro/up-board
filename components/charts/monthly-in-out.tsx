@@ -20,11 +20,13 @@ const MonthlyInOut = () => {
     !isLoading &&
     data &&
     data.map(({ Month, Year, ...rest }) => {
-      const date = new Date(Year, Month - 1);
-      return {
-        ...rest,
-        FormattedDate: format(date, 'LLL yy'),
-      };
+      if (Year && Month) {
+        const date = new Date(Year, Month - 1);
+        return {
+          ...rest,
+          FormattedDate: format(date, 'LLL yy'),
+        };
+      }
     });
 
   return (

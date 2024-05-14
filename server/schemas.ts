@@ -100,8 +100,8 @@ export type TransactionTagsModification = z.infer<
 >;
 
 export const AccountMonthlyInfoSchema = z.object({
-  Year: z.number(),
-  Month: z.number(),
+  Year: z.number().optional(),
+  Month: z.number().optional(),
   Income: z.number(),
   Expenses: z.number(),
   Net: z.number(),
