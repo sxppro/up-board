@@ -1,6 +1,5 @@
 'use client';
 
-import { DateRangeProps } from '@/types/custom';
 import { formatCurrency } from '@/utils/helpers';
 import { useDate } from '@/utils/hooks';
 import { trpc } from '@/utils/trpc';
@@ -9,7 +8,7 @@ import { PropsWithChildren } from 'react';
 import DashboardCard from '../core/dashboard-card';
 import TableSkeleton from '../core/table-skeleton';
 
-interface IOBarProps extends DateRangeProps {
+interface IOBarProps {
   accountId: string;
 }
 
@@ -21,6 +20,7 @@ export const IOBarLoading = () => (
 
 const IOBar = ({ children, accountId }: IOBarProps & PropsWithChildren) => {
   const { date } = useDate();
+
   const { data } = trpc.user.getMonthlyInfo.useQuery({
     accountId,
     dateRange: {
@@ -35,7 +35,7 @@ const IOBar = ({ children, accountId }: IOBarProps & PropsWithChildren) => {
       <BarChart
         index="Index"
         data={
-          data
+          Array.isArray(data) && data.length > 0
             ? [
                 {
                   Index: 'In',

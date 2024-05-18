@@ -1,6 +1,8 @@
 import IO from '@/components/charts/io';
 import DateRangePicker from '@/components/core/date-range-picker';
 import StatCard from '@/components/core/stat-card';
+import DateProvider from '@/components/providers/date-provider';
+import QueryProvider from '@/components/providers/query-provider';
 import { getAccountById } from '@/db';
 import { PageProps } from '@/types/custom';
 import { getSearchParams } from '@/utils/helpers';
@@ -63,7 +65,14 @@ const AccountPage = async ({ params, searchParams }: AccountPageProps) => {
             />
           </Suspense>
         </Grid>
-        <AccountCharts accountId={accountId} />
+        <QueryProvider>
+          <DateProvider
+            start={startDate ? new Date(startDate) : undefined}
+            end={endDate ? new Date(endDate) : undefined}
+          >
+            <AccountCharts accountId={accountId} />
+          </DateProvider>
+        </QueryProvider>
       </div>
     </>
   );
