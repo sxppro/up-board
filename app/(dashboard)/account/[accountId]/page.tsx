@@ -7,6 +7,7 @@ import { getAccountById } from '@/db';
 import { PageProps } from '@/types/custom';
 import { getSearchParams } from '@/utils/helpers';
 import { Col, Grid } from '@tremor/react';
+import { startOfMonth } from 'date-fns';
 import { X } from 'lucide-react';
 import { Metadata } from 'next';
 import { Suspense } from 'react';
@@ -21,6 +22,7 @@ export const metadata: Metadata = {
 };
 
 const AccountPage = async ({ params, searchParams }: AccountPageProps) => {
+  const now = new Date();
   const { accountId } = params;
   const { start, end } = searchParams;
   const [startDate, endDate] = getSearchParams(start, end);
@@ -45,8 +47,8 @@ const AccountPage = async ({ params, searchParams }: AccountPageProps) => {
       <div className="w-full flex flex-col md:flex-row justify-between gap-2">
         <h1 className="text-2xl font-bold tracking-tight">{displayName}</h1>
         <DateRangePicker
-          start={startDate ? new Date(startDate) : undefined}
-          end={endDate ? new Date(endDate) : undefined}
+          start={startDate ? new Date(startDate) : startOfMonth(now)}
+          end={endDate ? new Date(endDate) : now}
         />
       </div>
       <div className="w-full flex flex-col mt-2 gap-6">
@@ -60,15 +62,15 @@ const AccountPage = async ({ params, searchParams }: AccountPageProps) => {
           >
             <IO
               accountId={accountId}
-              start={startDate ? new Date(startDate) : undefined}
-              end={endDate ? new Date(endDate) : undefined}
+              start={startDate ? new Date(startDate) : startOfMonth(now)}
+              end={endDate ? new Date(endDate) : now}
             />
           </Suspense>
         </Grid>
         <QueryProvider>
           <DateProvider
-            start={startDate ? new Date(startDate) : undefined}
-            end={endDate ? new Date(endDate) : undefined}
+            start={startDate ? new Date(startDate) : startOfMonth(now)}
+            end={endDate ? new Date(endDate) : now}
           >
             <AccountCharts accountId={accountId} />
           </DateProvider>

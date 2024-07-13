@@ -2,7 +2,6 @@
 
 import { DateRangeProps } from '@/types/custom';
 import { DateContext } from '@/utils/contexts';
-import { startOfMonth } from 'date-fns';
 import { PropsWithChildren, useEffect, useMemo, useState } from 'react';
 import { DateRange } from 'react-day-picker';
 
@@ -11,10 +10,9 @@ const DateProvider = ({
   start,
   end,
 }: PropsWithChildren & DateRangeProps) => {
-  const currentDate = new Date();
   const [date, setDate] = useState<DateRange | undefined>({
-    from: start || startOfMonth(currentDate),
-    to: end || currentDate,
+    from: start,
+    to: end,
   });
   const dateContext = useMemo(() => ({ date, setDate }), [date]);
 
