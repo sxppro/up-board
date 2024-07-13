@@ -38,11 +38,11 @@ const IOBar = ({ children, accountId }: IOBarProps & PropsWithChildren) => {
           Array.isArray(data) && data.length > 0
             ? [
                 {
-                  Index: 'In',
+                  Index: 'Money In',
                   Value: data[0].Income,
                 },
                 {
-                  Index: 'Out',
+                  Index: 'Money Out',
                   Value: data[0].Expenses,
                 },
               ]

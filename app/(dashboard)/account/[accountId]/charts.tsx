@@ -1,3 +1,4 @@
+import ExpenseCategoriesDonut from '@/components/charts/expense-categories-donut';
 import IOBar from '@/components/charts/io-bar';
 import DashboardCard from '@/components/core/dashboard-card';
 import { Col, Grid, Text, Title } from '@tremor/react';
@@ -20,9 +21,7 @@ const AccountCharts = ({ accountId }: AccountChartsProps) => {
           </DashboardCard>
         </Col>
         <Col>
-          <DashboardCard>
-            <Text>Expenses tx</Text>
-          </DashboardCard>
+          <ExpenseCategoriesDonut />
         </Col>
         <Col>
           <IOBar accountId={accountId}>
