@@ -2,6 +2,7 @@ import {
   getAccountBalance,
   getCategories,
   getCategoryInfo,
+  getCategoryInfoHistory,
   getMonthlyInfo,
   getTagInfo,
   getTransactionById,
@@ -18,6 +19,8 @@ import {
   AccountMonthlyInfoSchema,
   DateRangeSchema,
   TransactionAccountTypeSchema,
+  TransactionCategoryInfoHistory,
+  TransactionCategoryInfoHistorySchema,
   TransactionCategoryInfoSchema,
   TransactionCategoryTypeSchema,
   TransactionIdSchema,
@@ -84,6 +87,28 @@ export const authedRouter = router({
     .query(async ({ input }) => {
       const { dateRange, type } = input;
       return await getCategoryInfo(dateRange, type);
+    }),
+  getCategoryInfoHistory: authedProcedure
+    .input(
+      z.object({
+        dateRange: DateRangeSchema,
+        type: TransactionCategoryTypeSchema,
+      })
+    )
+    .output(z.array(TransactionCategoryInfoHistorySchema))
+    .query(async ({ input }) => {
+      const { dateRange, type } = input;
+      const results = await getCategoryInfoHistory(dateRange, type);
+      return results.map(({ month, year, categories }) => {
+        // @ts-expect-error
+        const remappedElem: TransactionCategoryInfoHistory = {
+          FormattedDate: format(new Date(year, month - 1), 'LLL yy'),
+        };
+        categories.map(
+          ({ amount, category }) => (remappedElem[category] = amount)
+        );
+        return remappedElem;
+      });
     }),
   getAccountBalance: authedProcedure
     .input(

@@ -1,9 +1,11 @@
+import ExpenseCategoriesStackedBar from '@/components/charts/expense-categories-stacked-bar';
 import IO from '@/components/charts/io';
 import DashboardCard from '@/components/core/dashboard-card';
 import DateRangePicker from '@/components/core/date-range-picker';
 import StatCard from '@/components/core/stat-card';
 import TableSkeleton from '@/components/core/table-skeleton';
 import DateProvider from '@/components/providers/date-provider';
+import QueryProvider from '@/components/providers/query-provider';
 import AccountsList, {
   AccountsListLoading,
 } from '@/components/tables/accounts-list';
@@ -66,43 +68,46 @@ const DashboardPage = ({ searchParams }: PageProps) => {
           </Col>
           <Col numColSpanSm={2}>
             <div className="flex flex-col gap-3">
-              <DateProvider
-                start={startDate ? new Date(startDate) : startOfMonth(now)}
-                end={endDate ? new Date(endDate) : now}
-              >
-                <Grid numItemsMd={3} className="gap-3">
+              <QueryProvider>
+                <DateProvider
+                  start={startDate ? new Date(startDate) : startOfMonth(now)}
+                  end={endDate ? new Date(endDate) : now}
+                >
+                  <Grid numItemsMd={3} className="gap-3">
+                    <Suspense
+                      fallback={
+                        <Col numColSpanMd={3}>
+                          <StatCard
+                            info={{ title: 'Loading ...', isLoading: true }}
+                          />
+                        </Col>
+                      }
+                    >
+                      <IO
+                        accountId={process.env.UP_TRANS_ACC || ''}
+                        start={
+                          startDate ? new Date(startDate) : startOfMonth(now)
+                        }
+                        end={endDate ? new Date(endDate) : now}
+                      />
+                    </Suspense>
+                  </Grid>
+                  <ExpenseCategoriesStackedBar />
                   <Suspense
                     fallback={
-                      <Col numColSpanMd={3}>
-                        <StatCard
-                          info={{ title: 'Loading ...', isLoading: true }}
-                        />
-                      </Col>
+                      <DashboardCard>
+                        <Title>test</Title>
+                        <TableSkeleton cols={2} rows={7} />
+                      </DashboardCard>
                     }
                   >
-                    <IO
-                      accountId={process.env.UP_TRANS_ACC || ''}
-                      start={
-                        startDate ? new Date(startDate) : startOfMonth(now)
-                      }
-                      end={endDate ? new Date(endDate) : now}
+                    <TransactionCard
+                      title="test"
+                      options={{ type: 'transactions' }}
                     />
                   </Suspense>
-                </Grid>
-                <Suspense
-                  fallback={
-                    <DashboardCard>
-                      <Title>test</Title>
-                      <TableSkeleton cols={2} rows={7} />
-                    </DashboardCard>
-                  }
-                >
-                  <TransactionCard
-                    title="test"
-                    options={{ type: 'transactions' }}
-                  />
-                </Suspense>
-              </DateProvider>
+                </DateProvider>
+              </QueryProvider>
             </div>
           </Col>
         </Grid>

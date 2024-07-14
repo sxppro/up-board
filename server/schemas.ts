@@ -54,6 +54,24 @@ export type TransactionCategoryInfo = z.infer<
   typeof TransactionCategoryInfoSchema
 >;
 
+export const TransactionCategoryInfoHistorySchema = z
+  .object({
+    FormattedDate: z.string(),
+  })
+  .catchall(z.number());
+export type TransactionCategoryInfoHistory = z.infer<
+  typeof TransactionCategoryInfoHistorySchema
+>;
+
+export const TransactionCategoryInfoHistoryRawSchema = z.object({
+  month: z.number(),
+  year: z.number(),
+  categories: z.array(TransactionCategoryInfoSchema),
+});
+export type TransactionCategoryInfoHistoryRaw = z.infer<
+  typeof TransactionCategoryInfoHistoryRawSchema
+>;
+
 const TransactionStatusEnum = z.enum(['HELD', 'SETTLED']);
 
 const TransactionTypeEnum = z.enum(['transactions', 'transfers']);

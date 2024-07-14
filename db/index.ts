@@ -1,5 +1,6 @@
 import {
   TagInfo,
+  TransactionCategoryInfoHistoryRaw,
   type AccountBalanceHistory,
   type AccountMonthlyInfo,
   type DateRange,
@@ -24,6 +25,7 @@ import clientPromise from './connect';
 import {
   accountBalancePipeline,
   accountStatsPipeline,
+  categoriesByPeriodPipeline,
   categoriesPipeline,
   searchTransactionsPipeline,
   tagInfoPipeline,
@@ -181,8 +183,8 @@ export const getMonthlyInfo = async (
 /**
  * Generates category stats for transactions
  * between 2 dates
- * @param start
- * @param end
+ * @param dateRange
+ * @param type category type (subcategory or parent category)
  * @returns list of stats for each category
  */
 export const getCategoryInfo = async (
@@ -197,6 +199,34 @@ export const getCategoryInfo = async (
   const transactions = db.collection<DbTransactionResource>('transactions');
   const cursor = transactions.aggregate<TransactionCategoryInfo>(
     categoriesPipeline(
+      dateRange.from,
+      dateRange.to,
+      process.env.UP_TRANS_ACC,
+      type
+    )
+  );
+  const results = await cursor.toArray();
+  return results;
+};
+
+/**
+ * Generates category stats by month
+ * @param dateRange
+ * @param type category type (subcategory or parent category)
+ * @returns
+ */
+export const getCategoryInfoHistory = async (
+  dateRange: DateRange,
+  type: TransactionCategoryType
+) => {
+  if (!process.env.UP_TRANS_ACC) {
+    throw new Error('Up transaction account not defined');
+  }
+
+  const db = await connectToDatabase('up');
+  const transactions = db.collection<DbTransactionResource>('transactions');
+  const cursor = transactions.aggregate<TransactionCategoryInfoHistoryRaw>(
+    categoriesByPeriodPipeline(
       dateRange.from,
       dateRange.to,
       process.env.UP_TRANS_ACC,

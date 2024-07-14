@@ -357,7 +357,7 @@ const categoriesPipeline = (
       },
     },
   },
-  // Group documents by month and type and calculate the total amount and count
+  // Group documents by category and calculate the total amount and count
   {
     $group: {
       _id: '$category',
@@ -404,6 +404,140 @@ const categoriesPipeline = (
     $sort: {
       amount: -1,
       transactions: -1,
+    },
+  },
+];
+
+/**
+ * Pipeline for calculating number of transactions
+ * and total spending per transaction category
+ * per month for specified account
+ * @param from
+ * @param to
+ * @param accountId account ID
+ * @param type category type
+ * @returns aggregation pipeline definition
+ */
+const categoriesByPeriodPipeline = (
+  from: Date,
+  to: Date,
+  accountId: string,
+  type: 'child' | 'parent'
+) => [
+  {
+    $match: {
+      'relationships.account.data.id': accountId,
+      'attributes.createdAt': {
+        $gte: from,
+        $lte: to,
+      },
+      'attributes.isCategorizable': true,
+      'attributes.amount.valueInBaseUnits': {
+        $lt: 0,
+      },
+    },
+  },
+  // Grab month, year, category and amount
+  {
+    $project: {
+      month: {
+        $month: {
+          date: '$attributes.createdAt',
+          timezone: 'Australia/Melbourne',
+        },
+      },
+      year: {
+        $year: {
+          date: '$attributes.createdAt',
+          timezone: 'Australia/Melbourne',
+        },
+      },
+      category: {
+        $ifNull: [
+          type === 'parent'
+            ? '$relationships.parentCategory.data.id'
+            : '$relationships.category.data.id',
+          'uncategorised',
+        ],
+      },
+      amount: {
+        $toDecimal: '$attributes.amount.value',
+      },
+    },
+  },
+  // Group by month, year and category, sum amounts and no of transactions
+  {
+    $group: {
+      _id: {
+        month: '$month',
+        year: '$year',
+        category: '$category',
+      },
+      amount: {
+        $sum: '$amount',
+      },
+      transactions: {
+        $sum: 1,
+      },
+    },
+  },
+  // Converting category ids to names
+  {
+    $lookup: {
+      from: 'categories',
+      localField: '_id.category',
+      foreignField: '_id',
+      as: 'category',
+    },
+  },
+  {
+    $unwind: {
+      path: '$category',
+      preserveNullAndEmptyArrays: false,
+    },
+  },
+  // Set uncategorised transactions
+  {
+    $project: {
+      category: {
+        $ifNull: ['$category.attributes.name', 'Uncategorised'],
+      },
+      amount: {
+        $abs: {
+          $toDouble: '$amount',
+        },
+      },
+      transactions: 1,
+    },
+  },
+  // Group by month to collate categories by each month
+  {
+    $group: {
+      _id: {
+        month: '$_id.month',
+        year: '$_id.year',
+      },
+      categories: {
+        $addToSet: {
+          category: '$category',
+          amount: '$amount',
+          transactions: '$transactions',
+        },
+      },
+    },
+  },
+  {
+    $project: {
+      _id: 0,
+      month: '$_id.month',
+      year: '$_id.year',
+      categories: '$categories',
+    },
+  },
+  {
+    $sort: {
+      year: 1,
+      month: 1,
     },
   },
 ];
@@ -627,6 +761,7 @@ const searchTransactionsPipeline = (searchTerm: string) => [
 export {
   accountBalancePipeline,
   accountStatsPipeline,
+  categoriesByPeriodPipeline,
   categoriesPipeline,
   searchTransactionsPipeline,
   tagInfoPipeline,
