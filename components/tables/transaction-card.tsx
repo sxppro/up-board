@@ -26,7 +26,6 @@ type TransactionCardProps = {
  */
 const TransactionCard = async ({ title, options }: TransactionCardProps) => {
   const { account, type, sort, sortDir, limit } = options;
-  const test = new Promise((resolve) => setTimeout(resolve, 5000));
   const transactions = await getTransactions({
     dateRange: { from: new Date('2024-03-01'), to: new Date() },
     account: account || 'transactional',

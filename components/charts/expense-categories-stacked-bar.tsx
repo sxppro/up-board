@@ -1,17 +1,18 @@
 'use client';
 
+import { DateRangeProps } from '@/types/custom';
 import { formatCurrency } from '@/utils/helpers';
 import { useDate } from '@/utils/hooks';
 import { trpc } from '@/utils/trpc';
 import { BarChart, Subtitle, Title } from '@tremor/react';
 import DashboardCard from '../core/dashboard-card';
 
-const ExpenseCategoriesStackedBar = () => {
+const ExpenseCategoriesStackedBar = ({ start, end }: DateRangeProps) => {
   const { date } = useDate();
-  const { data, isLoading } = trpc.user.getCategoryInfoHistory.useQuery({
+  const { data } = trpc.user.getCategoryInfoHistory.useQuery({
     dateRange: {
-      from: date?.from,
-      to: date?.to,
+      from: start || date?.from,
+      to: end || date?.to,
     },
     type: 'parent',
   });
@@ -20,15 +21,6 @@ const ExpenseCategoriesStackedBar = () => {
     <DashboardCard>
       <Title>Spending</Title>
       <Subtitle>Last 6 months</Subtitle>
-      {/* {isLoading || !data ? (
-        <Skeleton className="w-full h-4" />
-      ) : (
-        <Legend
-          categories={data.map(
-            ({ category }: { category: string }) => category
-          )}
-        />
-      )} */}
       <BarChart
         data={data || []}
         index={'FormattedDate'}

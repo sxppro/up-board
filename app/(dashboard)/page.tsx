@@ -13,7 +13,7 @@ import TransactionCard from '@/components/tables/transaction-card';
 import { PageProps } from '@/types/custom';
 import { getSearchParams } from '@/utils/helpers';
 import { Col, Grid, Title } from '@tremor/react';
-import { startOfMonth } from 'date-fns';
+import { endOfMonth, startOfMonth, subMonths } from 'date-fns';
 import { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import { Suspense } from 'react';
@@ -92,7 +92,10 @@ const DashboardPage = ({ searchParams }: PageProps) => {
                       />
                     </Suspense>
                   </Grid>
-                  <ExpenseCategoriesStackedBar />
+                  <ExpenseCategoriesStackedBar
+                    start={subMonths(startOfMonth(subMonths(now, 1)), 5)}
+                    end={endOfMonth(subMonths(now, 1))}
+                  />
                   <Suspense
                     fallback={
                       <DashboardCard>
@@ -102,7 +105,7 @@ const DashboardPage = ({ searchParams }: PageProps) => {
                     }
                   >
                     <TransactionCard
-                      title="test"
+                      title="Recent Transactions"
                       options={{ type: 'transactions' }}
                     />
                   </Suspense>

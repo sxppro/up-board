@@ -15,7 +15,7 @@ export const AccountsListLoading = () => (
     <Flex alignItems="center" justifyContent="between">
       <Flex className="gap-2" flexDirection="col" alignItems="start">
         <Badge className="font-semibold px-2.5 py-0.5 -m-1" size="xs">
-          <Skeleton className="h-4 w-24 max-w-[6rem]" />
+          <Skeleton className="h-5 w-24 max-w-[6rem] p-1" />
         </Badge>
         <Skeleton className="h-8 w-[20rem]" />
       </Flex>
