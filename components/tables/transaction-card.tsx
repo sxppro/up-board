@@ -1,8 +1,7 @@
-'use client';
-
+import DashboardCard from '@/components/core/dashboard-card';
+import { getTransactions } from '@/db/helpers';
+import { TransactionRetrievalOptions } from '@/server/schemas';
 import { formatCurrency } from '@/utils/helpers';
-import { useDate } from '@/utils/hooks';
-import { trpc } from '@/utils/trpc';
 import {
   Flex,
   Table,
@@ -14,26 +13,32 @@ import {
   Text,
   Title,
 } from '@tremor/react';
-import DashboardCard from '../core/dashboard-card';
-import TableSkeleton from '../core/table-skeleton';
 
-const RecentTransactions = () => {
-  const { date } = useDate();
-  const { data, isLoading } = trpc.user.getTransactionsByDate.useQuery({
-    dateRange: { from: date?.from, to: date?.to },
-    account: 'transactional',
-    type: 'transactions',
-    sort: 'time',
-    sortDir: 'desc',
-    limit: 6,
+type TransactionCardProps = {
+  title: string;
+  options: Partial<TransactionRetrievalOptions>;
+};
+
+/**
+ * Dashboard card for displaying a glimpse
+ * of transactions
+ * @returns
+ */
+const TransactionCard = async ({ title, options }: TransactionCardProps) => {
+  const { account, type, sort, sortDir, limit } = options;
+  const transactions = await getTransactions({
+    dateRange: { from: new Date('2024-03-01'), to: new Date() },
+    account: account || 'transactional',
+    type: type || 'transactions',
+    sort: sort || 'time',
+    sortDir: sortDir || 'desc',
+    limit: limit || 6,
   });
 
   return (
     <DashboardCard>
-      <Title>Transactions</Title>
-      {isLoading || !data ? (
-        <TableSkeleton cols={2} rows={7} />
-      ) : data.length > 0 ? (
+      <Title>{title}</Title>
+      {transactions && transactions.length > 0 ? (
         <Table className="w-full flex-1">
           <TableHead>
             <TableRow>
@@ -42,7 +47,7 @@ const RecentTransactions = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {data.map(({ id, description, amountRaw }) => (
+            {transactions.map(({ id, description, amountRaw }) => (
               <TableRow key={id}>
                 <TableCell className="max-w-[225px] truncate">
                   {description}
@@ -63,4 +68,4 @@ const RecentTransactions = () => {
   );
 };
 
-export default RecentTransactions;
+export default TransactionCard;

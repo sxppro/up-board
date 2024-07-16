@@ -2,13 +2,13 @@ import {
   getAccountBalance,
   getCategories,
   getCategoryInfo,
+  getCategoryInfoHistory,
   getMonthlyInfo,
   getTagInfo,
   getTransactionById,
-  getTransactionsByDate,
-  getTransfers,
   replaceTransactions,
 } from '@/db';
+import { getTransactions } from '@/db/helpers';
 import { filterTransactionFields } from '@/utils/helpers';
 import { addTags, deleteTags, getTags } from '@/utils/up';
 import { TRPCError } from '@trpc/server';
@@ -19,6 +19,8 @@ import {
   AccountMonthlyInfoSchema,
   DateRangeSchema,
   TransactionAccountTypeSchema,
+  TransactionCategoryInfoHistory,
+  TransactionCategoryInfoHistorySchema,
   TransactionCategoryInfoSchema,
   TransactionCategoryTypeSchema,
   TransactionIdSchema,
@@ -66,10 +68,13 @@ export const authedRouter = router({
       }
     }),
   getMonthlyInfo: authedProcedure
-    .input(DateRangeSchema)
+    .input(
+      z.object({ accountId: z.string().uuid(), dateRange: DateRangeSchema })
+    )
     .output(z.array(AccountMonthlyInfoSchema))
     .query(async ({ input }) => {
-      return await getMonthlyInfo(input);
+      const { accountId, dateRange } = input;
+      return await getMonthlyInfo(accountId, dateRange);
     }),
   getCategoryInfo: authedProcedure
     .input(
@@ -82,6 +87,28 @@ export const authedRouter = router({
     .query(async ({ input }) => {
       const { dateRange, type } = input;
       return await getCategoryInfo(dateRange, type);
+    }),
+  getCategoryInfoHistory: authedProcedure
+    .input(
+      z.object({
+        dateRange: DateRangeSchema,
+        type: TransactionCategoryTypeSchema,
+      })
+    )
+    .output(z.array(TransactionCategoryInfoHistorySchema))
+    .query(async ({ input }) => {
+      const { dateRange, type } = input;
+      const results = await getCategoryInfoHistory(dateRange, type);
+      return results.map(({ month, year, categories }) => {
+        // @ts-expect-error
+        const remappedElem: TransactionCategoryInfoHistory = {
+          FormattedDate: format(new Date(year, month - 1), 'LLL yy'),
+        };
+        categories.map(
+          ({ amount, category }) => (remappedElem[category] = amount)
+        );
+        return remappedElem;
+      });
     }),
   getAccountBalance: authedProcedure
     .input(
@@ -110,22 +137,7 @@ export const authedRouter = router({
   getTransactionsByDate: authedProcedure
     .input(TransactionRetrievalOptionsSchema)
     .query(async ({ input }) => {
-      const { account, dateRange, type, ...options } = input;
-      if (type === 'transactions') {
-        const transactions = await getTransactionsByDate(
-          account === 'transactional'
-            ? process.env.UP_TRANS_ACC || ''
-            : account === 'savings'
-            ? process.env.UP_SAVINGS_ACC || ''
-            : '',
-          dateRange,
-          options
-        );
-        return filterTransactionFields(transactions);
-      } else if (type === 'transfers') {
-        const transfers = await getTransfers(dateRange);
-        return filterTransactionFields(transfers);
-      }
+      return await getTransactions(input);
     }),
   getTransactionById: authedProcedure
     .input(TransactionIdSchema)

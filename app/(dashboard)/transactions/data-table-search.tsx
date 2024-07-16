@@ -10,14 +10,14 @@ const DataTableSearch = ({
   ...rest
 }: ComponentProps<typeof Input>) => {
   const { push } = useRouter();
-  const pathname = usePathname();
+  const currentPath = usePathname();
 
   const handleSearchInput = useMemo(
     () =>
       debounce((e: ChangeEvent<HTMLInputElement>) => {
         const search = (search: string) =>
           push(
-            `${pathname}?${new URLSearchParams({
+            `${currentPath}?${new URLSearchParams({
               search,
             })}`
           );
@@ -25,7 +25,7 @@ const DataTableSearch = ({
           search(e.target.value);
         }
       }, 500),
-    [pathname, push]
+    [currentPath, push]
   );
 
   return (

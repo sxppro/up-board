@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/tooltip';
 import { TransactionResourceFiltered } from '@/server/schemas';
 import { ColumnDef } from '@tanstack/react-table';
-import { formatDistanceToNow } from 'date-fns';
+import { formatDistanceToNowStrict } from 'date-fns';
 import { enAU } from 'date-fns/locale';
 import { ArrowUpDown } from 'lucide-react';
 import DataTableRowActions from './data-table-row-actions';
@@ -72,11 +72,11 @@ export const columns: ColumnDef<TransactionResourceFiltered>[] = [
           <Tooltip>
             <TooltipTrigger asChild>
               <div className="w-[100px]">
-                {formatDistanceToNow(time, {
+                {formatDistanceToNowStrict(time, {
                   addSuffix: true,
-                  includeSeconds: true,
+                  roundingMethod: 'floor',
                   locale: enAU,
-                }).replace(/^about /, '')}
+                })}
               </div>
             </TooltipTrigger>
             <TooltipContent>

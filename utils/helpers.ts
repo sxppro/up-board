@@ -122,3 +122,12 @@ export const outputTransactionFields = (transaction: DbTransactionResource) => {
     ...rest,
   };
 };
+
+/**
+ *
+ */
+export const getSearchParams = (
+  ...params: (string | string[] | undefined)[]
+) => {
+  return params.map((param) => (Array.isArray(param) ? param[0] : param));
+};

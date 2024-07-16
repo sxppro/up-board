@@ -1,5 +1,5 @@
 import { DateRange } from '@/server/schemas';
-import { TransactionRetrievalOptions } from '@/types/custom';
+import { DateRangeGroupBy, TransactionRetrievalOptions } from '@/types/custom';
 
 /**
  * Conditional aggregation to determine whether
@@ -132,12 +132,16 @@ const lookupTransactionCategories = () => [
  * expenditure and number of transactions per month
  * between from and to dates (excluding transfers)
  * for specified account
- * @param from
- * @param to
  * @param accountId account ID
+ * @param dateRange date range
+ * @param groupBy how to group stats
  * @returns aggregation pipeline definition
  */
-const monthlyStatsPipeline = (from: Date, to: Date, accountId: string) => [
+const accountStatsPipeline = (
+  accountId: string,
+  dateRange: DateRange,
+  groupBy?: DateRangeGroupBy
+) => [
   /**
    * Match documents within the desired date range
    * and filter transfers
@@ -146,26 +150,41 @@ const monthlyStatsPipeline = (from: Date, to: Date, accountId: string) => [
     $match: {
       'relationships.account.data.id': accountId,
       'attributes.createdAt': {
-        $gte: from,
-        $lte: to,
+        $gte: dateRange.from,
+        $lte: dateRange.to,
       },
-      'attributes.isCategorizable': true,
+      // TODO: Toggle filtering transfers
+      ...(accountId === process.env.UP_TRANS_ACC && {
+        'attributes.isCategorizable': true,
+      }),
     },
   },
   {
     $project: {
-      month: {
-        $month: {
-          date: '$attributes.createdAt',
-          timezone: 'Australia/Melbourne',
+      ...(groupBy === 'daily' && {
+        day: {
+          $dayOfMonth: {
+            date: '$attributes.createdAt',
+            timezone: 'Australia/Melbourne',
+          },
         },
-      },
-      year: {
-        $year: {
-          date: '$attributes.createdAt',
-          timezone: 'Australia/Melbourne',
+      }),
+      ...((groupBy === 'daily' || groupBy === 'monthly') && {
+        month: {
+          $month: {
+            date: '$attributes.createdAt',
+            timezone: 'Australia/Melbourne',
+          },
         },
-      },
+      }),
+      ...(groupBy && {
+        year: {
+          $year: {
+            date: '$attributes.createdAt',
+            timezone: 'Australia/Melbourne',
+          },
+        },
+      }),
       amount: '$attributes.amount.valueInBaseUnits',
       type: labelIncomeExpense(),
     },
@@ -174,6 +193,7 @@ const monthlyStatsPipeline = (from: Date, to: Date, accountId: string) => [
   {
     $group: {
       _id: {
+        day: '$day',
         month: '$month',
         year: '$year',
       },
@@ -195,6 +215,14 @@ const monthlyStatsPipeline = (from: Date, to: Date, accountId: string) => [
         $abs: {
           $divide: ['$expense', 100],
         },
+      },
+      Net: {
+        $divide: [
+          {
+            $sum: ['$income', '$expense'],
+          },
+          100,
+        ],
       },
       Transactions: '$transactions',
     },
@@ -329,7 +357,7 @@ const categoriesPipeline = (
       },
     },
   },
-  // Group documents by month and type and calculate the total amount and count
+  // Group documents by category and calculate the total amount and count
   {
     $group: {
       _id: '$category',
@@ -376,6 +404,140 @@ const categoriesPipeline = (
     $sort: {
       amount: -1,
       transactions: -1,
+    },
+  },
+];
+
+/**
+ * Pipeline for calculating number of transactions
+ * and total spending per transaction category
+ * per month for specified account
+ * @param from
+ * @param to
+ * @param accountId account ID
+ * @param type category type
+ * @returns aggregation pipeline definition
+ */
+const categoriesByPeriodPipeline = (
+  from: Date,
+  to: Date,
+  accountId: string,
+  type: 'child' | 'parent'
+) => [
+  {
+    $match: {
+      'relationships.account.data.id': accountId,
+      'attributes.createdAt': {
+        $gte: from,
+        $lte: to,
+      },
+      'attributes.isCategorizable': true,
+      'attributes.amount.valueInBaseUnits': {
+        $lt: 0,
+      },
+    },
+  },
+  // Grab month, year, category and amount
+  {
+    $project: {
+      month: {
+        $month: {
+          date: '$attributes.createdAt',
+          timezone: 'Australia/Melbourne',
+        },
+      },
+      year: {
+        $year: {
+          date: '$attributes.createdAt',
+          timezone: 'Australia/Melbourne',
+        },
+      },
+      category: {
+        $ifNull: [
+          type === 'parent'
+            ? '$relationships.parentCategory.data.id'
+            : '$relationships.category.data.id',
+          'uncategorised',
+        ],
+      },
+      amount: {
+        $toDecimal: '$attributes.amount.value',
+      },
+    },
+  },
+  // Group by month, year and category, sum amounts and no of transactions
+  {
+    $group: {
+      _id: {
+        month: '$month',
+        year: '$year',
+        category: '$category',
+      },
+      amount: {
+        $sum: '$amount',
+      },
+      transactions: {
+        $sum: 1,
+      },
+    },
+  },
+  // Converting category ids to names
+  {
+    $lookup: {
+      from: 'categories',
+      localField: '_id.category',
+      foreignField: '_id',
+      as: 'category',
+    },
+  },
+  {
+    $unwind: {
+      path: '$category',
+      preserveNullAndEmptyArrays: false,
+    },
+  },
+  // Set uncategorised transactions
+  {
+    $project: {
+      category: {
+        $ifNull: ['$category.attributes.name', 'Uncategorised'],
+      },
+      amount: {
+        $abs: {
+          $toDouble: '$amount',
+        },
+      },
+      transactions: 1,
+    },
+  },
+  // Group by month to collate categories by each month
+  {
+    $group: {
+      _id: {
+        month: '$_id.month',
+        year: '$_id.year',
+      },
+      categories: {
+        $addToSet: {
+          category: '$category',
+          amount: '$amount',
+          transactions: '$transactions',
+        },
+      },
+    },
+  },
+  {
+    $project: {
+      _id: 0,
+      month: '$_id.month',
+      year: '$_id.year',
+      categories: '$categories',
+    },
+  },
+  {
+    $sort: {
+      year: 1,
+      month: 1,
     },
   },
 ];
@@ -598,8 +760,9 @@ const searchTransactionsPipeline = (searchTerm: string) => [
 
 export {
   accountBalancePipeline,
+  accountStatsPipeline,
+  categoriesByPeriodPipeline,
   categoriesPipeline,
-  monthlyStatsPipeline,
   searchTransactionsPipeline,
   tagInfoPipeline,
   transactionsByDatePipeline,

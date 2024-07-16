@@ -5,6 +5,7 @@ import {
   format,
   startOfDay,
   startOfMonth,
+  startOfWeek,
   startOfYear,
 } from 'date-fns';
 import { Calendar as CalendarIcon } from 'lucide-react';
@@ -16,8 +17,11 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
+import { DateRangeProps } from '@/types/custom';
 import { cn } from '@/utils/helpers';
-import { useDate } from '@/utils/hooks';
+import { usePathname, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { DateRange } from 'react-day-picker';
 import {
   Select,
   SelectContent,
@@ -28,25 +32,47 @@ import {
 
 enum DatePickerPresets {
   TODAY = 'today',
+  THIS_WEEK = 'thisWeek',
   THIS_MONTH = 'thisMonth',
   THIS_YEAR = 'thisYear',
 }
 
 export default function DateRangePicker({
   className,
-}: React.HTMLAttributes<HTMLDivElement>) {
-  const { date, setDate } = useDate();
+  start,
+  end,
+}: DateRangeProps & React.HTMLAttributes<HTMLDivElement>) {
+  const [date, setDate] = useState<DateRange | undefined>({
+    from: start,
+    to: end,
+  });
+  const router = useRouter();
+  const { replace } = router;
+  const currentPath = usePathname();
 
   const changeDateRange = (selection: DatePickerPresets) => {
     const date = new Date();
     if (selection === DatePickerPresets.TODAY) {
       setDate({ from: startOfDay(date), to: endOfDay(date) });
+    } else if (selection === DatePickerPresets.THIS_WEEK) {
+      setDate({ from: startOfWeek(date), to: date });
     } else if (selection === DatePickerPresets.THIS_MONTH) {
       setDate({ from: startOfMonth(date), to: date });
     } else if (selection === DatePickerPresets.THIS_YEAR) {
       setDate({ from: startOfYear(date), to: date });
     }
   };
+
+  useEffect(() => {
+    date?.from &&
+      date.to &&
+      replace(
+        `${currentPath}?${new URLSearchParams({
+          start: date?.from.toISOString(),
+          end: date?.to.toISOString(),
+        })}`
+      );
+  }, [date, currentPath, replace]);
 
   return (
     <div className={cn('grid gap-2', className)}>
@@ -88,6 +114,9 @@ export default function DateRangePicker({
             </SelectTrigger>
             <SelectContent>
               <SelectItem value={DatePickerPresets.TODAY}>Today</SelectItem>
+              <SelectItem value={DatePickerPresets.THIS_WEEK}>
+                This week
+              </SelectItem>
               <SelectItem value={DatePickerPresets.THIS_MONTH}>
                 This month
               </SelectItem>
