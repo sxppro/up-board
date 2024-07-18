@@ -29,7 +29,15 @@ const ExpenseCategoriesStackedBar = ({ start, end }: DateRangeProps) => {
             ? [...categories?.map(({ name }) => name), 'Uncategorised']
             : []
         }
+        colors={[
+          'up-good-life',
+          'up-home',
+          'up-personal',
+          'up-transport',
+          'gray-300',
+        ]}
         valueFormatter={(number: number) => formatCurrency(number, false)}
+        onValueChange={(v) => console.log(v)}
         stack
       />
     </DashboardCard>
