@@ -6,7 +6,7 @@ import QueryProvider from '@/components/providers/query-provider';
 import { getAccountById } from '@/db';
 import { PageProps } from '@/types/custom';
 import { getSearchParams } from '@/utils/helpers';
-import { Col, Grid } from '@tremor/react';
+import { Grid } from '@tremor/react';
 import { startOfMonth } from 'date-fns';
 import { X } from 'lucide-react';
 import { Metadata } from 'next';
@@ -55,9 +55,11 @@ const AccountPage = async ({ params, searchParams }: AccountPageProps) => {
         <Grid numItemsMd={3} className="gap-4">
           <Suspense
             fallback={
-              <Col numColSpanMd={3}>
+              <>
                 <StatCard info={{ title: 'Loading ...', isLoading: true }} />
-              </Col>
+                <StatCard info={{ title: 'Loading ...', isLoading: true }} />
+                <StatCard info={{ title: 'Loading ...', isLoading: true }} />
+              </>
             }
           >
             <IO

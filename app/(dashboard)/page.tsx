@@ -68,11 +68,17 @@ const DashboardPage = ({ searchParams }: PageProps) => {
                 <Grid numItemsMd={3} className="gap-3">
                   <Suspense
                     fallback={
-                      <Col numColSpanMd={3}>
+                      <>
                         <StatCard
                           info={{ title: 'Loading ...', isLoading: true }}
                         />
-                      </Col>
+                        <StatCard
+                          info={{ title: 'Loading ...', isLoading: true }}
+                        />
+                        <StatCard
+                          info={{ title: 'Loading ...', isLoading: true }}
+                        />
+                      </>
                     }
                   >
                     <IO
