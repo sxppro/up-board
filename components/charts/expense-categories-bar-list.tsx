@@ -1,6 +1,7 @@
 'use client';
 
 import { DateRangeProps } from '@/types/custom';
+import { colours } from '@/utils/constants';
 import { formatCurrency } from '@/utils/helpers';
 import { useDate } from '@/utils/hooks';
 import { trpc } from '@/utils/trpc';
@@ -19,7 +20,11 @@ const ExpenseCategoriesBarList = ({ start, end }: DateRangeProps) => {
   const data = isError
     ? []
     : rawData
-    ? rawData.map(({ category, amount }) => ({ name: category, value: amount }))
+    ? rawData.map(({ category, amount }) => ({
+        name: category,
+        value: amount,
+        color: colours[category],
+      }))
     : [];
 
   return (
