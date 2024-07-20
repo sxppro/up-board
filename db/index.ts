@@ -341,6 +341,7 @@ export const getCategories = async (type: TransactionCategoryType) => {
     .sort({ 'attributes.name': 1 })
     .project<TransactionCategoryOption>({
       _id: 0,
+      id: '$_id',
       value: '$attributes.name',
       name: '$attributes.name',
     });

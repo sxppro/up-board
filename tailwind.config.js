@@ -58,6 +58,15 @@ module.exports = {
           foreground: 'hsl(var(--card-foreground))',
         },
         /**
+         * Up
+         */
+        up: {
+          'good-life': '#F3DC61',
+          personal: '#EF8E4B',
+          home: '#BD79BD',
+          transport: '#6491C9',
+        },
+        /**
          * Tremor — light mode
          */
         tremor: {
@@ -194,6 +203,23 @@ module.exports = {
       pattern:
         /^(fill-(?:slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-(?:50|100|200|300|400|500|600|700|800|900|950))$/,
     },
+    // We add this flatMap to the safelist. You can pass more than one color if needed. E.g. "[#ffcc33]","[#161616]"
+    ...['up-good-life', 'up-personal', 'up-home', 'up-transport'].flatMap(
+      (customColor) => [
+        `bg-${customColor}`,
+        `border-${customColor}`,
+        `hover:bg-${customColor}`,
+        `hover:border-${customColor}`,
+        `hover:text-${customColor}`,
+        `fill-${customColor}`,
+        `ring-${customColor}`,
+        `stroke-${customColor}`,
+        `text-${customColor}`,
+        `ui-selected:bg-${customColor}`,
+        `ui-selected:border-${customColor}`,
+        `ui-selected:text-${customColor}`,
+      ]
+    ),
   ],
   plugins: [require('@headlessui/tailwindcss'), require('tailwindcss-animate')],
 };
