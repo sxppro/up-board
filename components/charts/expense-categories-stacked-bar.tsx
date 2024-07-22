@@ -4,11 +4,13 @@ import { DateRangeProps } from '@/types/custom';
 import { formatCurrency } from '@/utils/helpers';
 import { useDate } from '@/utils/hooks';
 import { trpc } from '@/utils/trpc';
-import { BarChart, Subtitle, Title } from '@tremor/react';
+import { BarChart, EventProps, Subtitle, Title } from '@tremor/react';
+import { useState } from 'react';
 import DashboardCard from '../core/dashboard-card';
 
 const ExpenseCategoriesStackedBar = ({ start, end }: DateRangeProps) => {
   const { date } = useDate();
+  const [category, setCategory] = useState<string | null>();
   const { data } = trpc.user.getCategoryInfoHistory.useQuery({
     dateRange: {
       from: start || date?.from,
@@ -17,6 +19,18 @@ const ExpenseCategoriesStackedBar = ({ start, end }: DateRangeProps) => {
     type: 'parent',
   });
   const { data: categories } = trpc.user.getCategories.useQuery('parent');
+
+  const handleChartInteraction = (event: EventProps) => {
+    if (event) {
+      const { eventType, categoryClicked } = event;
+      if (eventType === 'category') {
+        setCategory(categoryClicked);
+      }
+    } else {
+      setCategory(null);
+    }
+  };
+
   return (
     <DashboardCard>
       <Title>Spending</Title>
@@ -26,7 +40,9 @@ const ExpenseCategoriesStackedBar = ({ start, end }: DateRangeProps) => {
         index={'FormattedDate'}
         categories={
           categories
-            ? [...categories?.map(({ name }) => name), 'Uncategorised']
+            ? category
+              ? [category]
+              : [...categories?.map(({ name }) => name), 'Uncategorised']
             : []
         }
         colors={[
@@ -37,7 +53,7 @@ const ExpenseCategoriesStackedBar = ({ start, end }: DateRangeProps) => {
           'gray-300',
         ]}
         valueFormatter={(number: number) => formatCurrency(number, false)}
-        onValueChange={(v) => console.log(v)}
+        onValueChange={(v) => handleChartInteraction(v)}
         stack
       />
     </DashboardCard>
