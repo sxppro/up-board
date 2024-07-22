@@ -18,7 +18,7 @@ const AccountCharts = ({ accountId }: AccountChartsProps) => {
           <Suspense
             fallback={
               <DashboardCard>
-                <Title>test</Title>
+                <Title>Income</Title>
                 <TableSkeleton cols={2} rows={6} />
               </DashboardCard>
             }

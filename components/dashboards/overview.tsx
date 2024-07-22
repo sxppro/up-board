@@ -1,12 +1,15 @@
-import { Col, Grid } from '@tremor/react';
+import { Col, Grid, Title } from '@tremor/react';
+import { Suspense } from 'react';
 import AccountBalanceHistoricalArea from '../charts/account-balance-historical-area';
 import ExpenseCategoriesDonut from '../charts/expense-categories-donut';
 import IO from '../charts/io';
 import MonthlyInOut from '../charts/monthly-in-out';
+import DashboardCard from '../core/dashboard-card';
 import DateRangePicker from '../core/date-range-picker';
+import TableSkeleton from '../core/table-skeleton';
 import DateProvider from '../providers/date-provider';
 import Payments from '../tables/payments';
-import RecentTransactions from '../tables/recent-transactions';
+import TransactionCard from '../tables/transaction-card';
 
 const OverviewDashboard = () => {
   return (
@@ -25,7 +28,19 @@ const OverviewDashboard = () => {
             <ExpenseCategoriesDonut />
           </Col>
           <Col numColSpanMd={1}>
-            <RecentTransactions />
+            <Suspense
+              fallback={
+                <DashboardCard>
+                  <Title>Recent Transactions</Title>
+                  <TableSkeleton cols={2} rows={7} />
+                </DashboardCard>
+              }
+            >
+              <TransactionCard
+                title="Recent Transactions"
+                options={{ transactionType: 'transactions' }}
+              />
+            </Suspense>
           </Col>
         </Grid>
         <Grid numItemsMd={2} numItemsLg={3} className="gap-6 mt-6">
