@@ -25,7 +25,7 @@ type TransactionCardProps = {
  * @returns
  */
 const TransactionCard = async ({ title, options }: TransactionCardProps) => {
-  const { account, transactionType, sort, sortDir, limit } = options;
+  const { account, transactionType, sort, sortDir, limit, type } = options;
   const transactions = await getTransactions({
     dateRange: { from: new Date('2024-03-01'), to: new Date() },
     account: account || 'transactional',
@@ -33,6 +33,7 @@ const TransactionCard = async ({ title, options }: TransactionCardProps) => {
     sort: sort || 'time',
     sortDir: sortDir || 'desc',
     limit: limit || 6,
+    type,
   });
 
   return (
