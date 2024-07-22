@@ -393,7 +393,8 @@ const categoriesPipeline = (
   {
     $project: {
       _id: 0,
-      category: {
+      category: '$_id',
+      categoryName: {
         $ifNull: ['$category.attributes.name', 'Uncategorised'],
       },
       amount: {

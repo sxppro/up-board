@@ -40,13 +40,12 @@ const CategoryInsights = ({
   const data = isError
     ? []
     : rawData
-    ? rawData.map(({ category, amount }) => ({
-        name: category,
+    ? rawData.map(({ categoryName, amount }) => ({
+        name: categoryName,
         value: amount,
         color: `up-${category}`,
       }))
     : [];
-  console.log(data);
 
   return (
     <DashboardCard>
