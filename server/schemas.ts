@@ -33,6 +33,7 @@ export type TransactionAccountType = z.infer<
 >;
 
 export const TransactionCategoryOptionSchema = z.object({
+  id: z.string(),
   name: z.string(),
   value: z.string(),
 });

@@ -1,10 +1,10 @@
-import CategoryInsights from '@/components/charts/category-insights';
+import CategoryInsightsGroup from '@/components/charts/category-insights-group';
 import ExpenseCategoriesBarList from '@/components/charts/expense-categories-bar-list';
 import IOBar from '@/components/charts/io-bar';
 import DashboardCard from '@/components/core/dashboard-card';
 import TableSkeleton from '@/components/core/table-skeleton';
 import TransactionCard from '@/components/tables/transaction-card';
-import { Col, Grid, Text, Title } from '@tremor/react';
+import { Col, Grid, Title } from '@tremor/react';
 import { Suspense } from 'react';
 
 interface AccountChartsProps {
@@ -43,26 +43,7 @@ const AccountCharts = ({ accountId }: AccountChartsProps) => {
           </IOBar>
         </Col>
       </Grid>
-      <Grid numItemsMd={2} className="gap-4">
-        <Col>
-          <CategoryInsights category="good-life" categoryName="Good Life" />
-        </Col>
-        <Col>
-          <DashboardCard>
-            <Text>Personal</Text>
-          </DashboardCard>
-        </Col>
-        <Col>
-          <DashboardCard>
-            <Text>Home</Text>
-          </DashboardCard>
-        </Col>
-        <Col>
-          <DashboardCard>
-            <Text>Transport</Text>
-          </DashboardCard>
-        </Col>
-      </Grid>
+      <CategoryInsightsGroup />
     </>
   );
 };
