@@ -104,7 +104,7 @@ const DashboardPage = ({ searchParams }: PageProps) => {
                 >
                   <TransactionCard
                     title="Recent Transactions"
-                    options={{ type: 'transactions' }}
+                    options={{ transactionType: 'transactions' }}
                   />
                 </Suspense>
               </DateProvider>

@@ -661,7 +661,7 @@ const transactionsByDatePipeline = (
   dateRange: DateRange,
   options: TransactionRetrievalOptions
 ) => {
-  const { sort, sortDir } = options;
+  const { sort, sortDir, limit, type } = options;
   const sortBy =
     sort === 'amount'
       ? 'attributes.amount.valueInBaseUnits'
@@ -676,6 +676,11 @@ const transactionsByDatePipeline = (
           $lt: dateRange.to,
         },
         'attributes.isCategorizable': true,
+        ...(type
+          ? type === 'income'
+            ? [{ 'attributes.amount.valueInBaseUnits': { $gt: 0 } }]
+            : [{ 'attributes.amount.valueInBaseUnits': { $lt: 0 } }]
+          : []),
       },
     },
     ...lookupTransactionCategories(),
@@ -684,7 +689,7 @@ const transactionsByDatePipeline = (
         [sortBy]: dir,
       },
     },
-    ...(options.limit ? [{ $limit: options.limit }] : []),
+    ...(limit ? [{ $limit: limit }] : []),
   ];
 };
 

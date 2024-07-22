@@ -21,7 +21,7 @@ const Payments = () => {
   const { data, isLoading } = trpc.user.getTransactionsByDate.useQuery({
     dateRange: { from: date?.from, to: date?.to },
     account: 'transactional',
-    type: 'transfers',
+    transactionType: 'transfers',
     sort: 'time',
     sortDir: 'desc',
   });

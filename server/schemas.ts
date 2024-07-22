@@ -95,10 +95,11 @@ export type TransactionResourceFiltered = z.infer<
 export const TransactionRetrievalOptionsSchema = z.object({
   account: TransactionAccountTypeSchema,
   dateRange: DateRangeSchema,
-  type: TransactionTypeEnum,
+  transactionType: TransactionTypeEnum,
   sort: z.enum(['time', 'amount']),
   sortDir: z.enum(['asc', 'desc']),
   limit: z.number().optional(),
+  type: z.enum(['income', 'expense']).optional(),
 });
 export type TransactionRetrievalOptions = z.infer<
   typeof TransactionRetrievalOptionsSchema

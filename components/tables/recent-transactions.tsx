@@ -22,7 +22,7 @@ const RecentTransactions = () => {
   const { data, isLoading } = trpc.user.getTransactionsByDate.useQuery({
     dateRange: { from: date?.from, to: date?.to },
     account: 'transactional',
-    type: 'transactions',
+    transactionType: 'transactions',
     sort: 'time',
     sortDir: 'desc',
     limit: 6,

@@ -10,8 +10,8 @@ import { getTransactionsByDate, getTransfers } from '.';
 export const getTransactions = async (
   retrievalOpts: TransactionRetrievalOptions
 ) => {
-  const { account, dateRange, type, ...options } = retrievalOpts;
-  if (type === 'transactions') {
+  const { account, dateRange, transactionType, ...options } = retrievalOpts;
+  if (transactionType === 'transactions') {
     const transactions = await getTransactionsByDate(
       account === 'transactional'
         ? process.env.UP_TRANS_ACC || ''
@@ -22,7 +22,7 @@ export const getTransactions = async (
       options
     );
     return filterTransactionFields(transactions);
-  } else if (type === 'transfers') {
+  } else if (transactionType === 'transfers') {
     const transfers = await getTransfers(dateRange);
     return filterTransactionFields(transfers);
   }
