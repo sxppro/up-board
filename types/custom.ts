@@ -69,6 +69,7 @@ export type TransactionRetrievalOptions = {
   sort: 'time' | 'amount';
   sortDir: 'asc' | 'desc';
   limit?: number;
+  type?: 'income' | 'expense';
 };
 
 export type TransactionAccountType = 'transactional' | 'savings';

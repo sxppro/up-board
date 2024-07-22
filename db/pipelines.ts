@@ -678,8 +678,8 @@ const transactionsByDatePipeline = (
         'attributes.isCategorizable': true,
         ...(type
           ? type === 'income'
-            ? [{ 'attributes.amount.valueInBaseUnits': { $gt: 0 } }]
-            : [{ 'attributes.amount.valueInBaseUnits': { $lt: 0 } }]
+            ? { 'attributes.amount.valueInBaseUnits': { $gt: 0 } }
+            : { 'attributes.amount.valueInBaseUnits': { $lt: 0 } }
           : []),
       },
     },
