@@ -81,12 +81,13 @@ export const authedRouter = router({
       z.object({
         dateRange: DateRangeSchema,
         type: TransactionCategoryTypeSchema,
+        parentCategory: z.string().optional(),
       })
     )
     .output(z.array(TransactionCategoryInfoSchema))
     .query(async ({ input }) => {
-      const { dateRange, type } = input;
-      return await getCategoryInfo(dateRange, type);
+      const { dateRange, type, parentCategory } = input;
+      return await getCategoryInfo(dateRange, type, parentCategory);
     }),
   getCategoryInfoHistory: authedProcedure
     .input(

@@ -1,3 +1,4 @@
+import CategoryInsights from '@/components/charts/category-insights';
 import ExpenseCategoriesBarList from '@/components/charts/expense-categories-bar-list';
 import IOBar from '@/components/charts/io-bar';
 import DashboardCard from '@/components/core/dashboard-card';
@@ -44,9 +45,7 @@ const AccountCharts = ({ accountId }: AccountChartsProps) => {
       </Grid>
       <Grid numItemsMd={2} className="gap-4">
         <Col>
-          <DashboardCard>
-            <Text>Good Life</Text>
-          </DashboardCard>
+          <CategoryInsights category="good-life" categoryName="Good Life" />
         </Col>
         <Col>
           <DashboardCard>

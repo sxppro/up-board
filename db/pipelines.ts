@@ -321,7 +321,8 @@ const categoriesPipeline = (
   from: Date,
   to: Date,
   accountId: string,
-  type: 'child' | 'parent'
+  type: 'child' | 'parent',
+  parentCategory?: string
 ) => [
   /**
    * Match documents within the desired date range
@@ -339,6 +340,9 @@ const categoriesPipeline = (
       'attributes.amount.valueInBaseUnits': {
         $lt: 0,
       },
+      ...(parentCategory && {
+        'relationships.parentCategory.data.id': parentCategory,
+      }),
     },
   },
   // Project only the necessary fields for further processing
