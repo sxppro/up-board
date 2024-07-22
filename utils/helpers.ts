@@ -42,12 +42,17 @@ export const debounce = (callback: Function, wait: number) => {
  * @param decimals include decimals
  * @returns number formatted in AUD
  */
-export const formatCurrency = (number: number, decimals: boolean = true) =>
+export const formatCurrency = (
+  number: number,
+  decimals: boolean = true,
+  compact: boolean = false
+) =>
   Intl.NumberFormat('default', {
     style: 'currency',
     currency: 'AUD',
     currencyDisplay: 'narrowSymbol',
     maximumFractionDigits: decimals ? undefined : 0,
+    ...(compact && { notation: 'compact', compactDisplay: 'short' }),
   })
     .format(number)
     .toString();
