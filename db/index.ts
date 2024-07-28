@@ -189,7 +189,8 @@ export const getMonthlyInfo = async (
  */
 export const getCategoryInfo = async (
   dateRange: DateRange,
-  type: TransactionCategoryType
+  type: TransactionCategoryType,
+  parentCategory?: string
 ) => {
   if (!process.env.UP_TRANS_ACC) {
     throw new Error('Up transaction account not defined');
@@ -202,7 +203,8 @@ export const getCategoryInfo = async (
       dateRange.from,
       dateRange.to,
       process.env.UP_TRANS_ACC,
-      type
+      type,
+      parentCategory
     )
   );
   const results = await cursor.toArray();

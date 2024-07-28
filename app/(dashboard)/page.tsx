@@ -97,7 +97,7 @@ const DashboardPage = ({ searchParams }: PageProps) => {
                 <Suspense
                   fallback={
                     <DashboardCard>
-                      <Title>test</Title>
+                      <Title>Recent Transactions</Title>
                       <TableSkeleton cols={2} rows={7} />
                     </DashboardCard>
                   }

@@ -74,7 +74,11 @@ const AccountPage = async ({ params, searchParams }: AccountPageProps) => {
             start={startDate ? new Date(startDate) : startOfMonth(now)}
             end={endDate ? new Date(endDate) : now}
           >
-            <AccountCharts accountId={accountId} />
+            <AccountCharts
+              accountId={accountId}
+              start={startDate ? new Date(startDate) : undefined}
+              end={endDate ? new Date(endDate) : undefined}
+            />
           </DateProvider>
         </QueryProvider>
       </div>

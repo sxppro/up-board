@@ -1,16 +1,22 @@
+import CategoryInsightsGroup from '@/components/charts/category-insights-group';
 import ExpenseCategoriesBarList from '@/components/charts/expense-categories-bar-list';
 import IOBar from '@/components/charts/io-bar';
 import DashboardCard from '@/components/core/dashboard-card';
 import TableSkeleton from '@/components/core/table-skeleton';
 import TransactionCard from '@/components/tables/transaction-card';
-import { Col, Grid, Text, Title } from '@tremor/react';
+import { DateRangeProps } from '@/types/custom';
+import { Col, Grid, Title } from '@tremor/react';
 import { Suspense } from 'react';
 
 interface AccountChartsProps {
   accountId: string;
 }
 
-const AccountCharts = ({ accountId }: AccountChartsProps) => {
+const AccountCharts = ({
+  accountId,
+  start,
+  end,
+}: AccountChartsProps & DateRangeProps) => {
   return (
     <>
       <Grid numItemsMd={2} numItemsLg={3} className="gap-4">
@@ -18,13 +24,15 @@ const AccountCharts = ({ accountId }: AccountChartsProps) => {
           <Suspense
             fallback={
               <DashboardCard>
-                <Title>test</Title>
+                <Title>Income</Title>
                 <TableSkeleton cols={2} rows={6} />
               </DashboardCard>
             }
           >
             <TransactionCard
               title="Income"
+              start={start}
+              end={end}
               options={{
                 transactionType: 'transactions',
                 type: 'income',
@@ -42,28 +50,7 @@ const AccountCharts = ({ accountId }: AccountChartsProps) => {
           </IOBar>
         </Col>
       </Grid>
-      <Grid numItemsMd={2} className="gap-4">
-        <Col>
-          <DashboardCard>
-            <Text>Good Life</Text>
-          </DashboardCard>
-        </Col>
-        <Col>
-          <DashboardCard>
-            <Text>Personal</Text>
-          </DashboardCard>
-        </Col>
-        <Col>
-          <DashboardCard>
-            <Text>Home</Text>
-          </DashboardCard>
-        </Col>
-        <Col>
-          <DashboardCard>
-            <Text>Transport</Text>
-          </DashboardCard>
-        </Col>
-      </Grid>
+      <CategoryInsightsGroup />
     </>
   );
 };

@@ -33,6 +33,7 @@ export type TransactionAccountType = z.infer<
 >;
 
 export const TransactionCategoryOptionSchema = z.object({
+  id: z.string(),
   name: z.string(),
   value: z.string(),
 });
@@ -47,6 +48,7 @@ export type TransactionCategoryType = z.infer<
 
 export const TransactionCategoryInfoSchema = z.object({
   category: z.string(),
+  categoryName: z.string(),
   amount: z.number(),
   transactions: z.number(),
 });

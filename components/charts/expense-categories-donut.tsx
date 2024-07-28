@@ -57,7 +57,7 @@ const ExpenseCategoriesDonut = () => {
       ) : (
         <Legend
           categories={data.map(
-            ({ category }: { category: string }) => category
+            ({ categoryName }: { categoryName: string }) => categoryName
           )}
         />
       )}
@@ -67,7 +67,7 @@ const ExpenseCategoriesDonut = () => {
         category="amount"
         index="category"
         valueFormatter={(number) => formatCurrency(number, true)}
-        onValueChange={(v) => console.log(v?.category)}
+        onValueChange={(v) => console.log(v)}
         customTooltip={ExpenseCategoriesDonutTooltip}
         showAnimation
       />

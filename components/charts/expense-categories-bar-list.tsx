@@ -20,10 +20,10 @@ const ExpenseCategoriesBarList = ({ start, end }: DateRangeProps) => {
   const data = isError
     ? []
     : rawData
-    ? rawData.map(({ category, amount }) => ({
-        name: category,
+    ? rawData.map(({ categoryName, amount }) => ({
+        name: categoryName,
         value: amount,
-        color: colours[category],
+        color: colours[categoryName],
       }))
     : [];
 
