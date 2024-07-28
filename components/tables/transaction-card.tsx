@@ -1,6 +1,7 @@
 import DashboardCard from '@/components/core/dashboard-card';
 import { getTransactions } from '@/db/helpers';
 import { TransactionRetrievalOptions } from '@/server/schemas';
+import { DateRangeProps } from '@/types/custom';
 import { formatCurrency } from '@/utils/helpers';
 import {
   Flex,
@@ -13,6 +14,7 @@ import {
   Text,
   Title,
 } from '@tremor/react';
+import { startOfMonth } from 'date-fns';
 
 type TransactionCardProps = {
   title: string;
@@ -24,10 +26,18 @@ type TransactionCardProps = {
  * of transactions
  * @returns
  */
-const TransactionCard = async ({ title, options }: TransactionCardProps) => {
+const TransactionCard = async ({
+  title,
+  start,
+  end,
+  options,
+}: TransactionCardProps & DateRangeProps) => {
   const { account, transactionType, sort, sortDir, limit, type } = options;
   const transactions = await getTransactions({
-    dateRange: { from: new Date('2024-03-01'), to: new Date() },
+    dateRange: {
+      from: start || startOfMonth(new Date()),
+      to: end || new Date(),
+    },
     account: account || 'transactional',
     transactionType: transactionType || 'transactions',
     sort: sort || 'time',

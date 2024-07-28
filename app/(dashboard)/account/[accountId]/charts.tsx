@@ -4,6 +4,7 @@ import IOBar from '@/components/charts/io-bar';
 import DashboardCard from '@/components/core/dashboard-card';
 import TableSkeleton from '@/components/core/table-skeleton';
 import TransactionCard from '@/components/tables/transaction-card';
+import { DateRangeProps } from '@/types/custom';
 import { Col, Grid, Title } from '@tremor/react';
 import { Suspense } from 'react';
 
@@ -11,7 +12,11 @@ interface AccountChartsProps {
   accountId: string;
 }
 
-const AccountCharts = ({ accountId }: AccountChartsProps) => {
+const AccountCharts = ({
+  accountId,
+  start,
+  end,
+}: AccountChartsProps & DateRangeProps) => {
   return (
     <>
       <Grid numItemsMd={2} numItemsLg={3} className="gap-4">
@@ -26,6 +31,8 @@ const AccountCharts = ({ accountId }: AccountChartsProps) => {
           >
             <TransactionCard
               title="Income"
+              start={start}
+              end={end}
               options={{
                 transactionType: 'transactions',
                 type: 'income',
