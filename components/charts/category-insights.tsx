@@ -5,6 +5,7 @@ import { formatCurrency } from '@/utils/helpers';
 import { useDate } from '@/utils/hooks';
 import { trpc } from '@/utils/trpc';
 import {
+  BarChart,
   BarList,
   Tab,
   TabGroup,
@@ -13,6 +14,7 @@ import {
   TabPanels,
   Title,
 } from '@tremor/react';
+import { endOfMonth, startOfMonth, subMonths } from 'date-fns';
 import { useState } from 'react';
 import DashboardCard from '../core/dashboard-card';
 
@@ -29,23 +31,33 @@ const CategoryInsights = ({
 }: CategoryInsightsProps) => {
   const { date } = useDate();
   const [extended, setExtended] = useState(false);
-  const { data: rawData, isError } = trpc.user.getCategoryInfo.useQuery({
+  const { data: rawCategoryData, isSuccess } =
+    trpc.user.getCategoryInfo.useQuery({
+      dateRange: {
+        from: start || date?.from,
+        to: end || date?.to,
+      },
+      type: 'child',
+      parentCategory: category,
+    });
+  // Last 12 months of category history
+  const { data: historyData } = trpc.user.getCategoryInfoHistory.useQuery({
     dateRange: {
-      from: start || date?.from,
-      to: end || date?.to,
+      // Subtract 12 months
+      from: start || (date?.from && startOfMonth(subMonths(date?.from, 12))),
+      // End of previous month
+      to: end || (date?.from && endOfMonth(subMonths(date?.from, 1))),
     },
-    type: 'child',
-    parentCategory: category,
+    type: 'parent',
   });
-  const data = isError
-    ? []
-    : rawData
-    ? rawData.map(({ categoryName, amount }) => ({
-        name: categoryName,
-        value: amount,
-        color: `up-${category}`,
-      }))
-    : [];
+  const subcategoryData =
+    isSuccess && rawCategoryData
+      ? rawCategoryData.map(({ categoryName, amount }) => ({
+          name: categoryName,
+          value: amount,
+          color: `up-${category}`,
+        }))
+      : [];
 
   return (
     <DashboardCard>
@@ -61,14 +73,14 @@ const CategoryInsights = ({
               className={`overflow-hidden ${extended ? '' : 'max-h-[260px]'}`}
             >
               <BarList
-                data={data}
+                data={subcategoryData}
                 valueFormatter={(number: number) =>
                   formatCurrency(number, true)
                 }
               />
             </div>
 
-            {data.length > 7 ? (
+            {subcategoryData.length > 7 ? (
               <div
                 className={`flex justify-center ${
                   extended
@@ -86,6 +98,17 @@ const CategoryInsights = ({
             ) : (
               ''
             )}
+          </TabPanel>
+          <TabPanel>
+            <BarChart
+              className="h-60 sm:h-80"
+              data={historyData || []}
+              index={'FormattedDate'}
+              categories={[categoryName]}
+              colors={[`up-${category}`]}
+              valueFormatter={(number: number) => formatCurrency(number, false)}
+              showLegend={false}
+            />
           </TabPanel>
         </TabPanels>
       </TabGroup>
