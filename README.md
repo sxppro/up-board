@@ -1,20 +1,16 @@
-## Up Dashboard
+## Up Board
 
-A personal finance dashboard that's insightful and lets you take charge of what's going on with your money.
+Data visualisation for your Up account that's insightful and lets you see what's going on with your 💸
 
 ### Tech
 
-- Next.js
+- Next.js (this application)
   - Tailwind + [shadcn/ui](https://ui.shadcn.com/) + [tremor](https://www.tremor.so/)
 - MongoDB
-- Lambda fns (not part of this repo)
-  - Consumes webhook event to sync new, deleted or settled transactions
-  - Also used to sync changes to transaction categories and tags
+- AWS Lambda
+  - Consumes Up webhook event to sync new, deleted or settled transactions
+  - Also used to periodically sync changes to transaction categories and tags
 
 ### Learn More
 
 To read more about Up's API, please go to https://developer.up.com.au/.
-
-### Getting Started
-
-[todo]

@@ -12,7 +12,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: 'Soppro Dashboard',
+  title: 'Up Board',
   description: 'Your money where you can see it',
   authors: [
     {
