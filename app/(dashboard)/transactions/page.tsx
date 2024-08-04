@@ -1,4 +1,5 @@
 import TableSkeleton from '@/components/core/table-skeleton';
+import QueryProvider from '@/components/providers/query-provider';
 import TransactionTable from '@/components/tables/transaction-table';
 import { PageProps } from '@/types/custom';
 import { Metadata } from 'next';
@@ -16,12 +17,12 @@ const TransactionsPage = async ({ searchParams }: PageProps) => {
   const searchTerm = Array.isArray(search) ? search[0] : search;
 
   return (
-    <>
+    <QueryProvider>
       <h1 className="text-2xl font-bold tracking-tight">Transactions</h1>
       <Suspense fallback={<TableSkeleton cols={4} rows={10} />}>
         <TransactionTable search={searchTerm} />
       </Suspense>
-    </>
+    </QueryProvider>
   );
 };
 
