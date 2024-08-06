@@ -59,7 +59,7 @@ export interface paths {
           /**
            * @description The unique identifier for the account.
            *
-           * @example 92b41408-6b7b-4fca-982b-3fb1fdd77220
+           * @example 7699cfe5-eabd-4855-bbe7-9dfe3f70cebf
            */
           id: string;
         };
@@ -69,6 +69,49 @@ export interface paths {
         200: {
           content: {
             "application/json": components["schemas"]["GetAccountResponse"];
+          };
+        };
+      };
+    };
+  };
+  "/attachments": {
+    /**
+     * List attachments
+     * @description Retrieve a list of all attachments. The returned list is [paginated](#pagination) and can
+     * be scrolled by following the `next` and `prev` links where present.
+     */
+    get: {
+      responses: {
+        /** @description Successful Response */
+        200: {
+          content: {
+            "application/json": components["schemas"]["ListAttachmentsResponse"];
+          };
+        };
+      };
+    };
+  };
+  "/attachments/{id}": {
+    /**
+     * Retrieve attachment
+     * @description Retrieve a specific attachment by providing its unique identifier.
+     */
+    get: {
+      parameters: {
+        path: {
+          /**
+           * @description The unique identifier for the attachment.
+           *
+           * @example 3672d7fb-e56d-4c4a-b546-7c11ddb5e5e7
+           */
+          id: string;
+        };
+      };
+      responses: {
+        /** @description Successful Response */
+        200: {
+          content: {
+            "application/json": components["schemas"]["GetAttachmentResponse"];
           };
         };
       };
@@ -147,7 +190,7 @@ export interface paths {
           /**
            * @description The unique identifier for the transaction.
            *
-           * @example a572c7c3-b637-433c-a4ce-c0be5dcb0a5a
+           * @example 88b4ed70-7f15-4b46-a676-46aafad4c183
            */
           transactionId: string;
         };
@@ -234,7 +277,7 @@ export interface paths {
           /**
            * @description The unique identifier for the transaction.
            *
-           * @example acde4631-db56-49a6-aea3-4e2311ef1d6a
+           * @example 6259eac2-feac-417d-893e-84876c575913
            */
           transactionId: string;
         };
@@ -263,7 +306,7 @@ export interface paths {
           /**
            * @description The unique identifier for the transaction.
            *
-           * @example c3feb4ba-829c-4482-b882-1b9bd23da82d
+           * @example 86aacb90-a718-43f2-bb06-c1e32542ab26
            */
           transactionId: string;
         };
@@ -363,7 +406,7 @@ export interface paths {
           /**
            * @description The unique identifier for the transaction.
            *
-           * @example 7a9d19f9-106c-4e29-8591-52fc5d8f09c5
+           * @example 57a749fd-4fc9-40da-a8d9-ec9cf1d8c9ff
            */
           id: string;
         };
@@ -444,7 +487,7 @@ export interface paths {
           /**
            * @description The unique identifier for the account.
            *
-           * @example b5544658-4bbd-4eb1-8f63-a9909e0f564b
+           * @example 689a08de-fa65-4f2d-8b58-e49b17117dc7
            */
           accountId: string;
         };
@@ -537,7 +580,7 @@ export interface paths {
           /**
            * @description The unique identifier for the webhook.
            *
-           * @example c8283a72-24b0-4fd8-9b13-fccccab371e5
+           * @example 48984142-bb60-4fd9-8db2-ed72cfc2a0ba
            */
           id: string;
         };
@@ -562,7 +605,7 @@ export interface paths {
           /**
            * @description The unique identifier for the webhook.
            *
-           * @example a940825b-80b6-4798-b378-c6284259b4c5
+           * @example be530308-60e2-489b-9c73-ab0db6fd132d
            */
           id: string;
         };
@@ -586,7 +629,7 @@ export interface paths {
           /**
            * @description The unique identifier for the webhook.
            *
-           * @example 830e127d-fb89-4400-92bb-f3f48289dcba
+           * @example ca59a175-79fa-4467-867f-b0cf582ee6bd
            */
           webhookId: string;
         };
@@ -625,7 +668,7 @@ export interface paths {
           /**
            * @description The unique identifier for the webhook.
            *
-           * @example 7104f5df-4993-495f-9d29-2b4d062c03a9
+           * @example e579c0fe-62e7-47de-b436-4b1dfe110b35
            */
           webhookId: string;
         };
@@ -647,12 +690,12 @@ export type webhooks = Record<string, never>;
 export interface components {
   schemas: {
     /**
-     * @description Specifies the type of bank account. Currently returned values are `SAVER`
-     * and `TRANSACTIONAL`.
+     * @description Specifies the type of bank account. Currently returned values are
+     * `SAVER`, `TRANSACTIONAL` and `HOME_LOAN`.
      *
      * @enum {unknown}
      */
-    AccountTypeEnum: "SAVER" | "TRANSACTIONAL";
+    AccountTypeEnum: "SAVER" | "TRANSACTIONAL" | "HOME_LOAN";
     /**
      * @description Specifies the structure under which a bank account is owned. Currently
      * returned values are `INDIVIDUAL` and `JOINT`.
@@ -739,6 +782,74 @@ export interface components {
     GetAccountResponse: {
       /** @description The account returned in this response. */
       data: components["schemas"]["AccountResource"];
+    };
+    AttachmentResource: {
+      /** @description The type of this resource: `attachments` */
+      type: string;
+      /** @description The unique identifier for this attachment. */
+      id: string;
+      attributes: {
+        /**
+         * Format: date-time
+         * @description The date-time when the file was created.
+         */
+        createdAt: string | null;
+        /** @description A temporary link to download the file. */
+        fileURL: string | null;
+        /**
+         * Format: date-time
+         * @description The date-time at which the `fileURL` link expires.
+         */
+        fileURLExpiresAt: string;
+        /** @description File extension for the uploaded attachment. */
+        fileExtension: string | null;
+        /** @description Content type for the uploaded attachment. */
+        fileContentType: string | null;
+      };
+      relationships: {
+        transaction: {
+          data: {
+            /** @description The type of this resource: `transactions` */
+            type: string;
+            /** @description The unique identifier of the resource within its type. */
+            id: string;
+          };
+          links?: {
+            /** @description The link to retrieve the related resource(s) in this relationship. */
+            related: string;
+          };
+        };
+      };
+      links?: {
+        /** @description The canonical link to this resource within the API. */
+        self: string;
+      };
+    };
+    /**
+     * @description Successful response to get all attachments. This returns a paginated list of
+     * attachments, which can be scrolled by following the `prev` and `next` links if
+     * present.
+     */
+    ListAttachmentsResponse: {
+      /** @description The list of attachments returned in this response. */
+      data: components["schemas"]["AttachmentResource"][];
+      links: {
+        /**
+         * @description The link to the previous page in the results. If this value is `null`
+         * there is no previous page.
+         */
+        prev: string | null;
+        /**
+         * @description The link to the next page in the results. If this value is `null`
+         * there is no next page.
+         */
+        next: string | null;
+      };
+    };
+    /** @description Successful response to get a single attachment. */
+    GetAttachmentResponse: {
+      /** @description The attachment returned in this response. */
+      data: components["schemas"]["AttachmentResource"];
     };
     /** @description Provides information about a category and its ancestry. */
     CategoryResource: {
@@ -968,6 +1079,29 @@ export interface components {
       /** @description The total amount of cashback paid, represented as a positive value. */
       amount: components["schemas"]["MoneyObject"];
     };
+    /**
+     * @description Specifies the type of card charge.
+     *
+     * @enum {unknown}
+     */
+    CardPurchaseMethodEnum: "BAR_CODE" | "OCR" | "CARD_PIN" | "CARD_DETAILS" | "CARD_ON_FILE" | "ECOMMERCE" | "MAGNETIC_STRIPE" | "CONTACTLESS";
+    /** @description Provides information about the card used for a transaction. */
+    CardPurchaseMethodObject: {
+      /** @description The type of card purchase. */
+      method: components["schemas"]["CardPurchaseMethodEnum"];
+      /** @description The last four digits of the card used for the purchase, if applicable. */
+      cardNumberSuffix: string | null;
+    };
+    /** @description Provides information about the note and attachement. */
+    NoteObject: {
+      /** @description A text note about the transaction. */
+      text: string;
+    };
+    /** @description Provides information about the customer who initiated a transaction */
+    CustomerObject: {
+      /** @description The Upname or preferred name of the customer */
+      displayName: string;
+    };
     TransactionResource: {
       /** @description The type of this resource: `transactions` */
       type: string;
@@ -1031,6 +1165,8 @@ export interface components {
          * `HELD` at.
          */
         foreignAmount: components["schemas"]["MoneyObject"] | null;
+        /** @description Information about the card used for this transaction, if applicable. */
+        cardPurchaseMethod: components["schemas"]["CardPurchaseMethodObject"] | null;
         /**
          * Format: date-time
          * @description The date-time at which this transaction settled. This field will be
@@ -1042,6 +1178,12 @@ export interface components {
          * @description The date-time at which this transaction was first encountered.
          */
         createdAt: string;
+        /** @description A description of the transaction method used e.g. Purchase, BPAY Payment. */
+        transactionType: string | null;
+        /** @description A customer provided note about the transaction.  Can only be provided by Up High subscribers. */
+        note: components["schemas"]["NoteObject"] | null;
+        /** @description The customer who initated the transaction.  For 2Up accounts this could be the customer who's card was used. */
+        performingCustomer: components["schemas"]["CustomerObject"] | null;
       };
       relationships: {
         account: {
@@ -1115,6 +1257,18 @@ export interface components {
              * related resource(s) in this relationship.
              */
             self: string;
+          };
+        };
+        attachment: {
+          data: {
+            /** @description The type of this resource: `attachments` */
+            type: string;
+            /** @description The unique identifier of the resource within its type. */
+            id: string;
+          } | null;
+          links?: {
+            /** @description The link to retrieve the related resource(s) in this relationship. */
+            related: string;
           };
         };
       };
