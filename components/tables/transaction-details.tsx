@@ -25,7 +25,7 @@ const TransactionDetails = ({ transactionId }: TransactionDetailsProps) => {
     txDetails && Array.isArray(txDetails.tags) && txDetails.tags.length > 0;
 
   return isLoading || !txDetails ? (
-    <TableSkeleton cols={2} rows={8} />
+    <TableSkeleton cols={2} rows={9} />
   ) : (
     <Table>
       <TableCaption>{`Transaction ID: ${txDetails.id}`}</TableCaption>
