@@ -1,6 +1,5 @@
 import { Col, Grid, Title } from '@tremor/react';
 import { Suspense } from 'react';
-import AccountBalanceHistoricalArea from '../charts/account-balance-historical-area';
 import ExpenseCategoriesDonut from '../charts/expense-categories-donut';
 import IO from '../charts/io';
 import MonthlyInOut from '../charts/monthly-in-out';
@@ -21,9 +20,6 @@ const OverviewDashboard = () => {
       <div className="w-full">
         <IO accountId="" />
         <Grid numItemsMd={2} numItemsLg={3} className="gap-6 mt-6">
-          <Col numColSpanMd={2} numColSpanLg={1}>
-            <AccountBalanceHistoricalArea />
-          </Col>
           <Col numColSpanMd={1}>
             <ExpenseCategoriesDonut />
           </Col>
