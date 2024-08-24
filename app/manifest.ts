@@ -2,8 +2,8 @@ import { MetadataRoute } from 'next';
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'Soppro Dashboard',
-    short_name: 'Dashboard',
+    name: 'Up Board',
+    short_name: 'Up Board',
     description: 'Your money where you can see it',
     display: 'standalone',
     background_color: '#fff',

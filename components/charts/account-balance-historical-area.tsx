@@ -6,21 +6,21 @@ import { trpc } from '@/utils/trpc';
 import { AreaChart, Title } from '@tremor/react';
 import DashboardCard from '../core/dashboard-card';
 
-const AccountBalanceHistoricalArea = () => {
+const AccountBalanceHistoricalArea = ({ accountId }: { accountId: string }) => {
   const { date } = useDate();
   const { data } = trpc.user.getAccountBalance.useQuery({
     dateRange: {
       from: date?.from,
       to: date?.to,
     },
-    account: 'savings',
+    accountId,
   });
 
   return (
     <DashboardCard>
       <Title>Balance</Title>
       <AreaChart
-        className="flex-1"
+        className="w-full min-h-[20rem] h-full"
         data={data || []}
         index="FormattedDate"
         categories={['Balance']}

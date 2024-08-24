@@ -40,7 +40,7 @@ const AccountPage = async ({ params, searchParams }: AccountPageProps) => {
     );
   }
 
-  const { displayName } = accountInfo;
+  const { displayName, accountType } = accountInfo;
 
   return (
     <>
@@ -76,6 +76,7 @@ const AccountPage = async ({ params, searchParams }: AccountPageProps) => {
           >
             <AccountCharts
               accountId={accountId}
+              accountType={accountType}
               start={startDate ? new Date(startDate) : undefined}
               end={endDate ? new Date(endDate) : undefined}
             />

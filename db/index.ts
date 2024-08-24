@@ -4,7 +4,6 @@ import {
   type AccountBalanceHistory,
   type AccountMonthlyInfo,
   type DateRange,
-  type TransactionAccountType,
   type TransactionCategoryInfo,
   type TransactionCategoryOption,
   type TransactionCategoryType,
@@ -415,20 +414,11 @@ export const getAccounts = async (
  * @param accountId
  * @returns
  */
-const getAccountBalance = async (
-  dateRange: DateRange,
-  account: TransactionAccountType
-) => {
+const getAccountBalance = async (dateRange: DateRange, accountId: string) => {
   const db = await connectToDatabase('up');
   const transactions = db.collection<DbTransactionResource>('transactions');
   const cursor = transactions.aggregate<AccountBalanceHistory>(
-    accountBalancePipeline(
-      dateRange.from,
-      dateRange.to,
-      (account === 'transactional'
-        ? process.env.UP_TRANS_ACC
-        : process.env.UP_SAVINGS_ACC) || ''
-    )
+    accountBalancePipeline(dateRange.from, dateRange.to, accountId)
   );
   const results = await cursor.toArray();
   return results;

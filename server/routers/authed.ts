@@ -18,7 +18,6 @@ import {
   AccountBalanceHistorySchema,
   AccountMonthlyInfoSchema,
   DateRangeSchema,
-  TransactionAccountTypeSchema,
   TransactionCategoryInfoHistory,
   TransactionCategoryInfoHistorySchema,
   TransactionCategoryInfoSchema,
@@ -115,20 +114,20 @@ export const authedRouter = router({
     .input(
       z.object({
         dateRange: DateRangeSchema,
-        account: TransactionAccountTypeSchema,
+        accountId: z.string().uuid(),
       })
     )
     .output(
       z.array(AccountBalanceHistorySchema.extend({ FormattedDate: z.string() }))
     )
     .query(async ({ input }) => {
-      const { dateRange, account } = input;
-      const accountBalance = await getAccountBalance(dateRange, account);
+      const { dateRange, accountId } = input;
+      const accountBalance = await getAccountBalance(dateRange, accountId);
       return accountBalance.map(({ Timestamp, ...rest }) => {
         return {
           ...rest,
           Timestamp,
-          FormattedDate: format(Timestamp, 'dd LLL yy'),
+          FormattedDate: format(Timestamp, 'dd LLL'),
         };
       });
     }),

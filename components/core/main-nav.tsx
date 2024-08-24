@@ -13,16 +13,16 @@ const links = [
     route: '/',
   },
   {
-    page: 'Overview',
-    route: '/overview',
-  },
-  {
     page: 'Transactions',
     route: '/transactions',
   },
   {
     page: 'Tags',
     route: '/tags',
+  },
+  {
+    page: 'Overview',
+    route: '/overview',
   },
 ];
 

@@ -1,56 +1,23 @@
-import CategoryInsightsGroup from '@/components/charts/category-insights-group';
-import ExpenseCategoriesBarList from '@/components/charts/expense-categories-bar-list';
-import IOBar from '@/components/charts/io-bar';
-import DashboardCard from '@/components/core/dashboard-card';
-import TableSkeleton from '@/components/core/table-skeleton';
-import TransactionCard from '@/components/tables/transaction-card';
-import { DateRangeProps } from '@/types/custom';
-import { Col, Grid, Title } from '@tremor/react';
-import { Suspense } from 'react';
+import { AccountInfo, DateRangeProps } from '@/types/custom';
+import SaverCharts from './saver';
+import TransactionalCharts from './transactional';
 
-interface AccountChartsProps {
+export interface AccountChartsProps extends DateRangeProps {
   accountId: string;
+  accountType: AccountInfo['accountType'];
 }
 
-const AccountCharts = ({
-  accountId,
-  start,
-  end,
-}: AccountChartsProps & DateRangeProps) => {
+const AccountCharts = async (props: AccountChartsProps) => {
+  const { accountType } = props;
   return (
     <>
-      <Grid numItemsMd={2} numItemsLg={3} className="gap-4">
-        <Col>
-          <Suspense
-            fallback={
-              <DashboardCard>
-                <Title>Income</Title>
-                <TableSkeleton cols={2} rows={6} />
-              </DashboardCard>
-            }
-          >
-            <TransactionCard
-              title="Income"
-              start={start}
-              end={end}
-              options={{
-                transactionType: 'transactions',
-                type: 'income',
-                limit: 5,
-              }}
-            />
-          </Suspense>
-        </Col>
-        <Col>
-          <ExpenseCategoriesBarList />
-        </Col>
-        <Col>
-          <IOBar accountId={accountId}>
-            <Title>Today</Title>
-          </IOBar>
-        </Col>
-      </Grid>
-      <CategoryInsightsGroup />
+      {accountType === 'TRANSACTIONAL' ? (
+        <TransactionalCharts {...props} />
+      ) : accountType === 'SAVER' ? (
+        <SaverCharts {...props} />
+      ) : (
+        ''
+      )}
     </>
   );
 };
