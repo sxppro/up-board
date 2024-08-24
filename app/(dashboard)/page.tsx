@@ -1,5 +1,5 @@
 import ExpenseCategoriesStackedBar from '@/components/charts/expense-categories-stacked-bar';
-import IO from '@/components/charts/io';
+import IOStats from '@/components/charts/io-stats';
 import DashboardCard from '@/components/core/dashboard-card';
 import StatCard from '@/components/core/stat-card';
 import TableSkeleton from '@/components/core/table-skeleton';
@@ -81,7 +81,7 @@ const DashboardPage = ({ searchParams }: PageProps) => {
                       </>
                     }
                   >
-                    <IO
+                    <IOStats
                       accountId={process.env.UP_TRANS_ACC || ''}
                       start={
                         startDate ? new Date(startDate) : startOfMonth(now)

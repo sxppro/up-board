@@ -9,7 +9,7 @@ interface IOProps extends DateRangeProps {
   accountId: string;
 }
 
-const IO = async ({ accountId, start, end }: IOProps) => {
+const IOStats = async ({ accountId, start, end }: IOProps) => {
   const now = new Date();
   const stats = (
     await getMonthlyInfo(accountId, {
@@ -69,4 +69,4 @@ const IO = async ({ accountId, start, end }: IOProps) => {
   );
 };
 
-export default IO;
+export default IOStats;

@@ -1,7 +1,7 @@
 import { Col, Grid, Title } from '@tremor/react';
 import { Suspense } from 'react';
 import ExpenseCategoriesDonut from '../charts/expense-categories-donut';
-import IO from '../charts/io';
+import IOStats from '../charts/io-stats';
 import MonthlyInOut from '../charts/monthly-in-out';
 import DashboardCard from '../core/dashboard-card';
 import DateRangePicker from '../core/date-range-picker';
@@ -18,7 +18,7 @@ const OverviewDashboard = () => {
         <DateRangePicker />
       </div>
       <div className="w-full">
-        <IO accountId="" />
+        <IOStats accountId="" />
         <Grid numItemsMd={2} numItemsLg={3} className="gap-6 mt-6">
           <Col numColSpanMd={1}>
             <ExpenseCategoriesDonut />

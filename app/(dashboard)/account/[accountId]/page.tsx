@@ -1,4 +1,4 @@
-import IO from '@/components/charts/io';
+import IOStats from '@/components/charts/io-stats';
 import DateRangePicker from '@/components/core/date-range-picker';
 import StatCard from '@/components/core/stat-card';
 import DateProvider from '@/components/providers/date-provider';
@@ -62,7 +62,7 @@ const AccountPage = async ({ params, searchParams }: AccountPageProps) => {
               </>
             }
           >
-            <IO
+            <IOStats
               accountId={accountId}
               start={startDate ? new Date(startDate) : startOfMonth(now)}
               end={endDate ? new Date(endDate) : now}
