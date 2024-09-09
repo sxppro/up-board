@@ -12,14 +12,13 @@ interface AccountsListProps {
 
 export const AccountsListLoading = () => (
   <Card>
-    <Flex alignItems="center" justifyContent="between">
+    <Flex alignItems="center">
       <Flex className="gap-2" flexDirection="col" alignItems="start">
         <Badge className="font-semibold px-2.5 py-0.5 -m-1" size="xs">
           <Skeleton className="h-5 w-24 max-w-[6rem] p-1" />
         </Badge>
         <Skeleton className="h-8 w-[20rem]" />
       </Flex>
-      <ChevronRight className="h-8 w-8" />
     </Flex>
   </Card>
 );
