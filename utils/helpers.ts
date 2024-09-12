@@ -90,23 +90,26 @@ export function cn(...inputs: ClassValue[]) {
  * @returns
  */
 export const filterTransactionFields = (
-  transactions: components['schemas']['TransactionResource'][]
+  transactions?: components['schemas']['TransactionResource'][]
 ): TransactionResourceFiltered[] => {
-  return transactions.map((transaction) => {
-    const { id, attributes, relationships } = transaction;
-    return {
-      id,
-      description: attributes.description,
-      rawText: attributes.rawText,
-      amount: attributes.amount.value,
-      amountRaw: attributes.amount.valueInBaseUnits / 100,
-      time: attributes.createdAt,
-      status: attributes.status,
-      category: relationships.category.data?.id ?? 'uncategorised',
-      parentCategory: relationships.parentCategory.data?.id ?? 'uncategorised',
-      tags: relationships.tags.data.map(({ id }) => id),
-    };
-  });
+  return (
+    transactions?.map((transaction) => {
+      const { id, attributes, relationships } = transaction;
+      return {
+        id,
+        description: attributes.description,
+        rawText: attributes.rawText,
+        amount: attributes.amount.value,
+        amountRaw: attributes.amount.valueInBaseUnits / 100,
+        time: attributes.createdAt,
+        status: attributes.status,
+        category: relationships.category.data?.id ?? 'uncategorised',
+        parentCategory:
+          relationships.parentCategory.data?.id ?? 'uncategorised',
+        tags: relationships.tags.data.map(({ id }) => id),
+      };
+    }) || []
+  );
 };
 
 /**
