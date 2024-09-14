@@ -13,6 +13,7 @@ import path from 'node:path';
 import OpenAPISampler from 'openapi-sampler';
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
+import categories from '../mock/categories.json';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -78,10 +79,15 @@ const generateTransactions = (
       {},
       schema
     ) as components['schemas']['TransactionResource'];
+    const subCategories = categories.data.filter(
+      ({ relationships }) => relationships.parent.data
+    );
+    const chosenCategory = faker.helpers.arrayElement(subCategories);
     const date = faker.date.past().toISOString();
-    const amount = faker.finance.amount();
+    const amount = faker.finance.amount({ min: -10000, max: 10000 });
     const merchant = faker.company.name();
 
+    // Data
     transaction['type'] = 'transactions';
     transaction['id'] = faker.string.uuid();
     transaction['attributes']['status'] = faker.helpers.arrayElement([
@@ -102,6 +108,22 @@ const generateTransactions = (
       .soon({ refDate: date, days: 3 })
       .toISOString();
     transaction['attributes']['isCategorizable'] = faker.datatype.boolean();
+    // Account
+    transaction['relationships']['account']['data'] = {
+      type: 'accounts',
+      id: faker.helpers.arrayElement(accountIds),
+    };
+    // Subcategory
+    transaction['relationships']['category']['data'] = {
+      type: 'categories',
+      id: chosenCategory.id,
+    };
+    // Category
+    transaction['relationships']['parentCategory']['data'] = {
+      type: 'categories',
+      id: chosenCategory.relationships.parent.data?.id || '',
+    };
+
     return transaction;
   });
 };
