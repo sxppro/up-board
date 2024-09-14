@@ -123,7 +123,7 @@ export const authedRouter = router({
     .query(async ({ input }) => {
       const { dateRange, accountId } = input;
       const accountBalance = await getAccountBalance(dateRange, accountId);
-      return accountBalance.map(({ Timestamp, ...rest }) => {
+      return accountBalance?.map(({ Timestamp, ...rest }) => {
         return {
           ...rest,
           Timestamp,

@@ -29,7 +29,6 @@ const AccountPage = async ({ params, searchParams }: AccountPageProps) => {
   const accountInfo = await getAccountById(accountId);
 
   if (!accountInfo) {
-    // Show 404 or other
     return (
       <div className="w-full flex h-[calc(100vh - 4rem)]">
         <div className="flex flex-col items-center gap-2 m-auto">
