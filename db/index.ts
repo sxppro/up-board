@@ -2,15 +2,15 @@ import accounts from '@/mock/accounts.json';
 import categories from '@/mock/categories.json';
 import tags from '@/mock/tags.json';
 import transactions from '@/mock/transactions.json';
-import {
+import type {
+  AccountBalanceHistory,
+  AccountMonthlyInfo,
+  DateRange,
   TagInfo,
+  TransactionCategoryInfo,
   TransactionCategoryInfoHistoryRaw,
-  type AccountBalanceHistory,
-  type AccountMonthlyInfo,
-  type DateRange,
-  type TransactionCategoryInfo,
-  type TransactionCategoryOption,
-  type TransactionCategoryType,
+  TransactionCategoryOption,
+  TransactionCategoryType,
 } from '@/server/schemas';
 import {
   AccountInfo,
@@ -218,7 +218,16 @@ export const getMonthlyInfo = async (
     const results = await cursor.toArray();
     return results;
   } catch (err) {
-    return [];
+    const income = parseFloat(faker.finance.amount());
+    const expenses = parseFloat(faker.finance.amount());
+    return [
+      {
+        Income: income,
+        Expenses: expenses,
+        Net: income - expenses,
+        Transactions: faker.number.int({ max: 100 }),
+      },
+    ];
   }
 };
 
