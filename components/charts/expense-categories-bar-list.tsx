@@ -10,7 +10,7 @@ import DashboardCard from '../core/dashboard-card';
 
 const ExpenseCategoriesBarList = ({ start, end }: DateRangeProps) => {
   const { date } = useDate();
-  const { data: rawData, isError } = trpc.user.getCategoryInfo.useQuery({
+  const { data: rawData, isError } = trpc.public.getCategoryInfo.useQuery({
     dateRange: {
       from: start || date?.from,
       to: end || date?.to,

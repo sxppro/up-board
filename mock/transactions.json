@@ -44,7 +44,7 @@
         "amount": {
           "currencyCode": "RSD",
           "value": "3509.73",
-          "valueInBaseUnits": 3509.73
+          "valueInBaseUnits": 350973
         },
         "foreignAmount": {
           "currencyCode": "string",
@@ -55,8 +55,8 @@
           "method": "BAR_CODE",
           "cardNumberSuffix": "string"
         },
-        "settledAt": "2024-04-26T22:02:28.041Z",
-        "createdAt": "2024-04-24T20:56:20.869Z",
+        "settledAt": "2024-04-27T07:12:01.343Z",
+        "createdAt": "2024-04-25T06:05:54.171Z",
         "transactionType": "string",
         "note": {
           "text": "string"
@@ -167,7 +167,7 @@
         "amount": {
           "currencyCode": "ISK",
           "value": "-7264.97",
-          "valueInBaseUnits": -7264.97
+          "valueInBaseUnits": -726497
         },
         "foreignAmount": {
           "currencyCode": "string",
@@ -178,8 +178,8 @@
           "method": "BAR_CODE",
           "cardNumberSuffix": "string"
         },
-        "settledAt": "2023-12-20T07:14:38.415Z",
-        "createdAt": "2023-12-18T05:44:55.795Z",
+        "settledAt": "2023-12-20T16:24:11.718Z",
+        "createdAt": "2023-12-18T14:54:29.098Z",
         "transactionType": "string",
         "note": {
           "text": "string"
@@ -290,7 +290,7 @@
         "amount": {
           "currencyCode": "CDF",
           "value": "-6228.32",
-          "valueInBaseUnits": -6228.32
+          "valueInBaseUnits": -622832
         },
         "foreignAmount": {
           "currencyCode": "string",
@@ -301,8 +301,8 @@
           "method": "BAR_CODE",
           "cardNumberSuffix": "string"
         },
-        "settledAt": "2024-04-10T11:37:50.636Z",
-        "createdAt": "2024-04-07T21:31:10.888Z",
+        "settledAt": "2024-04-10T20:47:23.940Z",
+        "createdAt": "2024-04-08T06:40:44.192Z",
         "transactionType": "string",
         "note": {
           "text": "string"
@@ -418,7 +418,7 @@
         "amount": {
           "currencyCode": "MUR",
           "value": "3001.93",
-          "valueInBaseUnits": 3001.93
+          "valueInBaseUnits": 300193
         },
         "foreignAmount": {
           "currencyCode": "string",
@@ -429,8 +429,8 @@
           "method": "BAR_CODE",
           "cardNumberSuffix": "string"
         },
-        "settledAt": "2024-05-11T09:07:43.418Z",
-        "createdAt": "2024-05-09T21:00:45.870Z",
+        "settledAt": "2024-05-11T18:17:16.721Z",
+        "createdAt": "2024-05-10T06:10:19.173Z",
         "transactionType": "string",
         "note": {
           "text": "string"
@@ -541,7 +541,7 @@
         "amount": {
           "currencyCode": "TND",
           "value": "602.74",
-          "valueInBaseUnits": 602.74
+          "valueInBaseUnits": 60274
         },
         "foreignAmount": {
           "currencyCode": "string",
@@ -552,8 +552,8 @@
           "method": "BAR_CODE",
           "cardNumberSuffix": "string"
         },
-        "settledAt": "2024-05-06T07:52:20.550Z",
-        "createdAt": "2024-05-04T17:00:38.136Z",
+        "settledAt": "2024-05-06T17:01:53.853Z",
+        "createdAt": "2024-05-05T02:10:11.439Z",
         "transactionType": "string",
         "note": {
           "text": "string"
@@ -669,7 +669,7 @@
         "amount": {
           "currencyCode": "NGN",
           "value": "-2371.95",
-          "valueInBaseUnits": -2371.95
+          "valueInBaseUnits": -237194.99999999997
         },
         "foreignAmount": {
           "currencyCode": "string",
@@ -680,8 +680,8 @@
           "method": "BAR_CODE",
           "cardNumberSuffix": "string"
         },
-        "settledAt": "2023-10-02T11:26:38.122Z",
-        "createdAt": "2023-09-30T04:47:29.731Z",
+        "settledAt": "2023-10-02T20:36:11.425Z",
+        "createdAt": "2023-09-30T13:57:03.034Z",
         "transactionType": "string",
         "note": {
           "text": "string"
@@ -797,7 +797,7 @@
         "amount": {
           "currencyCode": "TJS",
           "value": "-6983.59",
-          "valueInBaseUnits": -6983.59
+          "valueInBaseUnits": -698359
         },
         "foreignAmount": {
           "currencyCode": "string",
@@ -808,8 +808,8 @@
           "method": "BAR_CODE",
           "cardNumberSuffix": "string"
         },
-        "settledAt": "2024-06-23T05:57:20.992Z",
-        "createdAt": "2024-06-21T05:29:41.588Z",
+        "settledAt": "2024-06-23T15:06:54.295Z",
+        "createdAt": "2024-06-21T14:39:14.891Z",
         "transactionType": "string",
         "note": {
           "text": "string"
@@ -925,7 +925,7 @@
         "amount": {
           "currencyCode": "NZD",
           "value": "1323.91",
-          "valueInBaseUnits": 1323.91
+          "valueInBaseUnits": 132391
         },
         "foreignAmount": {
           "currencyCode": "string",
@@ -936,8 +936,8 @@
           "method": "BAR_CODE",
           "cardNumberSuffix": "string"
         },
-        "settledAt": "2023-11-08T02:40:06.151Z",
-        "createdAt": "2023-11-06T16:05:29.519Z",
+        "settledAt": "2023-11-08T11:49:39.454Z",
+        "createdAt": "2023-11-07T01:15:02.822Z",
         "transactionType": "string",
         "note": {
           "text": "string"
@@ -1048,7 +1048,7 @@
         "amount": {
           "currencyCode": "HTG",
           "value": "2060.72",
-          "valueInBaseUnits": 2060.72
+          "valueInBaseUnits": 206071.99999999997
         },
         "foreignAmount": {
           "currencyCode": "string",
@@ -1059,8 +1059,8 @@
           "method": "BAR_CODE",
           "cardNumberSuffix": "string"
         },
-        "settledAt": "2024-03-18T07:32:52.725Z",
-        "createdAt": "2024-03-15T16:32:28.250Z",
+        "settledAt": "2024-03-18T16:42:26.028Z",
+        "createdAt": "2024-03-16T01:42:01.553Z",
         "transactionType": "string",
         "note": {
           "text": "string"
@@ -1176,7 +1176,7 @@
         "amount": {
           "currencyCode": "RWF",
           "value": "-3792.11",
-          "valueInBaseUnits": -3792.11
+          "valueInBaseUnits": -379211
         },
         "foreignAmount": {
           "currencyCode": "string",
@@ -1187,8 +1187,8 @@
           "method": "BAR_CODE",
           "cardNumberSuffix": "string"
         },
-        "settledAt": "2024-03-25T06:42:16.687Z",
-        "createdAt": "2024-03-24T07:00:04.636Z",
+        "settledAt": "2024-03-25T15:51:49.990Z",
+        "createdAt": "2024-03-24T16:09:37.939Z",
         "transactionType": "string",
         "note": {
           "text": "string"
@@ -1304,7 +1304,7 @@
         "amount": {
           "currencyCode": "BIF",
           "value": "-6518.95",
-          "valueInBaseUnits": -6518.95
+          "valueInBaseUnits": -651895
         },
         "foreignAmount": {
           "currencyCode": "string",
@@ -1315,8 +1315,8 @@
           "method": "BAR_CODE",
           "cardNumberSuffix": "string"
         },
-        "settledAt": "2024-04-22T09:27:08.015Z",
-        "createdAt": "2024-04-20T15:07:48.873Z",
+        "settledAt": "2024-04-22T18:36:41.318Z",
+        "createdAt": "2024-04-21T00:17:22.176Z",
         "transactionType": "string",
         "note": {
           "text": "string"
@@ -1432,7 +1432,7 @@
         "amount": {
           "currencyCode": "LBP",
           "value": "9613.55",
-          "valueInBaseUnits": 9613.55
+          "valueInBaseUnits": 961354.9999999999
         },
         "foreignAmount": {
           "currencyCode": "string",
@@ -1443,8 +1443,8 @@
           "method": "BAR_CODE",
           "cardNumberSuffix": "string"
         },
-        "settledAt": "2024-01-25T23:54:18.418Z",
-        "createdAt": "2024-01-23T23:18:27.196Z",
+        "settledAt": "2024-01-26T09:03:51.721Z",
+        "createdAt": "2024-01-24T08:28:00.499Z",
         "transactionType": "string",
         "note": {
           "text": "string"
@@ -1560,7 +1560,7 @@
         "amount": {
           "currencyCode": "KGS",
           "value": "-941.74",
-          "valueInBaseUnits": -941.74
+          "valueInBaseUnits": -94174
         },
         "foreignAmount": {
           "currencyCode": "string",
@@ -1571,8 +1571,8 @@
           "method": "BAR_CODE",
           "cardNumberSuffix": "string"
         },
-        "settledAt": "2024-04-12T05:11:08.073Z",
-        "createdAt": "2024-04-10T13:26:37.187Z",
+        "settledAt": "2024-04-12T14:20:41.376Z",
+        "createdAt": "2024-04-10T22:36:10.490Z",
         "transactionType": "string",
         "note": {
           "text": "string"
@@ -1688,7 +1688,7 @@
         "amount": {
           "currencyCode": "BDT",
           "value": "4030.49",
-          "valueInBaseUnits": 4030.49
+          "valueInBaseUnits": 403049
         },
         "foreignAmount": {
           "currencyCode": "string",
@@ -1699,8 +1699,8 @@
           "method": "BAR_CODE",
           "cardNumberSuffix": "string"
         },
-        "settledAt": "2024-01-04T20:38:32.751Z",
-        "createdAt": "2024-01-02T12:30:08.190Z",
+        "settledAt": "2024-01-05T05:48:06.054Z",
+        "createdAt": "2024-01-02T21:39:41.493Z",
         "transactionType": "string",
         "note": {
           "text": "string"
@@ -1816,7 +1816,7 @@
         "amount": {
           "currencyCode": "WST",
           "value": "-9127.52",
-          "valueInBaseUnits": -9127.52
+          "valueInBaseUnits": -912752
         },
         "foreignAmount": {
           "currencyCode": "string",
@@ -1827,8 +1827,8 @@
           "method": "BAR_CODE",
           "cardNumberSuffix": "string"
         },
-        "settledAt": "2024-06-08T18:55:21.838Z",
-        "createdAt": "2024-06-06T22:27:59.165Z",
+        "settledAt": "2024-06-09T04:04:55.141Z",
+        "createdAt": "2024-06-07T07:37:32.468Z",
         "transactionType": "string",
         "note": {
           "text": "string"
@@ -1939,7 +1939,7 @@
         "amount": {
           "currencyCode": "QAR",
           "value": "9728.06",
-          "valueInBaseUnits": 9728.06
+          "valueInBaseUnits": 972806
         },
         "foreignAmount": {
           "currencyCode": "string",
@@ -1950,8 +1950,8 @@
           "method": "BAR_CODE",
           "cardNumberSuffix": "string"
         },
-        "settledAt": "2024-04-29T07:00:03.854Z",
-        "createdAt": "2024-04-27T20:01:53.261Z",
+        "settledAt": "2024-04-29T16:09:37.157Z",
+        "createdAt": "2024-04-28T05:11:26.564Z",
         "transactionType": "string",
         "note": {
           "text": "string"
@@ -2062,7 +2062,7 @@
         "amount": {
           "currencyCode": "NGN",
           "value": "352.44",
-          "valueInBaseUnits": 352.44
+          "valueInBaseUnits": 35244
         },
         "foreignAmount": {
           "currencyCode": "string",
@@ -2073,8 +2073,8 @@
           "method": "BAR_CODE",
           "cardNumberSuffix": "string"
         },
-        "settledAt": "2024-07-21T13:59:58.716Z",
-        "createdAt": "2024-07-19T20:48:24.017Z",
+        "settledAt": "2024-07-21T23:09:32.018Z",
+        "createdAt": "2024-07-20T05:57:57.319Z",
         "transactionType": "string",
         "note": {
           "text": "string"
@@ -2190,7 +2190,7 @@
         "amount": {
           "currencyCode": "CAD",
           "value": "2684.31",
-          "valueInBaseUnits": 2684.31
+          "valueInBaseUnits": 268431
         },
         "foreignAmount": {
           "currencyCode": "string",
@@ -2201,8 +2201,8 @@
           "method": "BAR_CODE",
           "cardNumberSuffix": "string"
         },
-        "settledAt": "2023-12-07T11:15:17.475Z",
-        "createdAt": "2023-12-05T18:14:17.972Z",
+        "settledAt": "2023-12-07T20:24:50.778Z",
+        "createdAt": "2023-12-06T03:23:51.275Z",
         "transactionType": "string",
         "note": {
           "text": "string"
@@ -2313,7 +2313,7 @@
         "amount": {
           "currencyCode": "NGN",
           "value": "-421.86",
-          "valueInBaseUnits": -421.86
+          "valueInBaseUnits": -42186
         },
         "foreignAmount": {
           "currencyCode": "string",
@@ -2324,8 +2324,8 @@
           "method": "BAR_CODE",
           "cardNumberSuffix": "string"
         },
-        "settledAt": "2024-05-10T12:55:11.073Z",
-        "createdAt": "2024-05-09T11:16:47.291Z",
+        "settledAt": "2024-05-10T22:04:44.376Z",
+        "createdAt": "2024-05-09T20:26:20.594Z",
         "transactionType": "string",
         "note": {
           "text": "string"
@@ -2436,7 +2436,7 @@
         "amount": {
           "currencyCode": "ZMW",
           "value": "-4974.15",
-          "valueInBaseUnits": -4974.15
+          "valueInBaseUnits": -497414.99999999994
         },
         "foreignAmount": {
           "currencyCode": "string",
@@ -2447,8 +2447,8 @@
           "method": "BAR_CODE",
           "cardNumberSuffix": "string"
         },
-        "settledAt": "2024-08-22T06:54:06.347Z",
-        "createdAt": "2024-08-19T16:34:23.673Z",
+        "settledAt": "2024-08-22T16:03:39.650Z",
+        "createdAt": "2024-08-20T01:43:56.976Z",
         "transactionType": "string",
         "note": {
           "text": "string"

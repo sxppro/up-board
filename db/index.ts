@@ -254,7 +254,44 @@ export const getCategoryInfo = async (
     const results = await cursor.toArray();
     return results;
   } catch (err) {
-    return [];
+    if (parentCategory) {
+      const subCategories = categories.data.filter(
+        ({ relationships }) => relationships.parent.data?.id === parentCategory
+      );
+      return faker.helpers
+        .arrayElements(subCategories, { min: 3, max: 10 })
+        .map(({ id, attributes }) => ({
+          category: id,
+          categoryName: attributes.name,
+          amount: parseFloat(faker.finance.amount()),
+          transactions: faker.number.int({ max: 100 }),
+        }));
+    }
+    if (type === 'parent') {
+      const parentCategories = categories.data.filter(
+        ({ relationships }) => relationships.parent.data === null
+      );
+      return faker.helpers
+        .arrayElements(parentCategories, { min: 3, max: 10 })
+        .map(({ id, attributes }) => ({
+          category: id,
+          categoryName: attributes.name,
+          amount: parseFloat(faker.finance.amount()),
+          transactions: faker.number.int({ max: 100 }),
+        }));
+    } else {
+      const subCategories = categories.data.filter(
+        ({ relationships }) => relationships.parent.data !== null
+      );
+      return faker.helpers
+        .arrayElements(subCategories, { min: 3, max: 10 })
+        .map(({ id, attributes }) => ({
+          category: id,
+          categoryName: attributes.name,
+          amount: parseFloat(faker.finance.amount()),
+          transactions: faker.number.int({ max: 100 }),
+        }));
+    }
   }
 };
 
@@ -386,9 +423,9 @@ const getTransactionById = async (id: string) => {
     return result ? outputTransactionFields(result) : result;
   } catch (err) {
     return (
-      (transactions.data.find(({ id }) => id === id) as unknown as ReturnType<
-        typeof outputTransactionFields
-      >) || null
+      (transactions.data.find(
+        ({ id: txId }) => txId === id
+      ) as unknown as ReturnType<typeof outputTransactionFields>) || null
     );
   }
 };

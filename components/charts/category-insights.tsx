@@ -32,7 +32,7 @@ const CategoryInsights = ({
   const { date } = useDate();
   const [extended, setExtended] = useState(false);
   const { data: rawCategoryData, isSuccess } =
-    trpc.user.getCategoryInfo.useQuery({
+    trpc.public.getCategoryInfo.useQuery({
       dateRange: {
         from: start || date?.from,
         to: end || date?.to,
