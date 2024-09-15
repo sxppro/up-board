@@ -4,15 +4,15 @@
       "type": "accounts",
       "id": "428d3e1c-c6a1-4a39-aa0d-50fb09d0e307",
       "attributes": {
-        "displayName": "Savings Account",
-        "accountType": "TRANSACTIONAL",
+        "displayName": "Investment Account",
+        "accountType": "SAVER",
         "ownershipType": "INDIVIDUAL",
         "balance": {
-          "currencyCode": "SLE",
-          "value": "213.88",
-          "valueInBaseUnits": 213.88
+          "currencyCode": "TZS",
+          "value": "976.78",
+          "valueInBaseUnits": 976.78
         },
-        "createdAt": "2015-06-06T11:01:06.556Z"
+        "createdAt": "2018-01-15T00:53:07.083Z"
       },
       "relationships": {
         "transactions": {
@@ -29,15 +29,15 @@
       "type": "accounts",
       "id": "48194764-0478-4860-ac56-6242a08bc423",
       "attributes": {
-        "displayName": "Auto Loan Account",
-        "accountType": "SAVER",
+        "displayName": "Money Market Account",
+        "accountType": "TRANSACTIONAL",
         "ownershipType": "INDIVIDUAL",
         "balance": {
-          "currencyCode": "DKK",
-          "value": "838.16",
-          "valueInBaseUnits": 838.16
+          "currencyCode": "PAB",
+          "value": "916.20",
+          "valueInBaseUnits": 916.2
         },
-        "createdAt": "2024-05-10T15:35:27.544Z"
+        "createdAt": "2022-05-06T08:29:21.823Z"
       },
       "relationships": {
         "transactions": {
@@ -54,15 +54,15 @@
       "type": "accounts",
       "id": "dc991185-28ac-4137-bfed-c517fca0bdb0",
       "attributes": {
-        "displayName": "Money Market Account",
+        "displayName": "Personal Loan Account",
         "accountType": "TRANSACTIONAL",
         "ownershipType": "INDIVIDUAL",
         "balance": {
-          "currencyCode": "KGS",
-          "value": "828.37",
-          "valueInBaseUnits": 828.37
+          "currencyCode": "RUB",
+          "value": "725.43",
+          "valueInBaseUnits": 725.43
         },
-        "createdAt": "2015-02-18T07:02:42.560Z"
+        "createdAt": "2022-01-01T15:00:17.339Z"
       },
       "relationships": {
         "transactions": {

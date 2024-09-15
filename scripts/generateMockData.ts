@@ -70,10 +70,11 @@ const generateAccounts = (schema: any, accountIds: string[]) => {
  */
 const generateTransactions = (
   schema: any,
-  accountIds: string[],
-  number: number
+  options: { accountIds: string[]; tags: string[] },
+  amount: number
 ) => {
-  return [...Array(number)].map((_, i) => {
+  const { accountIds, tags } = options;
+  return [...Array(amount)].map((_, i) => {
     const transaction = OpenAPISampler.sample(
       schema['components']['schemas']['TransactionResource'],
       {},
@@ -123,6 +124,15 @@ const generateTransactions = (
       type: 'categories',
       id: chosenCategory.relationships.parent.data?.id || '',
     };
+    // Tag
+    if (faker.datatype.boolean()) {
+      transaction['relationships']['tags']['data'] = [
+        {
+          type: 'tags',
+          id: faker.helpers.arrayElement(tags),
+        },
+      ];
+    }
 
     return transaction;
   });
@@ -139,6 +149,11 @@ getApiSchema().then((upApiSchema) => {
   // Generate mock account UUIDs
   const accountIds = [...Array(3)].map(() => faker.string.uuid());
 
+  // Generate mock tags
+  const tags = [...Array(10)].map(
+    () => `${faker.commerce.productAdjective()} ${faker.commerce.productName()}`
+  );
+
   fs.writeFileSync(
     path.join(__dirname, '../mock/accounts.json'),
     JSON.stringify({ data: generateAccounts(upApiSchema, accountIds) })
@@ -146,6 +161,13 @@ getApiSchema().then((upApiSchema) => {
 
   fs.writeFileSync(
     path.join(__dirname, '../mock/transactions.json'),
-    JSON.stringify({ data: generateTransactions(upApiSchema, accountIds, 10) })
+    JSON.stringify({
+      data: generateTransactions(upApiSchema, { accountIds, tags }, 20),
+    })
+  );
+
+  fs.writeFileSync(
+    path.join(__dirname, '../mock/tags.json'),
+    JSON.stringify({ data: tags })
   );
 });
