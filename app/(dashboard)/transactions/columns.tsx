@@ -10,6 +10,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { TransactionResourceFiltered } from '@/server/schemas';
+import { formatCurrency } from '@/utils/helpers';
 import { ColumnDef } from '@tanstack/react-table';
 import { formatDistanceToNowStrict } from 'date-fns';
 import { enAU } from 'date-fns/locale';
@@ -129,10 +130,7 @@ export const columns: ColumnDef<TransactionResourceFiltered>[] = [
     header: () => <div className="text-end">Amount</div>,
     cell: ({ row }) => {
       const amount = parseFloat(row.getValue('amount'));
-      const formatted = new Intl.NumberFormat('en-AU', {
-        style: 'currency',
-        currency: 'AUD',
-      }).format(amount);
+      const formatted = formatCurrency(amount);
       return (
         <div className="w-[100px] float-right text-end font-medium">
           {formatted}
