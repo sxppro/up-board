@@ -51,7 +51,7 @@ const generateAccounts = (schema: any, accountIds: string[]) => {
     account['attributes']['displayName'] = faker.finance.accountName();
     account['attributes']['balance']['value'] = accountBalance;
     account['attributes']['balance']['valueInBaseUnits'] =
-      parseFloat(accountBalance);
+      parseFloat(accountBalance) * 100;
     account['attributes']['balance']['currencyCode'] =
       faker.finance.currencyCode();
     account['attributes']['createdAt'] = faker.date
@@ -103,7 +103,7 @@ const generateTransactions = (
       faker.finance.currencyCode();
     transaction['attributes']['amount']['value'] = amount;
     transaction['attributes']['amount']['valueInBaseUnits'] =
-      parseFloat(amount);
+      parseFloat(amount) * 100;
     transaction['attributes']['createdAt'] = date;
     transaction['attributes']['settledAt'] = faker.date
       .soon({ refDate: date, days: 3 })
@@ -158,18 +158,22 @@ getApiSchema().then((upApiSchema) => {
 
   fs.writeFileSync(
     path.join(__dirname, '../mock/accounts.json'),
-    JSON.stringify({ data: generateAccounts(upApiSchema, accountIds) })
+    JSON.stringify({ data: generateAccounts(upApiSchema, accountIds) }, null, 2)
   );
 
   fs.writeFileSync(
     path.join(__dirname, '../mock/transactions.json'),
-    JSON.stringify({
-      data: generateTransactions(upApiSchema, { accountIds, tags }, 20),
-    })
+    JSON.stringify(
+      {
+        data: generateTransactions(upApiSchema, { accountIds, tags }, 20),
+      },
+      null,
+      2
+    )
   );
 
   fs.writeFileSync(
     path.join(__dirname, '../mock/tags.json'),
-    JSON.stringify({ data: tags })
+    JSON.stringify({ data: tags }, null, 2)
   );
 });
