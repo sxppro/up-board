@@ -1,3 +1,7 @@
+import accounts from '@/mock/accounts.json';
+import categories from '@/mock/categories.json';
+import tags from '@/mock/tags.json';
+import transactions from '@/mock/transactions.json';
 import {
   TagInfo,
   TransactionCategoryInfoHistoryRaw,
@@ -187,7 +191,9 @@ export const searchTransactions = async (search: string) => {
     );
     return results;
   } catch (err) {
-    return;
+    return transactions.data.filter(({ attributes }) =>
+      attributes.description.toLowerCase().includes(search.toLowerCase())
+    ) as unknown as ReturnType<typeof outputTransactionFields>[];
   }
 };
 
@@ -315,9 +321,9 @@ export const getTagInfo = async (tag: string): Promise<TagInfo> => {
  * @returns
  */
 const getTransactionsByDate = async (
-  account: string,
   dateRange: DateRange,
-  options: TransactionRetrievalOptions
+  options: TransactionRetrievalOptions,
+  accountId?: string
 ) => {
   try {
     const transactions = await connectToCollection<DbTransactionResource>(
@@ -325,14 +331,22 @@ const getTransactionsByDate = async (
       'transactions'
     );
     const cursor = transactions.aggregate<DbTransactionResource>(
-      transactionsByDatePipeline(account, dateRange, options)
+      transactionsByDatePipeline(dateRange, options, accountId)
     );
     const results = (await cursor.toArray()).map((transaction) =>
       outputTransactionFields(transaction)
     );
     return results;
   } catch (err) {
-    return;
+    return transactions.data
+      .sort((a, b) =>
+        new Date(a.attributes.createdAt) > new Date(b.attributes.createdAt)
+          ? -1
+          : 1
+      )
+      .slice(0, options.limit) as unknown as ReturnType<
+      typeof outputTransactionFields
+    >[];
   }
 };
 
@@ -371,7 +385,11 @@ const getTransactionById = async (id: string) => {
     const result = await transactions.findOne({ _id: new UUID(id).toBinary() });
     return result ? outputTransactionFields(result) : result;
   } catch (err) {
-    return;
+    return (
+      (transactions.data.find(({ id }) => id === id) as unknown as ReturnType<
+        typeof outputTransactionFields
+      >) || null
+    );
   }
 };
 
@@ -392,7 +410,11 @@ export const getTransactionsByTag = async (tag: string) => {
     );
     return results;
   } catch (err) {
-    return;
+    return transactions.data.sort((a, b) =>
+      new Date(a.attributes.createdAt) > new Date(b.attributes.createdAt)
+        ? -1
+        : 1
+    ) as unknown as ReturnType<typeof outputTransactionFields>[];
   }
 };
 
@@ -436,13 +458,25 @@ export const getCategories = async (type: TransactionCategoryType) => {
     const results = await cursor.toArray();
     return results;
   } catch (err) {
-    return [
-      {
-        value: faker.commerce.department(),
-        id: faker.commerce.isbn(),
-        name: faker.commerce.department(),
-      },
-    ];
+    if (type === 'parent') {
+      return categories.data
+        .filter(({ relationships }) => relationships.parent.data === null)
+        .map(({ id, attributes }) => ({
+          id,
+          value: attributes.name,
+          name: attributes.name,
+        }))
+        .sort((a, b) => (a.name.toUpperCase() < b.name.toUpperCase() ? -1 : 1));
+    } else {
+      return categories.data
+        .filter(({ relationships }) => relationships.parent.data !== null)
+        .map(({ id, attributes }) => ({
+          id,
+          value: attributes.name,
+          name: attributes.name,
+        }))
+        .sort((a, b) => (a.name.toUpperCase() < b.name.toUpperCase() ? -1 : 1));
+    }
   }
 };
 
@@ -461,11 +495,7 @@ export const getTags = async () => {
     const results = await cursor.toArray();
     return results[0];
   } catch (err) {
-    return {
-      tags: [
-        `${faker.commerce.productAdjective()} ${faker.commerce.productName()}`,
-      ],
-    };
+    return { tags: tags.data };
   }
 };
 
@@ -521,13 +551,19 @@ export const getAccounts = async (
     const results = await cursor.toArray();
     return results;
   } catch (err) {
-    return [
-      {
-        id: faker.string.uuid(),
-        displayName: faker.finance.accountName(),
-        accountType: faker.helpers.arrayElement(['TRANSACTIONAL', 'SAVER']),
-      },
-    ];
+    return accountType
+      ? accounts.data
+          .filter(({ attributes }) => attributes.accountType === accountType)
+          .map(({ id, attributes }) => ({
+            id,
+            displayName: attributes.displayName,
+            accountType: attributes.accountType,
+          }))
+      : accounts.data.map(({ id, attributes }) => ({
+          id,
+          displayName: attributes.displayName,
+          accountType: attributes.accountType,
+        }));
   }
 };
 
@@ -588,14 +624,22 @@ export const getAccountById = async (accountId: string) => {
     );
     return account;
   } catch (err) {
-    return {
-      id: accountId,
-      displayName: faker.finance.accountName(),
-      accountType: faker.helpers.arrayElement([
-        'TRANSACTIONAL',
-        'SAVER',
-      ]) as components['schemas']['AccountTypeEnum'],
-    };
+    const account = accounts.data.find(({ id }) => id === accountId);
+    return account
+      ? {
+          id: account.id,
+          displayName: account.attributes.displayName,
+          accountType: account.attributes
+            .accountType as components['schemas']['AccountTypeEnum'],
+        }
+      : {
+          id: accountId,
+          displayName: faker.finance.accountName(),
+          accountType: faker.helpers.arrayElement([
+            'TRANSACTIONAL',
+            'SAVER',
+          ]) as components['schemas']['AccountTypeEnum'],
+        };
   }
 };
 

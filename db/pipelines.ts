@@ -662,9 +662,9 @@ const accountBalancePipeline = (from: Date, to: Date, accountId: string) => [
  * @returns
  */
 const transactionsByDatePipeline = (
-  accountId: string,
   dateRange: DateRange,
-  options: TransactionRetrievalOptions
+  options: TransactionRetrievalOptions,
+  accountId?: string
 ) => {
   const { sort, sortDir, limit, type } = options;
   const sortBy =
@@ -675,12 +675,12 @@ const transactionsByDatePipeline = (
   return [
     {
       $match: {
-        'relationships.account.data.id': accountId,
         'attributes.createdAt': {
           $gte: dateRange.from,
           $lt: dateRange.to,
         },
         'attributes.isCategorizable': true,
+        ...(accountId ? { 'relationships.account.data.id': accountId } : {}),
         ...(type
           ? type === 'income'
             ? { 'attributes.amount.valueInBaseUnits': { $gt: 0 } }

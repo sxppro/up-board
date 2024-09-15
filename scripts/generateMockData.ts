@@ -132,6 +132,8 @@ const generateTransactions = (
           id: faker.helpers.arrayElement(tags),
         },
       ];
+    } else {
+      transaction['relationships']['tags']['data'] = [];
     }
 
     return transaction;

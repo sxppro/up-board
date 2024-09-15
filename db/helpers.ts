@@ -13,13 +13,13 @@ export const getTransactions = async (
   const { account, dateRange, transactionType, ...options } = retrievalOpts;
   if (transactionType === 'transactions') {
     const transactions = await getTransactionsByDate(
-      account === 'transactional'
-        ? process.env.UP_TRANS_ACC || ''
-        : account === 'savings'
-        ? process.env.UP_SAVINGS_ACC || ''
-        : '',
       dateRange,
-      options
+      options,
+      account === 'transactional'
+        ? process.env.UP_TRANS_ACC
+        : account === 'savings'
+        ? process.env.UP_SAVINGS_ACC
+        : ''
     );
     return filterTransactionFields(transactions);
   } else if (transactionType === 'transfers') {

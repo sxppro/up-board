@@ -55,8 +55,8 @@
           "method": "BAR_CODE",
           "cardNumberSuffix": "string"
         },
-        "settledAt": "2024-04-26T21:45:02.538Z",
-        "createdAt": "2024-04-24T20:38:55.366Z",
+        "settledAt": "2024-04-26T22:02:28.041Z",
+        "createdAt": "2024-04-24T20:56:20.869Z",
         "transactionType": "string",
         "note": {
           "text": "string"
@@ -104,12 +104,7 @@
           }
         },
         "tags": {
-          "data": [
-            {
-              "type": "string",
-              "id": "string"
-            }
-          ],
+          "data": [],
           "links": {
             "self": "string"
           }
@@ -183,8 +178,8 @@
           "method": "BAR_CODE",
           "cardNumberSuffix": "string"
         },
-        "settledAt": "2023-12-20T06:57:12.912Z",
-        "createdAt": "2023-12-18T05:27:30.292Z",
+        "settledAt": "2023-12-20T07:14:38.415Z",
+        "createdAt": "2023-12-18T05:44:55.795Z",
         "transactionType": "string",
         "note": {
           "text": "string"
@@ -232,12 +227,7 @@
           }
         },
         "tags": {
-          "data": [
-            {
-              "type": "string",
-              "id": "string"
-            }
-          ],
+          "data": [],
           "links": {
             "self": "string"
           }
@@ -311,8 +301,8 @@
           "method": "BAR_CODE",
           "cardNumberSuffix": "string"
         },
-        "settledAt": "2024-04-10T11:20:25.134Z",
-        "createdAt": "2024-04-07T21:13:45.386Z",
+        "settledAt": "2024-04-10T11:37:50.636Z",
+        "createdAt": "2024-04-07T21:31:10.888Z",
         "transactionType": "string",
         "note": {
           "text": "string"
@@ -439,8 +429,8 @@
           "method": "BAR_CODE",
           "cardNumberSuffix": "string"
         },
-        "settledAt": "2024-05-11T08:50:17.915Z",
-        "createdAt": "2024-05-09T20:43:20.367Z",
+        "settledAt": "2024-05-11T09:07:43.418Z",
+        "createdAt": "2024-05-09T21:00:45.870Z",
         "transactionType": "string",
         "note": {
           "text": "string"
@@ -488,12 +478,7 @@
           }
         },
         "tags": {
-          "data": [
-            {
-              "type": "string",
-              "id": "string"
-            }
-          ],
+          "data": [],
           "links": {
             "self": "string"
           }
@@ -567,8 +552,8 @@
           "method": "BAR_CODE",
           "cardNumberSuffix": "string"
         },
-        "settledAt": "2024-05-06T07:34:55.047Z",
-        "createdAt": "2024-05-04T16:43:12.633Z",
+        "settledAt": "2024-05-06T07:52:20.550Z",
+        "createdAt": "2024-05-04T17:00:38.136Z",
         "transactionType": "string",
         "note": {
           "text": "string"
@@ -695,8 +680,8 @@
           "method": "BAR_CODE",
           "cardNumberSuffix": "string"
         },
-        "settledAt": "2023-10-02T11:09:12.619Z",
-        "createdAt": "2023-09-30T04:30:04.228Z",
+        "settledAt": "2023-10-02T11:26:38.122Z",
+        "createdAt": "2023-09-30T04:47:29.731Z",
         "transactionType": "string",
         "note": {
           "text": "string"
@@ -823,8 +808,8 @@
           "method": "BAR_CODE",
           "cardNumberSuffix": "string"
         },
-        "settledAt": "2024-06-23T05:39:55.490Z",
-        "createdAt": "2024-06-21T05:12:16.086Z",
+        "settledAt": "2024-06-23T05:57:20.992Z",
+        "createdAt": "2024-06-21T05:29:41.588Z",
         "transactionType": "string",
         "note": {
           "text": "string"
@@ -951,8 +936,8 @@
           "method": "BAR_CODE",
           "cardNumberSuffix": "string"
         },
-        "settledAt": "2023-11-08T02:22:40.648Z",
-        "createdAt": "2023-11-06T15:48:04.016Z",
+        "settledAt": "2023-11-08T02:40:06.151Z",
+        "createdAt": "2023-11-06T16:05:29.519Z",
         "transactionType": "string",
         "note": {
           "text": "string"
@@ -1000,12 +985,7 @@
           }
         },
         "tags": {
-          "data": [
-            {
-              "type": "string",
-              "id": "string"
-            }
-          ],
+          "data": [],
           "links": {
             "self": "string"
           }
@@ -1079,8 +1059,8 @@
           "method": "BAR_CODE",
           "cardNumberSuffix": "string"
         },
-        "settledAt": "2024-03-18T07:15:27.222Z",
-        "createdAt": "2024-03-15T16:15:02.747Z",
+        "settledAt": "2024-03-18T07:32:52.725Z",
+        "createdAt": "2024-03-15T16:32:28.250Z",
         "transactionType": "string",
         "note": {
           "text": "string"
@@ -1207,8 +1187,8 @@
           "method": "BAR_CODE",
           "cardNumberSuffix": "string"
         },
-        "settledAt": "2024-03-25T06:24:51.184Z",
-        "createdAt": "2024-03-24T06:42:39.133Z",
+        "settledAt": "2024-03-25T06:42:16.687Z",
+        "createdAt": "2024-03-24T07:00:04.636Z",
         "transactionType": "string",
         "note": {
           "text": "string"
@@ -1335,8 +1315,8 @@
           "method": "BAR_CODE",
           "cardNumberSuffix": "string"
         },
-        "settledAt": "2024-04-22T09:09:42.513Z",
-        "createdAt": "2024-04-20T14:50:23.371Z",
+        "settledAt": "2024-04-22T09:27:08.015Z",
+        "createdAt": "2024-04-20T15:07:48.873Z",
         "transactionType": "string",
         "note": {
           "text": "string"
@@ -1463,8 +1443,8 @@
           "method": "BAR_CODE",
           "cardNumberSuffix": "string"
         },
-        "settledAt": "2024-01-25T23:36:52.915Z",
-        "createdAt": "2024-01-23T23:01:01.693Z",
+        "settledAt": "2024-01-25T23:54:18.418Z",
+        "createdAt": "2024-01-23T23:18:27.196Z",
         "transactionType": "string",
         "note": {
           "text": "string"
@@ -1591,8 +1571,8 @@
           "method": "BAR_CODE",
           "cardNumberSuffix": "string"
         },
-        "settledAt": "2024-04-12T04:53:42.570Z",
-        "createdAt": "2024-04-10T13:09:11.684Z",
+        "settledAt": "2024-04-12T05:11:08.073Z",
+        "createdAt": "2024-04-10T13:26:37.187Z",
         "transactionType": "string",
         "note": {
           "text": "string"
@@ -1719,8 +1699,8 @@
           "method": "BAR_CODE",
           "cardNumberSuffix": "string"
         },
-        "settledAt": "2024-01-04T20:21:07.248Z",
-        "createdAt": "2024-01-02T12:12:42.687Z",
+        "settledAt": "2024-01-04T20:38:32.751Z",
+        "createdAt": "2024-01-02T12:30:08.190Z",
         "transactionType": "string",
         "note": {
           "text": "string"
@@ -1847,8 +1827,8 @@
           "method": "BAR_CODE",
           "cardNumberSuffix": "string"
         },
-        "settledAt": "2024-06-08T18:37:56.335Z",
-        "createdAt": "2024-06-06T22:10:33.662Z",
+        "settledAt": "2024-06-08T18:55:21.838Z",
+        "createdAt": "2024-06-06T22:27:59.165Z",
         "transactionType": "string",
         "note": {
           "text": "string"
@@ -1896,12 +1876,7 @@
           }
         },
         "tags": {
-          "data": [
-            {
-              "type": "string",
-              "id": "string"
-            }
-          ],
+          "data": [],
           "links": {
             "self": "string"
           }
@@ -1975,8 +1950,8 @@
           "method": "BAR_CODE",
           "cardNumberSuffix": "string"
         },
-        "settledAt": "2024-04-29T06:42:38.351Z",
-        "createdAt": "2024-04-27T19:44:27.758Z",
+        "settledAt": "2024-04-29T07:00:03.854Z",
+        "createdAt": "2024-04-27T20:01:53.261Z",
         "transactionType": "string",
         "note": {
           "text": "string"
@@ -2024,12 +1999,7 @@
           }
         },
         "tags": {
-          "data": [
-            {
-              "type": "string",
-              "id": "string"
-            }
-          ],
+          "data": [],
           "links": {
             "self": "string"
           }
@@ -2103,8 +2073,8 @@
           "method": "BAR_CODE",
           "cardNumberSuffix": "string"
         },
-        "settledAt": "2024-07-21T13:42:33.212Z",
-        "createdAt": "2024-07-19T20:30:58.513Z",
+        "settledAt": "2024-07-21T13:59:58.716Z",
+        "createdAt": "2024-07-19T20:48:24.017Z",
         "transactionType": "string",
         "note": {
           "text": "string"
@@ -2231,8 +2201,8 @@
           "method": "BAR_CODE",
           "cardNumberSuffix": "string"
         },
-        "settledAt": "2023-12-07T10:57:51.972Z",
-        "createdAt": "2023-12-05T17:56:52.469Z",
+        "settledAt": "2023-12-07T11:15:17.475Z",
+        "createdAt": "2023-12-05T18:14:17.972Z",
         "transactionType": "string",
         "note": {
           "text": "string"
@@ -2280,12 +2250,7 @@
           }
         },
         "tags": {
-          "data": [
-            {
-              "type": "string",
-              "id": "string"
-            }
-          ],
+          "data": [],
           "links": {
             "self": "string"
           }
@@ -2359,8 +2324,8 @@
           "method": "BAR_CODE",
           "cardNumberSuffix": "string"
         },
-        "settledAt": "2024-05-10T12:37:45.570Z",
-        "createdAt": "2024-05-09T10:59:21.788Z",
+        "settledAt": "2024-05-10T12:55:11.073Z",
+        "createdAt": "2024-05-09T11:16:47.291Z",
         "transactionType": "string",
         "note": {
           "text": "string"
@@ -2408,12 +2373,7 @@
           }
         },
         "tags": {
-          "data": [
-            {
-              "type": "string",
-              "id": "string"
-            }
-          ],
+          "data": [],
           "links": {
             "self": "string"
           }
@@ -2487,8 +2447,8 @@
           "method": "BAR_CODE",
           "cardNumberSuffix": "string"
         },
-        "settledAt": "2024-08-22T06:36:40.844Z",
-        "createdAt": "2024-08-19T16:16:58.170Z",
+        "settledAt": "2024-08-22T06:54:06.347Z",
+        "createdAt": "2024-08-19T16:34:23.673Z",
         "transactionType": "string",
         "note": {
           "text": "string"
@@ -2536,12 +2496,7 @@
           }
         },
         "tags": {
-          "data": [
-            {
-              "type": "string",
-              "id": "string"
-            }
-          ],
+          "data": [],
           "links": {
             "self": "string"
           }
