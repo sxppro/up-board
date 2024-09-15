@@ -109,9 +109,8 @@ export const columns: ColumnDef<TransactionResourceFiltered>[] = [
     cell: ({ row }) => (
       <div className="flex flex-wrap sm:w-[150px] gap-2">
         {(row.getValue('tags') as string[]).map((tag) => (
-          // TODO: Truncated tags look kinda funky
-          <Badge className="truncate" key={tag}>
-            {tag}
+          <Badge className="overflow-hidden" key={tag}>
+            <p className="truncate">{tag}</p>
           </Badge>
         ))}
       </div>
