@@ -6,7 +6,6 @@ import UserNav from '@/components/core/user-nav';
 import { getCurrentUser } from '@/utils/auth';
 import { Flex } from '@tremor/react';
 import { Metadata } from 'next';
-import { redirect } from 'next/navigation';
 
 export const metadata: Metadata = {
   title: 'Dashboard',
@@ -19,10 +18,6 @@ export default async function DashboardLayout({
 }) {
   const user = await getCurrentUser();
 
-  if (!user) {
-    redirect('/login');
-  }
-
   return (
     <>
       <PageProgressBar />
@@ -32,7 +27,7 @@ export default async function DashboardLayout({
           <MobileNav className="sm:hidden" />
           <div className="ml-auto flex items-center space-x-4">
             <ThemeToggle />
-            <UserNav user={user} />
+            {user ? <UserNav user={user} /> : ''}
           </div>
         </div>
       </div>
