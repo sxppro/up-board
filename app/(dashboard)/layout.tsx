@@ -35,7 +35,9 @@ export default async function DashboardLayout({
           <MobileNav className="sm:hidden" />
           <div className="ml-auto flex items-center space-x-4">
             <ThemeToggle />
-            {!user ? (
+            {user ? (
+              <UserNav user={user} />
+            ) : (
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
@@ -49,10 +51,7 @@ export default async function DashboardLayout({
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
-            ) : (
-              ''
             )}
-            {user ? <UserNav user={user} /> : ''}
           </div>
         </div>
       </div>
