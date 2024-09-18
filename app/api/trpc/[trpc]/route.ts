@@ -8,6 +8,29 @@ const handler = (req: Request) =>
     req,
     router: appRouter,
     createContext,
+    responseMeta(opts) {
+      const ONE_DAY_IN_SECONDS = 60 * 60 * 24;
+      const { ctx, errors, type } = opts;
+      const allOk = errors.length === 0;
+      const isQuery = type === 'query';
+
+      if (ctx?.session) {
+        return {
+          headers: new Headers({
+            'cache-control': 'private',
+          }),
+        };
+      } else if (allOk && isQuery) {
+        {
+          return {
+            headers: new Headers({
+              'cache-control': `public, s-maxage=${ONE_DAY_IN_SECONDS}, immutable`,
+            }),
+          };
+        }
+      }
+      return {};
+    },
   });
 
 export { handler as GET, handler as POST };
