@@ -70,7 +70,7 @@ const CategoryInsights = ({
         <TabPanels>
           <TabPanel>
             <div
-              className={`overflow-hidden ${extended ? '' : 'max-h-[260px]'}`}
+              className={`overflow-hidden ${extended ? '' : 'h-60 sm:h-80'}`}
             >
               <BarList
                 data={subcategoryData}
