@@ -24,7 +24,7 @@ const handler = (req: Request) =>
         {
           return {
             headers: new Headers({
-              'cache-control': `public, s-maxage=${ONE_DAY_IN_SECONDS}, immutable`,
+              'cache-control': `public, s-maxage=${ONE_DAY_IN_SECONDS}`,
             }),
           };
         }

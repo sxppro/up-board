@@ -1,13 +1,13 @@
 'use client';
 
-import { getTagInfo } from '@/db';
+import { TagInfo } from '@/server/schemas';
 import { formatCurrency } from '@/utils/helpers';
 import { Color, Grid } from '@tremor/react';
 import { List, Minus, Plus } from 'lucide-react';
 import StatCard from '../core/stat-card';
 
 interface TagDashboardProps {
-  tagInfo: Awaited<ReturnType<typeof getTagInfo>>;
+  tagInfo: TagInfo;
 }
 
 const TagDashboard = ({ tagInfo }: TagDashboardProps) => {
@@ -40,7 +40,7 @@ const TagDashboard = ({ tagInfo }: TagDashboardProps) => {
 
   return (
     <div className="w-full">
-      <Grid numItemsSm={2} numItemsLg={3} className="gap-6 my-2">
+      <Grid numItemsSm={2} numItemsLg={3} className="gap-3 my-2">
         {parsedTagInfo &&
           parsedTagInfo.map((item) => {
             return <StatCard key={item.title} info={{ ...item }} />;

@@ -404,7 +404,7 @@ export const getCategoryInfoHistory = async (
  * @param tag
  * @returns
  */
-export const getTagInfo = async (tag: string): Promise<TagInfo> => {
+export const getTagInfo = async (tag: string): Promise<TagInfo | undefined> => {
   try {
     const transactions = await connectToCollection<DbTransactionResource>(
       'up',
@@ -415,24 +415,27 @@ export const getTagInfo = async (tag: string): Promise<TagInfo> => {
     return results[0];
   } catch (err) {
     if (err instanceof Error && err.message.includes('unauthorised')) {
-      const data = {
-        Income: faker.number.float({ min: 0, max: 1000, fractionDigits: 2 }),
-        Expenses: faker.number.float({ min: 0, max: 1000, fractionDigits: 2 }),
-        Transactions: faker.number.int({ max: 100 }),
-      };
-      const res = TagInfoSchema.safeParse(getMockData('getTagInfo', data));
-      if (res.success) {
-        return res.data;
-      } else {
-        console.error(res.error);
+      if (tags.data.includes(tag)) {
+        const data = {
+          Income: faker.number.float({ min: 0, max: 1000, fractionDigits: 2 }),
+          Expenses: faker.number.float({
+            min: 0,
+            max: 1000,
+            fractionDigits: 2,
+          }),
+          Transactions: faker.number.int({ max: 100 }),
+        };
+        const res = TagInfoSchema.safeParse(getMockData('getTagInfo', data));
+        if (res.success) {
+          return res.data;
+        } else {
+          console.error(res.error);
+        }
       }
+      return;
     }
     console.error(err);
-    return {
-      Income: 0,
-      Expenses: 0,
-      Transactions: 0,
-    };
+    return;
   }
 };
 
@@ -460,8 +463,35 @@ const getTransactionsByDate = async (
     return results;
   } catch (err) {
     if (err instanceof Error && err.message.includes('unauthorised')) {
+      const { transactionType } = options;
       return transactions.data
-        .filter(({ attributes }) => attributes.isCategorizable)
+        .filter(({ attributes }) =>
+          transactionType === 'transactions'
+            ? attributes.isCategorizable
+            : !attributes.isCategorizable
+        )
+        .map(({ relationships, ...rest }) => ({
+          ...rest,
+          relationships: {
+            ...relationships,
+            category: {
+              data: {
+                id:
+                  categories.data.find(
+                    ({ id }) => id === relationships.category.data.id
+                  )?.attributes.name ?? 'Uncategorised',
+              },
+            },
+            parentCategory: {
+              data: {
+                id:
+                  categories.data.find(
+                    ({ id }) => id === relationships.parentCategory.data.id
+                  )?.attributes.name ?? 'Uncategorised',
+              },
+            },
+          },
+        }))
         .sort((a, b) =>
           new Date(a.attributes.createdAt) > new Date(b.attributes.createdAt)
             ? -1
