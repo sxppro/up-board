@@ -58,8 +58,6 @@ export interface DateRangeProps {
   end?: Date;
 }
 
-export type DateRangeGroupBy = 'daily' | 'monthly' | 'yearly';
-
 export type PageProps = {
   params: { slug: string };
   searchParams: { [key: string]: string | string[] | undefined };

@@ -59,57 +59,78 @@ const DashboardPage = ({ searchParams }: PageProps) => {
           </div>
         </Col>
         <Col numColSpanSm={2}>
-          <div className="flex flex-col gap-3">
+          <Grid className=" gap-3" numItemsMd={2}>
             <QueryProvider>
               <DateProvider
                 start={startDate ? new Date(startDate) : startOfMonth(now)}
                 end={endDate ? new Date(endDate) : now}
               >
-                <Grid numItemsMd={3} className="gap-3">
+                <Col numColSpan={2}>
+                  <Grid numItemsMd={3} className="gap-3">
+                    <Suspense
+                      fallback={
+                        <>
+                          <StatCard
+                            info={{ title: 'Loading ...', isLoading: true }}
+                          />
+                          <StatCard
+                            info={{ title: 'Loading ...', isLoading: true }}
+                          />
+                          <StatCard
+                            info={{ title: 'Loading ...', isLoading: true }}
+                          />
+                        </>
+                      }
+                    >
+                      <IOStats
+                        accountId={process.env.UP_TRANS_ACC || ''}
+                        start={
+                          startDate ? new Date(startDate) : startOfMonth(now)
+                        }
+                        end={endDate ? new Date(endDate) : now}
+                      />
+                    </Suspense>
+                  </Grid>
+                </Col>
+                <Col numColSpan={2}>
+                  <ExpenseCategoriesStackedBar
+                    start={subMonths(startOfMonth(subMonths(now, 1)), 5)}
+                    end={endOfMonth(subMonths(now, 1))}
+                  />
+                </Col>
+                <Col numColSpan={1}>
                   <Suspense
                     fallback={
-                      <>
-                        <StatCard
-                          info={{ title: 'Loading ...', isLoading: true }}
-                        />
-                        <StatCard
-                          info={{ title: 'Loading ...', isLoading: true }}
-                        />
-                        <StatCard
-                          info={{ title: 'Loading ...', isLoading: true }}
-                        />
-                      </>
+                      <DashboardCard>
+                        <Title>Recent Transactions</Title>
+                        <TableSkeleton cols={2} rows={7} />
+                      </DashboardCard>
                     }
                   >
-                    <IOStats
-                      accountId={process.env.UP_TRANS_ACC || ''}
-                      start={
-                        startDate ? new Date(startDate) : startOfMonth(now)
-                      }
-                      end={endDate ? new Date(endDate) : now}
+                    <TransactionCard
+                      title="Recent Transactions"
+                      options={{ transactionType: 'transactions' }}
                     />
                   </Suspense>
-                </Grid>
-                <ExpenseCategoriesStackedBar
-                  start={subMonths(startOfMonth(subMonths(now, 1)), 5)}
-                  end={endOfMonth(subMonths(now, 1))}
-                />
-                <Suspense
-                  fallback={
-                    <DashboardCard>
-                      <Title>Recent Transactions</Title>
-                      <TableSkeleton cols={2} rows={7} />
-                    </DashboardCard>
-                  }
-                >
-                  <TransactionCard
-                    title="Recent Transactions"
-                    options={{ transactionType: 'transactions' }}
-                  />
-                </Suspense>
+                </Col>
+                <Col numColSpan={1}>
+                  <Suspense
+                    fallback={
+                      <DashboardCard>
+                        <Title>Recent Transfers</Title>
+                        <TableSkeleton cols={2} rows={7} />
+                      </DashboardCard>
+                    }
+                  >
+                    <TransactionCard
+                      title="Recent Transfers"
+                      options={{ transactionType: 'transfers' }}
+                    />
+                  </Suspense>
+                </Col>
               </DateProvider>
             </QueryProvider>
-          </div>
+          </Grid>
         </Col>
       </Grid>
     </div>

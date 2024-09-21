@@ -108,7 +108,7 @@ const generateTransactions = (
     transaction['attributes']['settledAt'] = faker.date
       .soon({ refDate: date, days: 3 })
       .toISOString();
-    transaction['attributes']['isCategorizable'] = faker.datatype.boolean();
+    transaction['attributes']['isCategorizable'] = faker.datatype.boolean(0.75);
     // Account
     transaction['relationships']['account']['data'] = {
       type: 'accounts',

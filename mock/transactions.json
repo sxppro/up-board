@@ -8,7 +8,7 @@
         "rawText": "Reilly, Fadel and Koelpin, Jacobburgh 0485",
         "description": "Reilly, Fadel and Koelpin",
         "message": "string",
-        "isCategorizable": false,
+        "isCategorizable": true,
         "holdInfo": {
           "amount": {
             "currencyCode": "string",
@@ -55,8 +55,8 @@
           "method": "BAR_CODE",
           "cardNumberSuffix": "string"
         },
-        "settledAt": "2024-05-03T03:05:53.811Z",
-        "createdAt": "2024-05-01T01:59:46.639Z",
+        "settledAt": "2024-05-03T06:49:45.363Z",
+        "createdAt": "2024-05-01T05:43:38.191Z",
         "transactionType": "string",
         "note": {
           "text": "string"
@@ -178,8 +178,8 @@
           "method": "BAR_CODE",
           "cardNumberSuffix": "string"
         },
-        "settledAt": "2023-12-26T12:18:04.186Z",
-        "createdAt": "2023-12-24T10:48:21.566Z",
+        "settledAt": "2023-12-26T16:01:55.737Z",
+        "createdAt": "2023-12-24T14:32:13.117Z",
         "transactionType": "string",
         "note": {
           "text": "string"
@@ -301,8 +301,8 @@
           "method": "BAR_CODE",
           "cardNumberSuffix": "string"
         },
-        "settledAt": "2024-04-16T16:41:16.407Z",
-        "createdAt": "2024-04-14T02:34:36.659Z",
+        "settledAt": "2024-04-16T20:25:07.959Z",
+        "createdAt": "2024-04-14T06:18:28.211Z",
         "transactionType": "string",
         "note": {
           "text": "string"
@@ -382,7 +382,7 @@
         "rawText": "Kuhn Brothers, New Angelina 0283",
         "description": "Kuhn Brothers",
         "message": "string",
-        "isCategorizable": false,
+        "isCategorizable": true,
         "holdInfo": {
           "amount": {
             "currencyCode": "string",
@@ -429,8 +429,8 @@
           "method": "BAR_CODE",
           "cardNumberSuffix": "string"
         },
-        "settledAt": "2024-05-17T14:11:09.188Z",
-        "createdAt": "2024-05-16T02:04:11.640Z",
+        "settledAt": "2024-05-17T17:55:00.740Z",
+        "createdAt": "2024-05-16T05:48:03.192Z",
         "transactionType": "string",
         "note": {
           "text": "string"
@@ -552,8 +552,8 @@
           "method": "BAR_CODE",
           "cardNumberSuffix": "string"
         },
-        "settledAt": "2024-05-12T12:55:46.321Z",
-        "createdAt": "2024-05-10T22:04:03.907Z",
+        "settledAt": "2024-05-12T16:39:37.872Z",
+        "createdAt": "2024-05-11T01:47:55.458Z",
         "transactionType": "string",
         "note": {
           "text": "string"
@@ -680,8 +680,8 @@
           "method": "BAR_CODE",
           "cardNumberSuffix": "string"
         },
-        "settledAt": "2023-10-08T16:30:03.893Z",
-        "createdAt": "2023-10-06T09:50:55.502Z",
+        "settledAt": "2023-10-08T20:13:55.445Z",
+        "createdAt": "2023-10-06T13:34:47.054Z",
         "transactionType": "string",
         "note": {
           "text": "string"
@@ -808,8 +808,8 @@
           "method": "BAR_CODE",
           "cardNumberSuffix": "string"
         },
-        "settledAt": "2024-06-29T11:00:46.763Z",
-        "createdAt": "2024-06-27T10:33:07.359Z",
+        "settledAt": "2024-06-29T14:44:38.315Z",
+        "createdAt": "2024-06-27T14:16:58.911Z",
         "transactionType": "string",
         "note": {
           "text": "string"
@@ -936,8 +936,8 @@
           "method": "BAR_CODE",
           "cardNumberSuffix": "string"
         },
-        "settledAt": "2023-11-14T07:43:31.922Z",
-        "createdAt": "2023-11-12T21:08:55.290Z",
+        "settledAt": "2023-11-14T11:27:23.473Z",
+        "createdAt": "2023-11-13T00:52:46.841Z",
         "transactionType": "string",
         "note": {
           "text": "string"
@@ -1059,8 +1059,8 @@
           "method": "BAR_CODE",
           "cardNumberSuffix": "string"
         },
-        "settledAt": "2024-03-24T12:36:18.496Z",
-        "createdAt": "2024-03-21T21:35:54.021Z",
+        "settledAt": "2024-03-24T16:20:10.048Z",
+        "createdAt": "2024-03-22T01:19:45.573Z",
         "transactionType": "string",
         "note": {
           "text": "string"
@@ -1187,8 +1187,8 @@
           "method": "BAR_CODE",
           "cardNumberSuffix": "string"
         },
-        "settledAt": "2024-03-31T11:45:42.458Z",
-        "createdAt": "2024-03-30T12:03:30.407Z",
+        "settledAt": "2024-03-31T15:29:34.010Z",
+        "createdAt": "2024-03-30T15:47:21.959Z",
         "transactionType": "string",
         "note": {
           "text": "string"
@@ -1315,8 +1315,8 @@
           "method": "BAR_CODE",
           "cardNumberSuffix": "string"
         },
-        "settledAt": "2024-04-28T14:30:33.787Z",
-        "createdAt": "2024-04-26T20:11:14.645Z",
+        "settledAt": "2024-04-28T18:14:25.338Z",
+        "createdAt": "2024-04-26T23:55:06.196Z",
         "transactionType": "string",
         "note": {
           "text": "string"
@@ -1443,8 +1443,8 @@
           "method": "BAR_CODE",
           "cardNumberSuffix": "string"
         },
-        "settledAt": "2024-02-01T04:57:44.189Z",
-        "createdAt": "2024-01-30T04:21:52.967Z",
+        "settledAt": "2024-02-01T08:41:35.741Z",
+        "createdAt": "2024-01-30T08:05:44.519Z",
         "transactionType": "string",
         "note": {
           "text": "string"
@@ -1571,8 +1571,8 @@
           "method": "BAR_CODE",
           "cardNumberSuffix": "string"
         },
-        "settledAt": "2024-04-18T10:14:33.844Z",
-        "createdAt": "2024-04-16T18:30:02.958Z",
+        "settledAt": "2024-04-18T13:58:25.396Z",
+        "createdAt": "2024-04-16T22:13:54.510Z",
         "transactionType": "string",
         "note": {
           "text": "string"
@@ -1652,7 +1652,7 @@
         "rawText": "Koss Pty Ltd, Fort Alexander 4118",
         "description": "Koss Pty Ltd",
         "message": "string",
-        "isCategorizable": false,
+        "isCategorizable": true,
         "holdInfo": {
           "amount": {
             "currencyCode": "string",
@@ -1699,8 +1699,8 @@
           "method": "BAR_CODE",
           "cardNumberSuffix": "string"
         },
-        "settledAt": "2024-01-11T01:41:58.523Z",
-        "createdAt": "2024-01-08T17:33:33.962Z",
+        "settledAt": "2024-01-11T05:25:50.074Z",
+        "createdAt": "2024-01-08T21:17:25.513Z",
         "transactionType": "string",
         "note": {
           "text": "string"
@@ -1827,8 +1827,8 @@
           "method": "BAR_CODE",
           "cardNumberSuffix": "string"
         },
-        "settledAt": "2024-06-14T23:58:47.610Z",
-        "createdAt": "2024-06-13T03:31:24.937Z",
+        "settledAt": "2024-06-15T03:42:39.161Z",
+        "createdAt": "2024-06-13T07:15:16.488Z",
         "transactionType": "string",
         "note": {
           "text": "string"
@@ -1903,7 +1903,7 @@
         "rawText": "Leannon - Ferry, Jaydenside 5382",
         "description": "Leannon - Ferry",
         "message": "string",
-        "isCategorizable": false,
+        "isCategorizable": true,
         "holdInfo": {
           "amount": {
             "currencyCode": "string",
@@ -1950,8 +1950,8 @@
           "method": "BAR_CODE",
           "cardNumberSuffix": "string"
         },
-        "settledAt": "2024-05-05T12:03:29.626Z",
-        "createdAt": "2024-05-04T01:05:19.033Z",
+        "settledAt": "2024-05-05T15:47:21.178Z",
+        "createdAt": "2024-05-04T04:49:10.585Z",
         "transactionType": "string",
         "note": {
           "text": "string"
@@ -2073,8 +2073,8 @@
           "method": "BAR_CODE",
           "cardNumberSuffix": "string"
         },
-        "settledAt": "2024-07-27T19:03:24.487Z",
-        "createdAt": "2024-07-26T01:51:49.788Z",
+        "settledAt": "2024-07-27T22:47:16.039Z",
+        "createdAt": "2024-07-26T05:35:41.340Z",
         "transactionType": "string",
         "note": {
           "text": "string"
@@ -2201,8 +2201,8 @@
           "method": "BAR_CODE",
           "cardNumberSuffix": "string"
         },
-        "settledAt": "2023-12-13T16:18:43.246Z",
-        "createdAt": "2023-12-11T23:17:43.743Z",
+        "settledAt": "2023-12-13T20:02:34.798Z",
+        "createdAt": "2023-12-12T03:01:35.295Z",
         "transactionType": "string",
         "note": {
           "text": "string"
@@ -2277,7 +2277,7 @@
         "rawText": "Thomson, Cassin and Reynolds, North Michaelfurt 5362",
         "description": "Thomson, Cassin and Reynolds",
         "message": "string",
-        "isCategorizable": false,
+        "isCategorizable": true,
         "holdInfo": {
           "amount": {
             "currencyCode": "string",
@@ -2324,8 +2324,8 @@
           "method": "BAR_CODE",
           "cardNumberSuffix": "string"
         },
-        "settledAt": "2024-05-16T17:58:36.845Z",
-        "createdAt": "2024-05-15T16:20:13.063Z",
+        "settledAt": "2024-05-16T21:42:28.396Z",
+        "createdAt": "2024-05-15T20:04:04.614Z",
         "transactionType": "string",
         "note": {
           "text": "string"
@@ -2400,7 +2400,7 @@
         "rawText": "Paterson - Emard, Fort Ashtonfurt 5861",
         "description": "Paterson - Emard",
         "message": "string",
-        "isCategorizable": false,
+        "isCategorizable": true,
         "holdInfo": {
           "amount": {
             "currencyCode": "string",
@@ -2447,8 +2447,8 @@
           "method": "BAR_CODE",
           "cardNumberSuffix": "string"
         },
-        "settledAt": "2024-08-28T11:57:32.119Z",
-        "createdAt": "2024-08-25T21:37:49.445Z",
+        "settledAt": "2024-08-28T15:41:23.670Z",
+        "createdAt": "2024-08-26T01:21:40.996Z",
         "transactionType": "string",
         "note": {
           "text": "string"
