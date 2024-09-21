@@ -23,7 +23,7 @@ export const getTransactions = async (
     );
     return filterTransactionFields(transactions);
   } else if (transactionType === 'transfers') {
-    const transfers = await getTransfers(dateRange);
+    const transfers = await getTransfers(dateRange, options);
     return filterTransactionFields(transfers);
   }
 };

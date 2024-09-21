@@ -35,7 +35,7 @@ const ExpenseCategoriesStackedBar = ({ start, end }: DateRangeProps) => {
     <DashboardCard>
       <div>
         <Title>Spending</Title>
-        <Text>Last 6 months</Text>
+        <Text>Past 6 months</Text>
       </div>
       <BarChart
         data={data || []}

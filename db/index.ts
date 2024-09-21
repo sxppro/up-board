@@ -9,6 +9,7 @@ import {
   type AccountBalanceHistory,
   type AccountMonthlyInfo,
   type DateRange,
+  type DateRangeGroupBy,
   type TagInfo,
   type TransactionCategoryInfo,
   type TransactionCategoryInfoHistoryRaw,
@@ -18,7 +19,6 @@ import {
 import {
   AccountInfo,
   AccountResource,
-  DateRangeGroupBy,
   DbTransactionResource,
   TransactionRetrievalOptions,
 } from '@/types/custom';
@@ -28,7 +28,7 @@ import { outputTransactionFields } from '@/utils/helpers';
 import { getTransactionById as getUpTransactionById } from '@/utils/up';
 import { faker } from '@faker-js/faker';
 import { UUID } from 'bson';
-import { addDays, addMonths } from 'date-fns';
+import { addDays, addMonths, addYears } from 'date-fns';
 import { CollectionOptions, Document, MongoBulkWriteError } from 'mongodb';
 import clientPromise from './connect';
 import {
@@ -229,6 +229,36 @@ export const getMonthlyInfo = async (
     return results;
   } catch (err) {
     if (err instanceof Error && err.message.includes('unauthorised')) {
+      if (groupBy && dateRange.from < dateRange.to) {
+        let date = new Date(
+          dateRange.from.getFullYear(),
+          dateRange.from.getMonth(),
+          dateRange.from.getDate()
+        );
+        const dates = [];
+        while (date < dateRange.to) {
+          dates.push(date);
+          date =
+            groupBy === 'monthly'
+              ? addMonths(date, 1)
+              : groupBy === 'yearly'
+              ? addYears(date, 1)
+              : addDays(date, 1);
+        }
+
+        return dates.map((date) => {
+          const income = parseFloat(faker.finance.amount({ max: 5000 }));
+          const expenses = parseFloat(faker.finance.amount({ max: 5000 }));
+          return {
+            Income: income,
+            Expenses: expenses,
+            Net: income - expenses,
+            Transactions: faker.number.int({ max: 100 }),
+            Month: date.getMonth() + 1,
+            Year: date.getFullYear(),
+          };
+        });
+      }
       const income = parseFloat(faker.finance.amount({ max: 5000 }));
       const expenses = parseFloat(faker.finance.amount({ max: 5000 }));
       const data = [
@@ -237,7 +267,6 @@ export const getMonthlyInfo = async (
           Expenses: expenses,
           Net: income - expenses,
           Transactions: faker.number.int({ max: 100 }),
-          Test: 'test',
         },
       ];
       const res = AccountMonthlyInfoSchema.array().safeParse(
@@ -433,6 +462,7 @@ const getTransactionsByDate = async (
   } catch (err) {
     if (err instanceof Error && err.message.includes('unauthorised')) {
       return transactions.data
+        .filter(({ attributes }) => attributes.isCategorizable)
         .sort((a, b) =>
           new Date(a.attributes.createdAt) > new Date(b.attributes.createdAt)
             ? -1
@@ -621,7 +651,10 @@ export const getTags = async () => {
  * Retrieves bank transfers by account and date range
  * @returns
  */
-const getTransfers = async (dateRange: DateRange) => {
+const getTransfers = async (
+  dateRange: DateRange,
+  options: TransactionRetrievalOptions
+) => {
   try {
     const transactions = await connectToCollection<DbTransactionResource>(
       'up',
@@ -641,9 +674,11 @@ const getTransfers = async (dateRange: DateRange) => {
     return results;
   } catch (err) {
     if (err instanceof Error && err.message.includes('unauthorised')) {
-      return transactions.data.find(
-        ({ attributes }) => attributes.isCategorizable === false
-      ) as unknown as ReturnType<typeof outputTransactionFields>[];
+      return transactions.data
+        .filter(({ attributes }) => attributes.isCategorizable === false)
+        .slice(0, options.limit) as unknown as ReturnType<
+        typeof outputTransactionFields
+      >[];
     }
     console.error(err);
     return;

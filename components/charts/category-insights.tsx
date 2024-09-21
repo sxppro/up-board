@@ -77,6 +77,7 @@ const CategoryInsights = ({
                 valueFormatter={(number: number) =>
                   formatCurrency(number, true)
                 }
+                showAnimation
               />
             </div>
 
@@ -108,6 +109,7 @@ const CategoryInsights = ({
               colors={[`up-${category}`]}
               valueFormatter={(number: number) => formatCurrency(number, false)}
               showLegend={false}
+              showAnimation
             />
           </TabPanel>
         </TabPanels>

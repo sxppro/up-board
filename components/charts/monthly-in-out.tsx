@@ -3,41 +3,29 @@
 import { formatCurrency } from '@/utils/helpers';
 import { trpc } from '@/utils/trpc';
 import { BarChart, Text, Title } from '@tremor/react';
-import { format, startOfMonth, subYears } from 'date-fns';
+import { startOfMonth, subYears } from 'date-fns';
 import DashboardCard from '../core/dashboard-card';
 
 const currentDate = new Date();
 
-const MonthlyInOut = () => {
-  const { data, isLoading } = trpc.user.getMonthlyInfo.useQuery({
-    accountId: '',
+const MonthlyInOut = ({ accountId }: { accountId: string }) => {
+  const { data } = trpc.public.getMonthlyInfo.useQuery({
+    accountId,
     dateRange: {
       from: startOfMonth(subYears(currentDate, 1)),
       to: currentDate,
     },
+    groupBy: 'monthly',
   });
-  const dataWithFormattedDate =
-    !isLoading &&
-    data &&
-    data.map(({ Month, Year, ...rest }) => {
-      if (Year && Month) {
-        const date = new Date(Year, Month - 1);
-        return {
-          ...rest,
-          FormattedDate: format(date, 'LLL yy'),
-        };
-      }
-    });
 
   return (
     <DashboardCard>
       <div>
-        <Title>Monthly Comparison</Title>
-        <Text>Total income and expenses by month</Text>
+        <Title>Income & Spending</Title>
+        <Text>Monthly — Past 12 months</Text>
       </div>
       <BarChart
-        className="flex-1"
-        data={dataWithFormattedDate || []}
+        data={data || []}
         index="FormattedDate"
         categories={['Income', 'Expenses']}
         colors={['indigo', 'fuchsia']}

@@ -15,6 +15,9 @@ export const DateRangeSchema = z.object({
 });
 export type DateRange = z.infer<typeof DateRangeSchema>;
 
+export const DateRangeGroupBySchema = z.enum(['daily', 'monthly', 'yearly']);
+export type DateRangeGroupBy = z.infer<typeof DateRangeGroupBySchema>;
+
 export const TagInfoSchema = z.object({
   Income: z.number(),
   Expenses: z.number(),
@@ -129,6 +132,7 @@ export const AccountMonthlyInfoSchema = z.object({
   Expenses: z.number(),
   Net: z.number(),
   Transactions: z.number(),
+  FormattedDate: z.string().optional(),
 });
 export type AccountMonthlyInfo = z.infer<typeof AccountMonthlyInfoSchema>;
 

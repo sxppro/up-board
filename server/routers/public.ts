@@ -15,6 +15,7 @@ import { z } from 'zod';
 import {
   AccountBalanceHistorySchema,
   AccountMonthlyInfoSchema,
+  DateRangeGroupBySchema,
   DateRangeSchema,
   TransactionCategoryInfoHistorySchema,
   TransactionCategoryInfoSchema,
@@ -33,12 +34,26 @@ export const publicRouter = router({
     }),
   getMonthlyInfo: publicProcedure
     .input(
-      z.object({ accountId: z.string().uuid(), dateRange: DateRangeSchema })
+      z.object({
+        accountId: z.string().uuid(),
+        dateRange: DateRangeSchema,
+        groupBy: DateRangeGroupBySchema.optional(),
+      })
     )
     .output(z.array(AccountMonthlyInfoSchema))
     .query(async ({ input }) => {
-      const { accountId, dateRange } = input;
-      return await getMonthlyInfo(accountId, dateRange);
+      const { accountId, dateRange, groupBy } = input;
+      const results = await getMonthlyInfo(accountId, dateRange, groupBy);
+      return results.map(({ Year, Month, ...rest }) =>
+        Year && Month
+          ? {
+              ...rest,
+              Year,
+              Month,
+              FormattedDate: format(new Date(Year, Month - 1), 'LLL yy'),
+            }
+          : rest
+      );
     }),
   getCategoryInfo: publicProcedure
     .input(

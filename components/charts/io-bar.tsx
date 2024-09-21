@@ -20,7 +20,6 @@ export const IOBarLoading = () => (
 
 const IOBar = ({ children, accountId }: IOBarProps & PropsWithChildren) => {
   const { date } = useDate();
-
   const { data } = trpc.public.getMonthlyInfo.useQuery({
     accountId,
     dateRange: {
