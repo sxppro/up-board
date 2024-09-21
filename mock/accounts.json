@@ -12,7 +12,7 @@
           "value": "976.78",
           "valueInBaseUnits": 97678
         },
-        "createdAt": "2018-01-15T10:20:05.891Z"
+        "createdAt": "2018-01-21T06:13:58.355Z"
       },
       "relationships": {
         "transactions": {
@@ -37,7 +37,7 @@
           "value": "916.20",
           "valueInBaseUnits": 91620
         },
-        "createdAt": "2022-05-06T17:56:20.628Z"
+        "createdAt": "2022-05-12T13:50:13.094Z"
       },
       "relationships": {
         "transactions": {
@@ -62,7 +62,7 @@
           "value": "725.43",
           "valueInBaseUnits": 72543
         },
-        "createdAt": "2022-01-02T00:27:16.144Z"
+        "createdAt": "2022-01-07T20:21:08.609Z"
       },
       "relationships": {
         "transactions": {

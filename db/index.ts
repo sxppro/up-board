@@ -2,15 +2,20 @@ import accounts from '@/mock/accounts.json';
 import categories from '@/mock/categories.json';
 import tags from '@/mock/tags.json';
 import transactions from '@/mock/transactions.json';
-import type {
-  AccountBalanceHistory,
-  AccountMonthlyInfo,
-  DateRange,
-  TagInfo,
-  TransactionCategoryInfo,
-  TransactionCategoryInfoHistoryRaw,
-  TransactionCategoryOption,
-  TransactionCategoryType,
+import { getMockData } from '@/scripts/generateMockData';
+import {
+  AccountMonthlyInfoSchema,
+  TagInfoSchema,
+  TransactionCategoryInfoHistoryRawSchema,
+  TransactionCategoryInfoSchema,
+  type AccountBalanceHistory,
+  type AccountMonthlyInfo,
+  type DateRange,
+  type TagInfo,
+  type TransactionCategoryInfo,
+  type TransactionCategoryInfoHistoryRaw,
+  type TransactionCategoryOption,
+  type TransactionCategoryType,
 } from '@/server/schemas';
 import {
   AccountInfo,
@@ -38,6 +43,8 @@ import {
   transactionsByTagsPipeline,
   uniqueTagsPipeline,
 } from './pipelines';
+
+faker.seed(17);
 
 /**
  * Creates a db instance
@@ -191,9 +198,13 @@ export const searchTransactions = async (search: string) => {
     );
     return results;
   } catch (err) {
-    return transactions.data.filter(({ attributes }) =>
-      attributes.description.toLowerCase().includes(search.toLowerCase())
-    ) as unknown as ReturnType<typeof outputTransactionFields>[];
+    if (err instanceof Error && err.message.includes('unauthorised')) {
+      return transactions.data.filter(({ attributes }) =>
+        attributes.description.toLowerCase().includes(search.toLowerCase())
+      ) as unknown as ReturnType<typeof outputTransactionFields>[];
+    }
+    console.error(err);
+    return [];
   }
 };
 
@@ -218,16 +229,29 @@ export const getMonthlyInfo = async (
     const results = await cursor.toArray();
     return results;
   } catch (err) {
-    const income = parseFloat(faker.finance.amount());
-    const expenses = parseFloat(faker.finance.amount());
-    return [
-      {
-        Income: income,
-        Expenses: expenses,
-        Net: income - expenses,
-        Transactions: faker.number.int({ max: 100 }),
-      },
-    ];
+    if (err instanceof Error && err.message.includes('unauthorised')) {
+      const income = parseFloat(faker.finance.amount({ max: 5000 }));
+      const expenses = parseFloat(faker.finance.amount({ max: 5000 }));
+      const data = [
+        {
+          Income: income,
+          Expenses: expenses,
+          Net: income - expenses,
+          Transactions: faker.number.int({ max: 100 }),
+          Test: 'test',
+        },
+      ];
+      const res = AccountMonthlyInfoSchema.array().safeParse(
+        getMockData(getMonthlyInfo.name, data)
+      );
+      if (res.success) {
+        return res.data;
+      } else {
+        console.error(res.error);
+      }
+    }
+    console.error(err);
+    return [];
   }
 };
 
@@ -263,44 +287,33 @@ export const getCategoryInfo = async (
     const results = await cursor.toArray();
     return results;
   } catch (err) {
-    if (parentCategory) {
-      const subCategories = categories.data.filter(
-        ({ relationships }) => relationships.parent.data?.id === parentCategory
+    if (err instanceof Error && err.message.includes('unauthorised')) {
+      const filteredCategories = categories.data.filter(({ relationships }) =>
+        parentCategory
+          ? relationships.parent.data?.id === parentCategory
+          : type === 'parent'
+          ? relationships.parent.data === null
+          : relationships.parent.data !== null
       );
-      return faker.helpers
-        .arrayElements(subCategories, { min: 3, max: 10 })
+      const data = faker.helpers
+        .arrayElements(filteredCategories, { min: 3, max: 10 })
         .map(({ id, attributes }) => ({
           category: id,
           categoryName: attributes.name,
           amount: parseFloat(faker.finance.amount()),
           transactions: faker.number.int({ max: 100 }),
         }));
+      const res = TransactionCategoryInfoSchema.array().safeParse(
+        getMockData(getCategoryInfo.name, data)
+      );
+      if (res.success) {
+        return res.data;
+      } else {
+        console.error(res.error);
+      }
     }
-    if (type === 'parent') {
-      const parentCategories = categories.data.filter(
-        ({ relationships }) => relationships.parent.data === null
-      );
-      return faker.helpers
-        .arrayElements(parentCategories, { min: 3, max: 10 })
-        .map(({ id, attributes }) => ({
-          category: id,
-          categoryName: attributes.name,
-          amount: parseFloat(faker.finance.amount()),
-          transactions: faker.number.int({ max: 100 }),
-        }));
-    } else {
-      const subCategories = categories.data.filter(
-        ({ relationships }) => relationships.parent.data !== null
-      );
-      return faker.helpers
-        .arrayElements(subCategories, { min: 3, max: 10 })
-        .map(({ id, attributes }) => ({
-          category: id,
-          categoryName: attributes.name,
-          amount: parseFloat(faker.finance.amount()),
-          transactions: faker.number.int({ max: 100 }),
-        }));
-    }
+    console.error(err);
+    return [];
   }
 };
 
@@ -333,6 +346,36 @@ export const getCategoryInfoHistory = async (
     const results = await cursor.toArray();
     return results;
   } catch (err) {
+    if (err instanceof Error && err.message.includes('unauthorised')) {
+      const date = faker.date.recent();
+      const data = [
+        {
+          categories: categories.data
+            .filter(({ relationships }) =>
+              type === 'parent'
+                ? relationships.parent.data === null
+                : relationships.parent.data !== null
+            )
+            .map(({ id, attributes }) => ({
+              category: id,
+              categoryName: attributes.name,
+              amount: parseFloat(faker.finance.amount()),
+              transactions: faker.number.int({ max: 100 }),
+            })),
+          month: date.getMonth() + 1,
+          year: date.getFullYear(),
+        },
+      ];
+      const res = TransactionCategoryInfoHistoryRawSchema.array().safeParse(
+        getMockData(getCategoryInfoHistory.name, data)
+      );
+      if (res.success) {
+        return res.data;
+      } else {
+        console.error(res.error);
+      }
+    }
+    console.error(err);
     return [];
   }
 };
@@ -352,10 +395,24 @@ export const getTagInfo = async (tag: string): Promise<TagInfo> => {
     const results = await cursor.toArray();
     return results[0];
   } catch (err) {
+    if (err instanceof Error && err.message.includes('unauthorised')) {
+      const data = {
+        Income: faker.number.float({ min: 0, max: 1000, fractionDigits: 2 }),
+        Expenses: faker.number.float({ min: 0, max: 1000, fractionDigits: 2 }),
+        Transactions: faker.number.int({ max: 100 }),
+      };
+      const res = TagInfoSchema.safeParse(getMockData(getTagInfo.name, data));
+      if (res.success) {
+        return res.data;
+      } else {
+        console.error(res.error);
+      }
+    }
+    console.error(err);
     return {
-      Income: faker.number.float({ min: 0, max: 1000 }),
-      Expenses: faker.number.float({ min: 0, max: 1000 }),
-      Transactions: faker.number.int({ max: 100 }),
+      Income: 0,
+      Expenses: 0,
+      Transactions: 0,
     };
   }
 };
@@ -384,15 +441,19 @@ const getTransactionsByDate = async (
     );
     return results;
   } catch (err) {
-    return transactions.data
-      .sort((a, b) =>
-        new Date(a.attributes.createdAt) > new Date(b.attributes.createdAt)
-          ? -1
-          : 1
-      )
-      .slice(0, options.limit) as unknown as ReturnType<
-      typeof outputTransactionFields
-    >[];
+    if (err instanceof Error && err.message.includes('unauthorised')) {
+      return transactions.data
+        .sort((a, b) =>
+          new Date(a.attributes.createdAt) > new Date(b.attributes.createdAt)
+            ? -1
+            : 1
+        )
+        .slice(0, options.limit) as unknown as ReturnType<
+        typeof outputTransactionFields
+      >[];
+    }
+    console.error(err);
+    return [];
   }
 };
 
@@ -413,7 +474,11 @@ const getTransactionsByCategory = async (category: string) => {
     );
     return results;
   } catch (err) {
-    return;
+    if (err instanceof Error && err.message.includes('unauthorised')) {
+      return [];
+    }
+    console.error(err);
+    return [];
   }
 };
 
@@ -431,11 +496,15 @@ const getTransactionById = async (id: string) => {
     const result = await transactions.findOne({ _id: new UUID(id).toBinary() });
     return result ? outputTransactionFields(result) : result;
   } catch (err) {
-    return (
-      (transactions.data.find(
-        ({ id: txId }) => txId === id
-      ) as unknown as ReturnType<typeof outputTransactionFields>) || null
-    );
+    if (err instanceof Error && err.message.includes('unauthorised')) {
+      return (
+        (transactions.data.find(
+          ({ id: txId }) => txId === id
+        ) as unknown as ReturnType<typeof outputTransactionFields>) || null
+      );
+    }
+    console.error(err);
+    return;
   }
 };
 
@@ -456,11 +525,19 @@ export const getTransactionsByTag = async (tag: string) => {
     );
     return results;
   } catch (err) {
-    return transactions.data.sort((a, b) =>
-      new Date(a.attributes.createdAt) > new Date(b.attributes.createdAt)
-        ? -1
-        : 1
-    ) as unknown as ReturnType<typeof outputTransactionFields>[];
+    if (err instanceof Error && err.message.includes('unauthorised')) {
+      return transactions.data
+        .filter(({ relationships }) =>
+          relationships.tags.data.find(({ id }) => id === tag)
+        )
+        .sort((a, b) =>
+          new Date(a.attributes.createdAt) > new Date(b.attributes.createdAt)
+            ? -1
+            : 1
+        ) as unknown as ReturnType<typeof outputTransactionFields>[];
+    }
+    console.error(err);
+    return [];
   }
 };
 
@@ -478,6 +555,10 @@ export const getTransactionsByTags = async () => {
     const results = await cursor.toArray();
     return results;
   } catch (err) {
+    if (err instanceof Error && err.message.includes('unauthorised')) {
+      return [];
+    }
+    console.error(err);
     return [];
   }
 };
@@ -504,18 +585,13 @@ export const getCategories = async (type: TransactionCategoryType) => {
     const results = await cursor.toArray();
     return results;
   } catch (err) {
-    if (type === 'parent') {
+    if (err instanceof Error && err.message.includes('unauthorised')) {
       return categories.data
-        .filter(({ relationships }) => relationships.parent.data === null)
-        .map(({ id, attributes }) => ({
-          id,
-          value: attributes.name,
-          name: attributes.name,
-        }))
-        .sort((a, b) => (a.name.toUpperCase() < b.name.toUpperCase() ? -1 : 1));
-    } else {
-      return categories.data
-        .filter(({ relationships }) => relationships.parent.data !== null)
+        .filter(({ relationships }) =>
+          type === 'parent'
+            ? relationships.parent.data === null
+            : relationships.parent.data !== null
+        )
         .map(({ id, attributes }) => ({
           id,
           value: attributes.name,
@@ -523,6 +599,8 @@ export const getCategories = async (type: TransactionCategoryType) => {
         }))
         .sort((a, b) => (a.name.toUpperCase() < b.name.toUpperCase() ? -1 : 1));
     }
+    console.error(err);
+    return [];
   }
 };
 
@@ -541,7 +619,11 @@ export const getTags = async () => {
     const results = await cursor.toArray();
     return results[0];
   } catch (err) {
-    return { tags: tags.data };
+    if (err instanceof Error && err.message.includes('unauthorised')) {
+      return { tags: tags.data };
+    }
+    console.error(err);
+    return { tags: [] };
   }
 };
 
@@ -568,6 +650,12 @@ const getTransfers = async (dateRange: DateRange) => {
     );
     return results;
   } catch (err) {
+    if (err instanceof Error && err.message.includes('unauthorised')) {
+      return transactions.data.find(
+        ({ attributes }) => attributes.isCategorizable === false
+      ) as unknown as ReturnType<typeof outputTransactionFields>[];
+    }
+    console.error(err);
     return;
   }
 };
@@ -597,19 +685,23 @@ export const getAccounts = async (
     const results = await cursor.toArray();
     return results;
   } catch (err) {
-    return accountType
-      ? accounts.data
-          .filter(({ attributes }) => attributes.accountType === accountType)
-          .map(({ id, attributes }) => ({
+    if (err instanceof Error && err.message.includes('unauthorised')) {
+      return accountType
+        ? accounts.data
+            .filter(({ attributes }) => attributes.accountType === accountType)
+            .map(({ id, attributes }) => ({
+              id,
+              displayName: attributes.displayName,
+              accountType: attributes.accountType,
+            }))
+        : accounts.data.map(({ id, attributes }) => ({
             id,
             displayName: attributes.displayName,
             accountType: attributes.accountType,
-          }))
-      : accounts.data.map(({ id, attributes }) => ({
-          id,
-          displayName: attributes.displayName,
-          accountType: attributes.accountType,
-        }));
+          }));
+    }
+    console.error(err);
+    return [];
   }
 };
 
@@ -632,17 +724,21 @@ const getAccountBalance = async (dateRange: DateRange, accountId: string) => {
     const results = await cursor.toArray();
     return results;
   } catch (err) {
-    const date = faker.date.recent();
-    return [
-      {
-        Year: date.getFullYear(),
-        Month: date.getMonth() + 1,
-        Day: date.getDate(),
-        Timestamp: date,
-        Amount: parseFloat(faker.finance.amount({ min: -1000 })),
-        Balance: parseFloat(faker.finance.amount({ max: 100000 })),
-      },
-    ];
+    if (err instanceof Error && err.message.includes('unauthorised')) {
+      const date = faker.date.recent();
+      return [
+        {
+          Year: date.getFullYear(),
+          Month: date.getMonth() + 1,
+          Day: date.getDate(),
+          Timestamp: date,
+          Amount: parseFloat(faker.finance.amount({ min: -1000 })),
+          Balance: parseFloat(faker.finance.amount({ max: 100000 })),
+        },
+      ];
+    }
+    console.error(err);
+    return [];
   }
 };
 
@@ -670,22 +766,26 @@ export const getAccountById = async (accountId: string) => {
     );
     return account;
   } catch (err) {
-    const account = accounts.data.find(({ id }) => id === accountId);
-    return account
-      ? {
-          id: account.id,
-          displayName: account.attributes.displayName,
-          accountType: account.attributes
-            .accountType as components['schemas']['AccountTypeEnum'],
-        }
-      : {
-          id: accountId,
-          displayName: faker.finance.accountName(),
-          accountType: faker.helpers.arrayElement([
-            'TRANSACTIONAL',
-            'SAVER',
-          ]) as components['schemas']['AccountTypeEnum'],
-        };
+    if (err instanceof Error && err.message.includes('unauthorised')) {
+      const account = accounts.data.find(({ id }) => id === accountId);
+      return account
+        ? {
+            id: account.id,
+            displayName: account.attributes.displayName,
+            accountType: account.attributes
+              .accountType as components['schemas']['AccountTypeEnum'],
+          }
+        : {
+            id: accountId,
+            displayName: faker.finance.accountName(),
+            accountType: faker.helpers.arrayElement([
+              'TRANSACTIONAL',
+              'SAVER',
+            ]) as components['schemas']['AccountTypeEnum'],
+          };
+    }
+    console.error(err);
+    return;
   }
 };
 
