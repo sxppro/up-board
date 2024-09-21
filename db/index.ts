@@ -270,7 +270,7 @@ export const getMonthlyInfo = async (
         },
       ];
       const res = AccountMonthlyInfoSchema.array().safeParse(
-        getMockData(getMonthlyInfo.name, data)
+        getMockData('getMonthlyInfo', data)
       );
       if (res.success) {
         return res.data;
@@ -420,7 +420,7 @@ export const getTagInfo = async (tag: string): Promise<TagInfo> => {
         Expenses: faker.number.float({ min: 0, max: 1000, fractionDigits: 2 }),
         Transactions: faker.number.int({ max: 100 }),
       };
-      const res = TagInfoSchema.safeParse(getMockData(getTagInfo.name, data));
+      const res = TagInfoSchema.safeParse(getMockData('getTagInfo', data));
       if (res.success) {
         return res.data;
       } else {
