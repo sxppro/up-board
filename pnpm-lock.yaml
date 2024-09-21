@@ -142,6 +142,9 @@ devDependencies:
   '@types/node':
     specifier: 20.4.5
     version: 20.4.5
+  '@types/openapi-sampler':
+    specifier: ^1.0.3
+    version: 1.0.3
   '@types/react':
     specifier: 18.2.17
     version: 18.2.17
@@ -1686,6 +1689,10 @@ packages:
   /@types/nprogress@0.2.3:
     resolution: {integrity: sha512-k7kRA033QNtC+gLc4VPlfnue58CM1iQLgn1IMAU8VPHGOj7oIHPp9UlhedEnD/Gl8evoCjwkZjlBORtZ3JByUA==}
     dev: false
+
+  /@types/openapi-sampler@1.0.3:
+    resolution: {integrity: sha512-SwTm7ZahuDRKirbFSBu30X64mvdwITxS5yeC9JNV20Vp23Ymbl+hVdYxegkLDtYvXIxnUngJb8Ok+m3iEYfZiQ==}
+    dev: true
 
   /@types/prop-types@15.7.5:
     resolution: {integrity: sha512-JCB8C6SnDoQf0cNycqd/35A7MjcnK+ZTqE7judS6o7utxUCg6imJg3QK2qzHKszlTjcj2cn+NwMB2i96ubpj7w==}

@@ -10,7 +10,7 @@ import { components } from '@/types/up-api';
 import { fakerEN_AU as faker } from '@faker-js/faker';
 import fs, { existsSync } from 'node:fs';
 import path from 'node:path';
-import OpenAPISampler from 'openapi-sampler';
+import { sample } from 'openapi-sampler';
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
 import categories from '../mock/categories.json';
@@ -35,7 +35,7 @@ const getApiSchema = async () => {
 const generateAccounts = (schema: any, accountIds: string[]) => {
   const numOfAccounts = accountIds.length;
   return [...Array(numOfAccounts)].map((_, i) => {
-    const account = OpenAPISampler.sample(
+    const account = sample(
       schema['components']['schemas']['AccountResource'],
       {},
       schema
@@ -75,7 +75,7 @@ const generateTransactions = (
 ) => {
   const { accountIds, tags } = options;
   return [...Array(amount)].map((_, i) => {
-    const transaction = OpenAPISampler.sample(
+    const transaction = sample(
       schema['components']['schemas']['TransactionResource'],
       {},
       schema
@@ -140,40 +140,76 @@ const generateTransactions = (
   });
 };
 
-getApiSchema().then((upApiSchema) => {
-  // console.log(generateAccounts(upApiSchema, 3));
-
-  // Create mock directory if not available
-  if (!existsSync(path.join(__dirname, '../mock'))) {
-    fs.mkdirSync(path.join(__dirname, '../mock'));
+/**
+ * Retrieves mock data from existing file or writes to file
+ * with passed data
+ * @param fileName
+ * @param data
+ * @returns
+ */
+export const getMockData = (fileName: string, data: any) => {
+  if (!existsSync(path.join(__dirname, '../mock', `${fileName}.json`))) {
+    Array.isArray(data)
+      ? fs.writeFileSync(
+          path.join(__dirname, '../mock', `${fileName}.json`),
+          JSON.stringify({ data }, null, 2)
+        )
+      : fs.writeFileSync(
+          path.join(__dirname, '../mock', `${fileName}.json`),
+          JSON.stringify(data, null, 2)
+        );
+    return data;
+  } else {
+    const data = JSON.parse(
+      fs.readFileSync(
+        path.join(__dirname, '../mock', `${fileName}.json`),
+        'utf-8'
+      )
+    );
+    return data.data ? data.data : data;
   }
+};
 
-  // Generate mock account UUIDs
-  const accountIds = [...Array(3)].map(() => faker.string.uuid());
+// Only run if file is run directly
+if (process.argv[1] === __filename) {
+  getApiSchema().then((upApiSchema) => {
+    // Create mock directory if not available
+    if (!existsSync(path.join(__dirname, '../mock'))) {
+      fs.mkdirSync(path.join(__dirname, '../mock'));
+    }
 
-  // Generate mock tags
-  const tags = [...Array(10)].map(
-    () => `${faker.commerce.productAdjective()} ${faker.commerce.productName()}`
-  );
+    // Generate mock account UUIDs
+    const accountIds = [...Array(3)].map(() => faker.string.uuid());
 
-  fs.writeFileSync(
-    path.join(__dirname, '../mock/accounts.json'),
-    JSON.stringify({ data: generateAccounts(upApiSchema, accountIds) }, null, 2)
-  );
+    // Generate mock tags
+    const tags = [...Array(10)].map(
+      () =>
+        `${faker.commerce.productAdjective()} ${faker.commerce.productName()}`
+    );
 
-  fs.writeFileSync(
-    path.join(__dirname, '../mock/transactions.json'),
-    JSON.stringify(
-      {
-        data: generateTransactions(upApiSchema, { accountIds, tags }, 20),
-      },
-      null,
-      2
-    )
-  );
+    fs.writeFileSync(
+      path.join(__dirname, '../mock/accounts.json'),
+      JSON.stringify(
+        { data: generateAccounts(upApiSchema, accountIds) },
+        null,
+        2
+      )
+    );
 
-  fs.writeFileSync(
-    path.join(__dirname, '../mock/tags.json'),
-    JSON.stringify({ data: tags }, null, 2)
-  );
-});
+    fs.writeFileSync(
+      path.join(__dirname, '../mock/transactions.json'),
+      JSON.stringify(
+        {
+          data: generateTransactions(upApiSchema, { accountIds, tags }, 20),
+        },
+        null,
+        2
+      )
+    );
+
+    fs.writeFileSync(
+      path.join(__dirname, '../mock/tags.json'),
+      JSON.stringify({ data: tags }, null, 2)
+    );
+  });
+}
