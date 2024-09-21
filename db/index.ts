@@ -804,14 +804,7 @@ export const getAccountById = async (accountId: string) => {
             accountType: account.attributes
               .accountType as components['schemas']['AccountTypeEnum'],
           }
-        : {
-            id: accountId,
-            displayName: faker.finance.accountName(),
-            accountType: faker.helpers.arrayElement([
-              'TRANSACTIONAL',
-              'SAVER',
-            ]) as components['schemas']['AccountTypeEnum'],
-          };
+        : null;
     }
     console.error(err);
     return;

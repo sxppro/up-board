@@ -35,7 +35,7 @@ const TagPage = async ({ params }: TagPageProps) => {
           </Suspense>
         </>
       ) : (
-        <div className="w-full flex h-screen">
+        <div className="w-full flex h-[calc(100vh_-_94px)]">
           <div className="flex flex-col items-center gap-2 m-auto">
             <X className="h-8 w-8" />
             <h1 className="text-xl tracking-tight">Tag not found</h1>

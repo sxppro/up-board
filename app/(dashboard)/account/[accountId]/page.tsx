@@ -30,10 +30,10 @@ const AccountPage = async ({ params, searchParams }: AccountPageProps) => {
 
   if (!accountInfo) {
     return (
-      <div className="w-full flex h-[calc(100vh - 4rem)]">
+      <div className="w-full flex h-[calc(100vh_-_94px)]">
         <div className="flex flex-col items-center gap-2 m-auto">
           <X className="h-8 w-8" />
-          <h1 className="text-xl tracking-tight">No account info</h1>
+          <h1 className="text-xl tracking-tight">Account not found</h1>
         </div>
       </div>
     );
