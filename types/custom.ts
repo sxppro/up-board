@@ -63,15 +63,6 @@ export type PageProps = {
   searchParams: { [key: string]: string | string[] | undefined };
 };
 
-export type TransactionRetrievalOptions = {
-  sort: 'time' | 'amount';
-  sortDir: 'asc' | 'desc';
-  limit?: number;
-  type?: 'income' | 'expense';
-};
-
-export type TransactionAccountType = 'transactional' | 'savings';
-
 export type StatCardInfo = {
   title?: string;
   metric?: string | number | undefined;
