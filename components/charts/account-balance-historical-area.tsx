@@ -8,7 +8,7 @@ import DashboardCard from '../core/dashboard-card';
 
 const AccountBalanceHistoricalArea = ({ accountId }: { accountId: string }) => {
   const { date } = useDate();
-  const { data } = trpc.user.getAccountBalance.useQuery({
+  const { data } = trpc.public.getAccountBalance.useQuery({
     dateRange: {
       from: date?.from,
       to: date?.to,

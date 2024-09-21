@@ -28,7 +28,7 @@ import { outputTransactionFields } from '@/utils/helpers';
 import { getTransactionById as getUpTransactionById } from '@/utils/up';
 import { faker } from '@faker-js/faker';
 import { UUID } from 'bson';
-import { addMonths } from 'date-fns';
+import { addDays, addMonths } from 'date-fns';
 import { CollectionOptions, Document, MongoBulkWriteError } from 'mongodb';
 import clientPromise from './connect';
 import {
@@ -715,17 +715,30 @@ const getAccountBalance = async (dateRange: DateRange, accountId: string) => {
     return results;
   } catch (err) {
     if (err instanceof Error && err.message.includes('unauthorised')) {
-      const date = faker.date.recent();
-      return [
-        {
+      if (dateRange.from < dateRange.to) {
+        const startingBalance = parseFloat(
+          faker.finance.amount({ max: 10000 })
+        );
+        let date = new Date(
+          dateRange.from.getFullYear(),
+          dateRange.from.getMonth(),
+          dateRange.from.getDate()
+        );
+        const days = [];
+        while (date < dateRange.to) {
+          days.push(date);
+          date = addDays(date, 1);
+        }
+        return days.map((date) => ({
           Year: date.getFullYear(),
           Month: date.getMonth() + 1,
           Day: date.getDate(),
           Timestamp: date,
           Amount: parseFloat(faker.finance.amount({ min: -1000 })),
-          Balance: parseFloat(faker.finance.amount({ max: 100000 })),
-        },
-      ];
+          Balance:
+            startingBalance + parseFloat(faker.finance.amount({ min: -1000 })),
+        }));
+      }
     }
     console.error(err);
     return [];
