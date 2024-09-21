@@ -11,14 +11,14 @@ import DashboardCard from '../core/dashboard-card';
 const ExpenseCategoriesStackedBar = ({ start, end }: DateRangeProps) => {
   const { date } = useDate();
   const [category, setCategory] = useState<string | null>();
-  const { data } = trpc.user.getCategoryInfoHistory.useQuery({
+  const { data } = trpc.public.getCategoryInfoHistory.useQuery({
     dateRange: {
       from: start || date?.from,
       to: end || date?.to,
     },
     type: 'parent',
   });
-  const { data: categories } = trpc.user.getCategories.useQuery('parent');
+  const { data: categories } = trpc.public.getCategories.useQuery('parent');
 
   const handleChartInteraction = (event: EventProps) => {
     if (event) {

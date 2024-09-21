@@ -41,7 +41,7 @@ const CategoryInsights = ({
       parentCategory: category,
     });
   // Last 12 months of category history
-  const { data: historyData } = trpc.user.getCategoryInfoHistory.useQuery({
+  const { data: historyData } = trpc.public.getCategoryInfoHistory.useQuery({
     dateRange: {
       // Subtract 12 months
       from: start || (date?.from && startOfMonth(subMonths(date?.from, 12))),

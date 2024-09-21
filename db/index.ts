@@ -6,8 +6,6 @@ import { getMockData } from '@/scripts/generateMockData';
 import {
   AccountMonthlyInfoSchema,
   TagInfoSchema,
-  TransactionCategoryInfoHistoryRawSchema,
-  TransactionCategoryInfoSchema,
   type AccountBalanceHistory,
   type AccountMonthlyInfo,
   type DateRange,
@@ -30,6 +28,7 @@ import { outputTransactionFields } from '@/utils/helpers';
 import { getTransactionById as getUpTransactionById } from '@/utils/up';
 import { faker } from '@faker-js/faker';
 import { UUID } from 'bson';
+import { addMonths } from 'date-fns';
 import { CollectionOptions, Document, MongoBulkWriteError } from 'mongodb';
 import clientPromise from './connect';
 import {
@@ -295,7 +294,7 @@ export const getCategoryInfo = async (
           ? relationships.parent.data === null
           : relationships.parent.data !== null
       );
-      const data = faker.helpers
+      return faker.helpers
         .arrayElements(filteredCategories, { min: 3, max: 10 })
         .map(({ id, attributes }) => ({
           category: id,
@@ -303,14 +302,6 @@ export const getCategoryInfo = async (
           amount: parseFloat(faker.finance.amount()),
           transactions: faker.number.int({ max: 100 }),
         }));
-      const res = TransactionCategoryInfoSchema.array().safeParse(
-        getMockData(getCategoryInfo.name, data)
-      );
-      if (res.success) {
-        return res.data;
-      } else {
-        console.error(res.error);
-      }
     }
     console.error(err);
     return [];
@@ -347,32 +338,31 @@ export const getCategoryInfoHistory = async (
     return results;
   } catch (err) {
     if (err instanceof Error && err.message.includes('unauthorised')) {
-      const date = faker.date.recent();
-      const data = [
-        {
+      if (dateRange.from < dateRange.to) {
+        let date = new Date(
+          dateRange.from.getFullYear(),
+          dateRange.from.getMonth()
+        );
+        const months = [];
+        while (date < dateRange.to) {
+          months.push(date);
+          date = addMonths(date, 1);
+        }
+        return months.map((date) => ({
           categories: categories.data
             .filter(({ relationships }) =>
               type === 'parent'
                 ? relationships.parent.data === null
                 : relationships.parent.data !== null
             )
-            .map(({ id, attributes }) => ({
-              category: id,
-              categoryName: attributes.name,
+            .map(({ attributes }) => ({
+              category: attributes.name,
               amount: parseFloat(faker.finance.amount()),
               transactions: faker.number.int({ max: 100 }),
             })),
           month: date.getMonth() + 1,
           year: date.getFullYear(),
-        },
-      ];
-      const res = TransactionCategoryInfoHistoryRawSchema.array().safeParse(
-        getMockData(getCategoryInfoHistory.name, data)
-      );
-      if (res.success) {
-        return res.data;
-      } else {
-        console.error(res.error);
+        }));
       }
     }
     console.error(err);
