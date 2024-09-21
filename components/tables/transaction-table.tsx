@@ -14,8 +14,13 @@ const TransactionTable = async ({ search }: TransactionTableProps) => {
     search
       ? await searchTransactions(search)
       : await getTransactionsByDate(
-          { from: subMonths(now, 1), to: now },
-          { sort: 'time', sortDir: 'desc' },
+          {
+            account: 'transactional',
+            transactionType: 'transactions',
+            dateRange: { from: subMonths(now, 1), to: now },
+            sort: 'time',
+            sortDir: 'desc',
+          },
           ''
         )
   );

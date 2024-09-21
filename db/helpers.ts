@@ -1,6 +1,6 @@
 import { TransactionRetrievalOptions } from '@/server/schemas';
 import { filterTransactionFields } from '@/utils/helpers';
-import { getTransactionsByDate, getTransfers } from '.';
+import { getTransactionsByDate } from '.';
 
 /**
  * Retrieves transactions using various options
@@ -10,20 +10,14 @@ import { getTransactionsByDate, getTransfers } from '.';
 export const getTransactions = async (
   retrievalOpts: TransactionRetrievalOptions
 ) => {
-  const { account, dateRange, transactionType, ...options } = retrievalOpts;
-  if (transactionType === 'transactions') {
-    const transactions = await getTransactionsByDate(
-      dateRange,
-      options,
-      account === 'transactional'
-        ? process.env.UP_TRANS_ACC
-        : account === 'savings'
-        ? process.env.UP_SAVINGS_ACC
-        : ''
-    );
-    return filterTransactionFields(transactions);
-  } else if (transactionType === 'transfers') {
-    const transfers = await getTransfers(dateRange, options);
-    return filterTransactionFields(transfers);
-  }
+  const { account } = retrievalOpts;
+  const transactions = await getTransactionsByDate(
+    retrievalOpts,
+    account === 'transactional'
+      ? process.env.UP_TRANS_ACC
+      : account === 'savings'
+      ? process.env.UP_SAVINGS_ACC
+      : ''
+  );
+  return filterTransactionFields(transactions);
 };

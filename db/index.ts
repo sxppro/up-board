@@ -15,12 +15,12 @@ import {
   type TransactionCategoryInfoHistoryRaw,
   type TransactionCategoryOption,
   type TransactionCategoryType,
+  type TransactionRetrievalOptions,
 } from '@/server/schemas';
 import {
   AccountInfo,
   AccountResource,
   DbTransactionResource,
-  TransactionRetrievalOptions,
 } from '@/types/custom';
 import { components } from '@/types/up-api';
 import { auth } from '@/utils/auth';
@@ -443,7 +443,6 @@ export const getTagInfo = async (tag: string): Promise<TagInfo> => {
  * @returns
  */
 const getTransactionsByDate = async (
-  dateRange: DateRange,
   options: TransactionRetrievalOptions,
   accountId?: string
 ) => {
@@ -453,7 +452,7 @@ const getTransactionsByDate = async (
       'transactions'
     );
     const cursor = transactions.aggregate<DbTransactionResource>(
-      transactionsByDatePipeline(dateRange, options, accountId)
+      transactionsByDatePipeline(options, accountId)
     );
     const results = (await cursor.toArray()).map((transaction) =>
       outputTransactionFields(transaction)
@@ -648,44 +647,6 @@ export const getTags = async () => {
 };
 
 /**
- * Retrieves bank transfers by account and date range
- * @returns
- */
-const getTransfers = async (
-  dateRange: DateRange,
-  options: TransactionRetrievalOptions
-) => {
-  try {
-    const transactions = await connectToCollection<DbTransactionResource>(
-      'up',
-      'transactions'
-    );
-    const cursor = transactions.find({
-      'relationships.account.data.id': process.env.UP_TRANS_ACC,
-      'attributes.isCategorizable': false,
-      'attributes.createdAt': {
-        $gte: dateRange.from,
-        $lt: dateRange.to,
-      },
-    });
-    const results = (await cursor.toArray()).map((transaction) =>
-      outputTransactionFields(transaction)
-    );
-    return results;
-  } catch (err) {
-    if (err instanceof Error && err.message.includes('unauthorised')) {
-      return transactions.data
-        .filter(({ attributes }) => attributes.isCategorizable === false)
-        .slice(0, options.limit) as unknown as ReturnType<
-        typeof outputTransactionFields
-      >[];
-    }
-    console.error(err);
-    return;
-  }
-};
-
-/**
  * Retrieves list of accounts
  * @param accountType transactional or saver
  * @returns
@@ -832,5 +793,4 @@ export {
   getTransactionById,
   getTransactionsByCategory,
   getTransactionsByDate,
-  getTransfers,
 };

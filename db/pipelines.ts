@@ -1,5 +1,8 @@
-import { DateRange, DateRangeGroupBy } from '@/server/schemas';
-import { TransactionRetrievalOptions } from '@/types/custom';
+import {
+  DateRange,
+  DateRangeGroupBy,
+  TransactionRetrievalOptions,
+} from '@/server/schemas';
 
 /**
  * Conditional aggregation to determine whether
@@ -662,11 +665,10 @@ const accountBalancePipeline = (from: Date, to: Date, accountId: string) => [
  * @returns
  */
 const transactionsByDatePipeline = (
-  dateRange: DateRange,
   options: TransactionRetrievalOptions,
   accountId?: string
 ) => {
-  const { sort, sortDir, limit, type } = options;
+  const { dateRange, sort, sortDir, limit, type, transactionType } = options;
   const sortBy =
     sort === 'amount'
       ? 'attributes.amount.valueInBaseUnits'
@@ -679,7 +681,12 @@ const transactionsByDatePipeline = (
           $gte: dateRange.from,
           $lt: dateRange.to,
         },
-        'attributes.isCategorizable': true,
+        ...(transactionType
+          ? {
+              'attributes.isCategorizable':
+                transactionType === 'transactions' ? true : false,
+            }
+          : {}),
         ...(accountId ? { 'relationships.account.data.id': accountId } : {}),
         ...(type
           ? type === 'income'
