@@ -38,7 +38,7 @@ const ExpenseCategoriesDonutTooltip = ({
 
 const ExpenseCategoriesDonut = () => {
   const { date } = useDate();
-  const { data, isLoading } = trpc.user.getCategoryInfo.useQuery({
+  const { data, isLoading } = trpc.public.getCategoryInfo.useQuery({
     dateRange: {
       from: date?.from,
       to: date?.to,
