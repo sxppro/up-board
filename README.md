@@ -21,6 +21,6 @@ To read more about Up's API, please go to https://developer.up.com.au/.
 
 1. Install [tsx](https://www.npmjs.com/package/tsx) as a global dependency
 2. Add `type: "module"` to `package.json` locally
-3. Run `scripts/generateMockData.ts` to generate mock account and transaction data
+3. Run `tsx scripts/generateMockData.ts` to generate mock account and transaction data
 
 Categories data is obtained from `https://api.up.com.au/api/v1/categories` endpoint.

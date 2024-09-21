@@ -17,6 +17,7 @@ import {
   AccountMonthlyInfoSchema,
   DateRangeGroupBySchema,
   DateRangeSchema,
+  TransactionCategoryInfoHistory,
   TransactionCategoryInfoHistorySchema,
   TransactionCategoryInfoSchema,
   TransactionCategoryTypeSchema,
