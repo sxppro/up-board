@@ -148,21 +148,21 @@ const generateTransactions = (
  * @returns
  */
 export const getMockData = (fileName: string, data: any) => {
-  if (!existsSync(path.join(__dirname, '../mock', `${fileName}.json`))) {
+  if (!existsSync(path.join(process.cwd(), 'mock', `${fileName}.json`))) {
     Array.isArray(data)
       ? fs.writeFileSync(
-          path.join(__dirname, '../mock', `${fileName}.json`),
+          path.join(process.cwd(), 'mock', `${fileName}.json`),
           JSON.stringify({ data }, null, 2)
         )
       : fs.writeFileSync(
-          path.join(__dirname, '../mock', `${fileName}.json`),
+          path.join(process.cwd(), 'mock', `${fileName}.json`),
           JSON.stringify(data, null, 2)
         );
     return data;
   } else {
     const data = JSON.parse(
       fs.readFileSync(
-        path.join(__dirname, '../mock', `${fileName}.json`),
+        path.join(process.cwd(), 'mock', `${fileName}.json`),
         'utf-8'
       )
     );
