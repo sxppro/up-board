@@ -59,7 +59,7 @@ const DashboardPage = ({ searchParams }: PageProps) => {
           </div>
         </Col>
         <Col numColSpanSm={2}>
-          <Grid className=" gap-3" numItemsMd={2}>
+          <Grid className="gap-3" numItemsMd={2}>
             <QueryProvider>
               <DateProvider
                 start={startDate ? new Date(startDate) : startOfMonth(now)}
@@ -98,7 +98,7 @@ const DashboardPage = ({ searchParams }: PageProps) => {
                     end={endOfMonth(subMonths(now, 1))}
                   />
                 </Col>
-                <Col numColSpan={1}>
+                <Col numColSpan={2} numColSpanMd={1}>
                   <Suspense
                     fallback={
                       <DashboardCard>
@@ -113,7 +113,7 @@ const DashboardPage = ({ searchParams }: PageProps) => {
                     />
                   </Suspense>
                 </Col>
-                <Col numColSpan={1}>
+                <Col numColSpan={2} numColSpanMd={1}>
                   <Suspense
                     fallback={
                       <DashboardCard>

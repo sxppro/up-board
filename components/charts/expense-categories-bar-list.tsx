@@ -29,7 +29,7 @@ const ExpenseCategoriesBarList = ({ start, end }: DateRangeProps) => {
 
   return (
     <DashboardCard>
-      <Title>Spending by Category</Title>
+      <Title>Spending</Title>
       <p className="w-full mt-4 text-tremor-default flex items-center justify-between text-tremor-content dark:text-dark-tremor-content">
         <span>Category</span>
         <span>Total</span>
