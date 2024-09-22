@@ -13,7 +13,8 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   title: 'Up Board',
-  description: 'Your money where you can see it',
+  description:
+    'Personalised insights and data visualisation for your Up account',
   authors: [
     {
       name: 'Soppro',
