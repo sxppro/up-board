@@ -1,6 +1,6 @@
 ## Up Board
 
-Personalised insights and data visualisation for your Up account so you can see where your 💸 is going
+Personalised insights and data visualisation for your Up account.
 
 ### Learn More
 
@@ -28,12 +28,22 @@ Categories data is obtained from `https://api.up.com.au/api/v1/categories` endpo
 
 ### Screenshots
 
+**Homepage**
+
 ![Homepage](./media/homepage.png)
+
+**Transaction account**
 
 ![Transaction account](./media/transactional.png)
 
+**Saver account**
+
 ![Saver account](./media/saver.png)
 
+**Transactions**
+
 ![Transactions](./media/transactions.png)
+
+**Transaction details**
 
 ![Transaction details](./media/transaction-details.png)
