@@ -23,12 +23,12 @@ const SaverCharts = ({
           }
         >
           <TransactionCard
-            title="Income"
+            title="Transfers"
             start={start}
             end={end}
             options={{
-              transactionType: 'transactions',
-              type: 'income',
+              account: 'savings',
+              transactionType: 'transfers',
               limit: 5,
             }}
           />
