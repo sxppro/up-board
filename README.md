@@ -25,3 +25,15 @@ Categories data is obtained from `https://api.up.com.au/api/v1/categories` endpo
 - AWS Lambda
   - Consumes Up webhook event to sync new, deleted or settled transactions
   - Periodically syncs changes to transaction categories and tags
+
+### Screenshots
+
+![Homepage](./media/homepage.png)
+
+![Transaction account](./media/transactional.png)
+
+![Saver account](./media/saver.png)
+
+![Transactions](./media/transactions.png)
+
+![Transaction details](./media/transaction-details.png)
