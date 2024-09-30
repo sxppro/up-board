@@ -67,11 +67,12 @@ const connectToCollection = async <T extends Document>(
   collectionOpts?: CollectionOptions
 ) => {
   const session = await auth();
-  if (!session) {
+  if (session) {
+    const database = await connectToDatabase(db);
+    return database.collection<T>(collection, collectionOpts);
+  } else {
     throw new Error('unauthorised');
   }
-  const database = await connectToDatabase(db);
-  return database.collection<T>(collection, collectionOpts);
 };
 
 /**
