@@ -1,0 +1,1346 @@
+{
+  "data": [
+    {
+      "id": "good-life",
+      "type": "categories",
+      "attributes": {
+        "name": "Good Life"
+      },
+      "relationships": {
+        "parent": {
+          "data": null
+        },
+        "children": {
+          "data": [
+            {
+              "type": "categories",
+              "id": "games-and-software"
+            },
+            {
+              "type": "categories",
+              "id": "booze"
+            },
+            {
+              "type": "categories",
+              "id": "events-and-gigs"
+            },
+            {
+              "type": "categories",
+              "id": "hobbies"
+            },
+            {
+              "type": "categories",
+              "id": "holidays-and-travel"
+            },
+            {
+              "type": "categories",
+              "id": "lottery-and-gambling"
+            },
+            {
+              "type": "categories",
+              "id": "pubs-and-bars"
+            },
+            {
+              "type": "categories",
+              "id": "restaurants-and-cafes"
+            },
+            {
+              "type": "categories",
+              "id": "takeaway"
+            },
+            {
+              "type": "categories",
+              "id": "tobacco-and-vaping"
+            },
+            {
+              "type": "categories",
+              "id": "tv-and-music"
+            },
+            {
+              "type": "categories",
+              "id": "adult"
+            }
+          ],
+          "links": {
+            "related": "https://api.up.com.au/api/v1/categories?filter%5Bparent%5D=good-life"
+          }
+        }
+      },
+      "links": {
+        "self": "https://api.up.com.au/api/v1/categories/good-life"
+      }
+    },
+    {
+      "id": "car-insurance-and-maintenance",
+      "type": "categories",
+      "attributes": {
+        "name": "Car Insurance, Rego & Maintenance"
+      },
+      "relationships": {
+        "parent": {
+          "data": {
+            "type": "categories",
+            "id": "transport"
+          },
+          "links": {
+            "related": "https://api.up.com.au/api/v1/categories/transport"
+          }
+        },
+        "children": {
+          "data": [],
+          "links": {
+            "related": "https://api.up.com.au/api/v1/categories?filter%5Bparent%5D=car-insurance-and-maintenance"
+          }
+        }
+      },
+      "links": {
+        "self": "https://api.up.com.au/api/v1/categories/car-insurance-and-maintenance"
+      }
+    },
+    {
+      "id": "cycling",
+      "type": "categories",
+      "attributes": {
+        "name": "Cycling"
+      },
+      "relationships": {
+        "parent": {
+          "data": {
+            "type": "categories",
+            "id": "transport"
+          },
+          "links": {
+            "related": "https://api.up.com.au/api/v1/categories/transport"
+          }
+        },
+        "children": {
+          "data": [],
+          "links": {
+            "related": "https://api.up.com.au/api/v1/categories?filter%5Bparent%5D=cycling"
+          }
+        }
+      },
+      "links": {
+        "self": "https://api.up.com.au/api/v1/categories/cycling"
+      }
+    },
+    {
+      "id": "education-and-student-loans",
+      "type": "categories",
+      "attributes": {
+        "name": "Education & Student Loans"
+      },
+      "relationships": {
+        "parent": {
+          "data": {
+            "type": "categories",
+            "id": "personal"
+          },
+          "links": {
+            "related": "https://api.up.com.au/api/v1/categories/personal"
+          }
+        },
+        "children": {
+          "data": [],
+          "links": {
+            "related": "https://api.up.com.au/api/v1/categories?filter%5Bparent%5D=education-and-student-loans"
+          }
+        }
+      },
+      "links": {
+        "self": "https://api.up.com.au/api/v1/categories/education-and-student-loans"
+      }
+    },
+    {
+      "id": "internet",
+      "type": "categories",
+      "attributes": {
+        "name": "Internet"
+      },
+      "relationships": {
+        "parent": {
+          "data": {
+            "type": "categories",
+            "id": "home"
+          },
+          "links": {
+            "related": "https://api.up.com.au/api/v1/categories/home"
+          }
+        },
+        "children": {
+          "data": [],
+          "links": {
+            "related": "https://api.up.com.au/api/v1/categories?filter%5Bparent%5D=internet"
+          }
+        }
+      },
+      "links": {
+        "self": "https://api.up.com.au/api/v1/categories/internet"
+      }
+    },
+    {
+      "id": "transport",
+      "type": "categories",
+      "attributes": {
+        "name": "Transport"
+      },
+      "relationships": {
+        "parent": {
+          "data": null
+        },
+        "children": {
+          "data": [
+            {
+              "type": "categories",
+              "id": "car-insurance-and-maintenance"
+            },
+            {
+              "type": "categories",
+              "id": "cycling"
+            },
+            {
+              "type": "categories",
+              "id": "fuel"
+            },
+            {
+              "type": "categories",
+              "id": "parking"
+            },
+            {
+              "type": "categories",
+              "id": "public-transport"
+            },
+            {
+              "type": "categories",
+              "id": "car-repayments"
+            },
+            {
+              "type": "categories",
+              "id": "taxis-and-share-cars"
+            },
+            {
+              "type": "categories",
+              "id": "toll-roads"
+            }
+          ],
+          "links": {
+            "related": "https://api.up.com.au/api/v1/categories?filter%5Bparent%5D=transport"
+          }
+        }
+      },
+      "links": {
+        "self": "https://api.up.com.au/api/v1/categories/transport"
+      }
+    },
+    {
+      "id": "pets",
+      "type": "categories",
+      "attributes": {
+        "name": "Pets"
+      },
+      "relationships": {
+        "parent": {
+          "data": {
+            "type": "categories",
+            "id": "home"
+          },
+          "links": {
+            "related": "https://api.up.com.au/api/v1/categories/home"
+          }
+        },
+        "children": {
+          "data": [],
+          "links": {
+            "related": "https://api.up.com.au/api/v1/categories?filter%5Bparent%5D=pets"
+          }
+        }
+      },
+      "links": {
+        "self": "https://api.up.com.au/api/v1/categories/pets"
+      }
+    },
+    {
+      "id": "public-transport",
+      "type": "categories",
+      "attributes": {
+        "name": "Public Transport"
+      },
+      "relationships": {
+        "parent": {
+          "data": {
+            "type": "categories",
+            "id": "transport"
+          },
+          "links": {
+            "related": "https://api.up.com.au/api/v1/categories/transport"
+          }
+        },
+        "children": {
+          "data": [],
+          "links": {
+            "related": "https://api.up.com.au/api/v1/categories?filter%5Bparent%5D=public-transport"
+          }
+        }
+      },
+      "links": {
+        "self": "https://api.up.com.au/api/v1/categories/public-transport"
+      }
+    },
+    {
+      "id": "hair-and-beauty",
+      "type": "categories",
+      "attributes": {
+        "name": "Hair & Beauty"
+      },
+      "relationships": {
+        "parent": {
+          "data": {
+            "type": "categories",
+            "id": "personal"
+          },
+          "links": {
+            "related": "https://api.up.com.au/api/v1/categories/personal"
+          }
+        },
+        "children": {
+          "data": [],
+          "links": {
+            "related": "https://api.up.com.au/api/v1/categories?filter%5Bparent%5D=hair-and-beauty"
+          }
+        }
+      },
+      "links": {
+        "self": "https://api.up.com.au/api/v1/categories/hair-and-beauty"
+      }
+    },
+    {
+      "id": "pubs-and-bars",
+      "type": "categories",
+      "attributes": {
+        "name": "Pubs & Bars"
+      },
+      "relationships": {
+        "parent": {
+          "data": {
+            "type": "categories",
+            "id": "good-life"
+          },
+          "links": {
+            "related": "https://api.up.com.au/api/v1/categories/good-life"
+          }
+        },
+        "children": {
+          "data": [],
+          "links": {
+            "related": "https://api.up.com.au/api/v1/categories?filter%5Bparent%5D=pubs-and-bars"
+          }
+        }
+      },
+      "links": {
+        "self": "https://api.up.com.au/api/v1/categories/pubs-and-bars"
+      }
+    },
+    {
+      "id": "toll-roads",
+      "type": "categories",
+      "attributes": {
+        "name": "Tolls"
+      },
+      "relationships": {
+        "parent": {
+          "data": {
+            "type": "categories",
+            "id": "transport"
+          },
+          "links": {
+            "related": "https://api.up.com.au/api/v1/categories/transport"
+          }
+        },
+        "children": {
+          "data": [],
+          "links": {
+            "related": "https://api.up.com.au/api/v1/categories?filter%5Bparent%5D=toll-roads"
+          }
+        }
+      },
+      "links": {
+        "self": "https://api.up.com.au/api/v1/categories/toll-roads"
+      }
+    },
+    {
+      "id": "life-admin",
+      "type": "categories",
+      "attributes": {
+        "name": "Life Admin"
+      },
+      "relationships": {
+        "parent": {
+          "data": {
+            "type": "categories",
+            "id": "personal"
+          },
+          "links": {
+            "related": "https://api.up.com.au/api/v1/categories/personal"
+          }
+        },
+        "children": {
+          "data": [],
+          "links": {
+            "related": "https://api.up.com.au/api/v1/categories?filter%5Bparent%5D=life-admin"
+          }
+        }
+      },
+      "links": {
+        "self": "https://api.up.com.au/api/v1/categories/life-admin"
+      }
+    },
+    {
+      "id": "adult",
+      "type": "categories",
+      "attributes": {
+        "name": "Adult"
+      },
+      "relationships": {
+        "parent": {
+          "data": {
+            "type": "categories",
+            "id": "good-life"
+          },
+          "links": {
+            "related": "https://api.up.com.au/api/v1/categories/good-life"
+          }
+        },
+        "children": {
+          "data": [],
+          "links": {
+            "related": "https://api.up.com.au/api/v1/categories?filter%5Bparent%5D=adult"
+          }
+        }
+      },
+      "links": {
+        "self": "https://api.up.com.au/api/v1/categories/adult"
+      }
+    },
+    {
+      "id": "games-and-software",
+      "type": "categories",
+      "attributes": {
+        "name": "Apps, Games & Software"
+      },
+      "relationships": {
+        "parent": {
+          "data": {
+            "type": "categories",
+            "id": "good-life"
+          },
+          "links": {
+            "related": "https://api.up.com.au/api/v1/categories/good-life"
+          }
+        },
+        "children": {
+          "data": [],
+          "links": {
+            "related": "https://api.up.com.au/api/v1/categories?filter%5Bparent%5D=games-and-software"
+          }
+        }
+      },
+      "links": {
+        "self": "https://api.up.com.au/api/v1/categories/games-and-software"
+      }
+    },
+    {
+      "id": "fuel",
+      "type": "categories",
+      "attributes": {
+        "name": "Fuel"
+      },
+      "relationships": {
+        "parent": {
+          "data": {
+            "type": "categories",
+            "id": "transport"
+          },
+          "links": {
+            "related": "https://api.up.com.au/api/v1/categories/transport"
+          }
+        },
+        "children": {
+          "data": [],
+          "links": {
+            "related": "https://api.up.com.au/api/v1/categories?filter%5Bparent%5D=fuel"
+          }
+        }
+      },
+      "links": {
+        "self": "https://api.up.com.au/api/v1/categories/fuel"
+      }
+    },
+    {
+      "id": "fitness-and-wellbeing",
+      "type": "categories",
+      "attributes": {
+        "name": "Fitness & Wellbeing"
+      },
+      "relationships": {
+        "parent": {
+          "data": {
+            "type": "categories",
+            "id": "personal"
+          },
+          "links": {
+            "related": "https://api.up.com.au/api/v1/categories/personal"
+          }
+        },
+        "children": {
+          "data": [],
+          "links": {
+            "related": "https://api.up.com.au/api/v1/categories?filter%5Bparent%5D=fitness-and-wellbeing"
+          }
+        }
+      },
+      "links": {
+        "self": "https://api.up.com.au/api/v1/categories/fitness-and-wellbeing"
+      }
+    },
+    {
+      "id": "hobbies",
+      "type": "categories",
+      "attributes": {
+        "name": "Hobbies"
+      },
+      "relationships": {
+        "parent": {
+          "data": {
+            "type": "categories",
+            "id": "good-life"
+          },
+          "links": {
+            "related": "https://api.up.com.au/api/v1/categories/good-life"
+          }
+        },
+        "children": {
+          "data": [],
+          "links": {
+            "related": "https://api.up.com.au/api/v1/categories?filter%5Bparent%5D=hobbies"
+          }
+        }
+      },
+      "links": {
+        "self": "https://api.up.com.au/api/v1/categories/hobbies"
+      }
+    },
+    {
+      "id": "lottery-and-gambling",
+      "type": "categories",
+      "attributes": {
+        "name": "Lottery & Gambling"
+      },
+      "relationships": {
+        "parent": {
+          "data": {
+            "type": "categories",
+            "id": "good-life"
+          },
+          "links": {
+            "related": "https://api.up.com.au/api/v1/categories/good-life"
+          }
+        },
+        "children": {
+          "data": [],
+          "links": {
+            "related": "https://api.up.com.au/api/v1/categories?filter%5Bparent%5D=lottery-and-gambling"
+          }
+        }
+      },
+      "links": {
+        "self": "https://api.up.com.au/api/v1/categories/lottery-and-gambling"
+      }
+    },
+    {
+      "id": "home-insurance-and-rates",
+      "type": "categories",
+      "attributes": {
+        "name": "Rates & Insurance"
+      },
+      "relationships": {
+        "parent": {
+          "data": {
+            "type": "categories",
+            "id": "home"
+          },
+          "links": {
+            "related": "https://api.up.com.au/api/v1/categories/home"
+          }
+        },
+        "children": {
+          "data": [],
+          "links": {
+            "related": "https://api.up.com.au/api/v1/categories?filter%5Bparent%5D=home-insurance-and-rates"
+          }
+        }
+      },
+      "links": {
+        "self": "https://api.up.com.au/api/v1/categories/home-insurance-and-rates"
+      }
+    },
+    {
+      "id": "health-and-medical",
+      "type": "categories",
+      "attributes": {
+        "name": "Health & Medical"
+      },
+      "relationships": {
+        "parent": {
+          "data": {
+            "type": "categories",
+            "id": "personal"
+          },
+          "links": {
+            "related": "https://api.up.com.au/api/v1/categories/personal"
+          }
+        },
+        "children": {
+          "data": [],
+          "links": {
+            "related": "https://api.up.com.au/api/v1/categories?filter%5Bparent%5D=health-and-medical"
+          }
+        }
+      },
+      "links": {
+        "self": "https://api.up.com.au/api/v1/categories/health-and-medical"
+      }
+    },
+    {
+      "id": "restaurants-and-cafes",
+      "type": "categories",
+      "attributes": {
+        "name": "Restaurants & Cafes"
+      },
+      "relationships": {
+        "parent": {
+          "data": {
+            "type": "categories",
+            "id": "good-life"
+          },
+          "links": {
+            "related": "https://api.up.com.au/api/v1/categories/good-life"
+          }
+        },
+        "children": {
+          "data": [],
+          "links": {
+            "related": "https://api.up.com.au/api/v1/categories?filter%5Bparent%5D=restaurants-and-cafes"
+          }
+        }
+      },
+      "links": {
+        "self": "https://api.up.com.au/api/v1/categories/restaurants-and-cafes"
+      }
+    },
+    {
+      "id": "utilities",
+      "type": "categories",
+      "attributes": {
+        "name": "Utilities"
+      },
+      "relationships": {
+        "parent": {
+          "data": {
+            "type": "categories",
+            "id": "home"
+          },
+          "links": {
+            "related": "https://api.up.com.au/api/v1/categories/home"
+          }
+        },
+        "children": {
+          "data": [],
+          "links": {
+            "related": "https://api.up.com.au/api/v1/categories?filter%5Bparent%5D=utilities"
+          }
+        }
+      },
+      "links": {
+        "self": "https://api.up.com.au/api/v1/categories/utilities"
+      }
+    },
+    {
+      "id": "takeaway",
+      "type": "categories",
+      "attributes": {
+        "name": "Takeaway"
+      },
+      "relationships": {
+        "parent": {
+          "data": {
+            "type": "categories",
+            "id": "good-life"
+          },
+          "links": {
+            "related": "https://api.up.com.au/api/v1/categories/good-life"
+          }
+        },
+        "children": {
+          "data": [],
+          "links": {
+            "related": "https://api.up.com.au/api/v1/categories?filter%5Bparent%5D=takeaway"
+          }
+        }
+      },
+      "links": {
+        "self": "https://api.up.com.au/api/v1/categories/takeaway"
+      }
+    },
+    {
+      "id": "technology",
+      "type": "categories",
+      "attributes": {
+        "name": "Technology"
+      },
+      "relationships": {
+        "parent": {
+          "data": {
+            "type": "categories",
+            "id": "personal"
+          },
+          "links": {
+            "related": "https://api.up.com.au/api/v1/categories/personal"
+          }
+        },
+        "children": {
+          "data": [],
+          "links": {
+            "related": "https://api.up.com.au/api/v1/categories?filter%5Bparent%5D=technology"
+          }
+        }
+      },
+      "links": {
+        "self": "https://api.up.com.au/api/v1/categories/technology"
+      }
+    },
+    {
+      "id": "family",
+      "type": "categories",
+      "attributes": {
+        "name": "Children & Family"
+      },
+      "relationships": {
+        "parent": {
+          "data": {
+            "type": "categories",
+            "id": "personal"
+          },
+          "links": {
+            "related": "https://api.up.com.au/api/v1/categories/personal"
+          }
+        },
+        "children": {
+          "data": [],
+          "links": {
+            "related": "https://api.up.com.au/api/v1/categories?filter%5Bparent%5D=family"
+          }
+        }
+      },
+      "links": {
+        "self": "https://api.up.com.au/api/v1/categories/family"
+      }
+    },
+    {
+      "id": "booze",
+      "type": "categories",
+      "attributes": {
+        "name": "Booze"
+      },
+      "relationships": {
+        "parent": {
+          "data": {
+            "type": "categories",
+            "id": "good-life"
+          },
+          "links": {
+            "related": "https://api.up.com.au/api/v1/categories/good-life"
+          }
+        },
+        "children": {
+          "data": [],
+          "links": {
+            "related": "https://api.up.com.au/api/v1/categories?filter%5Bparent%5D=booze"
+          }
+        }
+      },
+      "links": {
+        "self": "https://api.up.com.au/api/v1/categories/booze"
+      }
+    },
+    {
+      "id": "homeware-and-appliances",
+      "type": "categories",
+      "attributes": {
+        "name": "Homeware & Appliances"
+      },
+      "relationships": {
+        "parent": {
+          "data": {
+            "type": "categories",
+            "id": "home"
+          },
+          "links": {
+            "related": "https://api.up.com.au/api/v1/categories/home"
+          }
+        },
+        "children": {
+          "data": [],
+          "links": {
+            "related": "https://api.up.com.au/api/v1/categories?filter%5Bparent%5D=homeware-and-appliances"
+          }
+        }
+      },
+      "links": {
+        "self": "https://api.up.com.au/api/v1/categories/homeware-and-appliances"
+      }
+    },
+    {
+      "id": "personal",
+      "type": "categories",
+      "attributes": {
+        "name": "Personal"
+      },
+      "relationships": {
+        "parent": {
+          "data": null
+        },
+        "children": {
+          "data": [
+            {
+              "type": "categories",
+              "id": "family"
+            },
+            {
+              "type": "categories",
+              "id": "clothing-and-accessories"
+            },
+            {
+              "type": "categories",
+              "id": "education-and-student-loans"
+            },
+            {
+              "type": "categories",
+              "id": "fitness-and-wellbeing"
+            },
+            {
+              "type": "categories",
+              "id": "gifts-and-charity"
+            },
+            {
+              "type": "categories",
+              "id": "hair-and-beauty"
+            },
+            {
+              "type": "categories",
+              "id": "health-and-medical"
+            },
+            {
+              "type": "categories",
+              "id": "investments"
+            },
+            {
+              "type": "categories",
+              "id": "life-admin"
+            },
+            {
+              "type": "categories",
+              "id": "mobile-phone"
+            },
+            {
+              "type": "categories",
+              "id": "news-magazines-and-books"
+            },
+            {
+              "type": "categories",
+              "id": "technology"
+            }
+          ],
+          "links": {
+            "related": "https://api.up.com.au/api/v1/categories?filter%5Bparent%5D=personal"
+          }
+        }
+      },
+      "links": {
+        "self": "https://api.up.com.au/api/v1/categories/personal"
+      }
+    },
+    {
+      "id": "events-and-gigs",
+      "type": "categories",
+      "attributes": {
+        "name": "Events & Gigs"
+      },
+      "relationships": {
+        "parent": {
+          "data": {
+            "type": "categories",
+            "id": "good-life"
+          },
+          "links": {
+            "related": "https://api.up.com.au/api/v1/categories/good-life"
+          }
+        },
+        "children": {
+          "data": [],
+          "links": {
+            "related": "https://api.up.com.au/api/v1/categories?filter%5Bparent%5D=events-and-gigs"
+          }
+        }
+      },
+      "links": {
+        "self": "https://api.up.com.au/api/v1/categories/events-and-gigs"
+      }
+    },
+    {
+      "id": "parking",
+      "type": "categories",
+      "attributes": {
+        "name": "Parking"
+      },
+      "relationships": {
+        "parent": {
+          "data": {
+            "type": "categories",
+            "id": "transport"
+          },
+          "links": {
+            "related": "https://api.up.com.au/api/v1/categories/transport"
+          }
+        },
+        "children": {
+          "data": [],
+          "links": {
+            "related": "https://api.up.com.au/api/v1/categories?filter%5Bparent%5D=parking"
+          }
+        }
+      },
+      "links": {
+        "self": "https://api.up.com.au/api/v1/categories/parking"
+      }
+    },
+    {
+      "id": "gifts-and-charity",
+      "type": "categories",
+      "attributes": {
+        "name": "Gifts & Charity"
+      },
+      "relationships": {
+        "parent": {
+          "data": {
+            "type": "categories",
+            "id": "personal"
+          },
+          "links": {
+            "related": "https://api.up.com.au/api/v1/categories/personal"
+          }
+        },
+        "children": {
+          "data": [],
+          "links": {
+            "related": "https://api.up.com.au/api/v1/categories?filter%5Bparent%5D=gifts-and-charity"
+          }
+        }
+      },
+      "links": {
+        "self": "https://api.up.com.au/api/v1/categories/gifts-and-charity"
+      }
+    },
+    {
+      "id": "holidays-and-travel",
+      "type": "categories",
+      "attributes": {
+        "name": "Holidays & Travel"
+      },
+      "relationships": {
+        "parent": {
+          "data": {
+            "type": "categories",
+            "id": "good-life"
+          },
+          "links": {
+            "related": "https://api.up.com.au/api/v1/categories/good-life"
+          }
+        },
+        "children": {
+          "data": [],
+          "links": {
+            "related": "https://api.up.com.au/api/v1/categories?filter%5Bparent%5D=holidays-and-travel"
+          }
+        }
+      },
+      "links": {
+        "self": "https://api.up.com.au/api/v1/categories/holidays-and-travel"
+      }
+    },
+    {
+      "id": "car-repayments",
+      "type": "categories",
+      "attributes": {
+        "name": "Repayments"
+      },
+      "relationships": {
+        "parent": {
+          "data": {
+            "type": "categories",
+            "id": "transport"
+          },
+          "links": {
+            "related": "https://api.up.com.au/api/v1/categories/transport"
+          }
+        },
+        "children": {
+          "data": [],
+          "links": {
+            "related": "https://api.up.com.au/api/v1/categories?filter%5Bparent%5D=car-repayments"
+          }
+        }
+      },
+      "links": {
+        "self": "https://api.up.com.au/api/v1/categories/car-repayments"
+      }
+    },
+    {
+      "id": "rent-and-mortgage",
+      "type": "categories",
+      "attributes": {
+        "name": "Rent & Mortgage"
+      },
+      "relationships": {
+        "parent": {
+          "data": {
+            "type": "categories",
+            "id": "home"
+          },
+          "links": {
+            "related": "https://api.up.com.au/api/v1/categories/home"
+          }
+        },
+        "children": {
+          "data": [],
+          "links": {
+            "related": "https://api.up.com.au/api/v1/categories?filter%5Bparent%5D=rent-and-mortgage"
+          }
+        }
+      },
+      "links": {
+        "self": "https://api.up.com.au/api/v1/categories/rent-and-mortgage"
+      }
+    },
+    {
+      "id": "investments",
+      "type": "categories",
+      "attributes": {
+        "name": "Investments"
+      },
+      "relationships": {
+        "parent": {
+          "data": {
+            "type": "categories",
+            "id": "personal"
+          },
+          "links": {
+            "related": "https://api.up.com.au/api/v1/categories/personal"
+          }
+        },
+        "children": {
+          "data": [],
+          "links": {
+            "related": "https://api.up.com.au/api/v1/categories?filter%5Bparent%5D=investments"
+          }
+        }
+      },
+      "links": {
+        "self": "https://api.up.com.au/api/v1/categories/investments"
+      }
+    },
+    {
+      "id": "mobile-phone",
+      "type": "categories",
+      "attributes": {
+        "name": "Mobile Phone"
+      },
+      "relationships": {
+        "parent": {
+          "data": {
+            "type": "categories",
+            "id": "personal"
+          },
+          "links": {
+            "related": "https://api.up.com.au/api/v1/categories/personal"
+          }
+        },
+        "children": {
+          "data": [],
+          "links": {
+            "related": "https://api.up.com.au/api/v1/categories?filter%5Bparent%5D=mobile-phone"
+          }
+        }
+      },
+      "links": {
+        "self": "https://api.up.com.au/api/v1/categories/mobile-phone"
+      }
+    },
+    {
+      "id": "news-magazines-and-books",
+      "type": "categories",
+      "attributes": {
+        "name": "News, Magazines & Books"
+      },
+      "relationships": {
+        "parent": {
+          "data": {
+            "type": "categories",
+            "id": "personal"
+          },
+          "links": {
+            "related": "https://api.up.com.au/api/v1/categories/personal"
+          }
+        },
+        "children": {
+          "data": [],
+          "links": {
+            "related": "https://api.up.com.au/api/v1/categories?filter%5Bparent%5D=news-magazines-and-books"
+          }
+        }
+      },
+      "links": {
+        "self": "https://api.up.com.au/api/v1/categories/news-magazines-and-books"
+      }
+    },
+    {
+      "id": "groceries",
+      "type": "categories",
+      "attributes": {
+        "name": "Groceries"
+      },
+      "relationships": {
+        "parent": {
+          "data": {
+            "type": "categories",
+            "id": "home"
+          },
+          "links": {
+            "related": "https://api.up.com.au/api/v1/categories/home"
+          }
+        },
+        "children": {
+          "data": [],
+          "links": {
+            "related": "https://api.up.com.au/api/v1/categories?filter%5Bparent%5D=groceries"
+          }
+        }
+      },
+      "links": {
+        "self": "https://api.up.com.au/api/v1/categories/groceries"
+      }
+    },
+    {
+      "id": "clothing-and-accessories",
+      "type": "categories",
+      "attributes": {
+        "name": "Clothing & Accessories"
+      },
+      "relationships": {
+        "parent": {
+          "data": {
+            "type": "categories",
+            "id": "personal"
+          },
+          "links": {
+            "related": "https://api.up.com.au/api/v1/categories/personal"
+          }
+        },
+        "children": {
+          "data": [],
+          "links": {
+            "related": "https://api.up.com.au/api/v1/categories?filter%5Bparent%5D=clothing-and-accessories"
+          }
+        }
+      },
+      "links": {
+        "self": "https://api.up.com.au/api/v1/categories/clothing-and-accessories"
+      }
+    },
+    {
+      "id": "home",
+      "type": "categories",
+      "attributes": {
+        "name": "Home"
+      },
+      "relationships": {
+        "parent": {
+          "data": null
+        },
+        "children": {
+          "data": [
+            {
+              "type": "categories",
+              "id": "groceries"
+            },
+            {
+              "type": "categories",
+              "id": "homeware-and-appliances"
+            },
+            {
+              "type": "categories",
+              "id": "internet"
+            },
+            {
+              "type": "categories",
+              "id": "home-maintenance-and-improvements"
+            },
+            {
+              "type": "categories",
+              "id": "pets"
+            },
+            {
+              "type": "categories",
+              "id": "home-insurance-and-rates"
+            },
+            {
+              "type": "categories",
+              "id": "rent-and-mortgage"
+            },
+            {
+              "type": "categories",
+              "id": "utilities"
+            }
+          ],
+          "links": {
+            "related": "https://api.up.com.au/api/v1/categories?filter%5Bparent%5D=home"
+          }
+        }
+      },
+      "links": {
+        "self": "https://api.up.com.au/api/v1/categories/home"
+      }
+    },
+    {
+      "id": "home-maintenance-and-improvements",
+      "type": "categories",
+      "attributes": {
+        "name": "Maintenance & Improvements"
+      },
+      "relationships": {
+        "parent": {
+          "data": {
+            "type": "categories",
+            "id": "home"
+          },
+          "links": {
+            "related": "https://api.up.com.au/api/v1/categories/home"
+          }
+        },
+        "children": {
+          "data": [],
+          "links": {
+            "related": "https://api.up.com.au/api/v1/categories?filter%5Bparent%5D=home-maintenance-and-improvements"
+          }
+        }
+      },
+      "links": {
+        "self": "https://api.up.com.au/api/v1/categories/home-maintenance-and-improvements"
+      }
+    },
+    {
+      "id": "taxis-and-share-cars",
+      "type": "categories",
+      "attributes": {
+        "name": "Taxis & Share Cars"
+      },
+      "relationships": {
+        "parent": {
+          "data": {
+            "type": "categories",
+            "id": "transport"
+          },
+          "links": {
+            "related": "https://api.up.com.au/api/v1/categories/transport"
+          }
+        },
+        "children": {
+          "data": [],
+          "links": {
+            "related": "https://api.up.com.au/api/v1/categories?filter%5Bparent%5D=taxis-and-share-cars"
+          }
+        }
+      },
+      "links": {
+        "self": "https://api.up.com.au/api/v1/categories/taxis-and-share-cars"
+      }
+    },
+    {
+      "id": "tobacco-and-vaping",
+      "type": "categories",
+      "attributes": {
+        "name": "Tobacco & Vaping"
+      },
+      "relationships": {
+        "parent": {
+          "data": {
+            "type": "categories",
+            "id": "good-life"
+          },
+          "links": {
+            "related": "https://api.up.com.au/api/v1/categories/good-life"
+          }
+        },
+        "children": {
+          "data": [],
+          "links": {
+            "related": "https://api.up.com.au/api/v1/categories?filter%5Bparent%5D=tobacco-and-vaping"
+          }
+        }
+      },
+      "links": {
+        "self": "https://api.up.com.au/api/v1/categories/tobacco-and-vaping"
+      }
+    },
+    {
+      "id": "tv-and-music",
+      "type": "categories",
+      "attributes": {
+        "name": "TV, Music & Streaming"
+      },
+      "relationships": {
+        "parent": {
+          "data": {
+            "type": "categories",
+            "id": "good-life"
+          },
+          "links": {
+            "related": "https://api.up.com.au/api/v1/categories/good-life"
+          }
+        },
+        "children": {
+          "data": [],
+          "links": {
+            "related": "https://api.up.com.au/api/v1/categories?filter%5Bparent%5D=tv-and-music"
+          }
+        }
+      },
+      "links": {
+        "self": "https://api.up.com.au/api/v1/categories/tv-and-music"
+      }
+    },
+    {
+      "id": "uncategorised",
+      "attributes": {
+        "name": "Uncategorised"
+      },
+      "relationships": {
+        "parent": {
+          "data": {
+            "type": "categories",
+            "id": "uncategorised"
+          }
+        }
+      }
+    }
+  ]
+}

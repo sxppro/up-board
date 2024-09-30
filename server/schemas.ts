@@ -15,6 +15,9 @@ export const DateRangeSchema = z.object({
 });
 export type DateRange = z.infer<typeof DateRangeSchema>;
 
+export const DateRangeGroupBySchema = z.enum(['daily', 'monthly', 'yearly']);
+export type DateRangeGroupBy = z.infer<typeof DateRangeGroupBySchema>;
+
 export const TagInfoSchema = z.object({
   Income: z.number(),
   Expenses: z.number(),
@@ -68,15 +71,18 @@ export type TransactionCategoryInfoHistory = z.infer<
 export const TransactionCategoryInfoHistoryRawSchema = z.object({
   month: z.number(),
   year: z.number(),
-  categories: z.array(TransactionCategoryInfoSchema),
+  categories: z.array(
+    TransactionCategoryInfoSchema.omit({ categoryName: true })
+  ),
 });
 export type TransactionCategoryInfoHistoryRaw = z.infer<
   typeof TransactionCategoryInfoHistoryRawSchema
 >;
 
-const TransactionStatusEnum = z.enum(['HELD', 'SETTLED']);
+const TransactionStatusSchema = z.enum(['HELD', 'SETTLED']);
 
-const TransactionTypeEnum = z.enum(['transactions', 'transfers']);
+const TransactionTypeSchema = z.enum(['transactions', 'transfers']);
+export type TransactionTypeEnum = z.infer<typeof TransactionTypeSchema>;
 
 export const TransactionResourceFilteredSchema = z.object({
   id: z.string().uuid(),
@@ -85,7 +91,7 @@ export const TransactionResourceFilteredSchema = z.object({
   amount: z.string(),
   amountRaw: z.number(),
   time: z.string().datetime(),
-  status: TransactionStatusEnum,
+  status: TransactionStatusSchema,
   category: z.string(),
   parentCategory: z.string(),
   tags: z.string().array(),
@@ -97,7 +103,7 @@ export type TransactionResourceFiltered = z.infer<
 export const TransactionRetrievalOptionsSchema = z.object({
   account: TransactionAccountTypeSchema,
   dateRange: DateRangeSchema,
-  transactionType: TransactionTypeEnum,
+  transactionType: TransactionTypeSchema,
   sort: z.enum(['time', 'amount']),
   sortDir: z.enum(['asc', 'desc']),
   limit: z.number().optional(),
@@ -127,6 +133,7 @@ export const AccountMonthlyInfoSchema = z.object({
   Expenses: z.number(),
   Net: z.number(),
   Transactions: z.number(),
+  FormattedDate: z.string().optional(),
 });
 export type AccountMonthlyInfo = z.infer<typeof AccountMonthlyInfoSchema>;
 

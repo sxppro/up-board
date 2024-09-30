@@ -20,10 +20,6 @@ const links = [
     page: 'Tags',
     route: '/tags',
   },
-  {
-    page: 'Overview',
-    route: '/overview',
-  },
 ];
 
 const MainNav = ({

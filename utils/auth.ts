@@ -1,3 +1,8 @@
+import {
+  GetServerSidePropsContext,
+  NextApiRequest,
+  NextApiResponse,
+} from 'next';
 import { NextAuthOptions, getServerSession } from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
 
@@ -35,8 +40,21 @@ export const authOptions: NextAuthOptions = {
  * Gets logged-in user info
  * @returns user info or undefined
  */
-
 export async function getCurrentUser() {
   const session = await getServerSession(authOptions);
   return session?.user;
+}
+
+/**
+ * Server-side helper for authing requests
+ * @param args
+ * @returns
+ */
+export function auth(
+  ...args:
+    | [GetServerSidePropsContext['req'], GetServerSidePropsContext['res']]
+    | [NextApiRequest, NextApiResponse]
+    | []
+) {
+  return getServerSession(...args, authOptions);
 }

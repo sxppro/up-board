@@ -10,6 +10,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { TransactionResourceFiltered } from '@/server/schemas';
+import { formatCurrency } from '@/utils/helpers';
 import { ColumnDef } from '@tanstack/react-table';
 import { formatDistanceToNowStrict } from 'date-fns';
 import { enAU } from 'date-fns/locale';
@@ -109,9 +110,8 @@ export const columns: ColumnDef<TransactionResourceFiltered>[] = [
     cell: ({ row }) => (
       <div className="flex flex-wrap sm:w-[150px] gap-2">
         {(row.getValue('tags') as string[]).map((tag) => (
-          // TODO: Truncated tags look kinda funky
-          <Badge className="truncate" key={tag}>
-            {tag}
+          <Badge className="overflow-hidden" key={tag}>
+            <p className="truncate">{tag}</p>
           </Badge>
         ))}
       </div>
@@ -130,10 +130,7 @@ export const columns: ColumnDef<TransactionResourceFiltered>[] = [
     header: () => <div className="text-end">Amount</div>,
     cell: ({ row }) => {
       const amount = parseFloat(row.getValue('amount'));
-      const formatted = new Intl.NumberFormat('en-AU', {
-        style: 'currency',
-        currency: 'AUD',
-      }).format(amount);
+      const formatted = formatCurrency(amount);
       return (
         <div className="w-[100px] float-right text-end font-medium">
           {formatted}

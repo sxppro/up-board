@@ -4,21 +4,21 @@ import { DateRangeProps } from '@/types/custom';
 import { formatCurrency } from '@/utils/helpers';
 import { useDate } from '@/utils/hooks';
 import { trpc } from '@/utils/trpc';
-import { BarChart, EventProps, Subtitle, Title } from '@tremor/react';
+import { BarChart, EventProps, Text, Title } from '@tremor/react';
 import { useState } from 'react';
 import DashboardCard from '../core/dashboard-card';
 
 const ExpenseCategoriesStackedBar = ({ start, end }: DateRangeProps) => {
   const { date } = useDate();
   const [category, setCategory] = useState<string | null>();
-  const { data } = trpc.user.getCategoryInfoHistory.useQuery({
+  const { data } = trpc.public.getCategoryInfoHistory.useQuery({
     dateRange: {
       from: start || date?.from,
       to: end || date?.to,
     },
     type: 'parent',
   });
-  const { data: categories } = trpc.user.getCategories.useQuery('parent');
+  const { data: categories } = trpc.public.getCategories.useQuery('parent');
 
   const handleChartInteraction = (event: EventProps) => {
     if (event) {
@@ -33,8 +33,10 @@ const ExpenseCategoriesStackedBar = ({ start, end }: DateRangeProps) => {
 
   return (
     <DashboardCard>
-      <Title>Spending</Title>
-      <Subtitle>Last 6 months</Subtitle>
+      <div>
+        <Title>Spending</Title>
+        <Text>Past 6 months</Text>
+      </div>
       <BarChart
         data={data || []}
         index={'FormattedDate'}

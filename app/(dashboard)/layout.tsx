@@ -3,10 +3,17 @@ import MobileNav from '@/components/core/mobile-nav';
 import PageProgressBar from '@/components/core/page-progress-bar';
 import ThemeToggle from '@/components/core/theme-toggle';
 import UserNav from '@/components/core/user-nav';
+import { Button } from '@/components/ui/button';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import { getCurrentUser } from '@/utils/auth';
 import { Flex } from '@tremor/react';
+import { FlaskConical } from 'lucide-react';
 import { Metadata } from 'next';
-import { redirect } from 'next/navigation';
 
 export const metadata: Metadata = {
   title: 'Dashboard',
@@ -19,10 +26,6 @@ export default async function DashboardLayout({
 }) {
   const user = await getCurrentUser();
 
-  if (!user) {
-    redirect('/login');
-  }
-
   return (
     <>
       <PageProgressBar />
@@ -32,7 +35,23 @@ export default async function DashboardLayout({
           <MobileNav className="sm:hidden" />
           <div className="ml-auto flex items-center space-x-4">
             <ThemeToggle />
-            <UserNav user={user} />
+            {user ? (
+              <UserNav user={user} />
+            ) : (
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button variant="outline">
+                      <FlaskConical className="mr-2 h-4 w-4" /> Demo
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>You are currently in demo mode.</p>
+                    <p>Mock data will be used.</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            )}
           </div>
         </div>
       </div>

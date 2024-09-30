@@ -58,21 +58,10 @@ export interface DateRangeProps {
   end?: Date;
 }
 
-export type DateRangeGroupBy = 'daily' | 'monthly' | 'yearly';
-
 export type PageProps = {
   params: { slug: string };
   searchParams: { [key: string]: string | string[] | undefined };
 };
-
-export type TransactionRetrievalOptions = {
-  sort: 'time' | 'amount';
-  sortDir: 'asc' | 'desc';
-  limit?: number;
-  type?: 'income' | 'expense';
-};
-
-export type TransactionAccountType = 'transactional' | 'savings';
 
 export type StatCardInfo = {
   title?: string;

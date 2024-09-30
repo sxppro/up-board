@@ -1,0 +1,79 @@
+{
+  "data": [
+    {
+      "type": "accounts",
+      "id": "428d3e1c-c6a1-4a39-aa0d-50fb09d0e307",
+      "attributes": {
+        "displayName": "Investment Account",
+        "accountType": "SAVER",
+        "ownershipType": "INDIVIDUAL",
+        "balance": {
+          "currencyCode": "TZS",
+          "value": "976.78",
+          "valueInBaseUnits": 97678
+        },
+        "createdAt": "2018-01-21T09:57:49.908Z"
+      },
+      "relationships": {
+        "transactions": {
+          "links": {
+            "related": "string"
+          }
+        }
+      },
+      "links": {
+        "self": "string"
+      }
+    },
+    {
+      "type": "accounts",
+      "id": "48194764-0478-4860-ac56-6242a08bc423",
+      "attributes": {
+        "displayName": "Money Market Account",
+        "accountType": "TRANSACTIONAL",
+        "ownershipType": "INDIVIDUAL",
+        "balance": {
+          "currencyCode": "PAB",
+          "value": "916.20",
+          "valueInBaseUnits": 91620
+        },
+        "createdAt": "2022-05-12T17:34:04.646Z"
+      },
+      "relationships": {
+        "transactions": {
+          "links": {
+            "related": "string"
+          }
+        }
+      },
+      "links": {
+        "self": "string"
+      }
+    },
+    {
+      "type": "accounts",
+      "id": "dc991185-28ac-4137-bfed-c517fca0bdb0",
+      "attributes": {
+        "displayName": "Personal Loan Account",
+        "accountType": "TRANSACTIONAL",
+        "ownershipType": "INDIVIDUAL",
+        "balance": {
+          "currencyCode": "RUB",
+          "value": "725.43",
+          "valueInBaseUnits": 72543
+        },
+        "createdAt": "2022-01-08T00:05:00.162Z"
+      },
+      "relationships": {
+        "transactions": {
+          "links": {
+            "related": "string"
+          }
+        }
+      },
+      "links": {
+        "self": "string"
+      }
+    }
+  ]
+}

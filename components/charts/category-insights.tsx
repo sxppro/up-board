@@ -32,7 +32,7 @@ const CategoryInsights = ({
   const { date } = useDate();
   const [extended, setExtended] = useState(false);
   const { data: rawCategoryData, isSuccess } =
-    trpc.user.getCategoryInfo.useQuery({
+    trpc.public.getCategoryInfo.useQuery({
       dateRange: {
         from: start || date?.from,
         to: end || date?.to,
@@ -41,7 +41,7 @@ const CategoryInsights = ({
       parentCategory: category,
     });
   // Last 12 months of category history
-  const { data: historyData } = trpc.user.getCategoryInfoHistory.useQuery({
+  const { data: historyData } = trpc.public.getCategoryInfoHistory.useQuery({
     dateRange: {
       // Subtract 12 months
       from: start || (date?.from && startOfMonth(subMonths(date?.from, 12))),
@@ -70,13 +70,14 @@ const CategoryInsights = ({
         <TabPanels>
           <TabPanel>
             <div
-              className={`overflow-hidden ${extended ? '' : 'max-h-[260px]'}`}
+              className={`overflow-hidden ${extended ? '' : 'h-60 sm:h-80'}`}
             >
               <BarList
                 data={subcategoryData}
                 valueFormatter={(number: number) =>
                   formatCurrency(number, true)
                 }
+                showAnimation
               />
             </div>
 
@@ -108,6 +109,7 @@ const CategoryInsights = ({
               colors={[`up-${category}`]}
               valueFormatter={(number: number) => formatCurrency(number, false)}
               showLegend={false}
+              showAnimation
             />
           </TabPanel>
         </TabPanels>

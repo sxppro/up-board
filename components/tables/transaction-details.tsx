@@ -19,14 +19,16 @@ interface TransactionDetailsProps {
 
 const TransactionDetails = ({ transactionId }: TransactionDetailsProps) => {
   const { data: txDetails, isLoading } =
-    trpc.user.getTransactionById.useQuery(transactionId);
+    trpc.public.getTransactionById.useQuery(transactionId);
   const { data: tags } = trpc.user.getTags.useQuery();
   const isTagged =
     txDetails && Array.isArray(txDetails.tags) && txDetails.tags.length > 0;
 
-  return isLoading || !txDetails ? (
-    <TableSkeleton cols={2} rows={9} />
-  ) : (
+  if (isLoading || !txDetails) {
+    return <TableSkeleton cols={2} rows={9} />;
+  }
+
+  return (
     <Table>
       <TableCaption>{`Transaction ID: ${txDetails.id}`}</TableCaption>
       <TableBody>
@@ -64,23 +66,27 @@ const TransactionDetails = ({ transactionId }: TransactionDetailsProps) => {
           <TableCell className="font-medium">Status</TableCell>
           <TableCell className="text-end">{txDetails.status}</TableCell>
         </TableRow>
-        <TableRow>
-          <TableCell className="font-medium">Tags</TableCell>
-          <TableCell className="text-end">
-            <div className="flex flex-wrap justify-end gap-1">
-              {isTagged &&
-                txDetails.tags.map((tag: string) => (
-                  <Badge key={tag}>{tag}</Badge>
-                ))}
-              <TransactionTagsCombobox
-                txId={txDetails.id}
-                title="Add tags"
-                options={tags || []}
-                initialState={txDetails.tags}
-              />
-            </div>
-          </TableCell>
-        </TableRow>
+        {tags ? (
+          <TableRow>
+            <TableCell className="font-medium">Tags</TableCell>
+            <TableCell className="text-end">
+              <div className="flex flex-wrap justify-end gap-1">
+                {isTagged &&
+                  txDetails.tags.map((tag: string) => (
+                    <Badge key={tag}>{tag}</Badge>
+                  ))}
+                <TransactionTagsCombobox
+                  txId={txDetails.id}
+                  title="Add tags"
+                  options={tags || []}
+                  initialState={txDetails.tags}
+                />
+              </div>
+            </TableCell>
+          </TableRow>
+        ) : (
+          ''
+        )}
       </TableBody>
     </Table>
   );

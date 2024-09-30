@@ -4,7 +4,8 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: 'Up Board',
     short_name: 'Up Board',
-    description: 'Your money where you can see it',
+    description:
+      'Personalised insights and data visualisation for your Up account',
     display: 'standalone',
     background_color: '#fff',
     theme_color: '#fff',

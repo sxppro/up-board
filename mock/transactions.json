@@ -1,0 +1,2519 @@
+{
+  "data": [
+    {
+      "type": "transactions",
+      "id": "8c55f333-cb21-4f74-972a-81299f98d90f",
+      "attributes": {
+        "status": "SETTLED",
+        "rawText": "Reilly, Fadel and Koelpin, Jacobburgh 0485",
+        "description": "Reilly, Fadel and Koelpin",
+        "message": "string",
+        "isCategorizable": true,
+        "holdInfo": {
+          "amount": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          },
+          "foreignAmount": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          }
+        },
+        "roundUp": {
+          "amount": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          },
+          "boostPortion": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          }
+        },
+        "cashback": {
+          "description": "string",
+          "amount": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          }
+        },
+        "amount": {
+          "currencyCode": "RSD",
+          "value": "3509.73",
+          "valueInBaseUnits": 350973
+        },
+        "foreignAmount": {
+          "currencyCode": "string",
+          "value": "string",
+          "valueInBaseUnits": 0
+        },
+        "cardPurchaseMethod": {
+          "method": "BAR_CODE",
+          "cardNumberSuffix": "string"
+        },
+        "settledAt": "2024-05-03T06:49:45.363Z",
+        "createdAt": "2024-05-01T05:43:38.191Z",
+        "transactionType": "string",
+        "note": {
+          "text": "string"
+        },
+        "performingCustomer": {
+          "displayName": "string"
+        }
+      },
+      "relationships": {
+        "account": {
+          "data": {
+            "type": "accounts",
+            "id": "428d3e1c-c6a1-4a39-aa0d-50fb09d0e307"
+          },
+          "links": {
+            "related": "string"
+          }
+        },
+        "transferAccount": {
+          "data": {
+            "type": "string",
+            "id": "string"
+          },
+          "links": {
+            "related": "string"
+          }
+        },
+        "category": {
+          "data": {
+            "type": "categories",
+            "id": "internet"
+          },
+          "links": {
+            "self": "string",
+            "related": "string"
+          }
+        },
+        "parentCategory": {
+          "data": {
+            "type": "categories",
+            "id": "home"
+          },
+          "links": {
+            "related": "string"
+          }
+        },
+        "tags": {
+          "data": [],
+          "links": {
+            "self": "string"
+          }
+        },
+        "attachment": {
+          "data": {
+            "type": "string",
+            "id": "string"
+          },
+          "links": {
+            "related": "string"
+          }
+        }
+      },
+      "links": {
+        "self": "string"
+      }
+    },
+    {
+      "type": "transactions",
+      "id": "8d2de491-88f7-42e6-9788-45ac9ff2aaf2",
+      "attributes": {
+        "status": "HELD",
+        "rawText": "Doyle - Flatley, Fort Annabellemouth 3557",
+        "description": "Doyle - Flatley",
+        "message": "string",
+        "isCategorizable": false,
+        "holdInfo": {
+          "amount": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          },
+          "foreignAmount": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          }
+        },
+        "roundUp": {
+          "amount": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          },
+          "boostPortion": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          }
+        },
+        "cashback": {
+          "description": "string",
+          "amount": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          }
+        },
+        "amount": {
+          "currencyCode": "ISK",
+          "value": "-7264.97",
+          "valueInBaseUnits": -726497
+        },
+        "foreignAmount": {
+          "currencyCode": "string",
+          "value": "string",
+          "valueInBaseUnits": 0
+        },
+        "cardPurchaseMethod": {
+          "method": "BAR_CODE",
+          "cardNumberSuffix": "string"
+        },
+        "settledAt": "2023-12-26T16:01:55.737Z",
+        "createdAt": "2023-12-24T14:32:13.117Z",
+        "transactionType": "string",
+        "note": {
+          "text": "string"
+        },
+        "performingCustomer": {
+          "displayName": "string"
+        }
+      },
+      "relationships": {
+        "account": {
+          "data": {
+            "type": "accounts",
+            "id": "428d3e1c-c6a1-4a39-aa0d-50fb09d0e307"
+          },
+          "links": {
+            "related": "string"
+          }
+        },
+        "transferAccount": {
+          "data": {
+            "type": "string",
+            "id": "string"
+          },
+          "links": {
+            "related": "string"
+          }
+        },
+        "category": {
+          "data": {
+            "type": "categories",
+            "id": "home-insurance-and-rates"
+          },
+          "links": {
+            "self": "string",
+            "related": "string"
+          }
+        },
+        "parentCategory": {
+          "data": {
+            "type": "categories",
+            "id": "home"
+          },
+          "links": {
+            "related": "string"
+          }
+        },
+        "tags": {
+          "data": [],
+          "links": {
+            "self": "string"
+          }
+        },
+        "attachment": {
+          "data": {
+            "type": "string",
+            "id": "string"
+          },
+          "links": {
+            "related": "string"
+          }
+        }
+      },
+      "links": {
+        "self": "string"
+      }
+    },
+    {
+      "type": "transactions",
+      "id": "171eb40d-abf3-47f6-a9b9-b296f3590522",
+      "attributes": {
+        "status": "HELD",
+        "rawText": "Mayer, Shields and Huel, East Zoe 7379",
+        "description": "Mayer, Shields and Huel",
+        "message": "string",
+        "isCategorizable": false,
+        "holdInfo": {
+          "amount": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          },
+          "foreignAmount": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          }
+        },
+        "roundUp": {
+          "amount": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          },
+          "boostPortion": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          }
+        },
+        "cashback": {
+          "description": "string",
+          "amount": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          }
+        },
+        "amount": {
+          "currencyCode": "CDF",
+          "value": "-6228.32",
+          "valueInBaseUnits": -622832
+        },
+        "foreignAmount": {
+          "currencyCode": "string",
+          "value": "string",
+          "valueInBaseUnits": 0
+        },
+        "cardPurchaseMethod": {
+          "method": "BAR_CODE",
+          "cardNumberSuffix": "string"
+        },
+        "settledAt": "2024-04-16T20:25:07.959Z",
+        "createdAt": "2024-04-14T06:18:28.211Z",
+        "transactionType": "string",
+        "note": {
+          "text": "string"
+        },
+        "performingCustomer": {
+          "displayName": "string"
+        }
+      },
+      "relationships": {
+        "account": {
+          "data": {
+            "type": "accounts",
+            "id": "dc991185-28ac-4137-bfed-c517fca0bdb0"
+          },
+          "links": {
+            "related": "string"
+          }
+        },
+        "transferAccount": {
+          "data": {
+            "type": "string",
+            "id": "string"
+          },
+          "links": {
+            "related": "string"
+          }
+        },
+        "category": {
+          "data": {
+            "type": "categories",
+            "id": "home-maintenance-and-improvements"
+          },
+          "links": {
+            "self": "string",
+            "related": "string"
+          }
+        },
+        "parentCategory": {
+          "data": {
+            "type": "categories",
+            "id": "home"
+          },
+          "links": {
+            "related": "string"
+          }
+        },
+        "tags": {
+          "data": [
+            {
+              "type": "tags",
+              "id": "Unbranded Luxurious Fresh Bacon"
+            }
+          ],
+          "links": {
+            "self": "string"
+          }
+        },
+        "attachment": {
+          "data": {
+            "type": "string",
+            "id": "string"
+          },
+          "links": {
+            "related": "string"
+          }
+        }
+      },
+      "links": {
+        "self": "string"
+      }
+    },
+    {
+      "type": "transactions",
+      "id": "755a6bd2-8dd6-4f6e-8c70-9932f6fcd083",
+      "attributes": {
+        "status": "SETTLED",
+        "rawText": "Kuhn Brothers, New Angelina 0283",
+        "description": "Kuhn Brothers",
+        "message": "string",
+        "isCategorizable": true,
+        "holdInfo": {
+          "amount": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          },
+          "foreignAmount": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          }
+        },
+        "roundUp": {
+          "amount": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          },
+          "boostPortion": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          }
+        },
+        "cashback": {
+          "description": "string",
+          "amount": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          }
+        },
+        "amount": {
+          "currencyCode": "MUR",
+          "value": "3001.93",
+          "valueInBaseUnits": 300193
+        },
+        "foreignAmount": {
+          "currencyCode": "string",
+          "value": "string",
+          "valueInBaseUnits": 0
+        },
+        "cardPurchaseMethod": {
+          "method": "BAR_CODE",
+          "cardNumberSuffix": "string"
+        },
+        "settledAt": "2024-05-17T17:55:00.740Z",
+        "createdAt": "2024-05-16T05:48:03.192Z",
+        "transactionType": "string",
+        "note": {
+          "text": "string"
+        },
+        "performingCustomer": {
+          "displayName": "string"
+        }
+      },
+      "relationships": {
+        "account": {
+          "data": {
+            "type": "accounts",
+            "id": "dc991185-28ac-4137-bfed-c517fca0bdb0"
+          },
+          "links": {
+            "related": "string"
+          }
+        },
+        "transferAccount": {
+          "data": {
+            "type": "string",
+            "id": "string"
+          },
+          "links": {
+            "related": "string"
+          }
+        },
+        "category": {
+          "data": {
+            "type": "categories",
+            "id": "life-admin"
+          },
+          "links": {
+            "self": "string",
+            "related": "string"
+          }
+        },
+        "parentCategory": {
+          "data": {
+            "type": "categories",
+            "id": "personal"
+          },
+          "links": {
+            "related": "string"
+          }
+        },
+        "tags": {
+          "data": [],
+          "links": {
+            "self": "string"
+          }
+        },
+        "attachment": {
+          "data": {
+            "type": "string",
+            "id": "string"
+          },
+          "links": {
+            "related": "string"
+          }
+        }
+      },
+      "links": {
+        "self": "string"
+      }
+    },
+    {
+      "type": "transactions",
+      "id": "2165992d-0693-40b9-8362-303eee9525b1",
+      "attributes": {
+        "status": "HELD",
+        "rawText": "O'Reilly Group, Wildermancester 6629",
+        "description": "O'Reilly Group",
+        "message": "string",
+        "isCategorizable": false,
+        "holdInfo": {
+          "amount": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          },
+          "foreignAmount": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          }
+        },
+        "roundUp": {
+          "amount": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          },
+          "boostPortion": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          }
+        },
+        "cashback": {
+          "description": "string",
+          "amount": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          }
+        },
+        "amount": {
+          "currencyCode": "TND",
+          "value": "602.74",
+          "valueInBaseUnits": 60274
+        },
+        "foreignAmount": {
+          "currencyCode": "string",
+          "value": "string",
+          "valueInBaseUnits": 0
+        },
+        "cardPurchaseMethod": {
+          "method": "BAR_CODE",
+          "cardNumberSuffix": "string"
+        },
+        "settledAt": "2024-05-12T16:39:37.872Z",
+        "createdAt": "2024-05-11T01:47:55.458Z",
+        "transactionType": "string",
+        "note": {
+          "text": "string"
+        },
+        "performingCustomer": {
+          "displayName": "string"
+        }
+      },
+      "relationships": {
+        "account": {
+          "data": {
+            "type": "accounts",
+            "id": "48194764-0478-4860-ac56-6242a08bc423"
+          },
+          "links": {
+            "related": "string"
+          }
+        },
+        "transferAccount": {
+          "data": {
+            "type": "string",
+            "id": "string"
+          },
+          "links": {
+            "related": "string"
+          }
+        },
+        "category": {
+          "data": {
+            "type": "categories",
+            "id": "adult"
+          },
+          "links": {
+            "self": "string",
+            "related": "string"
+          }
+        },
+        "parentCategory": {
+          "data": {
+            "type": "categories",
+            "id": "good-life"
+          },
+          "links": {
+            "related": "string"
+          }
+        },
+        "tags": {
+          "data": [
+            {
+              "type": "tags",
+              "id": "Gorgeous Ergonomic Frozen Salad"
+            }
+          ],
+          "links": {
+            "self": "string"
+          }
+        },
+        "attachment": {
+          "data": {
+            "type": "string",
+            "id": "string"
+          },
+          "links": {
+            "related": "string"
+          }
+        }
+      },
+      "links": {
+        "self": "string"
+      }
+    },
+    {
+      "type": "transactions",
+      "id": "182e8b2f-4c04-4623-ae08-dd90d643dd3b",
+      "attributes": {
+        "status": "HELD",
+        "rawText": "Howell Brothers, Laylaborough 8503",
+        "description": "Howell Brothers",
+        "message": "string",
+        "isCategorizable": false,
+        "holdInfo": {
+          "amount": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          },
+          "foreignAmount": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          }
+        },
+        "roundUp": {
+          "amount": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          },
+          "boostPortion": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          }
+        },
+        "cashback": {
+          "description": "string",
+          "amount": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          }
+        },
+        "amount": {
+          "currencyCode": "NGN",
+          "value": "-2371.95",
+          "valueInBaseUnits": -237194.99999999997
+        },
+        "foreignAmount": {
+          "currencyCode": "string",
+          "value": "string",
+          "valueInBaseUnits": 0
+        },
+        "cardPurchaseMethod": {
+          "method": "BAR_CODE",
+          "cardNumberSuffix": "string"
+        },
+        "settledAt": "2023-10-08T20:13:55.445Z",
+        "createdAt": "2023-10-06T13:34:47.054Z",
+        "transactionType": "string",
+        "note": {
+          "text": "string"
+        },
+        "performingCustomer": {
+          "displayName": "string"
+        }
+      },
+      "relationships": {
+        "account": {
+          "data": {
+            "type": "accounts",
+            "id": "dc991185-28ac-4137-bfed-c517fca0bdb0"
+          },
+          "links": {
+            "related": "string"
+          }
+        },
+        "transferAccount": {
+          "data": {
+            "type": "string",
+            "id": "string"
+          },
+          "links": {
+            "related": "string"
+          }
+        },
+        "category": {
+          "data": {
+            "type": "categories",
+            "id": "public-transport"
+          },
+          "links": {
+            "self": "string",
+            "related": "string"
+          }
+        },
+        "parentCategory": {
+          "data": {
+            "type": "categories",
+            "id": "transport"
+          },
+          "links": {
+            "related": "string"
+          }
+        },
+        "tags": {
+          "data": [
+            {
+              "type": "tags",
+              "id": "Unbranded Tasty Steel Car"
+            }
+          ],
+          "links": {
+            "self": "string"
+          }
+        },
+        "attachment": {
+          "data": {
+            "type": "string",
+            "id": "string"
+          },
+          "links": {
+            "related": "string"
+          }
+        }
+      },
+      "links": {
+        "self": "string"
+      }
+    },
+    {
+      "type": "transactions",
+      "id": "2e6f596f-f930-455c-9c7a-81cdf3d27751",
+      "attributes": {
+        "status": "HELD",
+        "rawText": "Olson - Hettinger, O'Connellfort 9045",
+        "description": "Olson - Hettinger",
+        "message": "string",
+        "isCategorizable": true,
+        "holdInfo": {
+          "amount": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          },
+          "foreignAmount": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          }
+        },
+        "roundUp": {
+          "amount": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          },
+          "boostPortion": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          }
+        },
+        "cashback": {
+          "description": "string",
+          "amount": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          }
+        },
+        "amount": {
+          "currencyCode": "TJS",
+          "value": "-6983.59",
+          "valueInBaseUnits": -698359
+        },
+        "foreignAmount": {
+          "currencyCode": "string",
+          "value": "string",
+          "valueInBaseUnits": 0
+        },
+        "cardPurchaseMethod": {
+          "method": "BAR_CODE",
+          "cardNumberSuffix": "string"
+        },
+        "settledAt": "2024-06-29T14:44:38.315Z",
+        "createdAt": "2024-06-27T14:16:58.911Z",
+        "transactionType": "string",
+        "note": {
+          "text": "string"
+        },
+        "performingCustomer": {
+          "displayName": "string"
+        }
+      },
+      "relationships": {
+        "account": {
+          "data": {
+            "type": "accounts",
+            "id": "48194764-0478-4860-ac56-6242a08bc423"
+          },
+          "links": {
+            "related": "string"
+          }
+        },
+        "transferAccount": {
+          "data": {
+            "type": "string",
+            "id": "string"
+          },
+          "links": {
+            "related": "string"
+          }
+        },
+        "category": {
+          "data": {
+            "type": "categories",
+            "id": "car-repayments"
+          },
+          "links": {
+            "self": "string",
+            "related": "string"
+          }
+        },
+        "parentCategory": {
+          "data": {
+            "type": "categories",
+            "id": "transport"
+          },
+          "links": {
+            "related": "string"
+          }
+        },
+        "tags": {
+          "data": [
+            {
+              "type": "tags",
+              "id": "Unbranded Tasty Steel Car"
+            }
+          ],
+          "links": {
+            "self": "string"
+          }
+        },
+        "attachment": {
+          "data": {
+            "type": "string",
+            "id": "string"
+          },
+          "links": {
+            "related": "string"
+          }
+        }
+      },
+      "links": {
+        "self": "string"
+      }
+    },
+    {
+      "type": "transactions",
+      "id": "f94aaf1d-bcff-4d6f-a4cb-98a8b3eacad6",
+      "attributes": {
+        "status": "HELD",
+        "rawText": "Douglas - Rodriguez, Fort Lucasboro 9137",
+        "description": "Douglas - Rodriguez",
+        "message": "string",
+        "isCategorizable": true,
+        "holdInfo": {
+          "amount": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          },
+          "foreignAmount": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          }
+        },
+        "roundUp": {
+          "amount": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          },
+          "boostPortion": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          }
+        },
+        "cashback": {
+          "description": "string",
+          "amount": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          }
+        },
+        "amount": {
+          "currencyCode": "NZD",
+          "value": "1323.91",
+          "valueInBaseUnits": 132391
+        },
+        "foreignAmount": {
+          "currencyCode": "string",
+          "value": "string",
+          "valueInBaseUnits": 0
+        },
+        "cardPurchaseMethod": {
+          "method": "BAR_CODE",
+          "cardNumberSuffix": "string"
+        },
+        "settledAt": "2023-11-14T11:27:23.473Z",
+        "createdAt": "2023-11-13T00:52:46.841Z",
+        "transactionType": "string",
+        "note": {
+          "text": "string"
+        },
+        "performingCustomer": {
+          "displayName": "string"
+        }
+      },
+      "relationships": {
+        "account": {
+          "data": {
+            "type": "accounts",
+            "id": "dc991185-28ac-4137-bfed-c517fca0bdb0"
+          },
+          "links": {
+            "related": "string"
+          }
+        },
+        "transferAccount": {
+          "data": {
+            "type": "string",
+            "id": "string"
+          },
+          "links": {
+            "related": "string"
+          }
+        },
+        "category": {
+          "data": {
+            "type": "categories",
+            "id": "hair-and-beauty"
+          },
+          "links": {
+            "self": "string",
+            "related": "string"
+          }
+        },
+        "parentCategory": {
+          "data": {
+            "type": "categories",
+            "id": "personal"
+          },
+          "links": {
+            "related": "string"
+          }
+        },
+        "tags": {
+          "data": [],
+          "links": {
+            "self": "string"
+          }
+        },
+        "attachment": {
+          "data": {
+            "type": "string",
+            "id": "string"
+          },
+          "links": {
+            "related": "string"
+          }
+        }
+      },
+      "links": {
+        "self": "string"
+      }
+    },
+    {
+      "type": "transactions",
+      "id": "cffcacdf-1bc8-4692-8ceb-a7374728aeb8",
+      "attributes": {
+        "status": "HELD",
+        "rawText": "Williams Group, Croninboro 4667",
+        "description": "Williams Group",
+        "message": "string",
+        "isCategorizable": false,
+        "holdInfo": {
+          "amount": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          },
+          "foreignAmount": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          }
+        },
+        "roundUp": {
+          "amount": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          },
+          "boostPortion": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          }
+        },
+        "cashback": {
+          "description": "string",
+          "amount": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          }
+        },
+        "amount": {
+          "currencyCode": "HTG",
+          "value": "2060.72",
+          "valueInBaseUnits": 206071.99999999997
+        },
+        "foreignAmount": {
+          "currencyCode": "string",
+          "value": "string",
+          "valueInBaseUnits": 0
+        },
+        "cardPurchaseMethod": {
+          "method": "BAR_CODE",
+          "cardNumberSuffix": "string"
+        },
+        "settledAt": "2024-03-24T16:20:10.048Z",
+        "createdAt": "2024-03-22T01:19:45.573Z",
+        "transactionType": "string",
+        "note": {
+          "text": "string"
+        },
+        "performingCustomer": {
+          "displayName": "string"
+        }
+      },
+      "relationships": {
+        "account": {
+          "data": {
+            "type": "accounts",
+            "id": "dc991185-28ac-4137-bfed-c517fca0bdb0"
+          },
+          "links": {
+            "related": "string"
+          }
+        },
+        "transferAccount": {
+          "data": {
+            "type": "string",
+            "id": "string"
+          },
+          "links": {
+            "related": "string"
+          }
+        },
+        "category": {
+          "data": {
+            "type": "categories",
+            "id": "hobbies"
+          },
+          "links": {
+            "self": "string",
+            "related": "string"
+          }
+        },
+        "parentCategory": {
+          "data": {
+            "type": "categories",
+            "id": "good-life"
+          },
+          "links": {
+            "related": "string"
+          }
+        },
+        "tags": {
+          "data": [
+            {
+              "type": "tags",
+              "id": "Fantastic Bespoke Soft Towels"
+            }
+          ],
+          "links": {
+            "self": "string"
+          }
+        },
+        "attachment": {
+          "data": {
+            "type": "string",
+            "id": "string"
+          },
+          "links": {
+            "related": "string"
+          }
+        }
+      },
+      "links": {
+        "self": "string"
+      }
+    },
+    {
+      "type": "transactions",
+      "id": "998dced2-63e0-4726-b1ce-3f58273a613b",
+      "attributes": {
+        "status": "HELD",
+        "rawText": "Botsford - Turcotte, Lake Natefield 0583",
+        "description": "Botsford - Turcotte",
+        "message": "string",
+        "isCategorizable": true,
+        "holdInfo": {
+          "amount": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          },
+          "foreignAmount": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          }
+        },
+        "roundUp": {
+          "amount": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          },
+          "boostPortion": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          }
+        },
+        "cashback": {
+          "description": "string",
+          "amount": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          }
+        },
+        "amount": {
+          "currencyCode": "RWF",
+          "value": "-3792.11",
+          "valueInBaseUnits": -379211
+        },
+        "foreignAmount": {
+          "currencyCode": "string",
+          "value": "string",
+          "valueInBaseUnits": 0
+        },
+        "cardPurchaseMethod": {
+          "method": "BAR_CODE",
+          "cardNumberSuffix": "string"
+        },
+        "settledAt": "2024-03-31T15:29:34.010Z",
+        "createdAt": "2024-03-30T15:47:21.959Z",
+        "transactionType": "string",
+        "note": {
+          "text": "string"
+        },
+        "performingCustomer": {
+          "displayName": "string"
+        }
+      },
+      "relationships": {
+        "account": {
+          "data": {
+            "type": "accounts",
+            "id": "428d3e1c-c6a1-4a39-aa0d-50fb09d0e307"
+          },
+          "links": {
+            "related": "string"
+          }
+        },
+        "transferAccount": {
+          "data": {
+            "type": "string",
+            "id": "string"
+          },
+          "links": {
+            "related": "string"
+          }
+        },
+        "category": {
+          "data": {
+            "type": "categories",
+            "id": "utilities"
+          },
+          "links": {
+            "self": "string",
+            "related": "string"
+          }
+        },
+        "parentCategory": {
+          "data": {
+            "type": "categories",
+            "id": "home"
+          },
+          "links": {
+            "related": "string"
+          }
+        },
+        "tags": {
+          "data": [
+            {
+              "type": "tags",
+              "id": "Sleek Unbranded Steel Mouse"
+            }
+          ],
+          "links": {
+            "self": "string"
+          }
+        },
+        "attachment": {
+          "data": {
+            "type": "string",
+            "id": "string"
+          },
+          "links": {
+            "related": "string"
+          }
+        }
+      },
+      "links": {
+        "self": "string"
+      }
+    },
+    {
+      "type": "transactions",
+      "id": "475b87ea-ba47-4017-9d49-c16928eec55e",
+      "attributes": {
+        "status": "SETTLED",
+        "rawText": "Bruen, Bartell and Larkin, Joelfort 5798",
+        "description": "Bruen, Bartell and Larkin",
+        "message": "string",
+        "isCategorizable": false,
+        "holdInfo": {
+          "amount": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          },
+          "foreignAmount": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          }
+        },
+        "roundUp": {
+          "amount": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          },
+          "boostPortion": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          }
+        },
+        "cashback": {
+          "description": "string",
+          "amount": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          }
+        },
+        "amount": {
+          "currencyCode": "BIF",
+          "value": "-6518.95",
+          "valueInBaseUnits": -651895
+        },
+        "foreignAmount": {
+          "currencyCode": "string",
+          "value": "string",
+          "valueInBaseUnits": 0
+        },
+        "cardPurchaseMethod": {
+          "method": "BAR_CODE",
+          "cardNumberSuffix": "string"
+        },
+        "settledAt": "2024-04-28T18:14:25.338Z",
+        "createdAt": "2024-04-26T23:55:06.196Z",
+        "transactionType": "string",
+        "note": {
+          "text": "string"
+        },
+        "performingCustomer": {
+          "displayName": "string"
+        }
+      },
+      "relationships": {
+        "account": {
+          "data": {
+            "type": "accounts",
+            "id": "428d3e1c-c6a1-4a39-aa0d-50fb09d0e307"
+          },
+          "links": {
+            "related": "string"
+          }
+        },
+        "transferAccount": {
+          "data": {
+            "type": "string",
+            "id": "string"
+          },
+          "links": {
+            "related": "string"
+          }
+        },
+        "category": {
+          "data": {
+            "type": "categories",
+            "id": "hobbies"
+          },
+          "links": {
+            "self": "string",
+            "related": "string"
+          }
+        },
+        "parentCategory": {
+          "data": {
+            "type": "categories",
+            "id": "good-life"
+          },
+          "links": {
+            "related": "string"
+          }
+        },
+        "tags": {
+          "data": [
+            {
+              "type": "tags",
+              "id": "Fantastic Bespoke Soft Towels"
+            }
+          ],
+          "links": {
+            "self": "string"
+          }
+        },
+        "attachment": {
+          "data": {
+            "type": "string",
+            "id": "string"
+          },
+          "links": {
+            "related": "string"
+          }
+        }
+      },
+      "links": {
+        "self": "string"
+      }
+    },
+    {
+      "type": "transactions",
+      "id": "76c53587-d503-4b74-a32a-369519f2ba11",
+      "attributes": {
+        "status": "SETTLED",
+        "rawText": "Gibson Pty Ltd, Emardside 0148",
+        "description": "Gibson Pty Ltd",
+        "message": "string",
+        "isCategorizable": true,
+        "holdInfo": {
+          "amount": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          },
+          "foreignAmount": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          }
+        },
+        "roundUp": {
+          "amount": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          },
+          "boostPortion": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          }
+        },
+        "cashback": {
+          "description": "string",
+          "amount": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          }
+        },
+        "amount": {
+          "currencyCode": "LBP",
+          "value": "9613.55",
+          "valueInBaseUnits": 961354.9999999999
+        },
+        "foreignAmount": {
+          "currencyCode": "string",
+          "value": "string",
+          "valueInBaseUnits": 0
+        },
+        "cardPurchaseMethod": {
+          "method": "BAR_CODE",
+          "cardNumberSuffix": "string"
+        },
+        "settledAt": "2024-02-01T08:41:35.741Z",
+        "createdAt": "2024-01-30T08:05:44.519Z",
+        "transactionType": "string",
+        "note": {
+          "text": "string"
+        },
+        "performingCustomer": {
+          "displayName": "string"
+        }
+      },
+      "relationships": {
+        "account": {
+          "data": {
+            "type": "accounts",
+            "id": "428d3e1c-c6a1-4a39-aa0d-50fb09d0e307"
+          },
+          "links": {
+            "related": "string"
+          }
+        },
+        "transferAccount": {
+          "data": {
+            "type": "string",
+            "id": "string"
+          },
+          "links": {
+            "related": "string"
+          }
+        },
+        "category": {
+          "data": {
+            "type": "categories",
+            "id": "technology"
+          },
+          "links": {
+            "self": "string",
+            "related": "string"
+          }
+        },
+        "parentCategory": {
+          "data": {
+            "type": "categories",
+            "id": "personal"
+          },
+          "links": {
+            "related": "string"
+          }
+        },
+        "tags": {
+          "data": [
+            {
+              "type": "tags",
+              "id": "Unbranded Tasty Steel Car"
+            }
+          ],
+          "links": {
+            "self": "string"
+          }
+        },
+        "attachment": {
+          "data": {
+            "type": "string",
+            "id": "string"
+          },
+          "links": {
+            "related": "string"
+          }
+        }
+      },
+      "links": {
+        "self": "string"
+      }
+    },
+    {
+      "type": "transactions",
+      "id": "86bf2696-e12d-4d42-a969-a78004fe28d2",
+      "attributes": {
+        "status": "HELD",
+        "rawText": "Shields, Davis and Wilderman, Corkerytown 1480",
+        "description": "Shields, Davis and Wilderman",
+        "message": "string",
+        "isCategorizable": true,
+        "holdInfo": {
+          "amount": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          },
+          "foreignAmount": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          }
+        },
+        "roundUp": {
+          "amount": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          },
+          "boostPortion": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          }
+        },
+        "cashback": {
+          "description": "string",
+          "amount": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          }
+        },
+        "amount": {
+          "currencyCode": "KGS",
+          "value": "-941.74",
+          "valueInBaseUnits": -94174
+        },
+        "foreignAmount": {
+          "currencyCode": "string",
+          "value": "string",
+          "valueInBaseUnits": 0
+        },
+        "cardPurchaseMethod": {
+          "method": "BAR_CODE",
+          "cardNumberSuffix": "string"
+        },
+        "settledAt": "2024-04-18T13:58:25.396Z",
+        "createdAt": "2024-04-16T22:13:54.510Z",
+        "transactionType": "string",
+        "note": {
+          "text": "string"
+        },
+        "performingCustomer": {
+          "displayName": "string"
+        }
+      },
+      "relationships": {
+        "account": {
+          "data": {
+            "type": "accounts",
+            "id": "dc991185-28ac-4137-bfed-c517fca0bdb0"
+          },
+          "links": {
+            "related": "string"
+          }
+        },
+        "transferAccount": {
+          "data": {
+            "type": "string",
+            "id": "string"
+          },
+          "links": {
+            "related": "string"
+          }
+        },
+        "category": {
+          "data": {
+            "type": "categories",
+            "id": "tobacco-and-vaping"
+          },
+          "links": {
+            "self": "string",
+            "related": "string"
+          }
+        },
+        "parentCategory": {
+          "data": {
+            "type": "categories",
+            "id": "good-life"
+          },
+          "links": {
+            "related": "string"
+          }
+        },
+        "tags": {
+          "data": [
+            {
+              "type": "tags",
+              "id": "Gorgeous Rustic Wooden Cheese"
+            }
+          ],
+          "links": {
+            "self": "string"
+          }
+        },
+        "attachment": {
+          "data": {
+            "type": "string",
+            "id": "string"
+          },
+          "links": {
+            "related": "string"
+          }
+        }
+      },
+      "links": {
+        "self": "string"
+      }
+    },
+    {
+      "type": "transactions",
+      "id": "c4f176fd-31e3-4190-8e16-8644c76b8f7d",
+      "attributes": {
+        "status": "SETTLED",
+        "rawText": "Koss Pty Ltd, Fort Alexander 4118",
+        "description": "Koss Pty Ltd",
+        "message": "string",
+        "isCategorizable": true,
+        "holdInfo": {
+          "amount": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          },
+          "foreignAmount": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          }
+        },
+        "roundUp": {
+          "amount": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          },
+          "boostPortion": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          }
+        },
+        "cashback": {
+          "description": "string",
+          "amount": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          }
+        },
+        "amount": {
+          "currencyCode": "BDT",
+          "value": "4030.49",
+          "valueInBaseUnits": 403049
+        },
+        "foreignAmount": {
+          "currencyCode": "string",
+          "value": "string",
+          "valueInBaseUnits": 0
+        },
+        "cardPurchaseMethod": {
+          "method": "BAR_CODE",
+          "cardNumberSuffix": "string"
+        },
+        "settledAt": "2024-01-11T05:25:50.074Z",
+        "createdAt": "2024-01-08T21:17:25.513Z",
+        "transactionType": "string",
+        "note": {
+          "text": "string"
+        },
+        "performingCustomer": {
+          "displayName": "string"
+        }
+      },
+      "relationships": {
+        "account": {
+          "data": {
+            "type": "accounts",
+            "id": "dc991185-28ac-4137-bfed-c517fca0bdb0"
+          },
+          "links": {
+            "related": "string"
+          }
+        },
+        "transferAccount": {
+          "data": {
+            "type": "string",
+            "id": "string"
+          },
+          "links": {
+            "related": "string"
+          }
+        },
+        "category": {
+          "data": {
+            "type": "categories",
+            "id": "cycling"
+          },
+          "links": {
+            "self": "string",
+            "related": "string"
+          }
+        },
+        "parentCategory": {
+          "data": {
+            "type": "categories",
+            "id": "transport"
+          },
+          "links": {
+            "related": "string"
+          }
+        },
+        "tags": {
+          "data": [
+            {
+              "type": "tags",
+              "id": "Gorgeous Ergonomic Frozen Salad"
+            }
+          ],
+          "links": {
+            "self": "string"
+          }
+        },
+        "attachment": {
+          "data": {
+            "type": "string",
+            "id": "string"
+          },
+          "links": {
+            "related": "string"
+          }
+        }
+      },
+      "links": {
+        "self": "string"
+      }
+    },
+    {
+      "type": "transactions",
+      "id": "a0f404a9-8de3-45f7-9537-8175f5fad5ad",
+      "attributes": {
+        "status": "HELD",
+        "rawText": "Rolfson - Schroeder, Corwinport 2853",
+        "description": "Rolfson - Schroeder",
+        "message": "string",
+        "isCategorizable": false,
+        "holdInfo": {
+          "amount": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          },
+          "foreignAmount": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          }
+        },
+        "roundUp": {
+          "amount": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          },
+          "boostPortion": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          }
+        },
+        "cashback": {
+          "description": "string",
+          "amount": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          }
+        },
+        "amount": {
+          "currencyCode": "WST",
+          "value": "-9127.52",
+          "valueInBaseUnits": -912752
+        },
+        "foreignAmount": {
+          "currencyCode": "string",
+          "value": "string",
+          "valueInBaseUnits": 0
+        },
+        "cardPurchaseMethod": {
+          "method": "BAR_CODE",
+          "cardNumberSuffix": "string"
+        },
+        "settledAt": "2024-06-15T03:42:39.161Z",
+        "createdAt": "2024-06-13T07:15:16.488Z",
+        "transactionType": "string",
+        "note": {
+          "text": "string"
+        },
+        "performingCustomer": {
+          "displayName": "string"
+        }
+      },
+      "relationships": {
+        "account": {
+          "data": {
+            "type": "accounts",
+            "id": "dc991185-28ac-4137-bfed-c517fca0bdb0"
+          },
+          "links": {
+            "related": "string"
+          }
+        },
+        "transferAccount": {
+          "data": {
+            "type": "string",
+            "id": "string"
+          },
+          "links": {
+            "related": "string"
+          }
+        },
+        "category": {
+          "data": {
+            "type": "categories",
+            "id": "booze"
+          },
+          "links": {
+            "self": "string",
+            "related": "string"
+          }
+        },
+        "parentCategory": {
+          "data": {
+            "type": "categories",
+            "id": "good-life"
+          },
+          "links": {
+            "related": "string"
+          }
+        },
+        "tags": {
+          "data": [],
+          "links": {
+            "self": "string"
+          }
+        },
+        "attachment": {
+          "data": {
+            "type": "string",
+            "id": "string"
+          },
+          "links": {
+            "related": "string"
+          }
+        }
+      },
+      "links": {
+        "self": "string"
+      }
+    },
+    {
+      "type": "transactions",
+      "id": "e96743ba-a2e9-4324-a1fb-077fb6301076",
+      "attributes": {
+        "status": "HELD",
+        "rawText": "Leannon - Ferry, Jaydenside 5382",
+        "description": "Leannon - Ferry",
+        "message": "string",
+        "isCategorizable": true,
+        "holdInfo": {
+          "amount": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          },
+          "foreignAmount": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          }
+        },
+        "roundUp": {
+          "amount": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          },
+          "boostPortion": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          }
+        },
+        "cashback": {
+          "description": "string",
+          "amount": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          }
+        },
+        "amount": {
+          "currencyCode": "QAR",
+          "value": "9728.06",
+          "valueInBaseUnits": 972806
+        },
+        "foreignAmount": {
+          "currencyCode": "string",
+          "value": "string",
+          "valueInBaseUnits": 0
+        },
+        "cardPurchaseMethod": {
+          "method": "BAR_CODE",
+          "cardNumberSuffix": "string"
+        },
+        "settledAt": "2024-05-05T15:47:21.178Z",
+        "createdAt": "2024-05-04T04:49:10.585Z",
+        "transactionType": "string",
+        "note": {
+          "text": "string"
+        },
+        "performingCustomer": {
+          "displayName": "string"
+        }
+      },
+      "relationships": {
+        "account": {
+          "data": {
+            "type": "accounts",
+            "id": "48194764-0478-4860-ac56-6242a08bc423"
+          },
+          "links": {
+            "related": "string"
+          }
+        },
+        "transferAccount": {
+          "data": {
+            "type": "string",
+            "id": "string"
+          },
+          "links": {
+            "related": "string"
+          }
+        },
+        "category": {
+          "data": {
+            "type": "categories",
+            "id": "hobbies"
+          },
+          "links": {
+            "self": "string",
+            "related": "string"
+          }
+        },
+        "parentCategory": {
+          "data": {
+            "type": "categories",
+            "id": "good-life"
+          },
+          "links": {
+            "related": "string"
+          }
+        },
+        "tags": {
+          "data": [],
+          "links": {
+            "self": "string"
+          }
+        },
+        "attachment": {
+          "data": {
+            "type": "string",
+            "id": "string"
+          },
+          "links": {
+            "related": "string"
+          }
+        }
+      },
+      "links": {
+        "self": "string"
+      }
+    },
+    {
+      "type": "transactions",
+      "id": "0763adc6-12f0-4079-b5d8-cea909de0a00",
+      "attributes": {
+        "status": "HELD",
+        "rawText": "Little, Glover and Hammes, North Jett 7526",
+        "description": "Little, Glover and Hammes",
+        "message": "string",
+        "isCategorizable": true,
+        "holdInfo": {
+          "amount": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          },
+          "foreignAmount": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          }
+        },
+        "roundUp": {
+          "amount": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          },
+          "boostPortion": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          }
+        },
+        "cashback": {
+          "description": "string",
+          "amount": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          }
+        },
+        "amount": {
+          "currencyCode": "NGN",
+          "value": "352.44",
+          "valueInBaseUnits": 35244
+        },
+        "foreignAmount": {
+          "currencyCode": "string",
+          "value": "string",
+          "valueInBaseUnits": 0
+        },
+        "cardPurchaseMethod": {
+          "method": "BAR_CODE",
+          "cardNumberSuffix": "string"
+        },
+        "settledAt": "2024-07-27T22:47:16.039Z",
+        "createdAt": "2024-07-26T05:35:41.340Z",
+        "transactionType": "string",
+        "note": {
+          "text": "string"
+        },
+        "performingCustomer": {
+          "displayName": "string"
+        }
+      },
+      "relationships": {
+        "account": {
+          "data": {
+            "type": "accounts",
+            "id": "48194764-0478-4860-ac56-6242a08bc423"
+          },
+          "links": {
+            "related": "string"
+          }
+        },
+        "transferAccount": {
+          "data": {
+            "type": "string",
+            "id": "string"
+          },
+          "links": {
+            "related": "string"
+          }
+        },
+        "category": {
+          "data": {
+            "type": "categories",
+            "id": "health-and-medical"
+          },
+          "links": {
+            "self": "string",
+            "related": "string"
+          }
+        },
+        "parentCategory": {
+          "data": {
+            "type": "categories",
+            "id": "personal"
+          },
+          "links": {
+            "related": "string"
+          }
+        },
+        "tags": {
+          "data": [
+            {
+              "type": "tags",
+              "id": "Gorgeous Small Soft Shirt"
+            }
+          ],
+          "links": {
+            "self": "string"
+          }
+        },
+        "attachment": {
+          "data": {
+            "type": "string",
+            "id": "string"
+          },
+          "links": {
+            "related": "string"
+          }
+        }
+      },
+      "links": {
+        "self": "string"
+      }
+    },
+    {
+      "type": "transactions",
+      "id": "5a81e679-ec07-498d-9a8c-6384c4488da2",
+      "attributes": {
+        "status": "SETTLED",
+        "rawText": "Thomas - Mason, Rodriguezmouth 2864",
+        "description": "Thomas - Mason",
+        "message": "string",
+        "isCategorizable": true,
+        "holdInfo": {
+          "amount": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          },
+          "foreignAmount": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          }
+        },
+        "roundUp": {
+          "amount": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          },
+          "boostPortion": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          }
+        },
+        "cashback": {
+          "description": "string",
+          "amount": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          }
+        },
+        "amount": {
+          "currencyCode": "CAD",
+          "value": "2684.31",
+          "valueInBaseUnits": 268431
+        },
+        "foreignAmount": {
+          "currencyCode": "string",
+          "value": "string",
+          "valueInBaseUnits": 0
+        },
+        "cardPurchaseMethod": {
+          "method": "BAR_CODE",
+          "cardNumberSuffix": "string"
+        },
+        "settledAt": "2023-12-13T20:02:34.798Z",
+        "createdAt": "2023-12-12T03:01:35.295Z",
+        "transactionType": "string",
+        "note": {
+          "text": "string"
+        },
+        "performingCustomer": {
+          "displayName": "string"
+        }
+      },
+      "relationships": {
+        "account": {
+          "data": {
+            "type": "accounts",
+            "id": "48194764-0478-4860-ac56-6242a08bc423"
+          },
+          "links": {
+            "related": "string"
+          }
+        },
+        "transferAccount": {
+          "data": {
+            "type": "string",
+            "id": "string"
+          },
+          "links": {
+            "related": "string"
+          }
+        },
+        "category": {
+          "data": {
+            "type": "categories",
+            "id": "fitness-and-wellbeing"
+          },
+          "links": {
+            "self": "string",
+            "related": "string"
+          }
+        },
+        "parentCategory": {
+          "data": {
+            "type": "categories",
+            "id": "personal"
+          },
+          "links": {
+            "related": "string"
+          }
+        },
+        "tags": {
+          "data": [],
+          "links": {
+            "self": "string"
+          }
+        },
+        "attachment": {
+          "data": {
+            "type": "string",
+            "id": "string"
+          },
+          "links": {
+            "related": "string"
+          }
+        }
+      },
+      "links": {
+        "self": "string"
+      }
+    },
+    {
+      "type": "transactions",
+      "id": "377efc0f-1ae5-45f4-8f8c-8e7061987799",
+      "attributes": {
+        "status": "HELD",
+        "rawText": "Thomson, Cassin and Reynolds, North Michaelfurt 5362",
+        "description": "Thomson, Cassin and Reynolds",
+        "message": "string",
+        "isCategorizable": true,
+        "holdInfo": {
+          "amount": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          },
+          "foreignAmount": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          }
+        },
+        "roundUp": {
+          "amount": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          },
+          "boostPortion": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          }
+        },
+        "cashback": {
+          "description": "string",
+          "amount": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          }
+        },
+        "amount": {
+          "currencyCode": "NGN",
+          "value": "-421.86",
+          "valueInBaseUnits": -42186
+        },
+        "foreignAmount": {
+          "currencyCode": "string",
+          "value": "string",
+          "valueInBaseUnits": 0
+        },
+        "cardPurchaseMethod": {
+          "method": "BAR_CODE",
+          "cardNumberSuffix": "string"
+        },
+        "settledAt": "2024-05-16T21:42:28.396Z",
+        "createdAt": "2024-05-15T20:04:04.614Z",
+        "transactionType": "string",
+        "note": {
+          "text": "string"
+        },
+        "performingCustomer": {
+          "displayName": "string"
+        }
+      },
+      "relationships": {
+        "account": {
+          "data": {
+            "type": "accounts",
+            "id": "428d3e1c-c6a1-4a39-aa0d-50fb09d0e307"
+          },
+          "links": {
+            "related": "string"
+          }
+        },
+        "transferAccount": {
+          "data": {
+            "type": "string",
+            "id": "string"
+          },
+          "links": {
+            "related": "string"
+          }
+        },
+        "category": {
+          "data": {
+            "type": "categories",
+            "id": "gifts-and-charity"
+          },
+          "links": {
+            "self": "string",
+            "related": "string"
+          }
+        },
+        "parentCategory": {
+          "data": {
+            "type": "categories",
+            "id": "personal"
+          },
+          "links": {
+            "related": "string"
+          }
+        },
+        "tags": {
+          "data": [],
+          "links": {
+            "self": "string"
+          }
+        },
+        "attachment": {
+          "data": {
+            "type": "string",
+            "id": "string"
+          },
+          "links": {
+            "related": "string"
+          }
+        }
+      },
+      "links": {
+        "self": "string"
+      }
+    },
+    {
+      "type": "transactions",
+      "id": "ea7955c5-f0b5-4508-abd2-e3093f681a63",
+      "attributes": {
+        "status": "SETTLED",
+        "rawText": "Paterson - Emard, Fort Ashtonfurt 5861",
+        "description": "Paterson - Emard",
+        "message": "string",
+        "isCategorizable": true,
+        "holdInfo": {
+          "amount": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          },
+          "foreignAmount": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          }
+        },
+        "roundUp": {
+          "amount": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          },
+          "boostPortion": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          }
+        },
+        "cashback": {
+          "description": "string",
+          "amount": {
+            "currencyCode": "string",
+            "value": "string",
+            "valueInBaseUnits": 0
+          }
+        },
+        "amount": {
+          "currencyCode": "ZMW",
+          "value": "-4974.15",
+          "valueInBaseUnits": -497414.99999999994
+        },
+        "foreignAmount": {
+          "currencyCode": "string",
+          "value": "string",
+          "valueInBaseUnits": 0
+        },
+        "cardPurchaseMethod": {
+          "method": "BAR_CODE",
+          "cardNumberSuffix": "string"
+        },
+        "settledAt": "2024-08-28T15:41:23.670Z",
+        "createdAt": "2024-08-26T01:21:40.996Z",
+        "transactionType": "string",
+        "note": {
+          "text": "string"
+        },
+        "performingCustomer": {
+          "displayName": "string"
+        }
+      },
+      "relationships": {
+        "account": {
+          "data": {
+            "type": "accounts",
+            "id": "428d3e1c-c6a1-4a39-aa0d-50fb09d0e307"
+          },
+          "links": {
+            "related": "string"
+          }
+        },
+        "transferAccount": {
+          "data": {
+            "type": "string",
+            "id": "string"
+          },
+          "links": {
+            "related": "string"
+          }
+        },
+        "category": {
+          "data": {
+            "type": "categories",
+            "id": "public-transport"
+          },
+          "links": {
+            "self": "string",
+            "related": "string"
+          }
+        },
+        "parentCategory": {
+          "data": {
+            "type": "categories",
+            "id": "transport"
+          },
+          "links": {
+            "related": "string"
+          }
+        },
+        "tags": {
+          "data": [],
+          "links": {
+            "self": "string"
+          }
+        },
+        "attachment": {
+          "data": {
+            "type": "string",
+            "id": "string"
+          },
+          "links": {
+            "related": "string"
+          }
+        }
+      },
+      "links": {
+        "self": "string"
+      }
+    }
+  ]
+}
