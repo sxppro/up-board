@@ -30,7 +30,7 @@ import { faker } from '@faker-js/faker';
 import { UUID } from 'bson';
 import { addDays, addMonths, addYears } from 'date-fns';
 import { CollectionOptions, Document, MongoBulkWriteError } from 'mongodb';
-import clientPromise from './connect';
+import client from './connect';
 import {
   accountBalancePipeline,
   accountStatsPipeline,
@@ -46,15 +46,6 @@ import {
 faker.seed(17);
 
 /**
- * Creates a db instance
- * @returns
- */
-const connectToDatabase = async (db: string) => {
-  const client = await clientPromise;
-  return client.db(db);
-};
-
-/**
  * Connects to a collection within a database
  * @param db Database name
  * @param collection Collection name
@@ -68,7 +59,7 @@ const connectToCollection = async <T extends Document>(
 ) => {
   const session = await auth();
   if (session) {
-    const database = await connectToDatabase(db);
+    const database = client.db(db);
     return database.collection<T>(collection, collectionOpts);
   } else {
     throw new Error('unauthorised');
@@ -108,7 +99,7 @@ export const insertTransactions = async (
     return;
   }
   try {
-    const db = await connectToDatabase('up');
+    const db = client.db('up');
     const transactions = db.collection<DbTransactionResource>('transactions');
     /**
      * Remaps id to _id as BSON UUID & ISO date strings
