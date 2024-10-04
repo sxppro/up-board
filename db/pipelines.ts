@@ -761,8 +761,10 @@ const searchTransactionsPipeline = (searchTerm: string) => [
       index: 'transactions-index',
       text: {
         query: searchTerm,
-        path: {
-          wildcard: '*',
+        path: 'attributes.description',
+        fuzzy: {
+          maxEdits: 1,
+          maxExpansions: 10
         },
       },
     },
