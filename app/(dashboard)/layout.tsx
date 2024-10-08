@@ -5,15 +5,19 @@ import ThemeToggle from '@/components/core/theme-toggle';
 import UserNav from '@/components/core/user-nav';
 import { Button } from '@/components/ui/button';
 import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
 import { getCurrentUser } from '@/utils/auth';
 import { Flex } from '@tremor/react';
 import { FlaskConical } from 'lucide-react';
 import { Metadata } from 'next';
+import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: 'Dashboard',
@@ -38,19 +42,26 @@ export default async function DashboardLayout({
             {user ? (
               <UserNav user={user} />
             ) : (
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button variant="outline">
-                      <FlaskConical className="mr-2 h-4 w-4" /> Demo
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button variant="outline">
+                    <FlaskConical className="mr-2 h-4 w-4" /> Demo
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[425px]">
+                  <DialogHeader>
+                    <DialogTitle>Demo Mode</DialogTitle>
+                  </DialogHeader>
+                  <DialogDescription>
+                    You are currently in demo mode. Mock data will be used.
+                  </DialogDescription>
+                  <DialogFooter>
+                    <Button asChild>
+                      <Link href={'/login'}>Log in</Link>
                     </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>You are currently in demo mode.</p>
-                    <p>Mock data will be used.</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
             )}
           </div>
         </div>
