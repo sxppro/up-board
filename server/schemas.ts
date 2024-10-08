@@ -96,7 +96,7 @@ export const TransactionResourceFilteredSchema = z.object({
   category: z.string(),
   parentCategory: z.string(),
   tags: z.string().array(),
-  deepLinkURL: z.string(),
+  deepLinkURL: z.string().optional(),
 });
 export type TransactionResourceFiltered = z.infer<
   typeof TransactionResourceFilteredSchema
