@@ -99,6 +99,7 @@ export const filterTransactionFields = (
         id,
         description: attributes.description,
         rawText: attributes.rawText,
+        message: attributes.message,
         amount: attributes.amount.value,
         amountRaw: attributes.amount.valueInBaseUnits / 100,
         time: attributes.createdAt,
@@ -107,6 +108,8 @@ export const filterTransactionFields = (
         parentCategory:
           relationships.parentCategory.data?.id ?? 'uncategorised',
         tags: relationships.tags.data.map(({ id }) => id),
+        // @ts-expect-error due to Up Banking API not being updated yet
+        deepLinkURL: attributes.deepLinkURL,
       };
     }) || []
   );

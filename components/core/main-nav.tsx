@@ -9,7 +9,7 @@ interface MainNavProps {
 
 const links = [
   {
-    page: 'Accounts',
+    page: 'Overview',
     route: '/',
   },
   {

@@ -38,7 +38,7 @@ const AccountsList = async ({ type, colour }: AccountsListProps) => {
             >
               <ActiveLink href={`/account/${id}`} keepQueryParams>
                 <Flex
-                  className="p-6"
+                  className="p-4"
                   alignItems="center"
                   justifyContent="between"
                 >

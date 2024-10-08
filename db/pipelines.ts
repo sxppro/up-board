@@ -764,6 +764,9 @@ const searchTransactionsPipeline = (searchTerm: string) => [
         path: {
           wildcard: '*',
         },
+        fuzzy: {
+          maxEdits: 1,
+        },
       },
     },
   },

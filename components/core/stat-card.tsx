@@ -11,7 +11,7 @@ const StatCard = ({ children, info }: StatCardProps) => {
   const { title, metric, icon, color, isLoading } = info;
   return (
     <Card
-      className="transition-shadow hover:shadow-md"
+      className="p-4 transition-shadow hover:shadow-md"
       decoration="top"
       decorationColor={color}
     >

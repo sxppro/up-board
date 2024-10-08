@@ -99,6 +99,7 @@ const generateTransactions = (
     transaction['attributes'][
       'rawText'
     ] = `${merchant}, ${faker.location.city()} ${faker.location.zipCode()}`;
+    transaction['attributes']['message'] = faker.lorem.sentence();
     transaction['attributes']['amount']['currencyCode'] =
       faker.finance.currencyCode();
     transaction['attributes']['amount']['value'] = amount;

@@ -1,7 +1,5 @@
 import ExpenseCategoriesStackedBar from '@/components/charts/expense-categories-stacked-bar';
-import IOStats from '@/components/charts/io-stats';
 import DashboardCard from '@/components/core/dashboard-card';
-import StatCard from '@/components/core/stat-card';
 import TableSkeleton from '@/components/core/table-skeleton';
 import DateProvider from '@/components/providers/date-provider';
 import QueryProvider from '@/components/providers/query-provider';
@@ -39,9 +37,9 @@ const DashboardPage = ({ searchParams }: PageProps) => {
 
   return (
     <div className="w-full flex flex-col gap-2">
-      <h1 className="text-2xl font-bold tracking-tight">Accounts</h1>
-      <Grid numItemsMd={2} numItemsLg={3} className="gap-6 mt-2">
-        <Col>
+      <h1 className="text-2xl font-bold tracking-tight">Overview</h1>
+      <Grid numItemsSm={2} numItemsLg={3} className="gap-6 mt-2">
+        <Col numColSpanSm={2} numColSpanLg={1}>
           <div className="flex flex-col gap-3">
             <Suspense fallback={<AccountsListLoading />}>
               <AccountsList type="TRANSACTIONAL" colour="rose" />
@@ -65,33 +63,6 @@ const DashboardPage = ({ searchParams }: PageProps) => {
                 start={startDate ? new Date(startDate) : startOfMonth(now)}
                 end={endDate ? new Date(endDate) : now}
               >
-                <Col numColSpan={2}>
-                  <Grid numItemsMd={3} className="gap-3">
-                    <Suspense
-                      fallback={
-                        <>
-                          <StatCard
-                            info={{ title: 'Loading ...', isLoading: true }}
-                          />
-                          <StatCard
-                            info={{ title: 'Loading ...', isLoading: true }}
-                          />
-                          <StatCard
-                            info={{ title: 'Loading ...', isLoading: true }}
-                          />
-                        </>
-                      }
-                    >
-                      <IOStats
-                        accountId={process.env.UP_TRANS_ACC || ''}
-                        start={
-                          startDate ? new Date(startDate) : startOfMonth(now)
-                        }
-                        end={endDate ? new Date(endDate) : now}
-                      />
-                    </Suspense>
-                  </Grid>
-                </Col>
                 <Col numColSpan={2}>
                   <ExpenseCategoriesStackedBar
                     start={subMonths(startOfMonth(subMonths(now, 1)), 5)}
