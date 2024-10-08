@@ -39,7 +39,7 @@ const DashboardPage = ({ searchParams }: PageProps) => {
     <div className="w-full flex flex-col gap-2">
       <h1 className="text-2xl font-bold tracking-tight">Overview</h1>
       <Grid numItemsSm={2} numItemsLg={3} className="gap-6 mt-2">
-        <Col numColSpan={2} numColSpanLg={1}>
+        <Col numColSpanSm={2} numColSpanLg={1}>
           <div className="flex flex-col gap-3">
             <Suspense fallback={<AccountsListLoading />}>
               <AccountsList type="TRANSACTIONAL" colour="rose" />
