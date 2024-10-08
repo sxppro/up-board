@@ -37,9 +37,15 @@ const TransactionDetails = ({ transactionId }: TransactionDetailsProps) => {
           <TableCell className="text-end">{txDetails.description}</TableCell>
         </TableRow>
         <TableRow>
-          <TableCell className="font-medium">Raw Text</TableCell>
+          <TableCell className="font-medium">Raw</TableCell>
           <TableCell className="font-mono text-end">
             {txDetails.rawText ?? '—'}
+          </TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell className="font-medium">Message</TableCell>
+          <TableCell className="font-mono text-end">
+            {txDetails.message ?? '—'}
           </TableCell>
         </TableRow>
         <TableRow>

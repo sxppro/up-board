@@ -88,6 +88,7 @@ export const TransactionResourceFilteredSchema = z.object({
   id: z.string().uuid(),
   description: z.string(),
   rawText: z.string().nullable(),
+  message: z.string().nullable(),
   amount: z.string(),
   amountRaw: z.number(),
   time: z.string().datetime(),

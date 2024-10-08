@@ -99,6 +99,7 @@ export const filterTransactionFields = (
         id,
         description: attributes.description,
         rawText: attributes.rawText,
+        message: attributes.message,
         amount: attributes.amount.value,
         amountRaw: attributes.amount.valueInBaseUnits / 100,
         time: attributes.createdAt,
