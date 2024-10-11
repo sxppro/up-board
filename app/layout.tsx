@@ -4,6 +4,7 @@ import { Analytics } from '@vercel/analytics/react';
 import { GeistSans } from 'geist/font/sans';
 import type { Metadata, Viewport } from 'next';
 import './globals.css';
+import { siteConfig } from './siteConfig';
 
 export const viewport: Viewport = {
   themeColor: [
@@ -13,9 +14,9 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: 'Up Board',
-  description:
-    'Personalised insights and data visualisation for your Up account',
+  metadataBase: new URL('https://upboard.app'),
+  title: siteConfig.name,
+  description: siteConfig.description,
   authors: [
     {
       name: 'Soppro',
@@ -23,6 +24,14 @@ export const metadata: Metadata = {
     },
   ],
   creator: 'Soppro',
+  openGraph: {
+    type: 'website',
+    locale: 'en_AU',
+    url: siteConfig.url,
+    title: siteConfig.name,
+    description: siteConfig.description,
+    siteName: siteConfig.name,
+  },
   icons: {
     icon: '/favicon.ico',
     shortcut: '/favicon-16x16.png',
