@@ -4,11 +4,14 @@ import { siteConfig } from '@/app/siteConfig';
 import { cn } from '@/utils/helpers';
 import { focusRing } from '@/utils/tremor';
 import {
-  RiHome2Line,
-  RiLinkM,
-  RiListCheck,
-  RiSettings5Line,
-} from '@remixicon/react';
+  Bookmarks,
+  ChartLine,
+  ListBullets,
+  Storefront,
+  Tag,
+  UserList,
+} from '@phosphor-icons/react';
+import { RiLinkM } from '@remixicon/react';
 import { User } from 'next-auth';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -20,12 +23,27 @@ import {
 import { UserProfileDesktop, UserProfileMobile } from './user-profile';
 
 const navigation = [
-  { name: 'Overview', href: siteConfig.baseLinks.home, icon: RiHome2Line },
-  { name: 'Accounts', href: siteConfig.baseLinks.accounts, icon: RiListCheck },
+  { name: 'Overview', href: siteConfig.baseLinks.home, icon: ChartLine },
+  { name: 'Accounts', href: siteConfig.baseLinks.accounts, icon: UserList },
   {
     name: 'Categories',
     href: siteConfig.baseLinks.categories,
-    icon: RiSettings5Line,
+    icon: Bookmarks,
+  },
+  {
+    name: 'Merchants',
+    href: siteConfig.baseLinks.merchants,
+    icon: Storefront,
+  },
+  {
+    name: 'Transactions',
+    href: siteConfig.baseLinks.transactions,
+    icon: ListBullets,
+  },
+  {
+    name: 'Tags',
+    href: siteConfig.baseLinks.tags,
+    icon: Tag,
   },
 ] as const;
 

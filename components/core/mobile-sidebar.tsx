@@ -12,22 +12,40 @@ import {
 import { cn } from '@/utils/helpers';
 import { focusRing } from '@/utils/tremor';
 import {
-  RiHome2Line,
-  RiLinkM,
-  RiListCheck,
-  RiMenuLine,
-  RiSettings5Line,
-} from '@remixicon/react';
+  Bookmarks,
+  ChartLine,
+  List,
+  ListBullets,
+  Storefront,
+  UserList,
+} from '@phosphor-icons/react';
+import { RiLinkM } from '@remixicon/react';
+import { Tag } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 const navigation = [
-  { name: 'Overview', href: siteConfig.baseLinks.home, icon: RiHome2Line },
-  { name: 'Accounts', href: siteConfig.baseLinks.accounts, icon: RiListCheck },
+  { name: 'Overview', href: siteConfig.baseLinks.home, icon: ChartLine },
+  { name: 'Accounts', href: siteConfig.baseLinks.accounts, icon: UserList },
   {
     name: 'Categories',
     href: siteConfig.baseLinks.categories,
-    icon: RiSettings5Line,
+    icon: Bookmarks,
+  },
+  {
+    name: 'Merchants',
+    href: siteConfig.baseLinks.merchants,
+    icon: Storefront,
+  },
+  {
+    name: 'Transactions',
+    href: siteConfig.baseLinks.transactions,
+    icon: ListBullets,
+  },
+  {
+    name: 'Tags',
+    href: siteConfig.baseLinks.tags,
+    icon: Tag,
   },
 ] as const;
 
@@ -66,15 +84,12 @@ export default function MobileSidebar() {
             aria-label="open sidebar"
             className="group flex items-center rounded-md p-2 text-sm font-medium hover:bg-gray-100 data-[state=open]:bg-gray-100 data-[state=open]:bg-gray-400/10 hover:dark:bg-gray-400/10"
           >
-            <RiMenuLine
-              className="size-6 shrink-0 sm:size-5"
-              aria-hidden="true"
-            />
+            <List className="size-6 shrink-0 sm:size-5" aria-hidden="true" />
           </Button>
         </DrawerTrigger>
         <DrawerContent className="sm:max-w-lg">
           <DrawerHeader>
-            <DrawerTitle>Retail Analytics</DrawerTitle>
+            <DrawerTitle>{siteConfig.name}</DrawerTitle>
           </DrawerHeader>
           <DrawerBody>
             <nav

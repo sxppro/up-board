@@ -14,12 +14,8 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import {
-  RiArrowRightUpLine,
-  RiComputerLine,
-  RiMoonLine,
-  RiSunLine,
-} from '@remixicon/react';
+import { Desktop, Moon, Sun } from '@phosphor-icons/react';
+import { ArrowUpRight } from 'lucide-react';
 import { User } from 'next-auth';
 import { signOut } from 'next-auth/react';
 import { useTheme } from 'next-themes';
@@ -75,10 +71,7 @@ export function UserProfileDropdown({
                       value="light"
                       className="gap-x-2"
                     >
-                      <RiSunLine
-                        className="size-4 shrink-0"
-                        aria-hidden="true"
-                      />
+                      <Sun className="size-4 shrink-0" aria-hidden="true" />
                       Light
                     </DropdownMenuRadioItem>
                     <DropdownMenuRadioItem
@@ -86,10 +79,7 @@ export function UserProfileDropdown({
                       value="dark"
                       className="gap-x-2"
                     >
-                      <RiMoonLine
-                        className="size-4 shrink-0"
-                        aria-hidden="true"
-                      />
+                      <Moon className="size-4 shrink-0" aria-hidden="true" />
                       Dark
                     </DropdownMenuRadioItem>
                     <DropdownMenuRadioItem
@@ -97,10 +87,7 @@ export function UserProfileDropdown({
                       value="system"
                       className="gap-x-2"
                     >
-                      <RiComputerLine
-                        className="size-4 shrink-0"
-                        aria-hidden="true"
-                      />
+                      <Desktop className="size-4 shrink-0" aria-hidden="true" />
                       System
                     </DropdownMenuRadioItem>
                   </DropdownMenuRadioGroup>
@@ -118,7 +105,7 @@ export function UserProfileDropdown({
                 className="cursor-pointer"
               >
                 Author
-                <RiArrowRightUpLine
+                <ArrowUpRight
                   className="mb-1 ml-1 size-2.5 shrink-0 text-gray-500"
                   aria-hidden="true"
                 />
@@ -130,7 +117,7 @@ export function UserProfileDropdown({
                 className="cursor-pointer"
               >
                 View source
-                <RiArrowRightUpLine
+                <ArrowUpRight
                   className="mb-1 ml-1 size-2.5 shrink-0 text-gray-500"
                   aria-hidden="true"
                 />
