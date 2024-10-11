@@ -20,32 +20,44 @@ import {
   RiMoonLine,
   RiSunLine,
 } from '@remixicon/react';
+import { User } from 'next-auth';
 import { useTheme } from 'next-themes';
-import * as React from 'react';
+import Link from 'next/link';
+import { useEffect, useState } from 'react';
 
-export type UserProfileDropdownProps = {
+interface UserProfileDropdownProps {
   children: React.ReactNode;
   align?: 'center' | 'start' | 'end';
-};
+  user?: Pick<User, 'name' | 'image' | 'email'>;
+}
 
 export function UserProfileDropdown({
   children,
   align = 'start',
+  user,
 }: UserProfileDropdownProps) {
-  const [mounted, setMounted] = React.useState(false);
+  const [mounted, setMounted] = useState(false);
   const { theme, setTheme } = useTheme();
-  React.useEffect(() => {
+
+  useEffect(() => {
     setMounted(true);
   }, []);
+
   return (
     <>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>{children}</DropdownMenuTrigger>
         <DropdownMenuContent
           align={align}
-          className="min-w-[calc(var(--radix-dropdown-menu-trigger-width))] max-h-[var(--radix-popper-available-height)]"
+          className="w-[calc(var(--radix-dropdown-menu-trigger-width))] max-h-[var(--radix-popper-available-height)]"
         >
-          <DropdownMenuLabel>emma.stone@acme.com</DropdownMenuLabel>
+          {user?.email ? (
+            <DropdownMenuLabel className="truncate">
+              {user.email}
+            </DropdownMenuLabel>
+          ) : (
+            ''
+          )}
           <DropdownMenuGroup>
             {mounted ? (
               <DropdownMenuSub>
@@ -99,32 +111,41 @@ export function UserProfileDropdown({
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
-            <DropdownMenuItem>
-              Changelog
-              <RiArrowRightUpLine
-                className="mb-1 ml-1 size-2.5 shrink-0 text-gray-500"
-                aria-hidden="true"
-              />
+            <DropdownMenuItem asChild>
+              <Link
+                href={'https://github.com/sxppro'}
+                className="cursor-pointer"
+              >
+                Author
+                <RiArrowRightUpLine
+                  className="mb-1 ml-1 size-2.5 shrink-0 text-gray-500"
+                  aria-hidden="true"
+                />
+              </Link>
             </DropdownMenuItem>
-            <DropdownMenuItem>
-              Documentation
-              <RiArrowRightUpLine
-                className="mb-1 ml-1 size-2.5 shrink-0 text-gray-500"
-                aria-hidden="true"
-              />
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              Join Slack community
-              <RiArrowRightUpLine
-                className="mb-1 ml-1 size-2.5 shrink-0 text-gray-500"
-                aria-hidden="true"
-              />
+            <DropdownMenuItem asChild>
+              <Link
+                href={'https://github.com/sxppro/up-board'}
+                className="cursor-pointer"
+              >
+                View source
+                <RiArrowRightUpLine
+                  className="mb-1 ml-1 size-2.5 shrink-0 text-gray-500"
+                  aria-hidden="true"
+                />
+              </Link>
             </DropdownMenuItem>
           </DropdownMenuGroup>
-          <DropdownMenuSeparator />
-          <DropdownMenuGroup>
-            <DropdownMenuItem>Sign out</DropdownMenuItem>
-          </DropdownMenuGroup>
+          {user ? (
+            <>
+              <DropdownMenuSeparator />
+              <DropdownMenuGroup>
+                <DropdownMenuItem>Sign out</DropdownMenuItem>
+              </DropdownMenuGroup>
+            </>
+          ) : (
+            ''
+          )}
         </DropdownMenuContent>
       </DropdownMenu>
     </>

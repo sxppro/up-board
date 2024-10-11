@@ -1,4 +1,5 @@
 'use client';
+
 import { siteConfig } from '@/app/siteConfig';
 import { cn } from '@/utils/helpers';
 import { focusRing } from '@/utils/tremor';
@@ -8,6 +9,7 @@ import {
   RiListCheck,
   RiSettings5Line,
 } from '@remixicon/react';
+import { User } from 'next-auth';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import MobileSidebar from './mobile-sidebar';
@@ -50,7 +52,11 @@ const shortcuts = [
   },
 ] as const;
 
-export function Sidebar() {
+interface SidebarProps {
+  user?: Pick<User, 'name' | 'image' | 'email'>;
+}
+
+const Sidebar = ({ user }: SidebarProps) => {
   const pathname = usePathname();
   const isActive = (itemHref: string) => pathname === itemHref;
 
@@ -112,7 +118,7 @@ export function Sidebar() {
             </div>
           </nav>
           <div className="mt-auto">
-            <UserProfileDesktop />
+            <UserProfileDesktop user={user} />
           </div>
         </aside>
       </nav>
@@ -120,10 +126,12 @@ export function Sidebar() {
       <div className="sticky top-0 z-40 flex h-16 shrink-0 items-center justify-between border-b border-gray-200 bg-white px-2 shadow-sm sm:gap-x-6 sm:px-4 lg:hidden dark:border-gray-800 dark:bg-gray-950">
         <ProviderDropdownMobile />
         <div className="flex items-center gap-1 sm:gap-2">
-          <UserProfileMobile />
+          <UserProfileMobile user={user} />
           <MobileSidebar />
         </div>
       </div>
     </>
   );
-}
+};
+
+export default Sidebar;
