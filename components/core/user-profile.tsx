@@ -2,21 +2,17 @@
 
 import { Button } from '@/components/ui/button';
 import { cn } from '@/utils/helpers';
-import { focusRing } from '@/utils/tremor';
 import { RiMore2Fill } from '@remixicon/react';
 
-import { DropdownUserProfile } from './dropdown-user-profile';
+import { UserProfileDropdown } from './user-profile-dropdown';
 
 export const UserProfileDesktop = () => {
   return (
-    <DropdownUserProfile>
+    <UserProfileDropdown>
       <Button
         aria-label="User settings"
         variant="ghost"
-        className={cn(
-          focusRing,
-          'group flex w-full items-center justify-between rounded-md p-2 text-sm font-medium text-gray-900 hover:bg-gray-100 data-[state=open]:bg-gray-100 data-[state=open]:bg-gray-400/10 hover:dark:bg-gray-400/10'
-        )}
+        className="group flex w-full items-center justify-between rounded-md p-2 text-sm font-medium text-gray-900 dark:text-gray-50 hover:bg-gray-100 data-[state=open]:bg-gray-100 data-[state=open]:bg-gray-400/10 hover:dark:bg-gray-400/10"
       >
         <span className="flex items-center gap-3">
           <span
@@ -32,13 +28,13 @@ export const UserProfileDesktop = () => {
           aria-hidden="true"
         />
       </Button>
-    </DropdownUserProfile>
+    </UserProfileDropdown>
   );
 };
 
 export const UserProfileMobile = () => {
   return (
-    <DropdownUserProfile align="end">
+    <UserProfileDropdown align="end">
       <Button
         aria-label="User settings"
         variant="ghost"
@@ -53,6 +49,6 @@ export const UserProfileMobile = () => {
           ES
         </span>
       </Button>
-    </DropdownUserProfile>
+    </UserProfileDropdown>
   );
 };
