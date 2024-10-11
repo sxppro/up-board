@@ -10,6 +10,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { cn } from '@/utils/helpers';
+import { focusInput } from '@/utils/tremor';
 import { RiArrowRightSLine, RiExpandUpDownLine } from '@remixicon/react';
 import React from 'react';
 import { ModalAddProvider } from './modal-add-provider';
@@ -50,7 +51,12 @@ export const ProviderDropdownDesktop = () => {
         modal={false}
       >
         <DropdownMenuTrigger asChild>
-          <button className="flex w-full items-center gap-x-2.5 rounded-md border border-gray-300 bg-white p-2 text-sm shadow-sm transition-all hover:bg-gray-50 dark:border-gray-800 dark:bg-gray-950 hover:dark:bg-gray-900">
+          <button
+            className={cn(
+              'flex w-full items-center gap-x-2.5 rounded-md border border-gray-300 bg-white p-2 text-sm shadow-sm transition-all hover:bg-gray-50 dark:border-gray-800 dark:bg-gray-950 hover:dark:bg-gray-900',
+              focusInput
+            )}
+          >
             <span
               className="flex aspect-square size-8 items-center justify-center rounded bg-indigo-600 p-2 text-xs font-medium text-white dark:bg-indigo-500"
               aria-hidden="true"

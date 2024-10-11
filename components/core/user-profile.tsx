@@ -2,8 +2,8 @@
 
 import { Button } from '@/components/ui/button';
 import { cn } from '@/utils/helpers';
+import { focusRing } from '@/utils/tremor';
 import { RiMore2Fill } from '@remixicon/react';
-
 import { UserProfileDropdown } from './user-profile-dropdown';
 
 export const UserProfileDesktop = () => {
@@ -12,7 +12,10 @@ export const UserProfileDesktop = () => {
       <Button
         aria-label="User settings"
         variant="ghost"
-        className="group flex w-full items-center justify-between rounded-md p-2 text-sm font-medium text-gray-900 dark:text-gray-50 hover:bg-gray-100 data-[state=open]:bg-gray-100 data-[state=open]:bg-gray-400/10 hover:dark:bg-gray-400/10"
+        className={cn(
+          'group transition-all flex w-full items-center justify-between rounded-md p-2 text-sm font-medium text-gray-900 dark:text-gray-50 hover:bg-gray-100 data-[state=open]:bg-gray-100 data-[state=open]:bg-gray-400/10 hover:dark:bg-gray-400/10',
+          focusRing
+        )}
       >
         <span className="flex items-center gap-3">
           <span

@@ -56,8 +56,7 @@ const shortcuts = [
 
 export default function MobileSidebar() {
   const pathname = usePathname();
-  const isActive = (itemHref: string) =>
-    pathname === itemHref || pathname.startsWith(itemHref);
+  const isActive = (itemHref: string) => pathname === itemHref;
   return (
     <>
       <Drawer>
