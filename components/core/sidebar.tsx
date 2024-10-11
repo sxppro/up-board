@@ -6,12 +6,12 @@ import { focusRing } from '@/utils/tremor';
 import {
   Bookmarks,
   ChartLine,
+  Link as LinkIcon,
   ListBullets,
   Storefront,
   Tag,
   UserList,
 } from '@phosphor-icons/react';
-import { RiLinkM } from '@remixicon/react';
 import { User } from 'next-auth';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -51,22 +51,22 @@ const shortcuts = [
   {
     name: 'Add new user',
     href: '#',
-    icon: RiLinkM,
+    icon: LinkIcon,
   },
   {
     name: 'Workspace usage',
     href: '#',
-    icon: RiLinkM,
+    icon: LinkIcon,
   },
   {
     name: 'Cost spend control',
     href: '#',
-    icon: RiLinkM,
+    icon: LinkIcon,
   },
   {
     name: 'Overview – Rows written',
     href: '#',
-    icon: RiLinkM,
+    icon: LinkIcon,
   },
 ] as const;
 
