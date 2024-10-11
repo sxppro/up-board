@@ -45,11 +45,8 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html
-      lang="en"
-      className={`${GeistSans.className} antialiased dark:bg-gray-950`}
-    >
-      <body>
+    <html lang="en">
+      <body className={`${GeistSans.className} antialiased dark:bg-gray-950`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
