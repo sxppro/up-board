@@ -21,6 +21,7 @@ import {
   RiSunLine,
 } from '@remixicon/react';
 import { User } from 'next-auth';
+import { signOut } from 'next-auth/react';
 import { useTheme } from 'next-themes';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
@@ -140,7 +141,16 @@ export function UserProfileDropdown({
             <>
               <DropdownMenuSeparator />
               <DropdownMenuGroup>
-                <DropdownMenuItem>Sign out</DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={(event) => {
+                    event.preventDefault();
+                    signOut({
+                      callbackUrl: `${window.location.origin}/login`,
+                    });
+                  }}
+                >
+                  Sign out
+                </DropdownMenuItem>
               </DropdownMenuGroup>
             </>
           ) : (
