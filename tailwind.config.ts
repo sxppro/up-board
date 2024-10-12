@@ -54,6 +54,13 @@ export default {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))',
         },
+        // Up
+        up: {
+          'good-life': '#F3DC61',
+          personal: '#EF8E4B',
+          home: '#BD79BD',
+          transport: '#6491C9',
+        },
         // light mode
         tremor: {
           brand: {
