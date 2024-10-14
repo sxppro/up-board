@@ -1,3 +1,4 @@
+import { siteConfig } from '@/app/siteConfig';
 import IOStats from '@/components/charts/io-stats';
 import DateRangePicker from '@/components/core/date-range-picker';
 import StatCard from '@/components/core/stat-card';
@@ -18,7 +19,7 @@ type AccountPageProps = {
 } & PageProps;
 
 export const metadata: Metadata = {
-  title: 'Dashboard — Account Overview',
+  title: `${siteConfig.name} — Account Overview`,
 };
 
 const AccountPage = async ({ params, searchParams }: AccountPageProps) => {

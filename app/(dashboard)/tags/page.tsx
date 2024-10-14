@@ -1,3 +1,4 @@
+import { siteConfig } from '@/app/siteConfig';
 import ActiveLink from '@/components/core/active-link';
 import { Button } from '@/components/ui/button';
 import {
@@ -12,7 +13,7 @@ import { X } from 'lucide-react';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Dashboard — Tags',
+  title: `${siteConfig.name} — Tags`,
 };
 
 const TagPage = async () => {

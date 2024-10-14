@@ -1,9 +1,10 @@
+import { siteConfig } from '@/app/siteConfig';
 import { Loader2 } from 'lucide-react';
 import { Metadata, NextPage } from 'next';
 import { redirect } from 'next/navigation';
 
 export const metadata: Metadata = {
-  title: 'Dashboard — Redirecting ...',
+  title: `${siteConfig.name} — Redirecting ...`,
 };
 
 const LoginRedirectPage: NextPage = () => {

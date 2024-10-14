@@ -1,3 +1,4 @@
+import { siteConfig } from '@/app/siteConfig';
 import TableSkeleton from '@/components/core/table-skeleton';
 import TagDashboard from '@/components/dashboards/tag';
 import TransactionsByTag from '@/components/tables/tag-transactions';
@@ -16,7 +17,7 @@ export async function generateMetadata(
 ): Promise<Metadata> {
   const { tagId } = params;
   const decodedTagId = decodeURIComponent(tagId);
-  return { title: `Dashboard — ${decodedTagId}` };
+  return { title: `${siteConfig.name} — ${decodedTagId}` };
 }
 
 const TagPage = async ({ params }: TagPageProps) => {

@@ -1,3 +1,4 @@
+import { siteConfig } from '@/app/siteConfig';
 import TableSkeleton from '@/components/core/table-skeleton';
 import QueryProvider from '@/components/providers/query-provider';
 import TransactionTable from '@/components/tables/transaction-table';
@@ -6,7 +7,7 @@ import { Metadata } from 'next';
 import { Suspense } from 'react';
 
 export const metadata: Metadata = {
-  title: 'Dashboard — Transactions',
+  title: `${siteConfig.name} — Transactions`,
 };
 
 // Disable data cache for transactions page

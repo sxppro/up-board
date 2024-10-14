@@ -1,11 +1,11 @@
 import { MetadataRoute } from 'next';
+import { siteConfig } from './siteConfig';
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'Up Board',
-    short_name: 'Up Board',
-    description:
-      'Personalised insights and data visualisation for your Up account',
+    name: siteConfig.name,
+    short_name: siteConfig.name,
+    description: siteConfig.description,
     display: 'standalone',
     background_color: '#fff',
     theme_color: '#fff',
