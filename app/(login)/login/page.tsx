@@ -1,3 +1,4 @@
+import { siteConfig } from '@/app/siteConfig';
 import UserAuthForm from '@/components/core/user-auth-form';
 import { buttonVariants } from '@/components/ui/button';
 import { cn } from '@/utils/helpers';
@@ -6,7 +7,7 @@ import { Metadata } from 'next';
 import Link from 'next/link';
 
 export const metadata: Metadata = {
-  title: 'Dashboard — Login',
+  title: `${siteConfig.name} — Login`,
 };
 
 export default async function AuthenticationPage() {

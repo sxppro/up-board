@@ -1,7 +1,13 @@
+import { siteConfig } from '@/app/siteConfig';
 import AccountsList, {
   AccountsListLoading,
 } from '@/components/tables/accounts-list';
+import { Metadata } from 'next';
 import { Suspense } from 'react';
+
+export const metadata: Metadata = {
+  title: `${siteConfig.name} — Accounts`,
+};
 
 const AccountsPage = () => {
   return (

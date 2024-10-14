@@ -1,10 +1,5 @@
 import Sidebar from '@/components/core/sidebar';
 import { getCurrentUser } from '@/utils/auth';
-import { Metadata } from 'next';
-
-export const metadata: Metadata = {
-  title: 'Dashboard',
-};
 
 export default async function DashboardLayout({
   children,

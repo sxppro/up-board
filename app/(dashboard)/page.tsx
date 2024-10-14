@@ -2,9 +2,10 @@ import Summary from '@/components/dashboards/overview/summary';
 import QueryProvider from '@/components/providers/query-provider';
 import { Separator } from '@/components/ui/separator';
 import { Metadata } from 'next';
+import { siteConfig } from '../siteConfig';
 
 export const metadata: Metadata = {
-  title: 'Dashboard — Overview',
+  title: `${siteConfig.name} — Overview`,
 };
 
 const DashboardPage = () => {
