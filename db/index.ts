@@ -322,7 +322,8 @@ export const getCategoryInfo = async (
           categoryName: attributes.name,
           amount: parseFloat(faker.finance.amount()),
           transactions: faker.number.int({ max: 100 }),
-        }));
+        }))
+        .sort((a, b) => (a.amount < b.amount ? 1 : -1));
     }
     console.error(err);
     return [];
