@@ -60,6 +60,7 @@ export default {
           personal: '#EF8E4B',
           home: '#BD79BD',
           transport: '#6491C9',
+          uncategorised: '#A0AEC0',
         },
         // light mode
         tremor: {
@@ -269,22 +270,26 @@ export default {
         /^(fill-(?:slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-(?:50|100|200|300|400|500|600|700|800|900|950))$/,
     },
     // Up custom colours
-    ...['up-good-life', 'up-personal', 'up-home', 'up-transport'].flatMap(
-      (customColor) => [
-        `bg-${customColor}`,
-        `border-${customColor}`,
-        `hover:bg-${customColor}`,
-        `hover:border-${customColor}`,
-        `hover:text-${customColor}`,
-        `fill-${customColor}`,
-        `ring-${customColor}`,
-        `stroke-${customColor}`,
-        `text-${customColor}`,
-        `ui-selected:bg-${customColor}`,
-        `ui-selected:border-${customColor}`,
-        `ui-selected:text-${customColor}`,
-      ]
-    ),
+    ...[
+      'up-good-life',
+      'up-personal',
+      'up-home',
+      'up-transport',
+      'up-uncategorised',
+    ].flatMap((customColor) => [
+      `bg-${customColor}`,
+      `border-${customColor}`,
+      `hover:bg-${customColor}`,
+      `hover:border-${customColor}`,
+      `hover:text-${customColor}`,
+      `fill-${customColor}`,
+      `ring-${customColor}`,
+      `stroke-${customColor}`,
+      `text-${customColor}`,
+      `ui-selected:bg-${customColor}`,
+      `ui-selected:border-${customColor}`,
+      `ui-selected:text-${customColor}`,
+    ]),
   ],
   plugins: [
     require('@headlessui/tailwindcss'),

@@ -1,8 +1,10 @@
 // Tremor Raw chartColors [v0.1.0]
 
+import { colours } from './constants';
+
 export type ColorUtility = 'bg' | 'stroke' | 'fill' | 'text';
 
-export const chartColors = {
+const defaultColors = {
   blue: {
     bg: 'bg-blue-500',
     stroke: 'stroke-blue-500',
@@ -57,7 +59,20 @@ export const chartColors = {
     fill: 'fill-fuchsia-500',
     text: 'text-fuchsia-500',
   },
-} as const satisfies {
+};
+
+export const chartColors = Object.assign(
+  {},
+  defaultColors,
+  ...Object.values(colours).map((colour) => ({
+    [colour]: {
+      bg: `bg-${colour}`,
+      stroke: `stroke-${colour}`,
+      fill: `fill-${colour}`,
+      text: `text-${colour}`,
+    },
+  }))
+) satisfies {
   [color: string]: {
     [key in ColorUtility]: string;
   };
