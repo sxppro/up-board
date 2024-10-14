@@ -140,9 +140,6 @@ dependencies:
   tailwind-variants:
     specifier: ^0.2.1
     version: 0.2.1(tailwindcss@3.4.13)
-  tailwindcss:
-    specifier: 3.4.13
-    version: 3.4.13
   tailwindcss-animate:
     specifier: ^1.0.7
     version: 1.0.7(tailwindcss@3.4.13)
@@ -178,6 +175,9 @@ devDependencies:
   openapi-typescript:
     specifier: ^6.4.0
     version: 6.4.0
+  tailwindcss:
+    specifier: 3.4.13
+    version: 3.4.13
   typescript:
     specifier: 5.5.3
     version: 5.5.3
