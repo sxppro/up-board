@@ -111,18 +111,46 @@ export const publicRouter = router({
     .input(
       z.object({
         dateRange: DateRangeSchema,
+        compareDateRange: DateRangeSchema.optional(),
         accountId: z.string(),
         type: TransactionIO,
       })
     )
-    .output(z.array(CumulativeIOSchema.extend({ FormattedDate: z.string() })))
+    .output(
+      z.array(
+        CumulativeIOSchema.extend({
+          FormattedDate: z.string(),
+          AmountCumulativePast: z.number().optional(),
+        })
+      )
+    )
     .query(async ({ input }) => {
-      const { dateRange, accountId, type } = input;
+      const { dateRange, compareDateRange, accountId, type } = input;
       const results = await getCumulativeIO(accountId, dateRange, type);
-      return results.map(({ Timestamp, ...rest }) => {
-        const FormattedDate = format(Timestamp, 'd MMM');
-        return { ...rest, Timestamp, FormattedDate };
-      });
+      if (compareDateRange) {
+        const compareResults = await getCumulativeIO(
+          accountId,
+          compareDateRange,
+          type
+        );
+        return compareResults.map(
+          ({ Timestamp, AmountCumulative, ...rest }, index) => {
+            const FormattedDate = format(Timestamp, 'd MMM');
+            return {
+              ...rest,
+              Timestamp,
+              AmountCumulativePast: AmountCumulative,
+              AmountCumulative: results[index]?.AmountCumulative ?? null,
+              FormattedDate,
+            };
+          }
+        );
+      } else {
+        return results.map(({ Timestamp, ...rest }) => {
+          const FormattedDate = format(Timestamp, 'd MMM');
+          return { ...rest, Timestamp, FormattedDate };
+        });
+      }
     }),
   getAccountBalance: publicProcedure
     .input(

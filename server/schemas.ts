@@ -165,6 +165,6 @@ export type AccountBalanceHistory = z.infer<typeof AccountBalanceHistorySchema>;
 
 export const CumulativeIOSchema = z.object({
   Timestamp: z.date(),
-  AmountCumulative: z.number(),
+  AmountCumulative: z.number().nullable(),
 });
 export type CumulativeIO = z.infer<typeof CumulativeIOSchema>;
