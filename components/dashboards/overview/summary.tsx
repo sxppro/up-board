@@ -102,7 +102,7 @@ const Summary = ({ accountId }: SummaryProps) => {
       </div>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         {!expenses || !income || !monthly ? (
-          <Skeleton className="sm:col-span-2 h-48" />
+          <Skeleton className="sm:col-span-2 h-80 sm:h-48" />
         ) : (
           <>
             <div className="flex flex-col gap-2">

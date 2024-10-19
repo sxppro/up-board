@@ -699,7 +699,9 @@ const cumulativeIOPipeline = (
       _id: 0,
       Timestamp: '$_id',
       AmountCumulative: {
-        $divide: ['$amountCumulative', 100],
+        $abs: {
+          $divide: ['$amountCumulative', 100],
+        },
       },
     },
   },
