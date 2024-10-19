@@ -188,8 +188,7 @@ const CumulativeSnapshot = ({
             </TabPanels>
           </TabGroup>
           <div className="flex flex-col sm:p-4">
-            <div className="flex-1 p-2">
-              {' '}
+            <div className="flex-1 flex flex-col gap-1 p-2">
               <p className="font-bold">Transaction account</p>{' '}
               {transactionalBalance ? (
                 <>
