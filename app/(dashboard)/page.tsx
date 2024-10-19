@@ -1,3 +1,4 @@
+import CumulativeSnapshot from '@/components/dashboards/overview/cumulative-snapshot';
 import Summary from '@/components/dashboards/overview/summary';
 import QueryProvider from '@/components/providers/query-provider';
 import { Separator } from '@/components/ui/separator';
@@ -15,17 +16,7 @@ const DashboardPage = async () => {
   return (
     <QueryProvider>
       <Summary accountId={accounts.at(0)?.id || ''} />
-      <section aria-labelledby="overview-income">
-        <div>
-          <h1
-            id="overview-income"
-            className="text-2xl font-semibold tracking-tight"
-          >
-            Income
-          </h1>
-          <Separator className="my-2" />
-        </div>
-      </section>
+      <CumulativeSnapshot accountId={accounts.at(0)?.id || ''} />
       <section aria-labelledby="overview-expenses">
         <div>
           <div className="flex items-center justify-between">

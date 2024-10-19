@@ -106,14 +106,14 @@ const Summary = ({ accountId }: SummaryProps) => {
         ) : (
           <>
             <div className="flex flex-col gap-2">
-              <p className="flex flex-row-reverse sm:flex-row items-baseline gap-2 justify-end">
-                <h2 className="sm:text-sm text-muted dark:text-muted-foreground">
-                  Total income
-                </h2>
+              <div className="flex items-baseline gap-2">
                 <span className="text-xl">
                   {formatCurrency(monthly[0]?.Income)}
                 </span>
-              </p>
+                <h2 className="sm:text-sm text-muted dark:text-muted-foreground">
+                  Total income
+                </h2>
+              </div>
               <CategoryBar
                 values={income.map(({ amount }) => amount)}
                 showLabels={false}
@@ -144,14 +144,14 @@ const Summary = ({ accountId }: SummaryProps) => {
               </ul>
             </div>
             <div className="flex flex-col gap-2">
-              <p className="flex items-baseline gap-2">
+              <div className="flex items-baseline gap-2">
                 <span className="text-xl">
                   {formatCurrency(monthly[0]?.Expenses)}
                 </span>
                 <h2 className="sm:text-sm text-muted dark:text-muted-foreground">
                   Total expenses
                 </h2>
-              </p>
+              </div>
               <CategoryBar
                 values={expenses.map(({ amount }) => amount)}
                 colors={expenses.map(
