@@ -752,7 +752,11 @@ export const getAccounts = async (
         id: '$_id',
         displayName: '$attributes.displayName',
         accountType: '$attributes.accountType',
-      });
+        balance: {
+          $toDecimal: '$attributes.balance.value',
+        },
+      })
+      .sort({ balance: -1 });
     const results = await cursor.toArray();
     return results;
   } catch (err) {

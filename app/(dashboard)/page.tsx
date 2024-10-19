@@ -11,11 +11,15 @@ export const metadata: Metadata = {
 
 const DashboardPage = async () => {
   const accounts = await getAccounts('TRANSACTIONAL');
+  const savAccounts = await getAccounts('SAVER');
 
   return (
     <QueryProvider>
       <Summary accountId={accounts.at(0)?.id || ''} />
-      <CumulativeSnapshot accountId={accounts.at(0)?.id || ''} />
+      <CumulativeSnapshot
+        accountId={accounts.at(0)?.id || ''}
+        savAccountId={savAccounts.at(0)?.id || ''}
+      />
     </QueryProvider>
   );
 };

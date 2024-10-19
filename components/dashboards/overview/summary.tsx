@@ -100,7 +100,7 @@ const Summary = ({ accountId }: SummaryProps) => {
         </div>
         <Separator className="my-2" />
       </div>
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:h-48">
         {!expenses || !income || !monthly ? (
           <Skeleton className="sm:col-span-2 h-80 sm:h-48" />
         ) : (

@@ -6,6 +6,7 @@ import { formatCurrency } from '@/utils/helpers';
 import { trpc } from '@/utils/trpc';
 import {
   LineChart,
+  SparkAreaChart,
   Tab,
   TabGroup,
   TabList,
@@ -22,11 +23,15 @@ import {
 
 interface CumulativeSnapshotProps {
   accountId: string;
+  savAccountId: string;
 }
 
 const now = new Date();
 
-const CumulativeSnapshot = ({ accountId }: CumulativeSnapshotProps) => {
+const CumulativeSnapshot = ({
+  accountId,
+  savAccountId,
+}: CumulativeSnapshotProps) => {
   const thisMonth = {
     from: startOfMonth(now),
     to: now,
@@ -80,6 +85,16 @@ const CumulativeSnapshot = ({ accountId }: CumulativeSnapshotProps) => {
   const { data: year } = trpc.public.getMonthlyInfo.useQuery({
     accountId,
     dateRange: thisYear,
+  });
+  const { data: transactionalBalance } = trpc.public.getAccountBalance.useQuery(
+    {
+      accountId,
+      dateRange: thisMonth,
+    }
+  );
+  const { data: savingsBalance } = trpc.public.getAccountBalance.useQuery({
+    accountId: savAccountId,
+    dateRange: thisMonth,
   });
 
   return (
@@ -172,6 +187,46 @@ const CumulativeSnapshot = ({ accountId }: CumulativeSnapshotProps) => {
               </TabPanel>
             </TabPanels>
           </TabGroup>
+          <div className="flex flex-col sm:p-4">
+            <div className="flex-1 p-2">
+              {' '}
+              <p className="font-bold">Transaction account</p>{' '}
+              {transactionalBalance ? (
+                <>
+                  <p className="text-2xl">
+                    {formatCurrency(transactionalBalance.at(-1)?.Balance)}
+                  </p>
+                  <SparkAreaChart
+                    className="w-full"
+                    data={transactionalBalance}
+                    index="FormattedDate"
+                    categories={['Balance']}
+                  />
+                </>
+              ) : (
+                <Skeleton className="w-full h-20" />
+              )}
+            </div>
+            <Separator />
+            <div className="flex-1 flex flex-col gap-1 p-2">
+              <p className="font-bold">Savings</p>
+              {savingsBalance ? (
+                <>
+                  <p className="text-2xl">
+                    {formatCurrency(savingsBalance.at(-1)?.Balance)}
+                  </p>
+                  <SparkAreaChart
+                    className="w-full"
+                    data={savingsBalance}
+                    index="FormattedDate"
+                    categories={['Balance']}
+                  />
+                </>
+              ) : (
+                <Skeleton className="w-full h-20" />
+              )}
+            </div>
+          </div>
         </div>
       </section>
       <section aria-labelledby="overview-expenses">
