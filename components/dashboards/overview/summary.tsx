@@ -110,7 +110,7 @@ const Summary = ({ accountId }: SummaryProps) => {
                 <span className="text-xl">
                   {formatCurrency(monthly[0]?.Income)}
                 </span>
-                <h2 className="sm:text-sm text-muted-foreground dark:text-muted-foreground">
+                <h2 className="sm:text-sm text-muted-foreground">
                   Total income
                 </h2>
               </div>
@@ -148,7 +148,7 @@ const Summary = ({ accountId }: SummaryProps) => {
                 <span className="text-xl">
                   {formatCurrency(monthly[0]?.Expenses)}
                 </span>
-                <h2 className="sm:text-sm text-muted-foreground dark:text-muted-foreground">
+                <h2 className="sm:text-sm text-muted-foreground">
                   Total expenses
                 </h2>
               </div>

@@ -93,7 +93,7 @@ const CumulativeSnapshot = ({ accountId }: CumulativeSnapshotProps) => {
             >
               Income
             </h1>
-            <p className="text-sm text-muted-foreground dark:text-muted-foreground">
+            <p className="text-sm text-muted-foreground">
               {dataUpdatedAtIncome
                 ? `Updated ${format(dataUpdatedAtIncome, 'HH:mm')}`
                 : 'Fetching...'}
@@ -104,11 +104,11 @@ const CumulativeSnapshot = ({ accountId }: CumulativeSnapshotProps) => {
         <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
           <TabGroup className="xl:col-span-2 ">
             <TabList className="space-x-0 items-center border-b">
-              <Tab className="pl-4 pr-12 py-3">
+              <Tab className="pl-4 pr-12 py-3 border-b-2 border-transparent">
                 <div className="flex flex-col gap-1 items-start">
-                  <p>Month to date</p>
+                  <p className="text-muted-foreground">Month to date</p>
                   {month ? (
-                    <p className="text-xl h-8">
+                    <p className="text-xl text-foreground h-8">
                       {formatCurrency(month[0]?.Income)}
                     </p>
                   ) : (
@@ -116,11 +116,12 @@ const CumulativeSnapshot = ({ accountId }: CumulativeSnapshotProps) => {
                   )}
                 </div>
               </Tab>
-              <Tab className="pl-4 pr-12 py-3">
+              <Separator orientation="vertical" className="h-[82px]" />
+              <Tab className="pl-4 pr-12 py-3 border-b-2 border-transparent">
                 <div className="flex flex-col gap-1 items-start">
-                  <p>Year to date</p>
+                  <p className="text-muted-foreground">Year to date</p>
                   {year ? (
-                    <p className="text-xl h-8">
+                    <p className="text-xl text-foreground h-8">
                       {formatCurrency(year[0]?.Income)}
                     </p>
                   ) : (
@@ -128,6 +129,7 @@ const CumulativeSnapshot = ({ accountId }: CumulativeSnapshotProps) => {
                   )}
                 </div>
               </Tab>
+              <Separator orientation="vertical" className="h-[82px]" />
             </TabList>
             <TabPanels>
               <TabPanel>
@@ -181,7 +183,7 @@ const CumulativeSnapshot = ({ accountId }: CumulativeSnapshotProps) => {
             >
               Expenses
             </h1>
-            <p className="text-sm text-muted-foreground dark:text-muted-foreground">
+            <p className="text-sm text-muted-foreground">
               {dataUpdatedAtExpenses
                 ? `Updated ${format(dataUpdatedAtExpenses, 'HH:mm')}`
                 : 'Fetching...'}
@@ -192,11 +194,11 @@ const CumulativeSnapshot = ({ accountId }: CumulativeSnapshotProps) => {
         <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
           <TabGroup className="xl:col-span-2 ">
             <TabList className="space-x-0 items-center border-b">
-              <Tab className="pl-4 pr-12 py-3">
+              <Tab className="pl-4 pr-12 py-3 border-b-2 border-transparent">
                 <div className="flex flex-col gap-1 items-start">
-                  <p>Month to date</p>
+                  <p className="text-muted-foreground">Month to date</p>
                   {month ? (
-                    <p className="text-xl h-8">
+                    <p className="text-xl text-foreground h-8">
                       {formatCurrency(month[0]?.Expenses)}
                     </p>
                   ) : (
@@ -204,11 +206,12 @@ const CumulativeSnapshot = ({ accountId }: CumulativeSnapshotProps) => {
                   )}
                 </div>
               </Tab>
-              <Tab className="pl-4 pr-12 py-3">
+              <Separator orientation="vertical" className="h-[82px]" />
+              <Tab className="pl-4 pr-12 py-3 border-b-2 border-transparent">
                 <div className="flex flex-col gap-1 items-start">
-                  <p>Year to date</p>
+                  <p className="text-muted-foreground">Year to date</p>
                   {year ? (
-                    <p className="text-xl h-8">
+                    <p className="text-xl text-foreground h-8">
                       {formatCurrency(year[0]?.Expenses)}
                     </p>
                   ) : (
@@ -216,6 +219,7 @@ const CumulativeSnapshot = ({ accountId }: CumulativeSnapshotProps) => {
                   )}
                 </div>
               </Tab>
+              <Separator orientation="vertical" className="h-[82px]" />
             </TabList>
             <TabPanels>
               <TabPanel>
