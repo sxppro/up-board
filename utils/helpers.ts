@@ -43,7 +43,7 @@ export const debounce = (callback: Function, wait: number) => {
  * @returns number formatted in AUD
  */
 export const formatCurrency = (
-  number: number,
+  number?: number,
   decimals: boolean = true,
   compact: boolean = false
 ) =>
@@ -54,7 +54,7 @@ export const formatCurrency = (
     maximumFractionDigits: decimals ? undefined : 0,
     ...(compact && { notation: 'compact', compactDisplay: 'short' }),
   })
-    .format(number)
+    .format(number ?? 0)
     .toString();
 
 /**
