@@ -86,6 +86,9 @@ export const TransactionIncomeInfoSchema = z.object({
 });
 export type TransactionIncomeInfo = z.infer<typeof TransactionIncomeInfoSchema>;
 
+export const TransactionIO = z.enum(['income', 'expense']);
+export type TransactionIOEnum = z.infer<typeof TransactionIO>;
+
 const TransactionStatusSchema = z.enum(['HELD', 'SETTLED']);
 
 const TransactionTypeSchema = z.enum(['transactions', 'transfers']);
@@ -116,7 +119,7 @@ export const TransactionRetrievalOptionsSchema = z.object({
   sort: z.enum(['time', 'amount']),
   sortDir: z.enum(['asc', 'desc']),
   limit: z.number().optional(),
-  type: z.enum(['income', 'expense']).optional(),
+  type: TransactionIO.optional(),
 });
 export type TransactionRetrievalOptions = z.infer<
   typeof TransactionRetrievalOptionsSchema
@@ -159,3 +162,9 @@ export const AccountBalanceHistorySchema = z.object({
   Balance: z.number(),
 });
 export type AccountBalanceHistory = z.infer<typeof AccountBalanceHistorySchema>;
+
+export const CumulativeIOSchema = z.object({
+  Timestamp: z.date(),
+  AmountCumulative: z.number(),
+});
+export type CumulativeIO = z.infer<typeof CumulativeIOSchema>;

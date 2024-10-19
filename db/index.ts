@@ -5,8 +5,10 @@ import transactions from '@/mock/transactions.json';
 import { getMockData } from '@/scripts/generateMockData';
 import {
   AccountMonthlyInfoSchema,
+  CumulativeIO,
   TagInfoSchema,
   TransactionIncomeInfo,
+  TransactionIOEnum,
   type AccountBalanceHistory,
   type AccountMonthlyInfo,
   type DateRange,
@@ -37,6 +39,7 @@ import {
   accountStatsPipeline,
   categoriesByPeriodPipeline,
   categoriesPipeline,
+  cumulativeIOPipeline,
   incomePipeline,
   searchTransactionsPipeline,
   tagInfoPipeline,
@@ -417,6 +420,35 @@ export const getCategoryInfoHistory = async (
         }));
       }
     }
+    console.error(err);
+    return [];
+  }
+};
+
+/**
+ * Cumulative income/expenses for an account
+ * over time
+ * @param accountId
+ * @param dateRange
+ * @param type
+ * @returns
+ */
+export const getCumulativeIO = async (
+  accountId: string,
+  dateRange: DateRange,
+  type: TransactionIOEnum
+) => {
+  try {
+    const transactions = await connectToCollection<DbTransactionResource>(
+      'up',
+      'transactions'
+    );
+    const cursor = transactions.aggregate<CumulativeIO>(
+      cumulativeIOPipeline(dateRange, accountId, type)
+    );
+    const results = await cursor.toArray();
+    return results;
+  } catch (err) {
     console.error(err);
     return [];
   }

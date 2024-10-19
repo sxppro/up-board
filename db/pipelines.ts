@@ -1,6 +1,7 @@
 import {
   DateRange,
   DateRangeGroupBy,
+  TransactionIOEnum,
   TransactionRetrievalOptions,
 } from '@/server/schemas';
 
@@ -614,6 +615,97 @@ const categoriesByPeriodPipeline = (
 ];
 
 /**
+ * Cumulative income or expenses
+ * @param dateRange
+ * @param accountId
+ * @param type
+ * @returns
+ */
+const cumulativeIOPipeline = (
+  dateRange: DateRange,
+  accountId: string,
+  type: TransactionIOEnum
+) => [
+  {
+    $match: {
+      'attributes.isCategorizable': true,
+      'attributes.createdAt': {
+        $gte: dateRange.from,
+        $lte: dateRange.to,
+      },
+      'attributes.amount.valueInBaseUnits': {
+        ...(type === 'income' ? { $gt: 0 } : { $lt: 0 }),
+      },
+      'relationships.account.data.id': accountId,
+    },
+  },
+  {
+    $group: {
+      _id: {
+        $dateTrunc: {
+          date: '$attributes.createdAt',
+          unit: 'day',
+        },
+      },
+      amount: {
+        $sum: '$attributes.amount.valueInBaseUnits',
+      },
+    },
+  },
+  {
+    $densify: {
+      field: '_id',
+      range: {
+        step: 1,
+        unit: 'day',
+        bounds: [
+          // Dates must be UTC (GMT+0)
+          dateRange.from,
+          dateRange.to,
+        ],
+      },
+    },
+  },
+  {
+    $addFields: {
+      amount: {
+        $cond: [
+          {
+            $not: ['$amount'],
+          },
+          0,
+          '$amount',
+        ],
+      },
+    },
+  },
+  {
+    $setWindowFields: {
+      sortBy: {
+        _id: 1,
+      },
+      output: {
+        amountCumulative: {
+          $sum: '$amount',
+          window: {
+            documents: ['unbounded', 'current'],
+          },
+        },
+      },
+    },
+  },
+  {
+    $project: {
+      _id: 0,
+      Timestamp: '$_id',
+      AmountCumulative: {
+        $divide: ['$amountCumulative', 100],
+      },
+    },
+  },
+];
+
+/**
  * Account balance over time
  * ! Note: timezone is currently hard-coded
  * @param from
@@ -846,6 +938,7 @@ export {
   accountStatsPipeline,
   categoriesByPeriodPipeline,
   categoriesPipeline,
+  cumulativeIOPipeline,
   incomePipeline,
   searchTransactionsPipeline,
   tagInfoPipeline,

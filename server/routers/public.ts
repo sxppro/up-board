@@ -3,6 +3,7 @@ import {
   getCategories,
   getCategoryInfo,
   getCategoryInfoHistory,
+  getCumulativeIO,
   getIncomeInfo,
   getMonthlyInfo,
   getTagInfo,
@@ -16,6 +17,7 @@ import { z } from 'zod';
 import {
   AccountBalanceHistorySchema,
   AccountMonthlyInfoSchema,
+  CumulativeIOSchema,
   DateRangeGroupBySchema,
   DateRangeSchema,
   TransactionCategoryInfoHistory,
@@ -24,6 +26,7 @@ import {
   TransactionCategoryTypeSchema,
   TransactionIdSchema,
   TransactionIncomeInfoSchema,
+  TransactionIO,
   TransactionResourceFilteredSchema,
   TransactionRetrievalOptionsSchema,
 } from '../schemas';
@@ -102,6 +105,23 @@ export const publicRouter = router({
           ({ amount, category }) => (remappedElem[category] = amount)
         );
         return remappedElem;
+      });
+    }),
+  getCumulativeIO: publicProcedure
+    .input(
+      z.object({
+        dateRange: DateRangeSchema,
+        accountId: z.string(),
+        type: TransactionIO,
+      })
+    )
+    .output(z.array(CumulativeIOSchema.extend({ FormattedDate: z.string() })))
+    .query(async ({ input }) => {
+      const { dateRange, accountId, type } = input;
+      const results = await getCumulativeIO(accountId, dateRange, type);
+      return results.map(({ Timestamp, ...rest }) => {
+        const FormattedDate = format(Timestamp, 'd MMM');
+        return { ...rest, Timestamp, FormattedDate };
       });
     }),
   getAccountBalance: publicProcedure
