@@ -1,5 +1,4 @@
 import CategoryInsightsGroup from '@/components/charts/category-insights-group';
-import ExpenseCategoriesCategoryBar from '@/components/charts/expense-categories-category-bar';
 import IOBar from '@/components/charts/io-bar';
 import MonthlyInOut from '@/components/charts/monthly-in-out';
 import DashboardCard from '@/components/core/dashboard-card';
@@ -37,9 +36,6 @@ const TransactionalCharts = ({
               }}
             />
           </Suspense>
-        </Col>
-        <Col>
-          <ExpenseCategoriesCategoryBar />
         </Col>
         <Col>
           <IOBar accountId={accountId}>

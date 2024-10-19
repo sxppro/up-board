@@ -1,6 +1,6 @@
 'use client';
 
-import ExpenseCategoriesCategoryBar from '@/components/charts/expense-categories-category-bar';
+import { CategoryBar } from '@/components/charts/tremor/category-bar';
 import {
   Select,
   SelectContent,
@@ -10,30 +10,59 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
+import { Skeleton } from '@/components/ui/skeleton';
+import { AvailableChartColors, chartColors } from '@/utils/charts';
+import { colours } from '@/utils/constants';
+import { cn, formatCurrency } from '@/utils/helpers';
+import { trpc } from '@/utils/trpc';
 import { subDays, subMonths, subYears } from 'date-fns';
 import { useState } from 'react';
 import { DateRange } from 'react-day-picker';
 
-const Summary = () => {
+interface SummaryProps {
+  accountId: string;
+}
+
+const Summary = ({ accountId }: SummaryProps) => {
   const now = new Date();
-  const [date, setDate] = useState<DateRange | undefined>({
+  const [dateRange, setDateRange] = useState<DateRange>({
     from: subDays(now, 30),
     to: now,
+  });
+  const { data: expenses } = trpc.public.getCategoryInfo.useQuery({
+    dateRange: {
+      from: dateRange?.from,
+      to: dateRange?.to,
+    },
+    type: 'parent',
+  });
+  const { data: income } = trpc.public.getIncomeInfo.useQuery({
+    dateRange: {
+      from: dateRange?.from,
+      to: dateRange?.to,
+    },
+  });
+  const { data: monthly } = trpc.public.getMonthlyInfo.useQuery({
+    accountId,
+    dateRange: {
+      from: dateRange?.from,
+      to: dateRange?.to,
+    },
   });
 
   const onValueChange = (value: string) => {
     if (value === '24h') {
-      setDate({ from: subDays(now, 1), to: now });
+      setDateRange({ from: subDays(now, 1), to: now });
     } else if (value === '7d') {
-      setDate({ from: subDays(now, 7), to: now });
+      setDateRange({ from: subDays(now, 7), to: now });
     } else if (value === '30d') {
-      setDate({ from: subDays(now, 30), to: now });
+      setDateRange({ from: subDays(now, 30), to: now });
     } else if (value === '3m') {
-      setDate({ from: subMonths(now, 3), to: now });
+      setDateRange({ from: subMonths(now, 3), to: now });
     } else if (value === '6m') {
-      setDate({ from: subMonths(now, 6), to: now });
+      setDateRange({ from: subMonths(now, 6), to: now });
     } else if (value === '12m') {
-      setDate({ from: subYears(now, 1), to: now });
+      setDateRange({ from: subYears(now, 1), to: now });
     }
   };
 
@@ -71,8 +100,92 @@ const Summary = () => {
         </div>
         <Separator className="my-2" />
       </div>
-      <div className="grid grid-cols-1 gap-14 sm:grid-cols-2">
-        <ExpenseCategoriesCategoryBar start={date?.from} end={date?.to} />
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        {!expenses || !income || !monthly ? (
+          <Skeleton className="sm:col-span-2 h-48" />
+        ) : (
+          <>
+            <div className="flex flex-col gap-2">
+              <p className="flex flex-row-reverse sm:flex-row items-baseline gap-2 justify-end">
+                <h2 className="sm:text-sm text-muted dark:text-muted-foreground">
+                  Total income
+                </h2>
+                <span className="text-xl">
+                  {formatCurrency(monthly[0]?.Income)}
+                </span>
+              </p>
+              <CategoryBar
+                values={income.map(({ amount }) => amount)}
+                showLabels={false}
+              />
+              <ul role="list" className="py-3 space-y-2">
+                {income.map(({ description, amount }, index) => (
+                  <li
+                    key={description}
+                    className="flex items-center gap-2 text-xs"
+                  >
+                    <span
+                      className={cn(
+                        `${chartColors[AvailableChartColors[index]].bg}`,
+                        'size-2.5 rounded-sm'
+                      )}
+                      aria-hidden="true"
+                    />
+                    <span className="text-gray-900 dark:text-gray-50">
+                      {description}
+                    </span>
+                    <span className="text-gray-600 dark:text-gray-400">
+                      ({formatCurrency(amount)} /{' '}
+                      {((amount / monthly[0].Income) * 100).toFixed(1)}
+                      %)
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="flex flex-col gap-2">
+              <p className="flex items-baseline gap-2">
+                <span className="text-xl">
+                  {formatCurrency(monthly[0]?.Expenses)}
+                </span>
+                <h2 className="sm:text-sm text-muted dark:text-muted-foreground">
+                  Total expenses
+                </h2>
+              </p>
+              <CategoryBar
+                values={expenses.map(({ amount }) => amount)}
+                colors={expenses.map(
+                  ({ categoryName }) => colours[categoryName]
+                )}
+                showLabels={false}
+              />
+              <ul role="list" className="py-3 space-y-2">
+                {expenses.map(({ category, categoryName, amount }) => (
+                  <li
+                    key={category}
+                    className="flex items-center gap-2 text-xs"
+                  >
+                    <span
+                      className={cn(
+                        `bg-${colours[categoryName]}`,
+                        'size-2.5 rounded-sm'
+                      )}
+                      aria-hidden="true"
+                    />
+                    <span className="text-gray-900 dark:text-gray-50">
+                      {categoryName}
+                    </span>
+                    <span className="text-gray-600 dark:text-gray-400">
+                      ({formatCurrency(amount)} /{' '}
+                      {((amount / monthly[0].Expenses) * 100).toFixed(1)}
+                      %)
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </>
+        )}
       </div>
     </section>
   );

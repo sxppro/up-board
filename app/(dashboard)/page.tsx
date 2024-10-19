@@ -1,6 +1,7 @@
 import Summary from '@/components/dashboards/overview/summary';
 import QueryProvider from '@/components/providers/query-provider';
 import { Separator } from '@/components/ui/separator';
+import { getAccounts } from '@/db';
 import { Metadata } from 'next';
 import { siteConfig } from '../siteConfig';
 
@@ -8,10 +9,12 @@ export const metadata: Metadata = {
   title: `${siteConfig.name} — Overview`,
 };
 
-const DashboardPage = () => {
+const DashboardPage = async () => {
+  const accounts = await getAccounts('TRANSACTIONAL');
+
   return (
     <QueryProvider>
-      <Summary />
+      <Summary accountId={accounts.at(0)?.id || ''} />
       <section aria-labelledby="overview-income">
         <div>
           <h1
