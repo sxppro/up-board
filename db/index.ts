@@ -6,6 +6,7 @@ import { getMockData } from '@/scripts/generateMockData';
 import {
   AccountMonthlyInfoSchema,
   TagInfoSchema,
+  TransactionIncomeInfo,
   type AccountBalanceHistory,
   type AccountMonthlyInfo,
   type DateRange,
@@ -36,6 +37,7 @@ import {
   accountStatsPipeline,
   categoriesByPeriodPipeline,
   categoriesPipeline,
+  incomePipeline,
   searchTransactionsPipeline,
   tagInfoPipeline,
   transactionsByDatePipeline,
@@ -269,6 +271,34 @@ export const getMonthlyInfo = async (
       } else {
         console.error(res.error);
       }
+    }
+    console.error(err);
+    return [];
+  }
+};
+
+/**
+ * Group income by merchant
+ * @param dateRange
+ * @returns
+ */
+export const getIncomeInfo = async (dateRange: DateRange) => {
+  try {
+    if (!process.env.UP_TRANS_ACC) {
+      throw new Error('Up transaction account not defined');
+    }
+    const transactions = await connectToCollection<DbTransactionResource>(
+      'up',
+      'transactions'
+    );
+    const cursor = transactions.aggregate<TransactionIncomeInfo>(
+      incomePipeline(dateRange.from, dateRange.to, process.env.UP_TRANS_ACC)
+    );
+    const results = await cursor.toArray();
+    return results;
+  } catch (err) {
+    if (err instanceof Error && err.message.includes('unauthorised')) {
+      return [];
     }
     console.error(err);
     return [];

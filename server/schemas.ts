@@ -79,6 +79,13 @@ export type TransactionCategoryInfoHistoryRaw = z.infer<
   typeof TransactionCategoryInfoHistoryRawSchema
 >;
 
+export const TransactionIncomeInfoSchema = z.object({
+  description: z.string(),
+  amount: z.number(),
+  transactions: z.number(),
+});
+export type TransactionIncomeInfo = z.infer<typeof TransactionIncomeInfoSchema>;
+
 const TransactionStatusSchema = z.enum(['HELD', 'SETTLED']);
 
 const TransactionTypeSchema = z.enum(['transactions', 'transfers']);

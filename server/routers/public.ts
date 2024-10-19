@@ -3,6 +3,7 @@ import {
   getCategories,
   getCategoryInfo,
   getCategoryInfoHistory,
+  getIncomeInfo,
   getMonthlyInfo,
   getTagInfo,
   getTransactionById,
@@ -22,6 +23,7 @@ import {
   TransactionCategoryInfoSchema,
   TransactionCategoryTypeSchema,
   TransactionIdSchema,
+  TransactionIncomeInfoSchema,
   TransactionResourceFilteredSchema,
   TransactionRetrievalOptionsSchema,
 } from '../schemas';
@@ -55,6 +57,17 @@ export const publicRouter = router({
             }
           : rest
       );
+    }),
+  getIncomeInfo: publicProcedure
+    .input(
+      z.object({
+        dateRange: DateRangeSchema,
+      })
+    )
+    .output(z.array(TransactionIncomeInfoSchema))
+    .query(async ({ input }) => {
+      const { dateRange } = input;
+      return await getIncomeInfo(dateRange);
     }),
   getCategoryInfo: publicProcedure
     .input(

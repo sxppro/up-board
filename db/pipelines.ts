@@ -311,6 +311,69 @@ const tagInfoPipeline = (tagId: string, monthly?: boolean) => [
 ];
 
 /**
+ * Groups income by transaction description
+ * (which is typically the merchant name)
+ * @param from
+ * @param to
+ * @param accountId
+ * @returns
+ */
+const incomePipeline = (from: Date, to: Date, accountId: string) => [
+  {
+    $match: {
+      'relationships.account.data.id': accountId,
+      'attributes.createdAt': {
+        $gte: from,
+        $lte: to,
+      },
+      'attributes.isCategorizable': true,
+      'attributes.amount.valueInBaseUnits': {
+        $gt: 0,
+      },
+    },
+  },
+  {
+    $project: {
+      description: {
+        $ifNull: ['$attributes.description', 'null'],
+      },
+      amount: {
+        $toDecimal: '$attributes.amount.value',
+      },
+    },
+  },
+  {
+    $group: {
+      _id: '$description',
+      amount: {
+        $sum: '$amount',
+      },
+      transactions: {
+        $sum: 1,
+      },
+    },
+  },
+  {
+    $project: {
+      _id: 0,
+      description: '$_id',
+      amount: {
+        $abs: {
+          $toDouble: '$amount',
+        },
+      },
+      transactions: 1,
+    },
+  },
+  {
+    $sort: {
+      amount: -1,
+      transactions: -1,
+    },
+  },
+  { $limit: 5 },
+];
+/**
  * Pipeline for calculating number of transactions
  * and total spending per transaction category for
  * specified account
@@ -783,6 +846,7 @@ export {
   accountStatsPipeline,
   categoriesByPeriodPipeline,
   categoriesPipeline,
+  incomePipeline,
   searchTransactionsPipeline,
   tagInfoPipeline,
   transactionsByDatePipeline,
