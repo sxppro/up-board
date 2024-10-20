@@ -114,7 +114,7 @@ const CumulativeSnapshot = ({
                 : 'Fetching...'}
             </p>
           </div>
-          <Separator className="my-2" />
+          <Separator className="mt-2" />
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
           <TabGroup className="xl:col-span-2 ">
@@ -243,7 +243,7 @@ const CumulativeSnapshot = ({
                 : 'Fetching...'}
             </p>
           </div>
-          <Separator className="my-2" />
+          <Separator className="mt-2" />
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
           <TabGroup className="xl:col-span-2 ">
