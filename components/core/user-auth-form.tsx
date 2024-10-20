@@ -72,7 +72,7 @@ const UserAuthForm = ({ className, ...props }: UserAuthFormProps) => {
         onClick={signInWithGoogle}
         disabled={isLoading}
       >
-        <GoogleLogo weight="bold" className="mr-2 h-4 w-4" /> Google
+        <GoogleLogo weight="bold" className="h-4 w-4" /> Google
       </Button>
     </div>
   );

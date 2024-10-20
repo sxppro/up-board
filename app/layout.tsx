@@ -45,7 +45,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={`${GeistSans.className} antialiased dark:bg-gray-950`}>
         <ThemeProvider
           attribute="class"
