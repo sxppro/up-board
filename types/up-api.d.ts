@@ -3,1558 +3,1999 @@
  * Do not make direct changes to the file.
  */
 
-
 export interface paths {
-  "/accounts": {
-    /**
-     * List accounts
-     * @description Retrieve a paginated list of all accounts for the currently
-     * authenticated user. The returned list is paginated and can be scrolled
-     * by following the `prev` and `next` links where present.
-     */
-    get: {
-      parameters: {
-        query?: {
-          /**
-           * @description The number of records to return in each page.
-           *
-           * @example 30
-           */
-          "page[size]"?: number;
-          /**
-           * @description The type of account for which to return records. This
-           * can be used to filter Savers from spending accounts.
-           *
-           * @example SAVER
-           */
-          "filter[accountType]"?: components["schemas"]["AccountTypeEnum"];
-          /**
-           * @description The account ownership structure for which to return
-           * records. This can be used to filter 2Up accounts from Up
-           * accounts.
-           *
-           * @example INDIVIDUAL
-           */
-          "filter[ownershipType]"?: components["schemas"]["OwnershipTypeEnum"];
+    "/accounts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
-      };
-      responses: {
-        /** @description Successful Response */
-        200: {
-          content: {
-            "application/json": components["schemas"]["ListAccountsResponse"];
-          };
+        /**
+         * List accounts
+         * @description Retrieve a paginated list of all accounts for the currently
+         *     authenticated user. The returned list is paginated and can be scrolled
+         *     by following the `prev` and `next` links where present.
+         *
+         */
+        get: {
+            parameters: {
+                query?: {
+                    /**
+                     * @description The number of records to return in each page.
+                     *
+                     * @example 30
+                     */
+                    "page[size]"?: number;
+                    /**
+                     * @description The type of account for which to return records. This
+                     *     can be used to filter Savers from spending accounts.
+                     *
+                     * @example SAVER
+                     */
+                    "filter[accountType]"?: components["schemas"]["AccountTypeEnum"];
+                    /**
+                     * @description The account ownership structure for which to return
+                     *     records. This can be used to filter 2Up accounts from Up
+                     *     accounts.
+                     *
+                     * @example INDIVIDUAL
+                     */
+                    "filter[ownershipType]"?: components["schemas"]["OwnershipTypeEnum"];
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Successful Response */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ListAccountsResponse"];
+                    };
+                };
+            };
         };
-      };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-  };
-  "/accounts/{id}": {
-    /**
-     * Retrieve account
-     * @description Retrieve a specific account by providing its unique identifier.
-     */
-    get: {
-      parameters: {
-        path: {
-          /**
-           * @description The unique identifier for the account.
-           *
-           * @example 7699cfe5-eabd-4855-bbe7-9dfe3f70cebf
-           */
-          id: string;
+    "/accounts/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
-      };
-      responses: {
-        /** @description Successful Response */
-        200: {
-          content: {
-            "application/json": components["schemas"]["GetAccountResponse"];
-          };
+        /**
+         * Retrieve account
+         * @description Retrieve a specific account by providing its unique identifier.
+         *
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description The unique identifier for the account.
+                     *
+                     * @example 7699cfe5-eabd-4855-bbe7-9dfe3f70cebf
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Successful Response */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GetAccountResponse"];
+                    };
+                };
+            };
         };
-      };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-  };
-  "/attachments": {
-    /**
-     * List attachments
-     * @description Retrieve a list of all attachments. The returned list is [paginated](#pagination) and can
-     * be scrolled by following the `next` and `prev` links where present.
-     */
-    get: {
-      responses: {
-        /** @description Successful Response */
-        200: {
-          content: {
-            "application/json": components["schemas"]["ListAttachmentsResponse"];
-          };
+    "/attachments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
-      };
+        /**
+         * List attachments
+         * @description Retrieve a list of all attachments. The returned list is [paginated](#pagination) and can
+         *     be scrolled by following the `next` and `prev` links where present.
+         *
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Successful Response */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ListAttachmentsResponse"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-  };
-  "/attachments/{id}": {
-    /**
-     * Retrieve attachment
-     * @description Retrieve a specific attachment by providing its unique identifier.
-     */
-    get: {
-      parameters: {
-        path: {
-          /**
-           * @description The unique identifier for the attachment.
-           *
-           * @example 3672d7fb-e56d-4c4a-b546-7c11ddb5e5e7
-           */
-          id: string;
+    "/attachments/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
-      };
-      responses: {
-        /** @description Successful Response */
-        200: {
-          content: {
-            "application/json": components["schemas"]["GetAttachmentResponse"];
-          };
+        /**
+         * Retrieve attachment
+         * @description Retrieve a specific attachment by providing its unique identifier.
+         *
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description The unique identifier for the attachment.
+                     *
+                     * @example 3672d7fb-e56d-4c4a-b546-7c11ddb5e5e7
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Successful Response */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GetAttachmentResponse"];
+                    };
+                };
+            };
         };
-      };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-  };
-  "/categories": {
-    /**
-     * List categories
-     * @description Retrieve a list of all categories and their ancestry. The returned list
-     * is not paginated.
-     */
-    get: {
-      parameters: {
-        query?: {
-          /**
-           * @description The unique identifier of a parent category for which to
-           * return only its children. Providing an invalid category
-           * identifier results in a `404` response.
-           *
-           * @example good-life
-           */
-          "filter[parent]"?: string;
+    "/categories": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
-      };
-      responses: {
-        /** @description Successful Response */
-        200: {
-          content: {
-            "application/json": components["schemas"]["ListCategoriesResponse"];
-          };
+        /**
+         * List categories
+         * @description Retrieve a list of all categories and their ancestry. The returned list
+         *     is not paginated.
+         *
+         */
+        get: {
+            parameters: {
+                query?: {
+                    /**
+                     * @description The unique identifier of a parent category for which to
+                     *     return only its children. Providing an invalid category
+                     *     identifier results in a `404` response.
+                     *
+                     * @example good-life
+                     */
+                    "filter[parent]"?: string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Successful Response */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ListCategoriesResponse"];
+                    };
+                };
+            };
         };
-      };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-  };
-  "/categories/{id}": {
-    /**
-     * Retrieve category
-     * @description Retrieve a specific category by providing its unique identifier.
-     */
-    get: {
-      parameters: {
-        path: {
-          /**
-           * @description The unique identifier for the category.
-           *
-           * @example restaurants-and-cafes
-           */
-          id: string;
+    "/categories/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
-      };
-      responses: {
-        /** @description Successful Response */
-        200: {
-          content: {
-            "application/json": components["schemas"]["GetCategoryResponse"];
-          };
+        /**
+         * Retrieve category
+         * @description Retrieve a specific category by providing its unique identifier.
+         *
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description The unique identifier for the category.
+                     *
+                     * @example restaurants-and-cafes
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Successful Response */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GetCategoryResponse"];
+                    };
+                };
+            };
         };
-      };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-  };
-  "/transactions/{transactionId}/relationships/category": {
-    /**
-     * Categorize transaction
-     * @description Updates the category associated with a transaction. Only transactions
-     * for which `isCategorizable` is set to true support this operation. The
-     * `id` is taken from the list exposed on `/categories` and cannot be one of
-     * the top-level (parent) categories. To de-categorize a transaction, set
-     * the entire `data` key to `null`. An HTTP `204` is returned on success.
-     * The associated category, along with its request URL is also exposed via
-     * the `category` relationship on the transaction resource returned from
-     * `/transactions/{id}`.
-     */
-    patch: {
-      parameters: {
-        path: {
-          /**
-           * @description The unique identifier for the transaction.
-           *
-           * @example 88b4ed70-7f15-4b46-a676-46aafad4c183
-           */
-          transactionId: string;
+    "/transactions/{transactionId}/relationships/category": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
-      };
-      requestBody?: {
-        content: {
-          "application/json": components["schemas"]["UpdateTransactionCategoryRequest"];
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Categorize transaction
+         * @description Updates the category associated with a transaction. Only transactions
+         *     for which `isCategorizable` is set to true support this operation. The
+         *     `id` is taken from the list exposed on `/categories` and cannot be one of
+         *     the top-level (parent) categories. To de-categorize a transaction, set
+         *     the entire `data` key to `null`. An HTTP `204` is returned on success.
+         *     The associated category, along with its request URL is also exposed via
+         *     the `category` relationship on the transaction resource returned from
+         *     `/transactions/{id}`.
+         *
+         */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description The unique identifier for the transaction.
+                     *
+                     * @example 88b4ed70-7f15-4b46-a676-46aafad4c183
+                     */
+                    transactionId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": components["schemas"]["UpdateTransactionCategoryRequest"];
+                };
+            };
+            responses: {
+                /** @description Successful Response */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
         };
-      };
-      responses: {
-        /** @description Successful Response */
-        204: never;
-      };
+        trace?: never;
     };
-  };
-  "/util/ping": {
-    /**
-     * Ping
-     * @description Make a basic ping request to the API. This is useful to verify that
-     * authentication is functioning correctly. On authentication success an
-     * HTTP `200` status is returned. On failure an HTTP `401` error response
-     * is returned.
-     */
-    get: {
-      responses: {
-        /** @description Successful Response */
-        200: {
-          content: {
-            "application/json": components["schemas"]["PingResponse"];
-          };
+    "/util/ping": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
-        /** @description Not Authorized */
-        401: {
-          content: {
-            "application/json": components["schemas"]["ErrorResponse"];
-          };
+        /**
+         * Ping
+         * @description Make a basic ping request to the API. This is useful to verify that
+         *     authentication is functioning correctly. On authentication success an
+         *     HTTP `200` status is returned. On failure an HTTP `401` error response
+         *     is returned.
+         *
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Successful Response */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["PingResponse"];
+                    };
+                };
+                /** @description Not Authorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+            };
         };
-      };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-  };
-  "/tags": {
-    /**
-     * List tags
-     * @description Retrieve a list of all tags currently in use. The returned list is
-     * [paginated](#pagination) and can be scrolled by following the `next`
-     * and `prev` links where present. Results are ordered lexicographically.
-     * The `transactions` relationship for each tag exposes a link
-     * to get the transactions with the given tag.
-     */
-    get: {
-      parameters: {
-        query?: {
-          /**
-           * @description The number of records to return in each page.
-           *
-           * @example 50
-           */
-          "page[size]"?: number;
+    "/tags": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
-      };
-      responses: {
-        /** @description Successful Response */
-        200: {
-          content: {
-            "application/json": components["schemas"]["ListTagsResponse"];
-          };
+        /**
+         * List tags
+         * @description Retrieve a list of all tags currently in use. The returned list is
+         *     [paginated](#pagination) and can be scrolled by following the `next`
+         *     and `prev` links where present. Results are ordered lexicographically.
+         *     The `transactions` relationship for each tag exposes a link
+         *     to get the transactions with the given tag.
+         *
+         */
+        get: {
+            parameters: {
+                query?: {
+                    /**
+                     * @description The number of records to return in each page.
+                     *
+                     * @example 50
+                     */
+                    "page[size]"?: number;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Successful Response */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ListTagsResponse"];
+                    };
+                };
+            };
         };
-      };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-  };
-  "/transactions/{transactionId}/relationships/tags": {
-    /**
-     * Add tags to transaction
-     * @description Associates one or more tags with a specific transaction. No more than 6
-     * tags may be present on any single transaction. Duplicate tags are
-     * silently ignored. An HTTP `204` is returned on success. The associated
-     * tags, along with this request URL, are also exposed via the `tags`
-     * relationship on the transaction resource returned from
-     * `/transactions/{id}`.
-     */
-    post: {
-      parameters: {
-        path: {
-          /**
-           * @description The unique identifier for the transaction.
-           *
-           * @example 6259eac2-feac-417d-893e-84876c575913
-           */
-          transactionId: string;
+    "/transactions/{transactionId}/relationships/tags": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
-      };
-      requestBody?: {
-        content: {
-          "application/json": components["schemas"]["UpdateTransactionTagsRequest"];
+        get?: never;
+        put?: never;
+        /**
+         * Add tags to transaction
+         * @description Associates one or more tags with a specific transaction. No more than 6
+         *     tags may be present on any single transaction. Duplicate tags are
+         *     silently ignored. An HTTP `204` is returned on success. The associated
+         *     tags, along with this request URL, are also exposed via the `tags`
+         *     relationship on the transaction resource returned from
+         *     `/transactions/{id}`.
+         *
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description The unique identifier for the transaction.
+                     *
+                     * @example 6259eac2-feac-417d-893e-84876c575913
+                     */
+                    transactionId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": components["schemas"]["UpdateTransactionTagsRequest"];
+                };
+            };
+            responses: {
+                /** @description Successful Response */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
         };
-      };
-      responses: {
-        /** @description Successful Response */
-        204: never;
-      };
+        /**
+         * Remove tags from transaction
+         * @description Disassociates one or more tags from a specific transaction. Tags that are
+         *     not associated are silently ignored. An HTTP `204` is returned on
+         *     success. The associated tags, along with this request URL, are also
+         *     exposed via the `tags` relationship on the transaction resource returned
+         *     from `/transactions/{id}`.
+         *
+         */
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description The unique identifier for the transaction.
+                     *
+                     * @example 86aacb90-a718-43f2-bb06-c1e32542ab26
+                     */
+                    transactionId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": components["schemas"]["UpdateTransactionTagsRequest"];
+                };
+            };
+            responses: {
+                /** @description Successful Response */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    /**
-     * Remove tags from transaction
-     * @description Disassociates one or more tags from a specific transaction. Tags that are
-     * not associated are silently ignored. An HTTP `204` is returned on
-     * success. The associated tags, along with this request URL, are also
-     * exposed via the `tags` relationship on the transaction resource returned
-     * from `/transactions/{id}`.
-     */
-    delete: {
-      parameters: {
-        path: {
-          /**
-           * @description The unique identifier for the transaction.
-           *
-           * @example 86aacb90-a718-43f2-bb06-c1e32542ab26
-           */
-          transactionId: string;
+    "/transactions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
-      };
-      requestBody?: {
-        content: {
-          "application/json": components["schemas"]["UpdateTransactionTagsRequest"];
+        /**
+         * List transactions
+         * @description Retrieve a list of all transactions across all accounts for the currently
+         *     authenticated user. The returned list is [paginated](#pagination) and can
+         *     be scrolled by following the `next` and `prev` links where present. To
+         *     narrow the results to a specific date range pass one or both of
+         *     `filter[since]` and `filter[until]` in the query string. These filter
+         *     parameters **should not** be used for pagination. Results are ordered
+         *     newest first to oldest last.
+         *
+         */
+        get: {
+            parameters: {
+                query?: {
+                    /**
+                     * @description The number of records to return in each page.
+                     *
+                     * @example 30
+                     */
+                    "page[size]"?: number;
+                    /**
+                     * @description The transaction status for which to return records. This
+                     *     can be used to filter `HELD` transactions from those
+                     *     that are `SETTLED`.
+                     *
+                     * @example HELD
+                     */
+                    "filter[status]"?: components["schemas"]["TransactionStatusEnum"];
+                    /**
+                     * @description The start date-time from which to return records,
+                     *     formatted according to rfc-3339. Not to be used for
+                     *     pagination purposes.
+                     *
+                     * @example 2020-01-01T01:02:03+10:00
+                     */
+                    "filter[since]"?: string;
+                    /**
+                     * @description The end date-time up to which to return records,
+                     *     formatted according to rfc-3339. Not to be used for
+                     *     pagination purposes.
+                     *
+                     * @example 2020-02-01T01:02:03+10:00
+                     */
+                    "filter[until]"?: string;
+                    /**
+                     * @description The category identifier for which to filter transactions.
+                     *     Both parent and child categories can be filtered through
+                     *     this parameter. Providing an invalid category identifier
+                     *     results in a `404` response.
+                     *
+                     * @example good-life
+                     */
+                    "filter[category]"?: string;
+                    /**
+                     * @description A transaction tag to filter for which to return records.
+                     *     If the tag does not exist, zero records are returned and
+                     *     a success response is given.
+                     *
+                     * @example Holiday
+                     */
+                    "filter[tag]"?: string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Successful Response */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ListTransactionsResponse"];
+                    };
+                };
+            };
         };
-      };
-      responses: {
-        /** @description Successful Response */
-        204: never;
-      };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-  };
-  "/transactions": {
-    /**
-     * List transactions
-     * @description Retrieve a list of all transactions across all accounts for the currently
-     * authenticated user. The returned list is [paginated](#pagination) and can
-     * be scrolled by following the `next` and `prev` links where present. To
-     * narrow the results to a specific date range pass one or both of
-     * `filter[since]` and `filter[until]` in the query string. These filter
-     * parameters **should not** be used for pagination. Results are ordered
-     * newest first to oldest last.
-     */
-    get: {
-      parameters: {
-        query?: {
-          /**
-           * @description The number of records to return in each page.
-           *
-           * @example 30
-           */
-          "page[size]"?: number;
-          /**
-           * @description The transaction status for which to return records. This
-           * can be used to filter `HELD` transactions from those
-           * that are `SETTLED`.
-           *
-           * @example HELD
-           */
-          "filter[status]"?: components["schemas"]["TransactionStatusEnum"];
-          /**
-           * @description The start date-time from which to return records,
-           * formatted according to rfc-3339. Not to be used for
-           * pagination purposes.
-           *
-           * @example 2020-01-01T01:02:03+10:00
-           */
-          "filter[since]"?: string;
-          /**
-           * @description The end date-time up to which to return records,
-           * formatted according to rfc-3339. Not to be used for
-           * pagination purposes.
-           *
-           * @example 2020-02-01T01:02:03+10:00
-           */
-          "filter[until]"?: string;
-          /**
-           * @description The category identifier for which to filter transactions.
-           * Both parent and child categories can be filtered through
-           * this parameter. Providing an invalid category identifier
-           * results in a `404` response.
-           *
-           * @example good-life
-           */
-          "filter[category]"?: string;
-          /**
-           * @description A transaction tag to filter for which to return records.
-           * If the tag does not exist, zero records are returned and
-           * a success response is given.
-           *
-           * @example Holiday
-           */
-          "filter[tag]"?: string;
+    "/transactions/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
-      };
-      responses: {
-        /** @description Successful Response */
-        200: {
-          content: {
-            "application/json": components["schemas"]["ListTransactionsResponse"];
-          };
+        /**
+         * Retrieve transaction
+         * @description Retrieve a specific transaction by providing its unique identifier.
+         *
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description The unique identifier for the transaction.
+                     *
+                     * @example 57a749fd-4fc9-40da-a8d9-ec9cf1d8c9ff
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Successful Response */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GetTransactionResponse"];
+                    };
+                };
+            };
         };
-      };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-  };
-  "/transactions/{id}": {
-    /**
-     * Retrieve transaction
-     * @description Retrieve a specific transaction by providing its unique identifier.
-     */
-    get: {
-      parameters: {
-        path: {
-          /**
-           * @description The unique identifier for the transaction.
-           *
-           * @example 57a749fd-4fc9-40da-a8d9-ec9cf1d8c9ff
-           */
-          id: string;
+    "/accounts/{accountId}/transactions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
-      };
-      responses: {
-        /** @description Successful Response */
-        200: {
-          content: {
-            "application/json": components["schemas"]["GetTransactionResponse"];
-          };
+        /**
+         * List transactions by account
+         * @description Retrieve a list of all transactions for a specific account. The returned
+         *     list is [paginated](#pagination) and can be scrolled by following the
+         *     `next` and `prev` links where present. To narrow the results to a
+         *     specific date range pass one or both of `filter[since]` and
+         *     `filter[until]` in the query string. These filter parameters
+         *     **should not** be used for pagination. Results are ordered newest first
+         *     to oldest last.
+         *
+         */
+        get: {
+            parameters: {
+                query?: {
+                    /**
+                     * @description The number of records to return in each page.
+                     *
+                     * @example 30
+                     */
+                    "page[size]"?: number;
+                    /**
+                     * @description The transaction status for which to return records. This
+                     *     can be used to filter `HELD` transactions from those
+                     *     that are `SETTLED`.
+                     *
+                     * @example HELD
+                     */
+                    "filter[status]"?: components["schemas"]["TransactionStatusEnum"];
+                    /**
+                     * @description The start date-time from which to return records,
+                     *     formatted according to rfc-3339. Not to be used for
+                     *     pagination purposes.
+                     *
+                     * @example 2020-01-01T01:02:03+10:00
+                     */
+                    "filter[since]"?: string;
+                    /**
+                     * @description The end date-time up to which to return records,
+                     *     formatted according to rfc-3339. Not to be used for
+                     *     pagination purposes.
+                     *
+                     * @example 2020-02-01T01:02:03+10:00
+                     */
+                    "filter[until]"?: string;
+                    /**
+                     * @description The category identifier for which to filter transactions.
+                     *     Both parent and child categories can be filtered through
+                     *     this parameter. Providing an invalid category identifier
+                     *     results in a `404` response.
+                     *
+                     * @example good-life
+                     */
+                    "filter[category]"?: string;
+                    /**
+                     * @description A transaction tag to filter for which to return records.
+                     *     If the tag does not exist, zero records are returned and
+                     *     a success response is given.
+                     *
+                     * @example Holiday
+                     */
+                    "filter[tag]"?: string;
+                };
+                header?: never;
+                path: {
+                    /**
+                     * @description The unique identifier for the account.
+                     *
+                     * @example 689a08de-fa65-4f2d-8b58-e49b17117dc7
+                     */
+                    accountId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Successful Response */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ListTransactionsResponse"];
+                    };
+                };
+            };
         };
-      };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-  };
-  "/accounts/{accountId}/transactions": {
-    /**
-     * List transactions by account
-     * @description Retrieve a list of all transactions for a specific account. The returned
-     * list is [paginated](#pagination) and can be scrolled by following the
-     * `next` and `prev` links where present. To narrow the results to a
-     * specific date range pass one or both of `filter[since]` and
-     * `filter[until]` in the query string. These filter parameters
-     * **should not** be used for pagination. Results are ordered newest first
-     * to oldest last.
-     */
-    get: {
-      parameters: {
-        query?: {
-          /**
-           * @description The number of records to return in each page.
-           *
-           * @example 30
-           */
-          "page[size]"?: number;
-          /**
-           * @description The transaction status for which to return records. This
-           * can be used to filter `HELD` transactions from those
-           * that are `SETTLED`.
-           *
-           * @example HELD
-           */
-          "filter[status]"?: components["schemas"]["TransactionStatusEnum"];
-          /**
-           * @description The start date-time from which to return records,
-           * formatted according to rfc-3339. Not to be used for
-           * pagination purposes.
-           *
-           * @example 2020-01-01T01:02:03+10:00
-           */
-          "filter[since]"?: string;
-          /**
-           * @description The end date-time up to which to return records,
-           * formatted according to rfc-3339. Not to be used for
-           * pagination purposes.
-           *
-           * @example 2020-02-01T01:02:03+10:00
-           */
-          "filter[until]"?: string;
-          /**
-           * @description The category identifier for which to filter transactions.
-           * Both parent and child categories can be filtered through
-           * this parameter. Providing an invalid category identifier
-           * results in a `404` response.
-           *
-           * @example good-life
-           */
-          "filter[category]"?: string;
-          /**
-           * @description A transaction tag to filter for which to return records.
-           * If the tag does not exist, zero records are returned and
-           * a success response is given.
-           *
-           * @example Holiday
-           */
-          "filter[tag]"?: string;
+    "/webhooks": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
-        path: {
-          /**
-           * @description The unique identifier for the account.
-           *
-           * @example 689a08de-fa65-4f2d-8b58-e49b17117dc7
-           */
-          accountId: string;
+        /**
+         * List webhooks
+         * @description Retrieve a list of configured webhooks. The returned list is
+         *     [paginated](#pagination) and can be scrolled by following the `next`
+         *     and `prev` links where present. Results are ordered oldest first to
+         *     newest last.
+         *
+         */
+        get: {
+            parameters: {
+                query?: {
+                    /**
+                     * @description The number of records to return in each page.
+                     *
+                     * @example 30
+                     */
+                    "page[size]"?: number;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Successful Response */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ListWebhooksResponse"];
+                    };
+                };
+            };
         };
-      };
-      responses: {
-        /** @description Successful Response */
-        200: {
-          content: {
-            "application/json": components["schemas"]["ListTransactionsResponse"];
-          };
+        put?: never;
+        /**
+         * Create webhook
+         * @description Create a new webhook with a given URL. The URL will receive webhook
+         *     events as JSON-encoded `POST` requests. The URL must respond with a HTTP
+         *     `200` status on success.
+         *
+         *     There is currently a limit of 10 webhooks at any given time. Once this
+         *     limit is reached, existing webhooks will need to be deleted before new
+         *     webhooks can be created.
+         *
+         *     Event delivery is retried with exponential backoff if the URL is
+         *     unreachable or it does not respond with a `200` status. The response
+         *     includes a `secretKey` attribute, which is used to sign requests sent to
+         *     the webhook URL. It will not be returned from any other endpoints within
+         *     the Up API. If the `secretKey` is lost, simply create a new webhook with
+         *     the same URL, capture its `secretKey` and then delete the original
+         *     webhook. See [Handling webhook events](#callback_post_webhookURL) for
+         *     details on how to process webhook events.
+         *
+         *     It is probably a good idea to test the webhook by
+         *     [sending it a `PING` event](#post_webhooks_webhookId_ping) after creating
+         *     it.
+         *
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": components["schemas"]["CreateWebhookRequest"];
+                };
+            };
+            responses: {
+                /** @description Created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["CreateWebhookResponse"];
+                    };
+                };
+            };
         };
-      };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-  };
-  "/webhooks": {
-    /**
-     * List webhooks
-     * @description Retrieve a list of configured webhooks. The returned list is
-     * [paginated](#pagination) and can be scrolled by following the `next`
-     * and `prev` links where present. Results are ordered oldest first to
-     * newest last.
-     */
-    get: {
-      parameters: {
-        query?: {
-          /**
-           * @description The number of records to return in each page.
-           *
-           * @example 30
-           */
-          "page[size]"?: number;
+    "/webhooks/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
-      };
-      responses: {
-        /** @description Successful Response */
-        200: {
-          content: {
-            "application/json": components["schemas"]["ListWebhooksResponse"];
-          };
+        /**
+         * Retrieve webhook
+         * @description Retrieve a specific webhook by providing its unique identifier.
+         *
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description The unique identifier for the webhook.
+                     *
+                     * @example 48984142-bb60-4fd9-8db2-ed72cfc2a0ba
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Successful Response */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GetWebhookResponse"];
+                    };
+                };
+            };
         };
-      };
+        put?: never;
+        post?: never;
+        /**
+         * Delete webhook
+         * @description Delete a specific webhook by providing its unique identifier. Once
+         *     deleted, webhook events will no longer be sent to the configured URL.
+         *
+         */
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description The unique identifier for the webhook.
+                     *
+                     * @example be530308-60e2-489b-9c73-ab0db6fd132d
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Deleted */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    /**
-     * Create webhook
-     * @description Create a new webhook with a given URL. The URL will receive webhook
-     * events as JSON-encoded `POST` requests. The URL must respond with a HTTP
-     * `200` status on success.
-     *
-     * There is currently a limit of 10 webhooks at any given time. Once this
-     * limit is reached, existing webhooks will need to be deleted before new
-     * webhooks can be created.
-     *
-     * Event delivery is retried with exponential backoff if the URL is
-     * unreachable or it does not respond with a `200` status. The response
-     * includes a `secretKey` attribute, which is used to sign requests sent to
-     * the webhook URL. It will not be returned from any other endpoints within
-     * the Up API. If the `secretKey` is lost, simply create a new webhook with
-     * the same URL, capture its `secretKey` and then delete the original
-     * webhook. See [Handling webhook events](#callback_post_webhookURL) for
-     * details on how to process webhook events.
-     *
-     * It is probably a good idea to test the webhook by
-     * [sending it a `PING` event](#post_webhooks_webhookId_ping) after creating
-     * it.
-     */
-    post: {
-      requestBody?: {
-        content: {
-          "application/json": components["schemas"]["CreateWebhookRequest"];
+    "/webhooks/{webhookId}/ping": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
-      };
-      responses: {
-        /** @description Created */
-        201: {
-          content: {
-            "application/json": components["schemas"]["CreateWebhookResponse"];
-          };
+        get?: never;
+        put?: never;
+        /**
+         * Ping webhook
+         * @description Send a `PING` event to a webhook by providing its unique identifier.
+         *     This is useful for testing and debugging purposes. The event is delivered
+         *     asynchronously and its data is returned in the response to this request.
+         *
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description The unique identifier for the webhook.
+                     *
+                     * @example ca59a175-79fa-4467-867f-b0cf582ee6bd
+                     */
+                    webhookId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Successful response */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["WebhookEventCallback"];
+                    };
+                };
+            };
         };
-      };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-  };
-  "/webhooks/{id}": {
-    /**
-     * Retrieve webhook
-     * @description Retrieve a specific webhook by providing its unique identifier.
-     */
-    get: {
-      parameters: {
-        path: {
-          /**
-           * @description The unique identifier for the webhook.
-           *
-           * @example 48984142-bb60-4fd9-8db2-ed72cfc2a0ba
-           */
-          id: string;
+    "/webhooks/{webhookId}/logs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
-      };
-      responses: {
-        /** @description Successful Response */
-        200: {
-          content: {
-            "application/json": components["schemas"]["GetWebhookResponse"];
-          };
+        /**
+         * List webhook logs
+         * @description Retrieve a list of delivery logs for a webhook by providing its unique
+         *     identifier. This is useful for analysis and debugging purposes. The
+         *     returned list is [paginated](#pagination) and can be scrolled by
+         *     following the `next` and `prev` links where present. Results are ordered
+         *     newest first to oldest last. Logs may be automatically purged after a
+         *     period of time.
+         *
+         */
+        get: {
+            parameters: {
+                query?: {
+                    /**
+                     * @description The number of records to return in each page.
+                     *
+                     * @example 30
+                     */
+                    "page[size]"?: number;
+                };
+                header?: never;
+                path: {
+                    /**
+                     * @description The unique identifier for the webhook.
+                     *
+                     * @example e579c0fe-62e7-47de-b436-4b1dfe110b35
+                     */
+                    webhookId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Successful response */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ListWebhookDeliveryLogsResponse"];
+                    };
+                };
+            };
         };
-      };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    /**
-     * Delete webhook
-     * @description Delete a specific webhook by providing its unique identifier. Once
-     * deleted, webhook events will no longer be sent to the configured URL.
-     */
-    delete: {
-      parameters: {
-        path: {
-          /**
-           * @description The unique identifier for the webhook.
-           *
-           * @example be530308-60e2-489b-9c73-ab0db6fd132d
-           */
-          id: string;
-        };
-      };
-      responses: {
-        /** @description Deleted */
-        204: never;
-      };
-    };
-  };
-  "/webhooks/{webhookId}/ping": {
-    /**
-     * Ping webhook
-     * @description Send a `PING` event to a webhook by providing its unique identifier.
-     * This is useful for testing and debugging purposes. The event is delivered
-     * asynchronously and its data is returned in the response to this request.
-     */
-    post: {
-      parameters: {
-        path: {
-          /**
-           * @description The unique identifier for the webhook.
-           *
-           * @example ca59a175-79fa-4467-867f-b0cf582ee6bd
-           */
-          webhookId: string;
-        };
-      };
-      responses: {
-        /** @description Successful response */
-        201: {
-          content: {
-            "application/json": components["schemas"]["WebhookEventCallback"];
-          };
-        };
-      };
-    };
-  };
-  "/webhooks/{webhookId}/logs": {
-    /**
-     * List webhook logs
-     * @description Retrieve a list of delivery logs for a webhook by providing its unique
-     * identifier. This is useful for analysis and debugging purposes. The
-     * returned list is [paginated](#pagination) and can be scrolled by
-     * following the `next` and `prev` links where present. Results are ordered
-     * newest first to oldest last. Logs may be automatically purged after a
-     * period of time.
-     */
-    get: {
-      parameters: {
-        query?: {
-          /**
-           * @description The number of records to return in each page.
-           *
-           * @example 30
-           */
-          "page[size]"?: number;
-        };
-        path: {
-          /**
-           * @description The unique identifier for the webhook.
-           *
-           * @example e579c0fe-62e7-47de-b436-4b1dfe110b35
-           */
-          webhookId: string;
-        };
-      };
-      responses: {
-        /** @description Successful response */
-        200: {
-          content: {
-            "application/json": components["schemas"]["ListWebhookDeliveryLogsResponse"];
-          };
-        };
-      };
-    };
-  };
 }
-
 export type webhooks = Record<string, never>;
-
 export interface components {
-  schemas: {
-    /**
-     * @description Specifies the type of bank account. Currently returned values are
-     * `SAVER`, `TRANSACTIONAL` and `HOME_LOAN`.
-     *
-     * @enum {unknown}
-     */
-    AccountTypeEnum: "SAVER" | "TRANSACTIONAL" | "HOME_LOAN";
-    /**
-     * @description Specifies the structure under which a bank account is owned. Currently
-     * returned values are `INDIVIDUAL` and `JOINT`.
-     *
-     * @enum {unknown}
-     */
-    OwnershipTypeEnum: "INDIVIDUAL" | "JOINT";
-    /** @description Provides information about a value of money. */
-    MoneyObject: {
-      /** @description The ISO 4217 currency code. */
-      currencyCode: string;
-      /**
-       * @description The amount of money, formatted as a string in the relevant currency.
-       * For example, for an Australian dollar value of $10.56, this field will
-       * be `"10.56"`. The currency symbol is not included in the string.
-       */
-      value: string;
-      /**
-       * @description The amount of money in the smallest denomination for the currency, as a
-       * 64-bit integer.  For example, for an Australian dollar value of $10.56,
-       * this field will be `1056`.
-       */
-      valueInBaseUnits: number;
-    };
-    /** @description Provides information about an Up bank account. */
-    AccountResource: {
-      /** @description The type of this resource: `accounts` */
-      type: string;
-      /** @description The unique identifier for this account. */
-      id: string;
-      attributes: {
-        /** @description The name associated with the account in the Up application. */
-        displayName: string;
-        /** @description The bank account type of this account. */
-        accountType: components["schemas"]["AccountTypeEnum"];
-        /** @description The ownership structure for this account. */
-        ownershipType: components["schemas"]["OwnershipTypeEnum"];
+    schemas: {
         /**
-         * @description The available balance of the account, taking into account any amounts
-         * that are currently on hold.
+         * @description Specifies the type of bank account. Currently returned values are
+         *     `SAVER`, `TRANSACTIONAL` and `HOME_LOAN`.
+         *
+         * @enum {unknown}
          */
-        balance: components["schemas"]["MoneyObject"];
+        AccountTypeEnum: "SAVER" | "TRANSACTIONAL" | "HOME_LOAN";
         /**
-         * Format: date-time
-         * @description The date-time at which this account was first opened.
+         * @description Specifies the structure under which a bank account is owned. Currently
+         *     returned values are `INDIVIDUAL` and `JOINT`.
+         *
+         * @enum {unknown}
          */
-        createdAt: string;
-      };
-      relationships: {
-        transactions: {
-          links?: {
-            /** @description The link to retrieve the related resource(s) in this relationship. */
-            related: string;
-          };
+        OwnershipTypeEnum: "INDIVIDUAL" | "JOINT";
+        /** @description Provides information about a value of money.
+         *      */
+        MoneyObject: {
+            /** @description The ISO 4217 currency code.
+             *      */
+            currencyCode: string;
+            /** @description The amount of money, formatted as a string in the relevant currency.
+             *     For example, for an Australian dollar value of $10.56, this field will
+             *     be `"10.56"`. The currency symbol is not included in the string.
+             *      */
+            value: string;
+            /** @description The amount of money in the smallest denomination for the currency, as a
+             *     64-bit integer.  For example, for an Australian dollar value of $10.56,
+             *     this field will be `1056`.
+             *      */
+            valueInBaseUnits: number;
         };
-      };
-      links?: {
-        /** @description The canonical link to this resource within the API. */
-        self: string;
-      };
-    };
-    /**
-     * @description Successful response to get all accounts. This returns a paginated list of
-     * accounts, which can be scrolled by following the `prev` and `next` links
-     * if present.
-     */
-    ListAccountsResponse: {
-      /** @description The list of accounts returned in this response. */
-      data: components["schemas"]["AccountResource"][];
-      links: {
-        /**
-         * @description The link to the previous page in the results. If this value is `null`
-         * there is no previous page.
-         */
-        prev: string | null;
-        /**
-         * @description The link to the next page in the results. If this value is `null`
-         * there is no next page.
-         */
-        next: string | null;
-      };
-    };
-    /** @description Successful response to get a single account. */
-    GetAccountResponse: {
-      /** @description The account returned in this response. */
-      data: components["schemas"]["AccountResource"];
-    };
-    AttachmentResource: {
-      /** @description The type of this resource: `attachments` */
-      type: string;
-      /** @description The unique identifier for this attachment. */
-      id: string;
-      attributes: {
-        /**
-         * Format: date-time
-         * @description The date-time when the file was created.
-         */
-        createdAt: string | null;
-        /** @description A temporary link to download the file. */
-        fileURL: string | null;
-        /**
-         * Format: date-time
-         * @description The date-time at which the `fileURL` link expires.
-         */
-        fileURLExpiresAt: string;
-        /** @description File extension for the uploaded attachment. */
-        fileExtension: string | null;
-        /** @description Content type for the uploaded attachment. */
-        fileContentType: string | null;
-      };
-      relationships: {
-        transaction: {
-          data: {
-            /** @description The type of this resource: `transactions` */
-            type: string;
-            /** @description The unique identifier of the resource within its type. */
-            id: string;
-          };
-          links?: {
-            /** @description The link to retrieve the related resource(s) in this relationship. */
-            related: string;
-          };
-        };
-      };
-      links?: {
-        /** @description The canonical link to this resource within the API. */
-        self: string;
-      };
-    };
-    /**
-     * @description Successful response to get all attachments. This returns a paginated list of
-     * attachments, which can be scrolled by following the `prev` and `next` links if
-     * present.
-     */
-    ListAttachmentsResponse: {
-      /** @description The list of attachments returned in this response. */
-      data: components["schemas"]["AttachmentResource"][];
-      links: {
-        /**
-         * @description The link to the previous page in the results. If this value is `null`
-         * there is no previous page.
-         */
-        prev: string | null;
-        /**
-         * @description The link to the next page in the results. If this value is `null`
-         * there is no next page.
-         */
-        next: string | null;
-      };
-    };
-    /** @description Successful response to get a single attachment. */
-    GetAttachmentResponse: {
-      /** @description The attachment returned in this response. */
-      data: components["schemas"]["AttachmentResource"];
-    };
-    /** @description Provides information about a category and its ancestry. */
-    CategoryResource: {
-      /** @description The type of this resource: `categories` */
-      type: string;
-      /**
-       * @description The unique identifier for this category. This is a human-readable but
-       * URL-safe value.
-       */
-      id: string;
-      attributes: {
-        /** @description The name of this category as seen in the Up application. */
-        name: string;
-      };
-      relationships: {
-        parent: {
-          data: {
-            /** @description The type of this resource: `categories` */
-            type: string;
-            /** @description The unique identifier of the resource within its type. */
-            id: string;
-          } | null;
-          links?: {
-            /** @description The link to retrieve the related resource(s) in this relationship. */
-            related: string;
-          };
-        };
-        children: {
-          data: {
-              /** @description The type of this resource: `categories` */
-              type: string;
-              /** @description The unique identifier of the resource within its type. */
-              id: string;
-            }[];
-          links?: {
-            /** @description The link to retrieve the related resource(s) in this relationship. */
-            related: string;
-          };
-        };
-      };
-      links?: {
-        /** @description The canonical link to this resource within the API. */
-        self: string;
-      };
-    };
-    /**
-     * @description Successful response to get all categories and their ancestry. The
-     * returned list is not paginated.
-     */
-    ListCategoriesResponse: {
-      /** @description The list of categories returned in this response. */
-      data: components["schemas"]["CategoryResource"][];
-    };
-    /** @description Successful response to get a single category and its ancestry. */
-    GetCategoryResponse: {
-      /** @description The category returned in this response. */
-      data: components["schemas"]["CategoryResource"];
-    };
-    /** @description Uniquely identifies a category in the API. */
-    CategoryInputResourceIdentifier: {
-      /** @description The type of this resource: `categories` */
-      type: string;
-      /**
-       * @description The unique identifier of the category, as returned by the `/categories`
-       * endpoint.
-       */
-      id: string;
-    };
-    /** @description Request to update the category associated with a transaction. */
-    UpdateTransactionCategoryRequest: {
-      /**
-       * @description The category to set on the transaction. Set this entire key to `null`
-       * de-categorize a transaction.
-       */
-      data: components["schemas"]["CategoryInputResourceIdentifier"] | null;
-    };
-    /** @description Basic ping response to verify authentication. */
-    PingResponse: {
-      meta: {
-        /** @description The unique identifier of the authenticated customer. */
-        id: string;
-        /** @description A cute emoji that represents the response status. */
-        statusEmoji: string;
-      };
-    };
-    /** @description Provides information about an error processing a request. */
-    ErrorObject: {
-      /**
-       * @description The HTTP status code associated with this error. This can also be
-       * obtained from the response headers. The status indicates the broad type
-       * of error according to HTTP semantics.
-       */
-      status: string;
-      /**
-       * @description A short description of this error. This should be stable across
-       * multiple occurrences of this type of error and typically expands on the
-       * reason for the status code.
-       */
-      title: string;
-      /**
-       * @description A detailed description of this error. This should be considered unique
-       * to individual occurrences of an error and subject to change. It is
-       * useful for debugging purposes.
-       */
-      detail: string;
-      /**
-       * @description If applicable, location in the request that this error relates to. This
-       * may be a parameter in the query string, or a an attribute in the
-       * request body.
-       */
-      source?: {
-        /**
-         * @description If this error relates to a query parameter, the name of the
-         * parameter.
-         */
-        parameter?: string;
-        /**
-         * @description If this error relates to an attribute in the request body, a
-         * rfc-6901 JSON pointer to the attribute.
-         */
-        pointer?: string;
-      };
-    };
-    /** @description Generic error response that returns one or more errors. */
-    ErrorResponse: {
-      /** @description The list of errors returned in this response. */
-      errors: components["schemas"]["ErrorObject"][];
-    };
-    /** @description Provides information about a tag. */
-    TagResource: {
-      /** @description The type of this resource: `tags` */
-      type: string;
-      /** @description The label of the tag, which also acts as the tag’s unique identifier. */
-      id: string;
-      relationships: {
-        transactions: {
-          links?: {
-            /** @description The link to retrieve the related resource(s) in this relationship. */
-            related: string;
-          };
-        };
-      };
-    };
-    /**
-     * @description Successful response to get all tags. This returns a paginated list of
-     * tags, which can be scrolled by following the `prev` and `next` links if
-     * present.
-     */
-    ListTagsResponse: {
-      /** @description The list of tags returned in this response. */
-      data: components["schemas"]["TagResource"][];
-      links: {
-        /**
-         * @description The link to the previous page in the results. If this value is `null`
-         * there is no previous page.
-         */
-        prev: string | null;
-        /**
-         * @description The link to the next page in the results. If this value is `null`
-         * there is no next page.
-         */
-        next: string | null;
-      };
-    };
-    /** @description Uniquely identifies a single tag in the API. */
-    TagInputResourceIdentifier: {
-      /** @description The type of this resource: `tags` */
-      type: string;
-      /** @description The label of the tag, which also acts as the tag’s unique identifier. */
-      id: string;
-    };
-    /** @description Request to add or remove tags associated with a transaction. */
-    UpdateTransactionTagsRequest: {
-      /** @description The tags to add to or remove from the transaction. */
-      data: components["schemas"]["TagInputResourceIdentifier"][];
-    };
-    /**
-     * @description Specifies which stage of processing a transaction is currently at.
-     * Currently returned values are `HELD` and `SETTLED`. When a transaction is
-     * held, its account’s `availableBalance` is affected. When a transaction is
-     * settled, its account’s `currentBalance` is affected.
-     *
-     * @enum {unknown}
-     */
-    TransactionStatusEnum: "HELD" | "SETTLED";
-    /**
-     * @description Provides information about the amount at which a transaction was in the
-     * `HELD` status.
-     */
-    HoldInfoObject: {
-      /**
-       * @description The amount of this transaction while in the `HELD` status, in
-       * Australian dollars.
-       */
-      amount: components["schemas"]["MoneyObject"];
-      /**
-       * @description The foreign currency amount of this transaction while in the `HELD`
-       * status. This field will be `null` for domestic transactions. The amount
-       * was converted to the AUD amount reflected in the `amount` field.
-       */
-      foreignAmount: components["schemas"]["MoneyObject"] | null;
-    };
-    /**
-     * @description Provides information about how a Round Up was applied, such as whether or
-     * not a boost was included in the Round Up.
-     */
-    RoundUpObject: {
-      /**
-       * @description The total amount of this Round Up, including any boosts, represented as
-       * a negative value.
-       */
-      amount: components["schemas"]["MoneyObject"];
-      /**
-       * @description The portion of the Round Up `amount` owing to boosted Round Ups,
-       * represented as a negative value. If no boost was added to the Round Up
-       * this field will be `null`.
-       */
-      boostPortion: components["schemas"]["MoneyObject"] | null;
-    };
-    /**
-     * @description Provides information about an instant reimbursement in the form of
-     * cashback.
-     */
-    CashbackObject: {
-      /** @description A brief description of why this cashback was paid. */
-      description: string;
-      /** @description The total amount of cashback paid, represented as a positive value. */
-      amount: components["schemas"]["MoneyObject"];
-    };
-    /**
-     * @description Specifies the type of card charge.
-     *
-     * @enum {unknown}
-     */
-    CardPurchaseMethodEnum: "BAR_CODE" | "OCR" | "CARD_PIN" | "CARD_DETAILS" | "CARD_ON_FILE" | "ECOMMERCE" | "MAGNETIC_STRIPE" | "CONTACTLESS";
-    /** @description Provides information about the card used for a transaction. */
-    CardPurchaseMethodObject: {
-      /** @description The type of card purchase. */
-      method: components["schemas"]["CardPurchaseMethodEnum"];
-      /** @description The last four digits of the card used for the purchase, if applicable. */
-      cardNumberSuffix: string | null;
-    };
-    /** @description Provides information about the note and attachement. */
-    NoteObject: {
-      /** @description A text note about the transaction. */
-      text: string;
-    };
-    /** @description Provides information about the customer who initiated a transaction */
-    CustomerObject: {
-      /** @description The Upname or preferred name of the customer */
-      displayName: string;
-    };
-    TransactionResource: {
-      /** @description The type of this resource: `transactions` */
-      type: string;
-      /** @description The unique identifier for this transaction. */
-      id: string;
-      attributes: {
-        /**
-         * @description The current processing status of this transaction, according to
-         * whether or not this transaction has settled or is still held.
-         */
-        status: components["schemas"]["TransactionStatusEnum"];
-        /**
-         * @description The original, unprocessed text of the transaction. This is often not
-         * a perfect indicator of the actual merchant, but it is useful for
-         * reconciliation purposes in some cases.
-         */
-        rawText: string | null;
-        /**
-         * @description A short description for this transaction. Usually the merchant name
-         * for purchases.
-         */
-        description: string;
-        /**
-         * @description Attached message for this transaction, such as a payment message, or a
-         * transfer note.
-         */
-        message: string | null;
-        /**
-         * @description Boolean flag set to true on transactions that support the use of
-         * categories.
-         */
-        isCategorizable: boolean;
-        /**
-         * @description If this transaction is currently in the `HELD` status, or was ever in
-         * the `HELD` status, the `amount` and `foreignAmount` of the
-         * transaction while `HELD`.
-         */
-        holdInfo: components["schemas"]["HoldInfoObject"] | null;
-        /**
-         * @description Details of how this transaction was rounded-up. If no Round Up was
-         * applied this field will be `null`.
-         */
-        roundUp: components["schemas"]["RoundUpObject"] | null;
-        /**
-         * @description If all or part of this transaction was instantly reimbursed in the
-         * form of cashback, details of the reimbursement.
-         */
-        cashback: components["schemas"]["CashbackObject"] | null;
-        /**
-         * @description The amount of this transaction in Australian dollars. For
-         * transactions that were once `HELD` but are now `SETTLED`, refer to
-         * the `holdInfo` field for the original `amount` the transaction was
-         * `HELD` at.
-         */
-        amount: components["schemas"]["MoneyObject"];
-        /**
-         * @description The foreign currency amount of this transaction. This field will be
-         * `null` for domestic transactions. The amount was converted to the AUD
-         * amount reflected in the `amount` of this transaction. Refer to the
-         * `holdInfo` field for the original `foreignAmount` the transaction was
-         * `HELD` at.
-         */
-        foreignAmount: components["schemas"]["MoneyObject"] | null;
-        /** @description Information about the card used for this transaction, if applicable. */
-        cardPurchaseMethod: components["schemas"]["CardPurchaseMethodObject"] | null;
-        /**
-         * Format: date-time
-         * @description The date-time at which this transaction settled. This field will be
-         * `null` for transactions that are currently in the `HELD` status.
-         */
-        settledAt: string | null;
-        /**
-         * Format: date-time
-         * @description The date-time at which this transaction was first encountered.
-         */
-        createdAt: string;
-        /** @description A description of the transaction method used e.g. Purchase, BPAY Payment. */
-        transactionType: string | null;
-        /** @description A customer provided note about the transaction.  Can only be provided by Up High subscribers. */
-        note: components["schemas"]["NoteObject"] | null;
-        /** @description The customer who initated the transaction.  For 2Up accounts this could be the customer who's card was used. */
-        performingCustomer: components["schemas"]["CustomerObject"] | null;
-      };
-      relationships: {
-        account: {
-          data: {
+        /** @description Provides information about an Up bank account.
+         *      */
+        AccountResource: {
             /** @description The type of this resource: `accounts` */
             type: string;
-            /** @description The unique identifier of the resource within its type. */
+            /** @description The unique identifier for this account.
+             *      */
             id: string;
-          };
-          links?: {
-            /** @description The link to retrieve the related resource(s) in this relationship. */
-            related: string;
-          };
+            attributes: {
+                /** @description The name associated with the account in the Up application.
+                 *      */
+                displayName: string;
+                /** @description The bank account type of this account.
+                 *      */
+                accountType: components["schemas"]["AccountTypeEnum"];
+                /** @description The ownership structure for this account.
+                 *      */
+                ownershipType: components["schemas"]["OwnershipTypeEnum"];
+                /** @description The available balance of the account, taking into account any amounts
+                 *     that are currently on hold.
+                 *      */
+                balance: components["schemas"]["MoneyObject"];
+                /**
+                 * Format: date-time
+                 * @description The date-time at which this account was first opened.
+                 *
+                 */
+                createdAt: string;
+            };
+            relationships: {
+                transactions: {
+                    links?: {
+                        /** @description The link to retrieve the related resource(s) in this relationship.
+                         *      */
+                        related: string;
+                    };
+                };
+            };
+            links?: {
+                /** @description The canonical link to this resource within the API.
+                 *      */
+                self: string;
+            };
         };
-        /**
-         * @description If this transaction is a transfer between accounts, this relationship
-         * will contain the account the transaction went to/came from. The
-         * `amount` field can be used to determine the direction of the transfer.
-         */
-        transferAccount: {
-          data: {
-            /** @description The type of this resource: `accounts` */
-            type: string;
-            /** @description The unique identifier of the resource within its type. */
-            id: string;
-          } | null;
-          links?: {
-            /** @description The link to retrieve the related resource(s) in this relationship. */
-            related: string;
-          };
+        /** @description Successful response to get all accounts. This returns a paginated list of
+         *     accounts, which can be scrolled by following the `prev` and `next` links
+         *     if present.
+         *      */
+        ListAccountsResponse: {
+            /** @description The list of accounts returned in this response.
+             *      */
+            data: components["schemas"]["AccountResource"][];
+            links: {
+                /** @description The link to the previous page in the results. If this value is `null`
+                 *     there is no previous page.
+                 *      */
+                prev: string | null;
+                /** @description The link to the next page in the results. If this value is `null`
+                 *     there is no next page.
+                 *      */
+                next: string | null;
+            };
         };
-        category: {
-          data: {
-            /** @description The type of this resource: `categories` */
-            type: string;
-            /** @description The unique identifier of the resource within its type. */
-            id: string;
-          } | null;
-          links?: {
-            /**
-             * @description The link to retrieve or modify linkage between this resources and the
-             * related resource(s) in this relationship.
-             */
-            self: string;
-            /** @description The link to retrieve the related resource(s) in this relationship. */
-            related?: string;
-          };
+        /** @description Successful response to get a single account.
+         *      */
+        GetAccountResponse: {
+            /** @description The account returned in this response.
+             *      */
+            data: components["schemas"]["AccountResource"];
         };
-        parentCategory: {
-          data: {
-            /** @description The type of this resource: `categories` */
-            type: string;
-            /** @description The unique identifier of the resource within its type. */
-            id: string;
-          } | null;
-          links?: {
-            /** @description The link to retrieve the related resource(s) in this relationship. */
-            related: string;
-          };
-        };
-        tags: {
-          data: {
-              /** @description The type of this resource: `tags` */
-              type: string;
-              /** @description The label of the tag, which also acts as the tag’s unique identifier. */
-              id: string;
-            }[];
-          links?: {
-            /**
-             * @description The link to retrieve or modify linkage between this resources and the
-             * related resource(s) in this relationship.
-             */
-            self: string;
-          };
-        };
-        attachment: {
-          data: {
+        AttachmentResource: {
             /** @description The type of this resource: `attachments` */
             type: string;
-            /** @description The unique identifier of the resource within its type. */
+            /** @description The unique identifier for this attachment.
+             *      */
             id: string;
-          } | null;
-          links?: {
-            /** @description The link to retrieve the related resource(s) in this relationship. */
-            related: string;
-          };
+            attributes: {
+                /**
+                 * Format: date-time
+                 * @description The date-time when the file was created.
+                 *
+                 */
+                createdAt: string | null;
+                /** @description A temporary link to download the file.
+                 *      */
+                fileURL: string | null;
+                /**
+                 * Format: date-time
+                 * @description The date-time at which the `fileURL` link expires.
+                 *
+                 */
+                fileURLExpiresAt: string;
+                /** @description File extension for the uploaded attachment.
+                 *      */
+                fileExtension: string | null;
+                /** @description Content type for the uploaded attachment.
+                 *      */
+                fileContentType: string | null;
+            };
+            relationships: {
+                transaction: {
+                    data: {
+                        /** @description The type of this resource: `transactions` */
+                        type: string;
+                        /** @description The unique identifier of the resource within its type.
+                         *      */
+                        id: string;
+                    };
+                    links?: {
+                        /** @description The link to retrieve the related resource(s) in this relationship.
+                         *      */
+                        related: string;
+                    };
+                };
+            };
+            links?: {
+                /** @description The canonical link to this resource within the API.
+                 *      */
+                self: string;
+            };
         };
-      };
-      links?: {
-        /** @description The canonical link to this resource within the API. */
-        self: string;
-      };
-    };
-    /**
-     * @description Successful response to get all transactions. This returns a paginated
-     * list of transactions, which can be scrolled by following the `prev` and
-     * `next` links if present.
-     */
-    ListTransactionsResponse: {
-      /** @description The list of transactions returned in this response. */
-      data: components["schemas"]["TransactionResource"][];
-      links: {
-        /**
-         * @description The link to the previous page in the results. If this value is `null`
-         * there is no previous page.
-         */
-        prev: string | null;
-        /**
-         * @description The link to the next page in the results. If this value is `null`
-         * there is no next page.
-         */
-        next: string | null;
-      };
-    };
-    /** @description Successful response to get a single transaction. */
-    GetTransactionResponse: {
-      /** @description The transaction returned in this response. */
-      data: components["schemas"]["TransactionResource"];
-    };
-    /** @description Provides information about a webhook. */
-    WebhookResource: {
-      /** @description The type of this resource: `webhooks` */
-      type: string;
-      /** @description The unique identifier for this webhook. */
-      id: string;
-      attributes: {
-        /** @description The URL that this webhook is configured to `POST` events to. */
-        url: string;
-        /**
-         * @description An optional description that was provided at the time the webhook was
-         * created.
-         */
-        description: string | null;
-        /**
-         * @description A shared secret key used to sign all webhook events sent to the
-         * configured webhook URL. This field is returned only once, upon the
-         * initial creation of the webhook. If lost, create a new webhook and
-         * delete this webhook.
-         *
-         * The webhook URL receives a request with a
-         * `X-Up-Authenticity-Signature` header, which is the SHA-256 HMAC of
-         * the entire raw request body signed using this `secretKey`. It is
-         * advised to compute and check this signature to verify the
-         * authenticity of requests sent to the webhook URL. See
-         * [Handling webhook events](#callback_post_webhookURL) for full
-         * details.
-         */
-        secretKey?: string;
-        /**
-         * Format: date-time
-         * @description The date-time at which this webhook was created.
-         */
-        createdAt: string;
-      };
-      relationships: {
-        logs: {
-          links?: {
-            /** @description The link to retrieve the related resource(s) in this relationship. */
-            related: string;
-          };
+        /** @description Successful response to get all attachments. This returns a paginated list of
+         *     attachments, which can be scrolled by following the `prev` and `next` links if
+         *     present.
+         *      */
+        ListAttachmentsResponse: {
+            /** @description The list of attachments returned in this response.
+             *      */
+            data: components["schemas"]["AttachmentResource"][];
+            links: {
+                /** @description The link to the previous page in the results. If this value is `null`
+                 *     there is no previous page.
+                 *      */
+                prev: string | null;
+                /** @description The link to the next page in the results. If this value is `null`
+                 *     there is no next page.
+                 *      */
+                next: string | null;
+            };
         };
-      };
-      links?: {
-        /** @description The canonical link to this resource within the API. */
-        self: string;
-      };
-    };
-    /**
-     * @description Successful response to get all webhooks. This returns a paginated list of
-     * webhooks, which can be scrolled by following the `prev` and `next` links
-     * if present.
-     */
-    ListWebhooksResponse: {
-      /** @description The list of webhooks returned in this response. */
-      data: components["schemas"]["WebhookResource"][];
-      links: {
-        /**
-         * @description The link to the previous page in the results. If this value is `null`
-         * there is no previous page.
-         */
-        prev: string | null;
-        /**
-         * @description The link to the next page in the results. If this value is `null`
-         * there is no next page.
-         */
-        next: string | null;
-      };
-    };
-    /** @description Represents a webhook specified as request input. */
-    WebhookInputResource: {
-      attributes: {
-        /**
-         * Format: uri
-         * @description The URL that this webhook should post events to. This must be a valid
-         * HTTP or HTTPS URL that does not exceed 300 characters in length.
-         */
-        url: string;
-        /**
-         * @description An optional description for this webhook, up to 64 characters in
-         * length.
-         */
-        description?: string | null;
-      };
-    };
-    /**
-     * @description Request to create a new webhook. This currently only requires a `url`
-     * attribute.
-     */
-    CreateWebhookRequest: {
-      /** @description The webhook resource to create. */
-      data: components["schemas"]["WebhookInputResource"];
-    };
-    /** @description Successful response after creating a webhook. */
-    CreateWebhookResponse: {
-      /** @description The webhook that was created. */
-      data: components["schemas"]["WebhookResource"];
-    };
-    /**
-     * @description Specifies the type of a webhook event. This can be used to determine what
-     * action to take in response to the event, such as which relationships to
-     * expect.
-     *
-     * @enum {unknown}
-     */
-    WebhookEventTypeEnum: "TRANSACTION_CREATED" | "TRANSACTION_SETTLED" | "TRANSACTION_DELETED" | "PING";
-    /**
-     * @description Provides the event data used in asynchronous webhook event callbacks to
-     * subscribed endpoints. Webhooks events have defined `eventType`s and may
-     * optionally relate to other resources within the Up API.
-     */
-    WebhookEventResource: {
-      /** @description The type of this resource: `webhook-events` */
-      type: string;
-      /**
-       * @description The unique identifier for this event. This will remain constant across
-       * delivery retries.
-       */
-      id: string;
-      attributes: {
-        /**
-         * @description The type of this event. This can be used to determine what action to
-         * take in response to the event.
-         */
-        eventType: components["schemas"]["WebhookEventTypeEnum"];
-        /**
-         * Format: date-time
-         * @description The date-time at which this event was generated.
-         */
-        createdAt: string;
-      };
-      relationships: {
-        webhook: {
-          data: {
-            /** @description The type of this resource: `webhooks` */
+        /** @description Successful response to get a single attachment.
+         *      */
+        GetAttachmentResponse: {
+            /** @description The attachment returned in this response.
+             *      */
+            data: components["schemas"]["AttachmentResource"];
+        };
+        /** @description Provides information about a category and its ancestry.
+         *      */
+        CategoryResource: {
+            /** @description The type of this resource: `categories` */
             type: string;
-            /** @description The unique identifier of the resource within its type. */
+            /** @description The unique identifier for this category. This is a human-readable but
+             *     URL-safe value.
+             *      */
             id: string;
-          };
-          links?: {
-            /** @description The link to retrieve the related resource(s) in this relationship. */
-            related: string;
-          };
+            attributes: {
+                /** @description The name of this category as seen in the Up application.
+                 *      */
+                name: string;
+            };
+            relationships: {
+                parent: {
+                    data: {
+                        /** @description The type of this resource: `categories` */
+                        type: string;
+                        /** @description The unique identifier of the resource within its type.
+                         *      */
+                        id: string;
+                    } | null;
+                    links?: {
+                        /** @description The link to retrieve the related resource(s) in this relationship.
+                         *      */
+                        related: string;
+                    };
+                };
+                children: {
+                    data: {
+                        /** @description The type of this resource: `categories` */
+                        type: string;
+                        /** @description The unique identifier of the resource within its type.
+                         *      */
+                        id: string;
+                    }[];
+                    links?: {
+                        /** @description The link to retrieve the related resource(s) in this relationship.
+                         *      */
+                        related: string;
+                    };
+                };
+            };
+            links?: {
+                /** @description The canonical link to this resource within the API.
+                 *      */
+                self: string;
+            };
         };
-        transaction?: {
-          data: {
+        /** @description Successful response to get all categories and their ancestry. The
+         *     returned list is not paginated.
+         *      */
+        ListCategoriesResponse: {
+            /** @description The list of categories returned in this response.
+             *      */
+            data: components["schemas"]["CategoryResource"][];
+        };
+        /** @description Successful response to get a single category and its ancestry.
+         *      */
+        GetCategoryResponse: {
+            /** @description The category returned in this response.
+             *      */
+            data: components["schemas"]["CategoryResource"];
+        };
+        /** @description Uniquely identifies a category in the API.
+         *      */
+        CategoryInputResourceIdentifier: {
+            /** @description The type of this resource: `categories` */
+            type: string;
+            /** @description The unique identifier of the category, as returned by the `/categories`
+             *     endpoint.
+             *      */
+            id: string;
+        };
+        /** @description Request to update the category associated with a transaction.
+         *      */
+        UpdateTransactionCategoryRequest: {
+            /** @description The category to set on the transaction. Set this entire key to `null`
+             *     de-categorize a transaction.
+             *      */
+            data: components["schemas"]["CategoryInputResourceIdentifier"] | null;
+        };
+        /** @description Basic ping response to verify authentication.
+         *      */
+        PingResponse: {
+            meta: {
+                /** @description The unique identifier of the authenticated customer.
+                 *      */
+                id: string;
+                /** @description A cute emoji that represents the response status.
+                 *      */
+                statusEmoji: string;
+            };
+        };
+        /** @description Provides information about an error processing a request.
+         *      */
+        ErrorObject: {
+            /** @description The HTTP status code associated with this error. This can also be
+             *     obtained from the response headers. The status indicates the broad type
+             *     of error according to HTTP semantics.
+             *      */
+            status: string;
+            /** @description A short description of this error. This should be stable across
+             *     multiple occurrences of this type of error and typically expands on the
+             *     reason for the status code.
+             *      */
+            title: string;
+            /** @description A detailed description of this error. This should be considered unique
+             *     to individual occurrences of an error and subject to change. It is
+             *     useful for debugging purposes.
+             *      */
+            detail: string;
+            /** @description If applicable, location in the request that this error relates to. This
+             *     may be a parameter in the query string, or a an attribute in the
+             *     request body.
+             *      */
+            source?: {
+                /** @description If this error relates to a query parameter, the name of the
+                 *     parameter.
+                 *      */
+                parameter?: string;
+                /** @description If this error relates to an attribute in the request body, a
+                 *     rfc-6901 JSON pointer to the attribute.
+                 *      */
+                pointer?: string;
+            };
+        };
+        /** @description Generic error response that returns one or more errors.
+         *      */
+        ErrorResponse: {
+            /** @description The list of errors returned in this response.
+             *      */
+            errors: components["schemas"]["ErrorObject"][];
+        };
+        /** @description Provides information about a tag.
+         *      */
+        TagResource: {
+            /** @description The type of this resource: `tags` */
+            type: string;
+            /** @description The label of the tag, which also acts as the tag’s unique identifier.
+             *      */
+            id: string;
+            relationships: {
+                transactions: {
+                    links?: {
+                        /** @description The link to retrieve the related resource(s) in this relationship.
+                         *      */
+                        related: string;
+                    };
+                };
+            };
+        };
+        /** @description Successful response to get all tags. This returns a paginated list of
+         *     tags, which can be scrolled by following the `prev` and `next` links if
+         *     present.
+         *      */
+        ListTagsResponse: {
+            /** @description The list of tags returned in this response.
+             *      */
+            data: components["schemas"]["TagResource"][];
+            links: {
+                /** @description The link to the previous page in the results. If this value is `null`
+                 *     there is no previous page.
+                 *      */
+                prev: string | null;
+                /** @description The link to the next page in the results. If this value is `null`
+                 *     there is no next page.
+                 *      */
+                next: string | null;
+            };
+        };
+        /** @description Uniquely identifies a single tag in the API.
+         *      */
+        TagInputResourceIdentifier: {
+            /** @description The type of this resource: `tags` */
+            type: string;
+            /** @description The label of the tag, which also acts as the tag’s unique identifier.
+             *      */
+            id: string;
+        };
+        /** @description Request to add or remove tags associated with a transaction.
+         *      */
+        UpdateTransactionTagsRequest: {
+            /** @description The tags to add to or remove from the transaction.
+             *      */
+            data: components["schemas"]["TagInputResourceIdentifier"][];
+        };
+        /**
+         * @description Specifies which stage of processing a transaction is currently at.
+         *     Currently returned values are `HELD` and `SETTLED`. When a transaction is
+         *     held, its account’s `availableBalance` is affected. When a transaction is
+         *     settled, its account’s `currentBalance` is affected.
+         *
+         * @enum {unknown}
+         */
+        TransactionStatusEnum: "HELD" | "SETTLED";
+        /** @description Provides information about the amount at which a transaction was in the
+         *     `HELD` status.
+         *      */
+        HoldInfoObject: {
+            /** @description The amount of this transaction while in the `HELD` status, in
+             *     Australian dollars.
+             *      */
+            amount: components["schemas"]["MoneyObject"];
+            /** @description The foreign currency amount of this transaction while in the `HELD`
+             *     status. This field will be `null` for domestic transactions. The amount
+             *     was converted to the AUD amount reflected in the `amount` field.
+             *      */
+            foreignAmount: components["schemas"]["MoneyObject"] | null;
+        };
+        /** @description Provides information about how a Round Up was applied, such as whether or
+         *     not a boost was included in the Round Up.
+         *      */
+        RoundUpObject: {
+            /** @description The total amount of this Round Up, including any boosts, represented as
+             *     a negative value.
+             *      */
+            amount: components["schemas"]["MoneyObject"];
+            /** @description The portion of the Round Up `amount` owing to boosted Round Ups,
+             *     represented as a negative value. If no boost was added to the Round Up
+             *     this field will be `null`.
+             *      */
+            boostPortion: components["schemas"]["MoneyObject"] | null;
+        };
+        /** @description Provides information about an instant reimbursement in the form of
+         *     cashback.
+         *      */
+        CashbackObject: {
+            /** @description A brief description of why this cashback was paid.
+             *      */
+            description: string;
+            /** @description The total amount of cashback paid, represented as a positive value.
+             *      */
+            amount: components["schemas"]["MoneyObject"];
+        };
+        /**
+         * @description Specifies the type of card charge.
+         *
+         * @enum {unknown}
+         */
+        CardPurchaseMethodEnum: "BAR_CODE" | "OCR" | "CARD_PIN" | "CARD_DETAILS" | "CARD_ON_FILE" | "ECOMMERCE" | "MAGNETIC_STRIPE" | "CONTACTLESS";
+        /** @description Provides information about the card used for a transaction.
+         *      */
+        CardPurchaseMethodObject: {
+            /** @description The type of card purchase.
+             *      */
+            method: components["schemas"]["CardPurchaseMethodEnum"];
+            /** @description The last four digits of the card used for the purchase, if applicable.
+             *      */
+            cardNumberSuffix: string | null;
+        };
+        /** @description Provides information about the note and attachement.
+         *      */
+        NoteObject: {
+            /** @description A text note about the transaction.
+             *      */
+            text: string;
+        };
+        /** @description Provides information about the customer who initiated a transaction
+         *      */
+        CustomerObject: {
+            /** @description The Upname or preferred name of the customer
+             *      */
+            displayName: string;
+        };
+        TransactionResource: {
             /** @description The type of this resource: `transactions` */
             type: string;
-            /** @description The unique identifier of the resource within its type. */
+            /** @description The unique identifier for this transaction.
+             *      */
             id: string;
-          };
-          links?: {
-            /** @description The link to retrieve the related resource(s) in this relationship. */
-            related: string;
-          };
+            attributes: {
+                /** @description The current processing status of this transaction, according to
+                 *     whether or not this transaction has settled or is still held.
+                 *      */
+                status: components["schemas"]["TransactionStatusEnum"];
+                /** @description The original, unprocessed text of the transaction. This is often not
+                 *     a perfect indicator of the actual merchant, but it is useful for
+                 *     reconciliation purposes in some cases.
+                 *      */
+                rawText: string | null;
+                /** @description A short description for this transaction. Usually the merchant name
+                 *     for purchases.
+                 *      */
+                description: string;
+                /** @description Attached message for this transaction, such as a payment message, or a
+                 *     transfer note.
+                 *      */
+                message: string | null;
+                /** @description Boolean flag set to true on transactions that support the use of
+                 *     categories.
+                 *      */
+                isCategorizable: boolean;
+                /** @description If this transaction is currently in the `HELD` status, or was ever in
+                 *     the `HELD` status, the `amount` and `foreignAmount` of the
+                 *     transaction while `HELD`.
+                 *      */
+                holdInfo: components["schemas"]["HoldInfoObject"] | null;
+                /** @description Details of how this transaction was rounded-up. If no Round Up was
+                 *     applied this field will be `null`.
+                 *      */
+                roundUp: components["schemas"]["RoundUpObject"] | null;
+                /** @description If all or part of this transaction was instantly reimbursed in the
+                 *     form of cashback, details of the reimbursement.
+                 *      */
+                cashback: components["schemas"]["CashbackObject"] | null;
+                /** @description The amount of this transaction in Australian dollars. For
+                 *     transactions that were once `HELD` but are now `SETTLED`, refer to
+                 *     the `holdInfo` field for the original `amount` the transaction was
+                 *     `HELD` at.
+                 *      */
+                amount: components["schemas"]["MoneyObject"];
+                /** @description The foreign currency amount of this transaction. This field will be
+                 *     `null` for domestic transactions. The amount was converted to the AUD
+                 *     amount reflected in the `amount` of this transaction. Refer to the
+                 *     `holdInfo` field for the original `foreignAmount` the transaction was
+                 *     `HELD` at.
+                 *      */
+                foreignAmount: components["schemas"]["MoneyObject"] | null;
+                /** @description Information about the card used for this transaction, if applicable.
+                 *      */
+                cardPurchaseMethod: components["schemas"]["CardPurchaseMethodObject"] | null;
+                /**
+                 * Format: date-time
+                 * @description The date-time at which this transaction settled. This field will be
+                 *     `null` for transactions that are currently in the `HELD` status.
+                 *
+                 */
+                settledAt: string | null;
+                /**
+                 * Format: date-time
+                 * @description The date-time at which this transaction was first encountered.
+                 *
+                 */
+                createdAt: string;
+                /** @description A description of the transaction method used e.g. Purchase, BPAY Payment.
+                 *      */
+                transactionType: string | null;
+                /** @description A customer provided note about the transaction.  Can only be provided by Up High subscribers.
+                 *      */
+                note: components["schemas"]["NoteObject"] | null;
+                /** @description The customer who initated the transaction.  For 2Up accounts this could be the customer who's card was used.
+                 *      */
+                performingCustomer: components["schemas"]["CustomerObject"] | null;
+            };
+            relationships: {
+                account: {
+                    data: {
+                        /** @description The type of this resource: `accounts` */
+                        type: string;
+                        /** @description The unique identifier of the resource within its type.
+                         *      */
+                        id: string;
+                    };
+                    links?: {
+                        /** @description The link to retrieve the related resource(s) in this relationship.
+                         *      */
+                        related: string;
+                    };
+                };
+                /** @description If this transaction is a transfer between accounts, this relationship
+                 *     will contain the account the transaction went to/came from. The
+                 *     `amount` field can be used to determine the direction of the transfer.
+                 *      */
+                transferAccount: {
+                    data: {
+                        /** @description The type of this resource: `accounts` */
+                        type: string;
+                        /** @description The unique identifier of the resource within its type.
+                         *      */
+                        id: string;
+                    } | null;
+                    links?: {
+                        /** @description The link to retrieve the related resource(s) in this relationship.
+                         *      */
+                        related: string;
+                    };
+                };
+                category: {
+                    data: {
+                        /** @description The type of this resource: `categories` */
+                        type: string;
+                        /** @description The unique identifier of the resource within its type.
+                         *      */
+                        id: string;
+                    } | null;
+                    links?: {
+                        /** @description The link to retrieve or modify linkage between this resources and the
+                         *     related resource(s) in this relationship.
+                         *      */
+                        self: string;
+                        /** @description The link to retrieve the related resource(s) in this relationship.
+                         *      */
+                        related?: string;
+                    };
+                };
+                parentCategory: {
+                    data: {
+                        /** @description The type of this resource: `categories` */
+                        type: string;
+                        /** @description The unique identifier of the resource within its type.
+                         *      */
+                        id: string;
+                    } | null;
+                    links?: {
+                        /** @description The link to retrieve the related resource(s) in this relationship.
+                         *      */
+                        related: string;
+                    };
+                };
+                tags: {
+                    data: {
+                        /** @description The type of this resource: `tags` */
+                        type: string;
+                        /** @description The label of the tag, which also acts as the tag’s unique identifier.
+                         *      */
+                        id: string;
+                    }[];
+                    links?: {
+                        /** @description The link to retrieve or modify linkage between this resources and the
+                         *     related resource(s) in this relationship.
+                         *      */
+                        self: string;
+                    };
+                };
+                attachment: {
+                    data: {
+                        /** @description The type of this resource: `attachments` */
+                        type: string;
+                        /** @description The unique identifier of the resource within its type.
+                         *      */
+                        id: string;
+                    } | null;
+                    links?: {
+                        /** @description The link to retrieve the related resource(s) in this relationship.
+                         *      */
+                        related: string;
+                    };
+                };
+            };
+            links?: {
+                /** @description The canonical link to this resource within the API.
+                 *      */
+                self: string;
+            };
         };
-      };
-    };
-    /** @description Asynchronous callback request used for webhook event delivery. */
-    WebhookEventCallback: {
-      /** @description The webhook event data sent to the subscribed webhook. */
-      data: components["schemas"]["WebhookEventResource"];
-    };
-    /** @description Successful response to get a single webhook. */
-    GetWebhookResponse: {
-      /** @description The webhook returned in this response. */
-      data: components["schemas"]["WebhookResource"];
-    };
-    /**
-     * @description Specifies the nature of the success or failure of a webhook delivery
-     * attempt to the subscribed webhook URL. The currently returned values are
-     * described below:
-     *
-     * - **`DELIVERED`**: The event was delivered to the webhook URL
-     *   successfully and a `200` response was received.
-     * - **`UNDELIVERABLE`**: The webhook URL was not reachable, or timed out.
-     * - **`BAD_RESPONSE_CODE`**: The event was delivered to the webhook URL
-     *   but a non-`200` response was received.
-     *
-     * @enum {unknown}
-     */
-    WebhookDeliveryStatusEnum: "DELIVERED" | "UNDELIVERABLE" | "BAD_RESPONSE_CODE";
-    /**
-     * @description Provides historical webhook event delivery information for analysis and
-     * debugging purposes.
-     */
-    WebhookDeliveryLogResource: {
-      /** @description The type of this resource: `webhook-delivery-logs` */
-      type: string;
-      /** @description The unique identifier for this log entry. */
-      id: string;
-      attributes: {
-        /** @description Information about the request that was sent to the webhook URL. */
-        request: {
-          /** @description The payload that was sent in the request body. */
-          body: string;
+        /** @description Successful response to get all transactions. This returns a paginated
+         *     list of transactions, which can be scrolled by following the `prev` and
+         *     `next` links if present.
+         *      */
+        ListTransactionsResponse: {
+            /** @description The list of transactions returned in this response.
+             *      */
+            data: components["schemas"]["TransactionResource"][];
+            links: {
+                /** @description The link to the previous page in the results. If this value is `null`
+                 *     there is no previous page.
+                 *      */
+                prev: string | null;
+                /** @description The link to the next page in the results. If this value is `null`
+                 *     there is no next page.
+                 *      */
+                next: string | null;
+            };
         };
-        /** @description Information about the response that was received from the webhook URL. */
-        response: {
-          /** @description The HTTP status code received in the response. */
-          statusCode: number;
-          /** @description The payload that was received in the response body. */
-          body: string;
-        } | null;
-        /** @description The success or failure status of this delivery attempt. */
-        deliveryStatus: components["schemas"]["WebhookDeliveryStatusEnum"];
+        /** @description Successful response to get a single transaction.
+         *      */
+        GetTransactionResponse: {
+            /** @description The transaction returned in this response.
+             *      */
+            data: components["schemas"]["TransactionResource"];
+        };
+        /** @description Provides information about a webhook.
+         *      */
+        WebhookResource: {
+            /** @description The type of this resource: `webhooks` */
+            type: string;
+            /** @description The unique identifier for this webhook.
+             *      */
+            id: string;
+            attributes: {
+                /** @description The URL that this webhook is configured to `POST` events to.
+                 *      */
+                url: string;
+                /** @description An optional description that was provided at the time the webhook was
+                 *     created.
+                 *      */
+                description: string | null;
+                /** @description A shared secret key used to sign all webhook events sent to the
+                 *     configured webhook URL. This field is returned only once, upon the
+                 *     initial creation of the webhook. If lost, create a new webhook and
+                 *     delete this webhook.
+                 *
+                 *     The webhook URL receives a request with a
+                 *     `X-Up-Authenticity-Signature` header, which is the SHA-256 HMAC of
+                 *     the entire raw request body signed using this `secretKey`. It is
+                 *     advised to compute and check this signature to verify the
+                 *     authenticity of requests sent to the webhook URL. See
+                 *     [Handling webhook events](#callback_post_webhookURL) for full
+                 *     details.
+                 *      */
+                secretKey?: string;
+                /**
+                 * Format: date-time
+                 * @description The date-time at which this webhook was created.
+                 *
+                 */
+                createdAt: string;
+            };
+            relationships: {
+                logs: {
+                    links?: {
+                        /** @description The link to retrieve the related resource(s) in this relationship.
+                         *      */
+                        related: string;
+                    };
+                };
+            };
+            links?: {
+                /** @description The canonical link to this resource within the API.
+                 *      */
+                self: string;
+            };
+        };
+        /** @description Successful response to get all webhooks. This returns a paginated list of
+         *     webhooks, which can be scrolled by following the `prev` and `next` links
+         *     if present.
+         *      */
+        ListWebhooksResponse: {
+            /** @description The list of webhooks returned in this response.
+             *      */
+            data: components["schemas"]["WebhookResource"][];
+            links: {
+                /** @description The link to the previous page in the results. If this value is `null`
+                 *     there is no previous page.
+                 *      */
+                prev: string | null;
+                /** @description The link to the next page in the results. If this value is `null`
+                 *     there is no next page.
+                 *      */
+                next: string | null;
+            };
+        };
+        /** @description Represents a webhook specified as request input.
+         *      */
+        WebhookInputResource: {
+            attributes: {
+                /**
+                 * Format: uri
+                 * @description The URL that this webhook should post events to. This must be a valid
+                 *     HTTP or HTTPS URL that does not exceed 300 characters in length.
+                 *
+                 */
+                url: string;
+                /** @description An optional description for this webhook, up to 64 characters in
+                 *     length.
+                 *      */
+                description?: string | null;
+            };
+        };
+        /** @description Request to create a new webhook. This currently only requires a `url`
+         *     attribute.
+         *      */
+        CreateWebhookRequest: {
+            /** @description The webhook resource to create.
+             *      */
+            data: components["schemas"]["WebhookInputResource"];
+        };
+        /** @description Successful response after creating a webhook.
+         *      */
+        CreateWebhookResponse: {
+            /** @description The webhook that was created.
+             *      */
+            data: components["schemas"]["WebhookResource"];
+        };
         /**
-         * Format: date-time
-         * @description The date-time at which this log entry was created.
+         * @description Specifies the type of a webhook event. This can be used to determine what
+         *     action to take in response to the event, such as which relationships to
+         *     expect.
+         *
+         * @enum {unknown}
          */
-        createdAt: string;
-      };
-      relationships: {
-        webhookEvent: {
-          data: {
+        WebhookEventTypeEnum: "TRANSACTION_CREATED" | "TRANSACTION_SETTLED" | "TRANSACTION_DELETED" | "PING";
+        /** @description Provides the event data used in asynchronous webhook event callbacks to
+         *     subscribed endpoints. Webhooks events have defined `eventType`s and may
+         *     optionally relate to other resources within the Up API.
+         *      */
+        WebhookEventResource: {
             /** @description The type of this resource: `webhook-events` */
             type: string;
-            /** @description The unique identifier of the resource within its type. */
+            /** @description The unique identifier for this event. This will remain constant across
+             *     delivery retries.
+             *      */
             id: string;
-          };
+            attributes: {
+                /** @description The type of this event. This can be used to determine what action to
+                 *     take in response to the event.
+                 *      */
+                eventType: components["schemas"]["WebhookEventTypeEnum"];
+                /**
+                 * Format: date-time
+                 * @description The date-time at which this event was generated.
+                 *
+                 */
+                createdAt: string;
+            };
+            relationships: {
+                webhook: {
+                    data: {
+                        /** @description The type of this resource: `webhooks` */
+                        type: string;
+                        /** @description The unique identifier of the resource within its type.
+                         *      */
+                        id: string;
+                    };
+                    links?: {
+                        /** @description The link to retrieve the related resource(s) in this relationship.
+                         *      */
+                        related: string;
+                    };
+                };
+                transaction?: {
+                    data: {
+                        /** @description The type of this resource: `transactions` */
+                        type: string;
+                        /** @description The unique identifier of the resource within its type.
+                         *      */
+                        id: string;
+                    };
+                    links?: {
+                        /** @description The link to retrieve the related resource(s) in this relationship.
+                         *      */
+                        related: string;
+                    };
+                };
+            };
         };
-      };
-    };
-    /**
-     * @description Successful response to get all delivery logs for a webhook. This returns
-     * a paginated list of delivery logs, which can be scrolled by following the
-     * `next` and `prev` links if present.
-     */
-    ListWebhookDeliveryLogsResponse: {
-      /** @description The list of delivery logs returned in this response. */
-      data: components["schemas"]["WebhookDeliveryLogResource"][];
-      links: {
+        /** @description Asynchronous callback request used for webhook event delivery.
+         *      */
+        WebhookEventCallback: {
+            /** @description The webhook event data sent to the subscribed webhook.
+             *      */
+            data: components["schemas"]["WebhookEventResource"];
+        };
+        /** @description Successful response to get a single webhook.
+         *      */
+        GetWebhookResponse: {
+            /** @description The webhook returned in this response.
+             *      */
+            data: components["schemas"]["WebhookResource"];
+        };
         /**
-         * @description The link to the previous page in the results. If this value is `null`
-         * there is no previous page.
+         * @description Specifies the nature of the success or failure of a webhook delivery
+         *     attempt to the subscribed webhook URL. The currently returned values are
+         *     described below:
+         *
+         *     - **`DELIVERED`**: The event was delivered to the webhook URL
+         *       successfully and a `200` response was received.
+         *     - **`UNDELIVERABLE`**: The webhook URL was not reachable, or timed out.
+         *     - **`BAD_RESPONSE_CODE`**: The event was delivered to the webhook URL
+         *       but a non-`200` response was received.
+         *
+         * @enum {unknown}
          */
-        prev: string | null;
-        /**
-         * @description The link to the next page in the results. If this value is `null`
-         * there is no next page.
-         */
-        next: string | null;
-      };
+        WebhookDeliveryStatusEnum: "DELIVERED" | "UNDELIVERABLE" | "BAD_RESPONSE_CODE";
+        /** @description Provides historical webhook event delivery information for analysis and
+         *     debugging purposes.
+         *      */
+        WebhookDeliveryLogResource: {
+            /** @description The type of this resource: `webhook-delivery-logs` */
+            type: string;
+            /** @description The unique identifier for this log entry.
+             *      */
+            id: string;
+            attributes: {
+                /** @description Information about the request that was sent to the webhook URL.
+                 *      */
+                request: {
+                    /** @description The payload that was sent in the request body.
+                     *      */
+                    body: string;
+                };
+                /** @description Information about the response that was received from the webhook URL.
+                 *      */
+                response: {
+                    /** @description The HTTP status code received in the response.
+                     *      */
+                    statusCode: number;
+                    /** @description The payload that was received in the response body.
+                     *      */
+                    body: string;
+                } | null;
+                /** @description The success or failure status of this delivery attempt.
+                 *      */
+                deliveryStatus: components["schemas"]["WebhookDeliveryStatusEnum"];
+                /**
+                 * Format: date-time
+                 * @description The date-time at which this log entry was created.
+                 *
+                 */
+                createdAt: string;
+            };
+            relationships: {
+                webhookEvent: {
+                    data: {
+                        /** @description The type of this resource: `webhook-events` */
+                        type: string;
+                        /** @description The unique identifier of the resource within its type.
+                         *      */
+                        id: string;
+                    };
+                };
+            };
+        };
+        /** @description Successful response to get all delivery logs for a webhook. This returns
+         *     a paginated list of delivery logs, which can be scrolled by following the
+         *     `next` and `prev` links if present.
+         *      */
+        ListWebhookDeliveryLogsResponse: {
+            /** @description The list of delivery logs returned in this response.
+             *      */
+            data: components["schemas"]["WebhookDeliveryLogResource"][];
+            links: {
+                /** @description The link to the previous page in the results. If this value is `null`
+                 *     there is no previous page.
+                 *      */
+                prev: string | null;
+                /** @description The link to the next page in the results. If this value is `null`
+                 *     there is no next page.
+                 *      */
+                next: string | null;
+            };
+        };
     };
-  };
-  responses: never;
-  parameters: never;
-  requestBodies: never;
-  headers: never;
-  pathItems: never;
+    responses: never;
+    parameters: never;
+    requestBodies: never;
+    headers: never;
+    pathItems: never;
 }
-
-export type external = Record<string, never>;
-
+export type $defs = Record<string, never>;
 export type operations = Record<string, never>;
