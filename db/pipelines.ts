@@ -4,6 +4,7 @@ import {
   TransactionIOEnum,
   TransactionRetrievalOptions,
 } from '@/server/schemas';
+import { UTCDate } from '@date-fns/utc';
 
 /**
  * Conditional aggregation to determine whether
@@ -625,87 +626,95 @@ const cumulativeIOPipeline = (
   dateRange: DateRange,
   accountId: string,
   type: TransactionIOEnum
-) => [
-  {
-    $match: {
-      'attributes.isCategorizable': true,
-      'attributes.createdAt': {
-        $gte: dateRange.from,
-        $lte: dateRange.to,
+) => {
+  // $densify doesn't play nicely with timezone offsets for some reason, anyway ...
+  const utcFrom = new UTCDate(
+    dateRange.from.getUTCFullYear(),
+    dateRange.from.getUTCMonth(),
+    dateRange.from.getUTCDate()
+  );
+  return [
+    {
+      $match: {
+        'attributes.isCategorizable': true,
+        'attributes.createdAt': {
+          $gte: dateRange.from,
+          $lte: dateRange.to,
+        },
+        'attributes.amount.valueInBaseUnits': {
+          ...(type === 'income' ? { $gt: 0 } : { $lt: 0 }),
+        },
+        'relationships.account.data.id': accountId,
       },
-      'attributes.amount.valueInBaseUnits': {
-        ...(type === 'income' ? { $gt: 0 } : { $lt: 0 }),
-      },
-      'relationships.account.data.id': accountId,
     },
-  },
-  {
-    $group: {
-      _id: {
-        $dateTrunc: {
-          date: '$attributes.createdAt',
+    {
+      $group: {
+        _id: {
+          $dateTrunc: {
+            date: '$attributes.createdAt',
+            unit: 'day',
+          },
+        },
+        amount: {
+          $sum: '$attributes.amount.valueInBaseUnits',
+        },
+      },
+    },
+    {
+      $densify: {
+        field: '_id',
+        range: {
+          step: 1,
           unit: 'day',
+          bounds: [
+            // Dates must be UTC (GMT+0)
+            utcFrom,
+            dateRange.to,
+          ],
         },
       },
-      amount: {
-        $sum: '$attributes.amount.valueInBaseUnits',
+    },
+    {
+      $addFields: {
+        amount: {
+          $cond: [
+            {
+              $not: ['$amount'],
+            },
+            0,
+            '$amount',
+          ],
+        },
       },
     },
-  },
-  {
-    $densify: {
-      field: '_id',
-      range: {
-        step: 1,
-        unit: 'day',
-        bounds: [
-          // Dates must be UTC (GMT+0)
-          dateRange.from,
-          dateRange.to,
-        ],
-      },
-    },
-  },
-  {
-    $addFields: {
-      amount: {
-        $cond: [
-          {
-            $not: ['$amount'],
-          },
-          0,
-          '$amount',
-        ],
-      },
-    },
-  },
-  {
-    $setWindowFields: {
-      sortBy: {
-        _id: 1,
-      },
-      output: {
-        amountCumulative: {
-          $sum: '$amount',
-          window: {
-            documents: ['unbounded', 'current'],
+    {
+      $setWindowFields: {
+        sortBy: {
+          _id: 1,
+        },
+        output: {
+          amountCumulative: {
+            $sum: '$amount',
+            window: {
+              documents: ['unbounded', 'current'],
+            },
           },
         },
       },
     },
-  },
-  {
-    $project: {
-      _id: 0,
-      Timestamp: '$_id',
-      AmountCumulative: {
-        $abs: {
-          $divide: ['$amountCumulative', 100],
+    {
+      $project: {
+        _id: 0,
+        Timestamp: '$_id',
+        AmountCumulative: {
+          $abs: {
+            $divide: ['$amountCumulative', 100],
+          },
         },
       },
     },
-  },
-];
+  ];
+};
 
 /**
  * Account balance over time

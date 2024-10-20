@@ -67,10 +67,7 @@ const Summary = ({ accountId }: SummaryProps) => {
   };
 
   return (
-    <section
-      aria-labelledby="overview-summary"
-      className="flex flex-col gap-4 sm:gap-8 lg:gap-10"
-    >
+    <section aria-labelledby="overview-summary" className="flex flex-col gap-4">
       <div>
         <div className="flex items-center justify-between">
           <h1
@@ -101,9 +98,7 @@ const Summary = ({ accountId }: SummaryProps) => {
         <Separator className="my-2" />
       </div>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:h-48">
-        {!expenses || !income || !monthly ? (
-          <Skeleton className="sm:col-span-2 h-80 sm:h-48" />
-        ) : (
+        {expenses && income && monthly ? (
           <>
             <div className="flex flex-col gap-2">
               <div className="flex items-baseline gap-2">
@@ -185,6 +180,8 @@ const Summary = ({ accountId }: SummaryProps) => {
               </ul>
             </div>
           </>
+        ) : (
+          <Skeleton className="sm:col-span-2 h-80 sm:h-48" />
         )}
       </div>
     </section>
