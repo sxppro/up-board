@@ -15,6 +15,7 @@ import {
 } from '@tremor/react';
 import {
   endOfMonth,
+  endOfYear,
   format,
   startOfMonth,
   startOfYear,
@@ -55,7 +56,7 @@ const CumulativeSnapshot = ({
     dateRange: thisYear,
     compareDateRange: {
       from: subYears(thisYear.from, 1),
-      to: subYears(endOfMonth(now), 1),
+      to: endOfYear(subYears(now, 1)),
     },
     type: 'income',
   });
@@ -74,7 +75,7 @@ const CumulativeSnapshot = ({
     dateRange: thisYear,
     compareDateRange: {
       from: subYears(thisYear.from, 1),
-      to: subYears(endOfMonth(now), 1),
+      to: endOfYear(subYears(now, 1)),
     },
     type: 'expense',
   });
@@ -119,7 +120,7 @@ const CumulativeSnapshot = ({
         <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
           <TabGroup className="xl:col-span-2 ">
             <TabList className="space-x-0 items-center border-b">
-              <Tab className="pl-4 pr-12 py-3 border-b-2 border-transparent">
+              <Tab className="flex-1 sm:flex-none pl-4 pr-12 py-3 border-b-2 border-transparent">
                 <div className="flex flex-col gap-1 items-start">
                   <p className="text-muted-foreground">Month to date</p>
                   {month ? (
@@ -132,7 +133,7 @@ const CumulativeSnapshot = ({
                 </div>
               </Tab>
               <Separator orientation="vertical" className="h-[82px]" />
-              <Tab className="pl-4 pr-12 py-3 border-b-2 border-transparent">
+              <Tab className="flex-1 sm:flex-none pl-4 pr-12 py-3 border-b-2 border-transparent">
                 <div className="flex flex-col gap-1 items-start">
                   <p className="text-muted-foreground">Year to date</p>
                   {year ? (
@@ -144,7 +145,10 @@ const CumulativeSnapshot = ({
                   )}
                 </div>
               </Tab>
-              <Separator orientation="vertical" className="h-[82px]" />
+              <Separator
+                orientation="vertical"
+                className="hidden sm:block h-[82px]"
+              />
             </TabList>
             <TabPanels>
               <TabPanel>
@@ -248,7 +252,7 @@ const CumulativeSnapshot = ({
         <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
           <TabGroup className="xl:col-span-2 ">
             <TabList className="space-x-0 items-center border-b">
-              <Tab className="pl-4 pr-12 py-3 border-b-2 border-transparent">
+              <Tab className="flex-1 sm:flex-none pl-4 pr-12 py-3 border-b-2 border-transparent">
                 <div className="flex flex-col gap-1 items-start">
                   <p className="text-muted-foreground">Month to date</p>
                   {month ? (
@@ -261,7 +265,7 @@ const CumulativeSnapshot = ({
                 </div>
               </Tab>
               <Separator orientation="vertical" className="h-[82px]" />
-              <Tab className="pl-4 pr-12 py-3 border-b-2 border-transparent">
+              <Tab className="flex-1 sm:flex-none pl-4 pr-12 py-3 border-b-2 border-transparent">
                 <div className="flex flex-col gap-1 items-start">
                   <p className="text-muted-foreground">Year to date</p>
                   {year ? (
@@ -273,7 +277,10 @@ const CumulativeSnapshot = ({
                   )}
                 </div>
               </Tab>
-              <Separator orientation="vertical" className="h-[82px]" />
+              <Separator
+                orientation="vertical"
+                className="hidden sm:block h-[82px]"
+              />
             </TabList>
             <TabPanels>
               <TabPanel>
