@@ -11,6 +11,12 @@ import {
 } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/tremor/accordion';
 import { AvailableChartColors, chartColors } from '@/utils/charts';
 import { colours } from '@/utils/constants';
 import { cn, formatCurrency } from '@/utils/helpers';
@@ -98,7 +104,7 @@ const Summary = ({ accountId }: SummaryProps) => {
         </div>
         <Separator className="my-2" />
       </div>
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:h-48">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         {expenses && income && monthly ? (
           <>
             <div className="flex flex-col gap-2">
@@ -114,30 +120,39 @@ const Summary = ({ accountId }: SummaryProps) => {
                 values={income.map(({ amount }) => amount)}
                 showLabels={false}
               />
-              <ul role="list" className="py-3 space-y-2">
-                {income.map(({ description, amount }, index) => (
-                  <li
-                    key={description}
-                    className="flex items-center gap-2 text-xs"
-                  >
-                    <span
-                      className={cn(
-                        `${chartColors[AvailableChartColors[index]].bg}`,
-                        'size-2.5 rounded-sm'
-                      )}
-                      aria-hidden="true"
-                    />
-                    <span className="text-gray-900 dark:text-gray-50">
-                      {description}
-                    </span>
-                    <span className="text-gray-600 dark:text-gray-400">
-                      ({formatCurrency(amount)} /{' '}
-                      {((amount / monthly[0].Income) * 100).toFixed(1)}
-                      %)
-                    </span>
-                  </li>
-                ))}
-              </ul>
+              <Accordion type="single" collapsible>
+                <AccordionItem className="border-none" value="item-1">
+                  <AccordionTrigger className="py-2">
+                    More details
+                  </AccordionTrigger>
+                  <AccordionContent>
+                    <ul role="list" className="space-y-2">
+                      {income.map(({ description, amount }, index) => (
+                        <li
+                          key={description}
+                          className="flex items-center gap-2 text-xs"
+                        >
+                          <span
+                            className={cn(
+                              `${chartColors[AvailableChartColors[index]].bg}`,
+                              'size-2.5 rounded-sm'
+                            )}
+                            aria-hidden="true"
+                          />
+                          <span className="text-gray-900 dark:text-gray-50">
+                            {description}
+                          </span>
+                          <span className="text-gray-600 dark:text-gray-400">
+                            ({formatCurrency(amount)} /{' '}
+                            {((amount / monthly[0].Income) * 100).toFixed(1)}
+                            %)
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
             </div>
             <div className="flex flex-col gap-2">
               <div className="flex items-baseline gap-2">
@@ -155,34 +170,43 @@ const Summary = ({ accountId }: SummaryProps) => {
                 )}
                 showLabels={false}
               />
-              <ul role="list" className="py-3 space-y-2">
-                {expenses.map(({ category, categoryName, amount }) => (
-                  <li
-                    key={category}
-                    className="flex items-center gap-2 text-xs"
-                  >
-                    <span
-                      className={cn(
-                        `bg-${colours[categoryName]}`,
-                        'size-2.5 rounded-sm'
-                      )}
-                      aria-hidden="true"
-                    />
-                    <span className="text-gray-900 dark:text-gray-50">
-                      {categoryName}
-                    </span>
-                    <span className="text-gray-600 dark:text-gray-400">
-                      ({formatCurrency(amount)} /{' '}
-                      {((amount / monthly[0].Expenses) * 100).toFixed(1)}
-                      %)
-                    </span>
-                  </li>
-                ))}
-              </ul>
+              <Accordion type="single" collapsible>
+                <AccordionItem className="border-none" value="item-1">
+                  <AccordionTrigger className="py-2">
+                    More details
+                  </AccordionTrigger>
+                  <AccordionContent>
+                    <ul role="list" className="space-y-2">
+                      {expenses.map(({ category, categoryName, amount }) => (
+                        <li
+                          key={category}
+                          className="flex items-center gap-2 text-xs"
+                        >
+                          <span
+                            className={cn(
+                              `bg-${colours[categoryName]}`,
+                              'size-2.5 rounded-sm'
+                            )}
+                            aria-hidden="true"
+                          />
+                          <span className="text-gray-900 dark:text-gray-50">
+                            {categoryName}
+                          </span>
+                          <span className="text-gray-600 dark:text-gray-400">
+                            ({formatCurrency(amount)} /{' '}
+                            {((amount / monthly[0].Expenses) * 100).toFixed(1)}
+                            %)
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  </AccordionContent>{' '}
+                </AccordionItem>
+              </Accordion>
             </div>
           </>
         ) : (
-          <Skeleton className="sm:col-span-2 h-80 sm:h-48" />
+          <Skeleton className="sm:col-span-2 h-48 sm:h-[88px]" />
         )}
       </div>
     </section>
