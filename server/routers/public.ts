@@ -4,7 +4,7 @@ import {
   getCategoryInfo,
   getCategoryInfoHistory,
   getCumulativeIO,
-  getIncomeInfo,
+  getMerchantInfo,
   getMonthlyInfo,
   getTagInfo,
   getTransactionById,
@@ -61,16 +61,17 @@ export const publicRouter = router({
           : rest
       );
     }),
-  getIncomeInfo: publicProcedure
+  getMerchantInfo: publicProcedure
     .input(
       z.object({
         dateRange: DateRangeSchema,
+        type: TransactionIO.optional(),
       })
     )
     .output(z.array(TransactionIncomeInfoSchema))
     .query(async ({ input }) => {
-      const { dateRange } = input;
-      return await getIncomeInfo(dateRange);
+      const { dateRange, type } = input;
+      return await getMerchantInfo(dateRange, type);
     }),
   getCategoryInfo: publicProcedure
     .input(

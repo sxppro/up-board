@@ -36,11 +36,12 @@ const Summary = ({ accountId }: SummaryProps) => {
     },
     type: 'parent',
   });
-  const { data: income } = trpc.public.getIncomeInfo.useQuery({
+  const { data: income } = trpc.public.getMerchantInfo.useQuery({
     dateRange: {
       from: dateRange?.from,
       to: dateRange?.to,
     },
+    type: 'income',
   });
   const { data: monthly } = trpc.public.getMonthlyInfo.useQuery({
     accountId,

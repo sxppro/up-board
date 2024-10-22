@@ -40,7 +40,7 @@ import {
   categoriesByPeriodPipeline,
   categoriesPipeline,
   cumulativeIOPipeline,
-  incomePipeline,
+  merchantsPipeline,
   searchTransactionsPipeline,
   tagInfoPipeline,
   transactionsByDatePipeline,
@@ -285,7 +285,10 @@ export const getMonthlyInfo = async (
  * @param dateRange
  * @returns
  */
-export const getIncomeInfo = async (dateRange: DateRange) => {
+export const getMerchantInfo = async (
+  dateRange: DateRange,
+  type?: TransactionIOEnum
+) => {
   try {
     if (!process.env.UP_TRANS_ACC) {
       throw new Error('Up transaction account not defined');
@@ -295,7 +298,7 @@ export const getIncomeInfo = async (dateRange: DateRange) => {
       'transactions'
     );
     const cursor = transactions.aggregate<TransactionIncomeInfo>(
-      incomePipeline(dateRange.from, dateRange.to, process.env.UP_TRANS_ACC)
+      merchantsPipeline(dateRange, process.env.UP_TRANS_ACC, type)
     );
     const results = await cursor.toArray();
     return results;

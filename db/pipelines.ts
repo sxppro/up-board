@@ -320,18 +320,24 @@ const tagInfoPipeline = (tagId: string, monthly?: boolean) => [
  * @param accountId
  * @returns
  */
-const incomePipeline = (from: Date, to: Date, accountId: string) => [
+const merchantsPipeline = (
+  dateRange: DateRange,
+  accountId: string,
+  type?: TransactionIOEnum
+) => [
   {
     $match: {
       'relationships.account.data.id': accountId,
       'attributes.createdAt': {
-        $gte: from,
-        $lte: to,
+        $gte: dateRange.from,
+        $lte: dateRange.to,
       },
       'attributes.isCategorizable': true,
-      'attributes.amount.valueInBaseUnits': {
-        $gt: 0,
-      },
+      ...(type && {
+        'attributes.amount.valueInBaseUnits': {
+          ...(type === 'income' ? { $gt: 0 } : { $lt: 0 }),
+        },
+      }),
     },
   },
   {
@@ -950,7 +956,7 @@ export {
   categoriesByPeriodPipeline,
   categoriesPipeline,
   cumulativeIOPipeline,
-  incomePipeline,
+  merchantsPipeline,
   searchTransactionsPipeline,
   tagInfoPipeline,
   transactionsByDatePipeline,
