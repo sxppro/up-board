@@ -6,10 +6,12 @@ import { getMockData } from '@/scripts/generateMockData';
 import {
   AccountMonthlyInfoSchema,
   CumulativeIO,
+  RetrievalOptions,
   TagInfoSchema,
   TransactionIncomeInfo,
   TransactionIOEnum,
   type AccountBalanceHistory,
+  type AccountInfo,
   type AccountMonthlyInfo,
   type DateRange,
   type DateRangeGroupBy,
@@ -20,11 +22,7 @@ import {
   type TransactionCategoryType,
   type TransactionRetrievalOptions,
 } from '@/server/schemas';
-import {
-  AccountInfo,
-  AccountResource,
-  DbTransactionResource,
-} from '@/types/custom';
+import { AccountResource, DbTransactionResource } from '@/types/custom';
 import { components } from '@/types/up-api';
 import { auth } from '@/utils/auth';
 import { outputTransactionFields } from '@/utils/helpers';
@@ -321,6 +319,7 @@ export const getMerchantInfo = async (
 export const getCategoryInfo = async (
   dateRange: DateRange,
   type: TransactionCategoryType,
+  options: RetrievalOptions,
   parentCategory?: string
 ) => {
   try {
@@ -333,10 +332,10 @@ export const getCategoryInfo = async (
     );
     const cursor = transactions.aggregate<TransactionCategoryInfo>(
       categoriesPipeline(
-        dateRange.from,
-        dateRange.to,
+        dateRange,
         process.env.UP_TRANS_ACC,
         type,
+        options || {},
         parentCategory
       )
     );
@@ -790,7 +789,10 @@ export const getAccounts = async (
  * @param accountId
  * @returns
  */
-const getAccountBalance = async (dateRange: DateRange, accountId: string) => {
+export const getAccountBalanceHistorical = async (
+  dateRange: DateRange,
+  accountId: string
+) => {
   try {
     const transactions = await connectToCollection<DbTransactionResource>(
       'up',
@@ -851,6 +853,9 @@ export const getAccountById = async (accountId: string) => {
           _id: 0,
           id: '$_id',
           displayName: '$attributes.displayName',
+          balance: {
+            $toDouble: '$attributes.balance.value',
+          },
           accountType: '$attributes.accountType',
         },
       }
@@ -863,8 +868,8 @@ export const getAccountById = async (accountId: string) => {
         ? {
             id: account.id,
             displayName: account.attributes.displayName,
-            accountType: account.attributes
-              .accountType as components['schemas']['AccountTypeEnum'],
+            accountType: account.attributes.accountType,
+            balance: parseFloat(account.attributes.balance.value),
           }
         : null;
     }
@@ -873,9 +878,4 @@ export const getAccountById = async (accountId: string) => {
   }
 };
 
-export {
-  getAccountBalance,
-  getTransactionById,
-  getTransactionsByCategory,
-  getTransactionsByDate,
-};
+export { getTransactionById, getTransactionsByCategory, getTransactionsByDate };

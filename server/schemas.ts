@@ -18,6 +18,11 @@ export type DateRange = z.infer<typeof DateRangeSchema>;
 export const DateRangeGroupBySchema = z.enum(['daily', 'monthly', 'yearly']);
 export type DateRangeGroupBy = z.infer<typeof DateRangeGroupBySchema>;
 
+export const RetrievalOpts = z.object({
+  limit: z.number().optional(),
+});
+export type RetrievalOptions = z.infer<typeof RetrievalOpts>;
+
 export const TagInfoSchema = z.object({
   Income: z.number(),
   Expenses: z.number(),
@@ -54,6 +59,7 @@ export const TransactionCategoryInfoSchema = z.object({
   categoryName: z.string(),
   amount: z.number(),
   transactions: z.number(),
+  parentCategory: z.string().optional(),
 });
 export type TransactionCategoryInfo = z.infer<
   typeof TransactionCategoryInfoSchema
@@ -112,15 +118,16 @@ export type TransactionResourceFiltered = z.infer<
   typeof TransactionResourceFilteredSchema
 >;
 
-export const TransactionRetrievalOptionsSchema = z.object({
-  account: TransactionAccountTypeSchema,
-  dateRange: DateRangeSchema,
-  transactionType: TransactionTypeSchema,
-  sort: z.enum(['time', 'amount']),
-  sortDir: z.enum(['asc', 'desc']),
-  limit: z.number().optional(),
-  type: TransactionIO.optional(),
-});
+export const TransactionRetrievalOptionsSchema = z
+  .object({
+    account: TransactionAccountTypeSchema,
+    dateRange: DateRangeSchema,
+    transactionType: TransactionTypeSchema,
+    sort: z.enum(['time', 'amount']),
+    sortDir: z.enum(['asc', 'desc']),
+    type: TransactionIO.optional(),
+  })
+  .merge(RetrievalOpts);
 export type TransactionRetrievalOptions = z.infer<
   typeof TransactionRetrievalOptionsSchema
 >;
@@ -137,6 +144,14 @@ export const TransactionTagsModificationSchema = z.object({
 export type TransactionTagsModification = z.infer<
   typeof TransactionTagsModificationSchema
 >;
+
+export const AccountInfoSchema = z.object({
+  id: z.string().uuid(),
+  displayName: z.string(),
+  balance: z.number(),
+  accountType: z.string(),
+});
+export type AccountInfo = z.infer<typeof AccountInfoSchema>;
 
 export const AccountMonthlyInfoSchema = z.object({
   Year: z.number().optional(),

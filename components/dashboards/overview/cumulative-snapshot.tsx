@@ -2,7 +2,7 @@
 
 import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
-import { formatCurrency } from '@/utils/helpers';
+import { cn, formatCurrency } from '@/utils/helpers';
 import { trpc } from '@/utils/trpc';
 import {
   LineChart,
@@ -96,6 +96,19 @@ const CumulativeSnapshot = ({
   const { data: savingsBalance } = trpc.public.getAccountBalance.useQuery({
     accountId: savAccountId,
     dateRange: thisMonth,
+  });
+  const { data: savingsAcc } = trpc.public.getAccountById.useQuery({
+    accountId: savAccountId,
+  });
+  const { data: transactionalAcc } = trpc.public.getAccountById.useQuery({
+    accountId,
+  });
+  const { data: expenseCategories } = trpc.public.getCategoryInfo.useQuery({
+    dateRange: thisMonth,
+    type: 'child',
+    options: {
+      limit: 4,
+    },
   });
 
   return (
@@ -193,11 +206,11 @@ const CumulativeSnapshot = ({
           </TabGroup>
           <div className="flex flex-col py-4 sm:p-4">
             <div className="flex-1 flex flex-col gap-1">
-              <p className="font-bold">Transaction account</p>{' '}
-              {transactionalBalance ? (
+              <p className="font-bold">Transaction account</p>
+              {transactionalBalance && transactionalAcc ? (
                 <>
                   <p className="text-2xl">
-                    {formatCurrency(transactionalBalance.at(-1)?.Balance)}
+                    {formatCurrency(transactionalAcc.balance)}
                   </p>
                   <SparkAreaChart
                     className="w-full"
@@ -213,10 +226,10 @@ const CumulativeSnapshot = ({
             <Separator className="my-4" />
             <div className="flex-1 flex flex-col gap-1">
               <p className="font-bold">Savings</p>
-              {savingsBalance ? (
+              {savingsBalance && savingsAcc ? (
                 <>
                   <p className="text-2xl">
-                    {formatCurrency(savingsBalance.at(-1)?.Balance)}
+                    {formatCurrency(savingsAcc.balance)}
                   </p>
                   <SparkAreaChart
                     className="w-full"
@@ -326,6 +339,37 @@ const CumulativeSnapshot = ({
           <div className="flex flex-col py-4 sm:p-4">
             <div className="flex-1 flex flex-col gap-1">
               <p className="font-bold">Top Categories</p>
+              <div className="flex flex-col gap-1">
+                {expenseCategories ? (
+                  expenseCategories.map(
+                    ({ category, categoryName, amount, parentCategory }) => (
+                      <div
+                        key={category}
+                        className="w-full flex h-8 items-center"
+                      >
+                        <div className="flex flex-1 gap-2 overflow-hidden">
+                          <div
+                            className={cn(
+                              'inline-block h-6 w-1 rounded-full',
+                              parentCategory
+                                ? `bg-up-${parentCategory}`
+                                : 'bg-up-uncategorised'
+                            )}
+                          ></div>
+                          <span className="text-gray-700 dark:text-gray-300 truncate">
+                            {categoryName}
+                          </span>
+                        </div>
+                        <span className="font-semibold">
+                          {formatCurrency(amount)}
+                        </span>
+                      </div>
+                    )
+                  )
+                ) : (
+                  <></>
+                )}
+              </div>
             </div>
             <Separator className="my-4" />
             <div className="flex-1 flex flex-col gap-1">

@@ -1,5 +1,6 @@
 import {
-  getAccountBalance,
+  getAccountBalanceHistorical,
+  getAccountById,
   getCategories,
   getCategoryInfo,
   getCategoryInfoHistory,
@@ -16,10 +17,12 @@ import { format } from 'date-fns';
 import { z } from 'zod';
 import {
   AccountBalanceHistorySchema,
+  AccountInfoSchema,
   AccountMonthlyInfoSchema,
   CumulativeIOSchema,
   DateRangeGroupBySchema,
   DateRangeSchema,
+  RetrievalOpts,
   TransactionCategoryInfoHistory,
   TransactionCategoryInfoHistorySchema,
   TransactionCategoryInfoSchema,
@@ -79,12 +82,18 @@ export const publicRouter = router({
         dateRange: DateRangeSchema,
         type: TransactionCategoryTypeSchema,
         parentCategory: z.string().optional(),
+        options: RetrievalOpts.optional(),
       })
     )
     .output(z.array(TransactionCategoryInfoSchema))
     .query(async ({ input }) => {
-      const { dateRange, type, parentCategory } = input;
-      return await getCategoryInfo(dateRange, type, parentCategory);
+      const { dateRange, type, parentCategory, options } = input;
+      return await getCategoryInfo(
+        dateRange,
+        type,
+        options || {},
+        parentCategory
+      );
     }),
   getCategoryInfoHistory: publicProcedure
     .input(
@@ -165,7 +174,10 @@ export const publicRouter = router({
     )
     .query(async ({ input }) => {
       const { dateRange, accountId } = input;
-      const accountBalance = await getAccountBalance(dateRange, accountId);
+      const accountBalance = await getAccountBalanceHistorical(
+        dateRange,
+        accountId
+      );
       return accountBalance.map(({ Timestamp, ...rest }) => {
         return {
           ...rest,
@@ -173,6 +185,21 @@ export const publicRouter = router({
           FormattedDate: format(Timestamp, 'dd LLL'),
         };
       });
+    }),
+  getAccountById: publicProcedure
+    .input(
+      z.object({
+        accountId: z.string().uuid(),
+      })
+    )
+    .output(AccountInfoSchema)
+    .query(async ({ input }) => {
+      const { accountId } = input;
+      const account = await getAccountById(accountId);
+      if (!account) {
+        throw new TRPCError({ code: 'NOT_FOUND' });
+      }
+      return account;
     }),
   getTagInfo: publicProcedure.input(z.string()).query(async ({ input }) => {
     return await getTagInfo(input);

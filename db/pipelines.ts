@@ -1,6 +1,7 @@
 import {
   DateRange,
   DateRangeGroupBy,
+  RetrievalOptions,
   TransactionIOEnum,
   TransactionRetrievalOptions,
 } from '@/server/schemas';
@@ -392,100 +393,105 @@ const merchantsPipeline = (
  * @returns aggregation pipeline definition
  */
 const categoriesPipeline = (
-  from: Date,
-  to: Date,
+  dateRange: DateRange,
   accountId: string,
   type: 'child' | 'parent',
+  options: RetrievalOptions,
   parentCategory?: string
-) => [
-  /**
-   * Match documents within the desired date range
-   * and filter transfers
-   */
-  {
-    $match: {
-      'relationships.account.data.id': accountId,
-      'attributes.createdAt': {
-        $gte: from,
-        $lte: to,
-      },
-      'attributes.isCategorizable': true,
-      // Only expenses
-      'attributes.amount.valueInBaseUnits': {
-        $lt: 0,
-      },
-      ...(parentCategory && {
-        'relationships.parentCategory.data.id': parentCategory,
-      }),
-    },
-  },
-  // Project only the necessary fields for further processing
-  {
-    $project: {
-      category: {
-        $ifNull: [
-          type === 'parent'
-            ? '$relationships.parentCategory.data.id'
-            : '$relationships.category.data.id',
-          'uncategorised',
-        ],
-      },
-      amount: {
-        $toDecimal: '$attributes.amount.value',
+) => {
+  const { limit } = options;
+  return [
+    /**
+     * Match documents within the desired date range
+     * and filter transfers
+     */
+    {
+      $match: {
+        'relationships.account.data.id': accountId,
+        'attributes.createdAt': {
+          $gte: dateRange.from,
+          $lte: dateRange.to,
+        },
+        'attributes.isCategorizable': true,
+        // Only expenses
+        'attributes.amount.valueInBaseUnits': {
+          $lt: 0,
+        },
+        ...(parentCategory && {
+          'relationships.parentCategory.data.id': parentCategory,
+        }),
       },
     },
-  },
-  // Group documents by category and calculate the total amount and count
-  {
-    $group: {
-      _id: '$category',
-      amount: {
-        $sum: '$amount',
-      },
-      transactions: {
-        $sum: 1,
-      },
-    },
-  },
-  {
-    $lookup: {
-      from: 'categories',
-      localField: '_id',
-      foreignField: '_id',
-      as: 'category',
-    },
-  },
-  {
-    $unwind:
-      // So unnecessary!
-      {
-        path: '$category',
-        preserveNullAndEmptyArrays: false,
-      },
-  },
-  // Project the final result
-  {
-    $project: {
-      _id: 0,
-      category: '$_id',
-      categoryName: {
-        $ifNull: ['$category.attributes.name', 'Uncategorised'],
-      },
-      amount: {
-        $abs: {
-          $toDouble: '$amount',
+    // Project only the necessary fields for further processing
+    {
+      $project: {
+        category: {
+          $ifNull: [
+            type === 'parent'
+              ? '$relationships.parentCategory.data.id'
+              : '$relationships.category.data.id',
+            'uncategorised',
+          ],
+        },
+        amount: {
+          $toDecimal: '$attributes.amount.value',
         },
       },
-      transactions: 1,
     },
-  },
-  {
-    $sort: {
-      amount: -1,
-      transactions: -1,
+    // Group documents by category and calculate the total amount and count
+    {
+      $group: {
+        _id: '$category',
+        amount: {
+          $sum: '$amount',
+        },
+        transactions: {
+          $sum: 1,
+        },
+      },
     },
-  },
-];
+    {
+      $lookup: {
+        from: 'categories',
+        localField: '_id',
+        foreignField: '_id',
+        as: 'category',
+      },
+    },
+    {
+      $unwind:
+        // So unnecessary!
+        {
+          path: '$category',
+          preserveNullAndEmptyArrays: false,
+        },
+    },
+    // Project the final result
+    {
+      $project: {
+        _id: 0,
+        category: '$_id',
+        categoryName: {
+          $ifNull: ['$category.attributes.name', 'Uncategorised'],
+        },
+        parentCategory: '$category.relationships.parent.data.id',
+        amount: {
+          $abs: {
+            $toDouble: '$amount',
+          },
+        },
+        transactions: 1,
+      },
+    },
+    {
+      $sort: {
+        amount: -1,
+        transactions: -1,
+      },
+    },
+    ...(limit ? [{ $limit: limit }] : []),
+  ];
+};
 
 /**
  * Pipeline for calculating number of transactions
