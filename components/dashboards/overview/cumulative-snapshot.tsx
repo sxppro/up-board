@@ -191,8 +191,8 @@ const CumulativeSnapshot = ({
               </TabPanel>
             </TabPanels>
           </TabGroup>
-          <div className="flex flex-col sm:p-4">
-            <div className="flex-1 flex flex-col gap-1 p-2">
+          <div className="flex flex-col py-4 sm:p-4">
+            <div className="flex-1 flex flex-col gap-1">
               <p className="font-bold">Transaction account</p>{' '}
               {transactionalBalance ? (
                 <>
@@ -210,8 +210,8 @@ const CumulativeSnapshot = ({
                 <Skeleton className="w-full h-20" />
               )}
             </div>
-            <Separator />
-            <div className="flex-1 flex flex-col gap-1 p-2">
+            <Separator className="my-4" />
+            <div className="flex-1 flex flex-col gap-1">
               <p className="font-bold">Savings</p>
               {savingsBalance ? (
                 <>
@@ -323,6 +323,15 @@ const CumulativeSnapshot = ({
               </TabPanel>
             </TabPanels>
           </TabGroup>
+          <div className="flex flex-col py-4 sm:p-4">
+            <div className="flex-1 flex flex-col gap-1">
+              <p className="font-bold">Top Categories</p>
+            </div>
+            <Separator className="my-4" />
+            <div className="flex-1 flex flex-col gap-1">
+              <p className="font-bold">Top Merchants</p>
+            </div>
+          </div>
         </div>
       </section>
     </>
