@@ -18,7 +18,7 @@ import {
   AccordionTrigger,
 } from '@/components/ui/tremor/accordion';
 import { AvailableChartColors, chartColors } from '@/utils/charts';
-import { colours } from '@/utils/constants';
+import { colours, now } from '@/utils/constants';
 import { cn, formatCurrency } from '@/utils/helpers';
 import { trpc } from '@/utils/trpc';
 import { subDays, subMonths, subYears } from 'date-fns';
@@ -30,7 +30,6 @@ interface SummaryProps {
 }
 
 const Summary = ({ accountId }: SummaryProps) => {
-  const now = new Date();
   const [dateRange, setDateRange] = useState<DateRange>({
     from: subDays(now, 30),
     to: now,

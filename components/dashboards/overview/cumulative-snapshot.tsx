@@ -2,6 +2,7 @@
 
 import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
+import { now } from '@/utils/constants';
 import { cn, formatCurrency } from '@/utils/helpers';
 import { trpc } from '@/utils/trpc';
 import {
@@ -26,8 +27,6 @@ interface CumulativeSnapshotProps {
   accountId: string;
   savAccountId: string;
 }
-
-const now = new Date();
 
 const CumulativeSnapshot = ({
   accountId,
