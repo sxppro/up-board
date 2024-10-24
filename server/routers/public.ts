@@ -68,26 +68,27 @@ export const publicRouter = router({
     .input(
       z.object({
         dateRange: DateRangeSchema,
+        options: RetrievalOpts.optional(),
         type: TransactionIO.optional(),
       })
     )
     .output(z.array(TransactionIncomeInfoSchema))
     .query(async ({ input }) => {
-      const { dateRange, type } = input;
-      return await getMerchantInfo(dateRange, type);
+      const { dateRange, options, type } = input;
+      return await getMerchantInfo(dateRange, options || {}, type);
     }),
   getCategoryInfo: publicProcedure
     .input(
       z.object({
         dateRange: DateRangeSchema,
         type: TransactionCategoryTypeSchema,
-        parentCategory: z.string().optional(),
         options: RetrievalOpts.optional(),
+        parentCategory: z.string().optional(),
       })
     )
     .output(z.array(TransactionCategoryInfoSchema))
     .query(async ({ input }) => {
-      const { dateRange, type, parentCategory, options } = input;
+      const { dateRange, type, options, parentCategory } = input;
       return await getCategoryInfo(
         dateRange,
         type,

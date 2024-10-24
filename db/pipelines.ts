@@ -324,64 +324,68 @@ const tagInfoPipeline = (tagId: string, monthly?: boolean) => [
 const merchantsPipeline = (
   dateRange: DateRange,
   accountId: string,
+  options: RetrievalOptions,
   type?: TransactionIOEnum
-) => [
-  {
-    $match: {
-      'relationships.account.data.id': accountId,
-      'attributes.createdAt': {
-        $gte: dateRange.from,
-        $lte: dateRange.to,
-      },
-      'attributes.isCategorizable': true,
-      ...(type && {
-        'attributes.amount.valueInBaseUnits': {
-          ...(type === 'income' ? { $gt: 0 } : { $lt: 0 }),
+) => {
+  const { limit } = options;
+  return [
+    {
+      $match: {
+        'relationships.account.data.id': accountId,
+        'attributes.createdAt': {
+          $gte: dateRange.from,
+          $lte: dateRange.to,
         },
-      }),
-    },
-  },
-  {
-    $project: {
-      description: {
-        $ifNull: ['$attributes.description', 'null'],
-      },
-      amount: {
-        $toDecimal: '$attributes.amount.value',
+        'attributes.isCategorizable': true,
+        ...(type && {
+          'attributes.amount.valueInBaseUnits': {
+            ...(type === 'income' ? { $gt: 0 } : { $lt: 0 }),
+          },
+        }),
       },
     },
-  },
-  {
-    $group: {
-      _id: '$description',
-      amount: {
-        $sum: '$amount',
-      },
-      transactions: {
-        $sum: 1,
-      },
-    },
-  },
-  {
-    $project: {
-      _id: 0,
-      description: '$_id',
-      amount: {
-        $abs: {
-          $toDouble: '$amount',
+    {
+      $project: {
+        description: {
+          $ifNull: ['$attributes.description', 'null'],
+        },
+        amount: {
+          $toDecimal: '$attributes.amount.value',
         },
       },
-      transactions: 1,
     },
-  },
-  {
-    $sort: {
-      amount: -1,
-      transactions: -1,
+    {
+      $group: {
+        _id: '$description',
+        amount: {
+          $sum: '$amount',
+        },
+        transactions: {
+          $sum: 1,
+        },
+      },
     },
-  },
-  { $limit: 5 },
-];
+    {
+      $project: {
+        _id: 0,
+        description: '$_id',
+        amount: {
+          $abs: {
+            $toDouble: '$amount',
+          },
+        },
+        transactions: 1,
+      },
+    },
+    {
+      $sort: {
+        amount: -1,
+        transactions: -1,
+      },
+    },
+    ...(limit ? [{ $limit: limit }] : [{ $limit: 5 }]),
+  ];
+};
 /**
  * Pipeline for calculating number of transactions
  * and total spending per transaction category for

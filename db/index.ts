@@ -285,6 +285,7 @@ export const getMonthlyInfo = async (
  */
 export const getMerchantInfo = async (
   dateRange: DateRange,
+  options: RetrievalOptions,
   type?: TransactionIOEnum
 ) => {
   try {
@@ -296,7 +297,7 @@ export const getMerchantInfo = async (
       'transactions'
     );
     const cursor = transactions.aggregate<TransactionIncomeInfo>(
-      merchantsPipeline(dateRange, process.env.UP_TRANS_ACC, type)
+      merchantsPipeline(dateRange, process.env.UP_TRANS_ACC, options, type)
     );
     const results = await cursor.toArray();
     return results;

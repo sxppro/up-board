@@ -110,6 +110,13 @@ const CumulativeSnapshot = ({
       limit: 4,
     },
   });
+  const { data: merchants } = trpc.public.getMerchantInfo.useQuery({
+    dateRange: thisMonth,
+    type: 'expense',
+    options: {
+      limit: 4,
+    },
+  });
 
   return (
     <>
@@ -263,7 +270,7 @@ const CumulativeSnapshot = ({
           <Separator className="mt-2" />
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
-          <TabGroup className="xl:col-span-2 ">
+          <TabGroup className="xl:col-span-2">
             <TabList className="space-x-0 items-center border-b">
               <Tab className="flex-1 sm:flex-none pl-4 pr-12 py-3 border-b-2 border-transparent">
                 <div className="flex flex-col gap-1 items-start">
@@ -340,40 +347,55 @@ const CumulativeSnapshot = ({
             <div className="flex-1 flex flex-col gap-1">
               <p className="font-bold">Top Categories</p>
               <div className="flex flex-col gap-1">
-                {expenseCategories ? (
-                  expenseCategories.map(
-                    ({ category, categoryName, amount, parentCategory }) => (
-                      <div
-                        key={category}
-                        className="w-full flex h-8 items-center"
-                      >
-                        <div className="flex flex-1 gap-2 overflow-hidden">
-                          <div
-                            className={cn(
-                              'inline-block h-6 w-1 rounded-full',
-                              parentCategory
-                                ? `bg-up-${parentCategory}`
-                                : 'bg-up-uncategorised'
-                            )}
-                          ></div>
-                          <span className="text-gray-700 dark:text-gray-300 truncate">
-                            {categoryName}
-                          </span>
+                {expenseCategories
+                  ? expenseCategories.map(
+                      ({ category, categoryName, amount, parentCategory }) => (
+                        <div
+                          key={category}
+                          className="w-full flex h-8 items-center"
+                        >
+                          <div className="flex flex-1 gap-2 overflow-hidden">
+                            <div
+                              className={cn(
+                                'inline-block h-6 w-1 rounded-full',
+                                parentCategory
+                                  ? `bg-up-${parentCategory}`
+                                  : 'bg-up-uncategorised'
+                              )}
+                            ></div>
+                            <p className="text-gray-700 dark:text-gray-300 truncate">
+                              {categoryName}
+                            </p>
+                          </div>
+                          <span>{formatCurrency(amount)}</span>
                         </div>
-                        <span className="font-semibold">
-                          {formatCurrency(amount)}
-                        </span>
-                      </div>
+                      )
                     )
-                  )
-                ) : (
-                  <></>
-                )}
+                  : [...Array(4).keys()].map((i) => (
+                      <Skeleton key={i} className="h-8" />
+                    ))}
               </div>
             </div>
             <Separator className="my-4" />
             <div className="flex-1 flex flex-col gap-1">
               <p className="font-bold">Top Merchants</p>
+              <div className="flex flex-col gap-1">
+                {merchants
+                  ? merchants.map(({ description, amount }) => (
+                      <div
+                        key={description}
+                        className="w-full flex h-8 items-center overflow-hidden"
+                      >
+                        <p className="flex-1 text-gray-700 dark:text-gray-300 truncate">
+                          {description}
+                        </p>
+                        <span>{formatCurrency(amount)}</span>
+                      </div>
+                    ))
+                  : [...Array(4).keys()].map((i) => (
+                      <Skeleton key={i} className="h-8" />
+                    ))}
+              </div>
             </div>
           </div>
         </div>
