@@ -1,7 +1,7 @@
-import accounts from '@/mock/accounts.json';
-import categories from '@/mock/categories.json';
-import tags from '@/mock/tags.json';
-import transactions from '@/mock/transactions.json';
+import accountsMock from '@/mock/accounts.json';
+import categoriesMock from '@/mock/categories.json';
+import tagsMock from '@/mock/tags.json';
+import transactionsMock from '@/mock/transactions.json';
 import { getMockData } from '@/scripts/generateMockData';
 import {
   AccountMonthlyInfoSchema,
@@ -65,7 +65,7 @@ const connectToCollection = async <T extends Document>(
     const database = client.db(db);
     return database.collection<T>(collection, collectionOpts);
   } else {
-    throw new Error('unauthorised');
+    return null;
   }
 };
 
@@ -152,23 +152,26 @@ export const insertTransactions = async (
 export const replaceTransactions = async (transactionIds: string[]) => {
   try {
     const transactions = await connectToCollection('up', 'transactions');
-    let replacedTransactions = 0;
-    await Promise.all(
-      transactionIds.map(async (id) => {
-        const data = await getUpTransactionById(id);
-        const replace = await transactions.replaceOne(
-          {
-            _id: new UUID(id).toBinary(),
-          },
-          convertUpToDbTransaction(data.data)
-        );
-        if (replace.acknowledged) {
-          replacedTransactions += replace.modifiedCount;
-        }
-      })
-    );
-    return replacedTransactions;
+    if (transactions) {
+      let replacedTransactions = 0;
+      await Promise.all(
+        transactionIds.map(async (id) => {
+          const data = await getUpTransactionById(id);
+          const replace = await transactions.replaceOne(
+            {
+              _id: new UUID(id).toBinary(),
+            },
+            convertUpToDbTransaction(data.data)
+          );
+          if (replace.acknowledged) {
+            replacedTransactions += replace.modifiedCount;
+          }
+        })
+      );
+      return replacedTransactions;
+    }
   } catch (err) {
+    console.error(err);
     return;
   }
 };
@@ -184,19 +187,20 @@ export const searchTransactions = async (search: string) => {
       'up',
       'transactions'
     );
-    const cursor = transactions.aggregate<DbTransactionResource>(
-      searchTransactionsPipeline(search)
-    );
-    const results = (await cursor.toArray()).map((transaction) =>
-      outputTransactionFields(transaction)
-    );
-    return results;
-  } catch (err) {
-    if (err instanceof Error && err.message.includes('unauthorised')) {
-      return transactions.data.filter(({ attributes }) =>
+    if (transactions) {
+      const cursor = transactions.aggregate<DbTransactionResource>(
+        searchTransactionsPipeline(search)
+      );
+      const results = (await cursor.toArray()).map((transaction) =>
+        outputTransactionFields(transaction)
+      );
+      return results;
+    } else {
+      return transactionsMock.data.filter(({ attributes }) =>
         attributes.description.toLowerCase().includes(search.toLowerCase())
       ) as unknown as ReturnType<typeof outputTransactionFields>[];
     }
+  } catch (err) {
     console.error(err);
     return [];
   }
@@ -217,13 +221,13 @@ export const getMonthlyInfo = async (
       'up',
       'transactions'
     );
-    const cursor = transactions.aggregate<AccountMonthlyInfo>(
-      accountStatsPipeline(accountId, dateRange, groupBy)
-    );
-    const results = await cursor.toArray();
-    return results;
-  } catch (err) {
-    if (err instanceof Error && err.message.includes('unauthorised')) {
+    if (transactions) {
+      const cursor = transactions.aggregate<AccountMonthlyInfo>(
+        accountStatsPipeline(accountId, dateRange, groupBy)
+      );
+      const results = await cursor.toArray();
+      return results;
+    } else {
       if (groupBy && dateRange.from < dateRange.to) {
         let date = new Date(
           dateRange.from.getFullYear(),
@@ -271,8 +275,10 @@ export const getMonthlyInfo = async (
         return res.data;
       } else {
         console.error(res.error);
+        return [];
       }
     }
+  } catch (err) {
     console.error(err);
     return [];
   }
@@ -296,15 +302,16 @@ export const getMerchantInfo = async (
       'up',
       'transactions'
     );
-    const cursor = transactions.aggregate<TransactionIncomeInfo>(
-      merchantsPipeline(dateRange, process.env.UP_TRANS_ACC, options, type)
-    );
-    const results = await cursor.toArray();
-    return results;
-  } catch (err) {
-    if (err instanceof Error && err.message.includes('unauthorised')) {
+    if (transactions) {
+      const cursor = transactions.aggregate<TransactionIncomeInfo>(
+        merchantsPipeline(dateRange, process.env.UP_TRANS_ACC, options, type)
+      );
+      const results = await cursor.toArray();
+      return results;
+    } else {
       return [];
     }
+  } catch (err) {
     console.error(err);
     return [];
   }
@@ -331,25 +338,26 @@ export const getCategoryInfo = async (
       'up',
       'transactions'
     );
-    const cursor = transactions.aggregate<TransactionCategoryInfo>(
-      categoriesPipeline(
-        dateRange,
-        process.env.UP_TRANS_ACC,
-        type,
-        options || {},
-        parentCategory
-      )
-    );
-    const results = await cursor.toArray();
-    return results;
-  } catch (err) {
-    if (err instanceof Error && err.message.includes('unauthorised')) {
-      const filteredCategories = categories.data.filter(({ relationships }) =>
-        parentCategory
-          ? relationships.parent.data?.id === parentCategory
-          : type === 'parent'
-          ? relationships.parent.data === null
-          : relationships.parent.data !== null
+    if (transactions) {
+      const cursor = transactions.aggregate<TransactionCategoryInfo>(
+        categoriesPipeline(
+          dateRange,
+          process.env.UP_TRANS_ACC,
+          type,
+          options || {},
+          parentCategory
+        )
+      );
+      const results = await cursor.toArray();
+      return results;
+    } else {
+      const filteredCategories = categoriesMock.data.filter(
+        ({ relationships }) =>
+          parentCategory
+            ? relationships.parent.data?.id === parentCategory
+            : type === 'parent'
+            ? relationships.parent.data === null
+            : relationships.parent.data !== null
       );
       return faker.helpers
         .arrayElements(filteredCategories, { min: 3, max: 10 })
@@ -361,6 +369,7 @@ export const getCategoryInfo = async (
         }))
         .sort((a, b) => (a.amount < b.amount ? 1 : -1));
     }
+  } catch (err) {
     console.error(err);
     return [];
   }
@@ -384,18 +393,18 @@ export const getCategoryInfoHistory = async (
       'up',
       'transactions'
     );
-    const cursor = transactions.aggregate<TransactionCategoryInfoHistoryRaw>(
-      categoriesByPeriodPipeline(
-        dateRange.from,
-        dateRange.to,
-        process.env.UP_TRANS_ACC,
-        type
-      )
-    );
-    const results = await cursor.toArray();
-    return results;
-  } catch (err) {
-    if (err instanceof Error && err.message.includes('unauthorised')) {
+    if (transactions) {
+      const cursor = transactions.aggregate<TransactionCategoryInfoHistoryRaw>(
+        categoriesByPeriodPipeline(
+          dateRange.from,
+          dateRange.to,
+          process.env.UP_TRANS_ACC,
+          type
+        )
+      );
+      const results = await cursor.toArray();
+      return results;
+    } else {
       if (dateRange.from < dateRange.to) {
         let date = new Date(
           dateRange.from.getFullYear(),
@@ -407,7 +416,7 @@ export const getCategoryInfoHistory = async (
           date = addMonths(date, 1);
         }
         return months.map((date) => ({
-          categories: categories.data
+          categories: categoriesMock.data
             .filter(({ relationships }) =>
               type === 'parent'
                 ? relationships.parent.data === null
@@ -422,7 +431,9 @@ export const getCategoryInfoHistory = async (
           year: date.getFullYear(),
         }));
       }
+      return [];
     }
+  } catch (err) {
     console.error(err);
     return [];
   }
@@ -446,11 +457,15 @@ export const getCumulativeIO = async (
       'up',
       'transactions'
     );
-    const cursor = transactions.aggregate<CumulativeIO>(
-      cumulativeIOPipeline(dateRange, accountId, type)
-    );
-    const results = await cursor.toArray();
-    return results;
+    if (transactions) {
+      const cursor = transactions.aggregate<CumulativeIO>(
+        cumulativeIOPipeline(dateRange, accountId, type)
+      );
+      const results = await cursor.toArray();
+      return results;
+    } else {
+      return [];
+    }
   } catch (err) {
     console.error(err);
     return [];
@@ -468,12 +483,12 @@ export const getTagInfo = async (tag: string): Promise<TagInfo | undefined> => {
       'up',
       'transactions'
     );
-    const cursor = transactions.aggregate<TagInfo>(tagInfoPipeline(tag));
-    const results = await cursor.toArray();
-    return results[0];
-  } catch (err) {
-    if (err instanceof Error && err.message.includes('unauthorised')) {
-      if (tags.data.includes(tag)) {
+    if (transactions) {
+      const cursor = transactions.aggregate<TagInfo>(tagInfoPipeline(tag));
+      const results = await cursor.toArray();
+      return results[0];
+    } else {
+      if (tagsMock.data.includes(tag)) {
         const data = {
           Income: faker.number.float({ min: 0, max: 1000, fractionDigits: 2 }),
           Expenses: faker.number.float({
@@ -492,6 +507,7 @@ export const getTagInfo = async (tag: string): Promise<TagInfo | undefined> => {
       }
       return;
     }
+  } catch (err) {
     console.error(err);
     return;
   }
@@ -512,17 +528,17 @@ const getTransactionsByDate = async (
       'up',
       'transactions'
     );
-    const cursor = transactions.aggregate<DbTransactionResource>(
-      transactionsByDatePipeline(options, accountId)
-    );
-    const results = (await cursor.toArray()).map((transaction) =>
-      outputTransactionFields(transaction)
-    );
-    return results;
-  } catch (err) {
-    if (err instanceof Error && err.message.includes('unauthorised')) {
+    if (transactions) {
+      const cursor = transactions.aggregate<DbTransactionResource>(
+        transactionsByDatePipeline(options, accountId)
+      );
+      const results = (await cursor.toArray()).map((transaction) =>
+        outputTransactionFields(transaction)
+      );
+      return results;
+    } else {
       const { transactionType } = options;
-      return transactions.data
+      return transactionsMock.data
         .filter(({ attributes }) =>
           transactionType === 'transactions'
             ? attributes.isCategorizable
@@ -535,7 +551,7 @@ const getTransactionsByDate = async (
             category: {
               data: {
                 id:
-                  categories.data.find(
+                  categoriesMock.data.find(
                     ({ id }) => id === relationships.category.data.id
                   )?.attributes.name ?? 'Uncategorised',
               },
@@ -543,7 +559,7 @@ const getTransactionsByDate = async (
             parentCategory: {
               data: {
                 id:
-                  categories.data.find(
+                  categoriesMock.data.find(
                     ({ id }) => id === relationships.parentCategory.data.id
                   )?.attributes.name ?? 'Uncategorised',
               },
@@ -559,6 +575,7 @@ const getTransactionsByDate = async (
         typeof outputTransactionFields
       >[];
     }
+  } catch (err) {
     console.error(err);
     return [];
   }
@@ -575,15 +592,39 @@ const getTransactionsByCategory = async (category: string) => {
       'up',
       'transactions'
     );
-    const cursor = transactions.find({ $text: { $search: category } });
-    const results = (await cursor.toArray()).map((transaction) =>
-      outputTransactionFields(transaction)
-    );
-    return results;
-  } catch (err) {
-    if (err instanceof Error && err.message.includes('unauthorised')) {
-      return [];
+    if (transactions) {
+      const cursor = transactions.find({ $text: { $search: category } });
+      const results = (await cursor.toArray()).map((transaction) =>
+        outputTransactionFields(transaction)
+      );
+      return results;
+    } else {
+      return transactionsMock.data
+        .filter(
+          ({ relationships }) => relationships.category.data.id === category
+        )
+        .map(({ relationships, ...rest }) => ({
+          ...rest,
+          relationships: {
+            ...relationships,
+            category: {
+              data: {
+                id: categoriesMock.data.find(
+                  ({ id }) => id === relationships.category.data.id
+                )?.attributes.name,
+              },
+            },
+            parentCategory: {
+              data: {
+                id: categoriesMock.data.find(
+                  ({ id }) => id === relationships.parentCategory.data.id
+                )?.attributes.name,
+              },
+            },
+          },
+        })) as unknown as ReturnType<typeof outputTransactionFields>[];
     }
+  } catch (err) {
     console.error(err);
     return [];
   }
@@ -600,16 +641,19 @@ const getTransactionById = async (id: string) => {
       'up',
       'transactions'
     );
-    const result = await transactions.findOne({ _id: new UUID(id).toBinary() });
-    return result ? outputTransactionFields(result) : result;
-  } catch (err) {
-    if (err instanceof Error && err.message.includes('unauthorised')) {
+    if (transactions) {
+      const result = await transactions.findOne({
+        _id: new UUID(id).toBinary(),
+      });
+      return result ? outputTransactionFields(result) : result;
+    } else {
       return (
-        (transactions.data.find(
+        (transactionsMock.data.find(
           ({ id: txId }) => txId === id
         ) as unknown as ReturnType<typeof outputTransactionFields>) || null
       );
     }
+  } catch (err) {
     console.error(err);
     return;
   }
@@ -626,14 +670,14 @@ export const getTransactionsByTag = async (tag: string) => {
       'up',
       'transactions'
     );
-    const cursor = transactions.find({ 'relationships.tags.data.id': tag });
-    const results = (await cursor.toArray()).map((transaction) =>
-      outputTransactionFields(transaction)
-    );
-    return results;
-  } catch (err) {
-    if (err instanceof Error && err.message.includes('unauthorised')) {
-      return transactions.data
+    if (transactions) {
+      const cursor = transactions.find({ 'relationships.tags.data.id': tag });
+      const results = (await cursor.toArray()).map((transaction) =>
+        outputTransactionFields(transaction)
+      );
+      return results;
+    } else {
+      return transactionsMock.data
         .filter(({ relationships }) =>
           relationships.tags.data.find(({ id }) => id === tag)
         )
@@ -643,6 +687,7 @@ export const getTransactionsByTag = async (tag: string) => {
             : 1
         ) as unknown as ReturnType<typeof outputTransactionFields>[];
     }
+  } catch (err) {
     console.error(err);
     return [];
   }
@@ -658,13 +703,14 @@ export const getTransactionsByTags = async () => {
       'up',
       'transactions'
     );
-    const cursor = transactions.aggregate(transactionsByTagsPipeline());
-    const results = await cursor.toArray();
-    return results;
-  } catch (err) {
-    if (err instanceof Error && err.message.includes('unauthorised')) {
+    if (transactions) {
+      const cursor = transactions.aggregate(transactionsByTagsPipeline());
+      const results = await cursor.toArray();
+      return results;
+    } else {
       return [];
     }
+  } catch (err) {
     console.error(err);
     return [];
   }
@@ -678,22 +724,22 @@ export const getTransactionsByTags = async () => {
 export const getCategories = async (type: TransactionCategoryType) => {
   try {
     const categories = await connectToCollection('up', 'categories');
-    const cursor = categories
-      .find({
-        'relationships.parent.data': type === 'child' ? { $ne: null } : null,
-      })
-      .sort({ 'attributes.name': 1 })
-      .project<TransactionCategoryOption>({
-        _id: 0,
-        id: '$_id',
-        value: '$attributes.name',
-        name: '$attributes.name',
-      });
-    const results = await cursor.toArray();
-    return results;
-  } catch (err) {
-    if (err instanceof Error && err.message.includes('unauthorised')) {
-      return categories.data
+    if (categories) {
+      const cursor = categories
+        .find({
+          'relationships.parent.data': type === 'child' ? { $ne: null } : null,
+        })
+        .sort({ 'attributes.name': 1 })
+        .project<TransactionCategoryOption>({
+          _id: 0,
+          id: '$_id',
+          value: '$attributes.name',
+          name: '$attributes.name',
+        });
+      const results = await cursor.toArray();
+      return results;
+    } else {
+      return categoriesMock.data
         .filter(({ relationships }) =>
           type === 'parent'
             ? relationships.parent.data === null
@@ -706,6 +752,7 @@ export const getCategories = async (type: TransactionCategoryType) => {
         }))
         .sort((a, b) => (a.name.toUpperCase() < b.name.toUpperCase() ? -1 : 1));
     }
+  } catch (err) {
     console.error(err);
     return [];
   }
@@ -720,15 +767,16 @@ export const getTags = async () => {
       'up',
       'transactions'
     );
-    const cursor = transactions.aggregate<{ tags: string[] }>(
-      uniqueTagsPipeline()
-    );
-    const results = await cursor.toArray();
-    return results[0];
-  } catch (err) {
-    if (err instanceof Error && err.message.includes('unauthorised')) {
-      return { tags: tags.data };
+    if (transactions) {
+      const cursor = transactions.aggregate<{ tags: string[] }>(
+        uniqueTagsPipeline()
+      );
+      const results = await cursor.toArray();
+      return results[0];
+    } else {
+      return { tags: tagsMock.data };
     }
+  } catch (err) {
     console.error(err);
     return { tags: [] };
   }
@@ -747,37 +795,38 @@ export const getAccounts = async (
       'up',
       'accounts'
     );
-    const cursor = accounts
-      .find(accountType ? { 'attributes.accountType': accountType } : {})
-      .sort({ 'attributes.displayName': 1, 'attributes.accountType': 1 })
-      .project<AccountInfo>({
-        _id: 0,
-        id: '$_id',
-        displayName: '$attributes.displayName',
-        accountType: '$attributes.accountType',
-        balance: {
-          $toDecimal: '$attributes.balance.value',
-        },
-      })
-      .sort({ balance: -1 });
-    const results = await cursor.toArray();
-    return results;
-  } catch (err) {
-    if (err instanceof Error && err.message.includes('unauthorised')) {
+    if (accounts) {
+      const cursor = accounts
+        .find(accountType ? { 'attributes.accountType': accountType } : {})
+        .sort({ 'attributes.displayName': 1, 'attributes.accountType': 1 })
+        .project<AccountInfo>({
+          _id: 0,
+          id: '$_id',
+          displayName: '$attributes.displayName',
+          accountType: '$attributes.accountType',
+          balance: {
+            $toDecimal: '$attributes.balance.value',
+          },
+        })
+        .sort({ balance: -1 });
+      const results = await cursor.toArray();
+      return results;
+    } else {
       return accountType
-        ? accounts.data
+        ? accountsMock.data
             .filter(({ attributes }) => attributes.accountType === accountType)
             .map(({ id, attributes }) => ({
               id,
               displayName: attributes.displayName,
               accountType: attributes.accountType,
             }))
-        : accounts.data.map(({ id, attributes }) => ({
+        : accountsMock.data.map(({ id, attributes }) => ({
             id,
             displayName: attributes.displayName,
             accountType: attributes.accountType,
           }));
     }
+  } catch (err) {
     console.error(err);
     return [];
   }
@@ -799,13 +848,13 @@ export const getAccountBalanceHistorical = async (
       'up',
       'transactions'
     );
-    const cursor = transactions.aggregate<AccountBalanceHistory>(
-      accountBalancePipeline(dateRange.from, dateRange.to, accountId)
-    );
-    const results = await cursor.toArray();
-    return results;
-  } catch (err) {
-    if (err instanceof Error && err.message.includes('unauthorised')) {
+    if (transactions) {
+      const cursor = transactions.aggregate<AccountBalanceHistory>(
+        accountBalancePipeline(dateRange.from, dateRange.to, accountId)
+      );
+      const results = await cursor.toArray();
+      return results;
+    } else {
       if (dateRange.from < dateRange.to) {
         const startingBalance = parseFloat(
           faker.finance.amount({ max: 10000 })
@@ -830,7 +879,9 @@ export const getAccountBalanceHistorical = async (
             startingBalance + parseFloat(faker.finance.amount({ min: -1000 })),
         }));
       }
+      return [];
     }
+  } catch (err) {
     console.error(err);
     return [];
   }
@@ -847,24 +898,24 @@ export const getAccountById = async (accountId: string) => {
       'up',
       'accounts'
     );
-    const account = await accounts.findOne<AccountInfo>(
-      { _id: accountId },
-      {
-        projection: {
-          _id: 0,
-          id: '$_id',
-          displayName: '$attributes.displayName',
-          balance: {
-            $toDouble: '$attributes.balance.value',
+    if (accounts) {
+      const account = await accounts.findOne<AccountInfo>(
+        { _id: accountId },
+        {
+          projection: {
+            _id: 0,
+            id: '$_id',
+            displayName: '$attributes.displayName',
+            balance: {
+              $toDouble: '$attributes.balance.value',
+            },
+            accountType: '$attributes.accountType',
           },
-          accountType: '$attributes.accountType',
-        },
-      }
-    );
-    return account;
-  } catch (err) {
-    if (err instanceof Error && err.message.includes('unauthorised')) {
-      const account = accounts.data.find(({ id }) => id === accountId);
+        }
+      );
+      return account;
+    } else {
+      const account = accountsMock.data.find(({ id }) => id === accountId);
       return account
         ? {
             id: account.id,
@@ -874,6 +925,7 @@ export const getAccountById = async (accountId: string) => {
           }
         : null;
     }
+  } catch (err) {
     console.error(err);
     return;
   }
