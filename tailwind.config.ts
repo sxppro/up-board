@@ -75,14 +75,14 @@ export default {
           background: {
             muted: colors.gray[50],
             subtle: colors.gray[100],
-            DEFAULT: colors.white,
+            DEFAULT: 'hsl(var(--background))',
             emphasis: colors.gray[700],
           },
           border: {
-            DEFAULT: colors.gray[200],
+            DEFAULT: 'hsl(var(--border))',
           },
           ring: {
-            DEFAULT: colors.gray[200],
+            DEFAULT: 'hsl(var(--ring))',
           },
           content: {
             subtle: colors.gray[400],
@@ -105,14 +105,14 @@ export default {
           background: {
             muted: '#131A2B',
             subtle: colors.gray[800],
-            DEFAULT: colors.gray[900],
+            DEFAULT: 'hsl(var(--background))',
             emphasis: colors.gray[300],
           },
           border: {
-            DEFAULT: colors.gray[800],
+            DEFAULT: 'hsl(var(--border))',
           },
           ring: {
-            DEFAULT: colors.gray[800],
+            DEFAULT: 'hsl(var(--ring))',
           },
           content: {
             subtle: colors.gray[600],
