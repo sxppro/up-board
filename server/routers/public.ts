@@ -36,46 +36,49 @@ import {
 import { publicProcedure, router } from '../trpc';
 
 export const publicRouter = router({
+  getAccountBalance: publicProcedure
+    .input(
+      z.object({
+        dateRange: DateRangeSchema,
+        accountId: z.string().uuid(),
+      })
+    )
+    .output(
+      z.array(AccountBalanceHistorySchema.extend({ FormattedDate: z.string() }))
+    )
+    .query(async ({ input }) => {
+      const { dateRange, accountId } = input;
+      const accountBalance = await getAccountBalanceHistorical(
+        dateRange,
+        accountId
+      );
+      return accountBalance.map(({ Timestamp, ...rest }) => {
+        return {
+          ...rest,
+          Timestamp,
+          FormattedDate: format(Timestamp, 'dd LLL'),
+        };
+      });
+    }),
+  getAccountById: publicProcedure
+    .input(
+      z.object({
+        accountId: z.string().uuid(),
+      })
+    )
+    .output(AccountInfoSchema)
+    .query(async ({ input }) => {
+      const { accountId } = input;
+      const account = await getAccountById(accountId);
+      if (!account) {
+        throw new TRPCError({ code: 'NOT_FOUND' });
+      }
+      return account;
+    }),
   getCategories: publicProcedure
     .input(TransactionCategoryTypeSchema)
     .query(async ({ input }) => {
       return await getCategories(input);
-    }),
-  getMonthlyInfo: publicProcedure
-    .input(
-      z.object({
-        accountId: z.string().uuid(),
-        dateRange: DateRangeSchema,
-        groupBy: DateRangeGroupBySchema.optional(),
-      })
-    )
-    .output(z.array(AccountMonthlyInfoSchema))
-    .query(async ({ input }) => {
-      const { accountId, dateRange, groupBy } = input;
-      const results = await getMonthlyInfo(accountId, dateRange, groupBy);
-      return results.map(({ Year, Month, ...rest }) =>
-        Year && Month
-          ? {
-              ...rest,
-              Year,
-              Month,
-              FormattedDate: format(new Date(Year, Month - 1), 'LLL yy'),
-            }
-          : rest
-      );
-    }),
-  getMerchantInfo: publicProcedure
-    .input(
-      z.object({
-        dateRange: DateRangeSchema,
-        options: RetrievalOpts.optional(),
-        type: TransactionIO.optional(),
-      })
-    )
-    .output(z.array(TransactionIncomeInfoSchema))
-    .query(async ({ input }) => {
-      const { dateRange, options, type } = input;
-      return await getMerchantInfo(dateRange, options || {}, type);
     }),
   getCategoryInfo: publicProcedure
     .input(
@@ -163,53 +166,45 @@ export const publicRouter = router({
         });
       }
     }),
-  getAccountBalance: publicProcedure
+  getMerchantInfo: publicProcedure
     .input(
       z.object({
         dateRange: DateRangeSchema,
-        accountId: z.string().uuid(),
+        options: RetrievalOpts.optional(),
+        type: TransactionIO.optional(),
       })
     )
-    .output(
-      z.array(AccountBalanceHistorySchema.extend({ FormattedDate: z.string() }))
-    )
+    .output(z.array(TransactionIncomeInfoSchema))
     .query(async ({ input }) => {
-      const { dateRange, accountId } = input;
-      const accountBalance = await getAccountBalanceHistorical(
-        dateRange,
-        accountId
-      );
-      return accountBalance.map(({ Timestamp, ...rest }) => {
-        return {
-          ...rest,
-          Timestamp,
-          FormattedDate: format(Timestamp, 'dd LLL'),
-        };
-      });
+      const { dateRange, options, type } = input;
+      return await getMerchantInfo(dateRange, options || {}, type);
     }),
-  getAccountById: publicProcedure
+  getMonthlyInfo: publicProcedure
     .input(
       z.object({
         accountId: z.string().uuid(),
+        dateRange: DateRangeSchema,
+        groupBy: DateRangeGroupBySchema.optional(),
       })
     )
-    .output(AccountInfoSchema)
+    .output(z.array(AccountMonthlyInfoSchema))
     .query(async ({ input }) => {
-      const { accountId } = input;
-      const account = await getAccountById(accountId);
-      if (!account) {
-        throw new TRPCError({ code: 'NOT_FOUND' });
-      }
-      return account;
+      const { accountId, dateRange, groupBy } = input;
+      const results = await getMonthlyInfo(accountId, dateRange, groupBy);
+      return results.map(({ Year, Month, ...rest }) =>
+        Year && Month
+          ? {
+              ...rest,
+              Year,
+              Month,
+              FormattedDate: format(new Date(Year, Month - 1), 'LLL yy'),
+            }
+          : rest
+      );
     }),
   getTagInfo: publicProcedure.input(z.string()).query(async ({ input }) => {
     return await getTagInfo(input);
   }),
-  getTransactionsByDate: publicProcedure
-    .input(TransactionRetrievalOptionsSchema)
-    .query(async ({ input }) => {
-      return await getTransactions(input);
-    }),
   getTransactionById: publicProcedure
     .input(TransactionIdSchema)
     .output(TransactionResourceFilteredSchema)
@@ -219,5 +214,10 @@ export const publicRouter = router({
         throw new TRPCError({ code: 'NOT_FOUND' });
       }
       return filterTransactionFields([transaction])[0];
+    }),
+  getTransactionsByDate: publicProcedure
+    .input(TransactionRetrievalOptionsSchema)
+    .query(async ({ input }) => {
+      return await getTransactions(input);
     }),
 });
