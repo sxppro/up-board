@@ -1,8 +1,11 @@
 import {
-  getAccountBalance,
+  getAccountBalanceHistorical,
+  getAccountById,
   getCategories,
   getCategoryInfo,
   getCategoryInfoHistory,
+  getCumulativeIO,
+  getMerchantInfo,
   getMonthlyInfo,
   getTagInfo,
   getTransactionById,
@@ -14,24 +17,167 @@ import { format } from 'date-fns';
 import { z } from 'zod';
 import {
   AccountBalanceHistorySchema,
+  AccountInfoSchema,
   AccountMonthlyInfoSchema,
+  CumulativeIOSchema,
   DateRangeGroupBySchema,
   DateRangeSchema,
+  RetrievalOpts,
   TransactionCategoryInfoHistory,
   TransactionCategoryInfoHistorySchema,
   TransactionCategoryInfoSchema,
   TransactionCategoryTypeSchema,
   TransactionIdSchema,
+  TransactionIncomeInfoSchema,
+  TransactionIO,
   TransactionResourceFilteredSchema,
   TransactionRetrievalOptionsSchema,
 } from '../schemas';
 import { publicProcedure, router } from '../trpc';
 
 export const publicRouter = router({
+  getAccountBalance: publicProcedure
+    .input(
+      z.object({
+        dateRange: DateRangeSchema,
+        accountId: z.string().uuid(),
+      })
+    )
+    .output(
+      z.array(AccountBalanceHistorySchema.extend({ FormattedDate: z.string() }))
+    )
+    .query(async ({ input }) => {
+      const { dateRange, accountId } = input;
+      const accountBalance = await getAccountBalanceHistorical(
+        dateRange,
+        accountId
+      );
+      return accountBalance.map(({ Timestamp, ...rest }) => {
+        return {
+          ...rest,
+          Timestamp,
+          FormattedDate: format(Timestamp, 'dd LLL'),
+        };
+      });
+    }),
+  getAccountById: publicProcedure
+    .input(
+      z.object({
+        accountId: z.string().uuid(),
+      })
+    )
+    .output(AccountInfoSchema)
+    .query(async ({ input }) => {
+      const { accountId } = input;
+      const account = await getAccountById(accountId);
+      if (!account) {
+        throw new TRPCError({ code: 'NOT_FOUND' });
+      }
+      return account;
+    }),
   getCategories: publicProcedure
     .input(TransactionCategoryTypeSchema)
     .query(async ({ input }) => {
       return await getCategories(input);
+    }),
+  getCategoryInfo: publicProcedure
+    .input(
+      z.object({
+        dateRange: DateRangeSchema,
+        type: TransactionCategoryTypeSchema,
+        options: RetrievalOpts.optional(),
+        parentCategory: z.string().optional(),
+      })
+    )
+    .output(z.array(TransactionCategoryInfoSchema))
+    .query(async ({ input }) => {
+      const { dateRange, type, options, parentCategory } = input;
+      return await getCategoryInfo(
+        dateRange,
+        type,
+        options || {},
+        parentCategory
+      );
+    }),
+  getCategoryInfoHistory: publicProcedure
+    .input(
+      z.object({
+        dateRange: DateRangeSchema,
+        type: TransactionCategoryTypeSchema,
+      })
+    )
+    .output(z.array(TransactionCategoryInfoHistorySchema))
+    .query(async ({ input }) => {
+      const { dateRange, type } = input;
+      const results = await getCategoryInfoHistory(dateRange, type);
+      return results.map(({ month, year, categories }) => {
+        // @ts-expect-error
+        const remappedElem: TransactionCategoryInfoHistory = {
+          FormattedDate: format(new Date(year, month - 1), 'LLL yy'),
+        };
+        categories.map(
+          ({ amount, category }) => (remappedElem[category] = amount)
+        );
+        return remappedElem;
+      });
+    }),
+  getCumulativeIO: publicProcedure
+    .input(
+      z.object({
+        dateRange: DateRangeSchema,
+        compareDateRange: DateRangeSchema.optional(),
+        accountId: z.string(),
+        type: TransactionIO,
+      })
+    )
+    .output(
+      z.array(
+        CumulativeIOSchema.extend({
+          FormattedDate: z.string(),
+          AmountCumulativePast: z.number().optional(),
+        })
+      )
+    )
+    .query(async ({ input }) => {
+      const { dateRange, compareDateRange, accountId, type } = input;
+      const results = await getCumulativeIO(accountId, dateRange, type);
+      if (compareDateRange) {
+        const compareResults = await getCumulativeIO(
+          accountId,
+          compareDateRange,
+          type
+        );
+        return compareResults.map(
+          ({ Timestamp, AmountCumulative, ...rest }, index) => {
+            const FormattedDate = format(Timestamp, 'd MMM');
+            return {
+              ...rest,
+              Timestamp,
+              AmountCumulativePast: AmountCumulative,
+              AmountCumulative: results[index]?.AmountCumulative ?? null,
+              FormattedDate,
+            };
+          }
+        );
+      } else {
+        return results.map(({ Timestamp, ...rest }) => {
+          const FormattedDate = format(Timestamp, 'd MMM');
+          return { ...rest, Timestamp, FormattedDate };
+        });
+      }
+    }),
+  getMerchantInfo: publicProcedure
+    .input(
+      z.object({
+        dateRange: DateRangeSchema,
+        options: RetrievalOpts.optional(),
+        type: TransactionIO.optional(),
+      })
+    )
+    .output(z.array(TransactionIncomeInfoSchema))
+    .query(async ({ input }) => {
+      const { dateRange, options, type } = input;
+      return await getMerchantInfo(dateRange, options || {}, type);
     }),
   getMonthlyInfo: publicProcedure
     .input(
@@ -56,70 +202,9 @@ export const publicRouter = router({
           : rest
       );
     }),
-  getCategoryInfo: publicProcedure
-    .input(
-      z.object({
-        dateRange: DateRangeSchema,
-        type: TransactionCategoryTypeSchema,
-        parentCategory: z.string().optional(),
-      })
-    )
-    .output(z.array(TransactionCategoryInfoSchema))
-    .query(async ({ input }) => {
-      const { dateRange, type, parentCategory } = input;
-      return await getCategoryInfo(dateRange, type, parentCategory);
-    }),
-  getCategoryInfoHistory: publicProcedure
-    .input(
-      z.object({
-        dateRange: DateRangeSchema,
-        type: TransactionCategoryTypeSchema,
-      })
-    )
-    .output(z.array(TransactionCategoryInfoHistorySchema))
-    .query(async ({ input }) => {
-      const { dateRange, type } = input;
-      const results = await getCategoryInfoHistory(dateRange, type);
-      return results.map(({ month, year, categories }) => {
-        // @ts-expect-error
-        const remappedElem: TransactionCategoryInfoHistory = {
-          FormattedDate: format(new Date(year, month - 1), 'LLL yy'),
-        };
-        categories.map(
-          ({ amount, category }) => (remappedElem[category] = amount)
-        );
-        return remappedElem;
-      });
-    }),
-  getAccountBalance: publicProcedure
-    .input(
-      z.object({
-        dateRange: DateRangeSchema,
-        accountId: z.string().uuid(),
-      })
-    )
-    .output(
-      z.array(AccountBalanceHistorySchema.extend({ FormattedDate: z.string() }))
-    )
-    .query(async ({ input }) => {
-      const { dateRange, accountId } = input;
-      const accountBalance = await getAccountBalance(dateRange, accountId);
-      return accountBalance.map(({ Timestamp, ...rest }) => {
-        return {
-          ...rest,
-          Timestamp,
-          FormattedDate: format(Timestamp, 'dd LLL'),
-        };
-      });
-    }),
   getTagInfo: publicProcedure.input(z.string()).query(async ({ input }) => {
     return await getTagInfo(input);
   }),
-  getTransactionsByDate: publicProcedure
-    .input(TransactionRetrievalOptionsSchema)
-    .query(async ({ input }) => {
-      return await getTransactions(input);
-    }),
   getTransactionById: publicProcedure
     .input(TransactionIdSchema)
     .output(TransactionResourceFilteredSchema)
@@ -129,5 +214,10 @@ export const publicRouter = router({
         throw new TRPCError({ code: 'NOT_FOUND' });
       }
       return filterTransactionFields([transaction])[0];
+    }),
+  getTransactionsByDate: publicProcedure
+    .input(TransactionRetrievalOptionsSchema)
+    .query(async ({ input }) => {
+      return await getTransactions(input);
     }),
 });

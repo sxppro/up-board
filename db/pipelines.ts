@@ -1,8 +1,11 @@
 import {
   DateRange,
   DateRangeGroupBy,
+  RetrievalOptions,
+  TransactionIOEnum,
   TransactionRetrievalOptions,
 } from '@/server/schemas';
+import { UTCDate } from '@date-fns/utc';
 
 /**
  * Conditional aggregation to determine whether
@@ -311,6 +314,79 @@ const tagInfoPipeline = (tagId: string, monthly?: boolean) => [
 ];
 
 /**
+ * Groups income by transaction description
+ * (which is typically the merchant name)
+ * @param from
+ * @param to
+ * @param accountId
+ * @returns
+ */
+const merchantsPipeline = (
+  dateRange: DateRange,
+  accountId: string,
+  options: RetrievalOptions,
+  type?: TransactionIOEnum
+) => {
+  const { limit } = options;
+  return [
+    {
+      $match: {
+        'relationships.account.data.id': accountId,
+        'attributes.createdAt': {
+          $gte: dateRange.from,
+          $lte: dateRange.to,
+        },
+        'attributes.isCategorizable': true,
+        ...(type && {
+          'attributes.amount.valueInBaseUnits': {
+            ...(type === 'income' ? { $gt: 0 } : { $lt: 0 }),
+          },
+        }),
+      },
+    },
+    {
+      $project: {
+        description: {
+          $ifNull: ['$attributes.description', 'null'],
+        },
+        amount: {
+          $toDecimal: '$attributes.amount.value',
+        },
+      },
+    },
+    {
+      $group: {
+        _id: '$description',
+        amount: {
+          $sum: '$amount',
+        },
+        transactions: {
+          $sum: 1,
+        },
+      },
+    },
+    {
+      $project: {
+        _id: 0,
+        description: '$_id',
+        amount: {
+          $abs: {
+            $toDouble: '$amount',
+          },
+        },
+        transactions: 1,
+      },
+    },
+    {
+      $sort: {
+        amount: -1,
+        transactions: -1,
+      },
+    },
+    ...(limit ? [{ $limit: limit }] : [{ $limit: 5 }]),
+  ];
+};
+/**
  * Pipeline for calculating number of transactions
  * and total spending per transaction category for
  * specified account
@@ -321,100 +397,105 @@ const tagInfoPipeline = (tagId: string, monthly?: boolean) => [
  * @returns aggregation pipeline definition
  */
 const categoriesPipeline = (
-  from: Date,
-  to: Date,
+  dateRange: DateRange,
   accountId: string,
   type: 'child' | 'parent',
+  options: RetrievalOptions,
   parentCategory?: string
-) => [
-  /**
-   * Match documents within the desired date range
-   * and filter transfers
-   */
-  {
-    $match: {
-      'relationships.account.data.id': accountId,
-      'attributes.createdAt': {
-        $gte: from,
-        $lte: to,
-      },
-      'attributes.isCategorizable': true,
-      // Only expenses
-      'attributes.amount.valueInBaseUnits': {
-        $lt: 0,
-      },
-      ...(parentCategory && {
-        'relationships.parentCategory.data.id': parentCategory,
-      }),
-    },
-  },
-  // Project only the necessary fields for further processing
-  {
-    $project: {
-      category: {
-        $ifNull: [
-          type === 'parent'
-            ? '$relationships.parentCategory.data.id'
-            : '$relationships.category.data.id',
-          'uncategorised',
-        ],
-      },
-      amount: {
-        $toDecimal: '$attributes.amount.value',
+) => {
+  const { limit } = options;
+  return [
+    /**
+     * Match documents within the desired date range
+     * and filter transfers
+     */
+    {
+      $match: {
+        'relationships.account.data.id': accountId,
+        'attributes.createdAt': {
+          $gte: dateRange.from,
+          $lte: dateRange.to,
+        },
+        'attributes.isCategorizable': true,
+        // Only expenses
+        'attributes.amount.valueInBaseUnits': {
+          $lt: 0,
+        },
+        ...(parentCategory && {
+          'relationships.parentCategory.data.id': parentCategory,
+        }),
       },
     },
-  },
-  // Group documents by category and calculate the total amount and count
-  {
-    $group: {
-      _id: '$category',
-      amount: {
-        $sum: '$amount',
-      },
-      transactions: {
-        $sum: 1,
-      },
-    },
-  },
-  {
-    $lookup: {
-      from: 'categories',
-      localField: '_id',
-      foreignField: '_id',
-      as: 'category',
-    },
-  },
-  {
-    $unwind:
-      // So unnecessary!
-      {
-        path: '$category',
-        preserveNullAndEmptyArrays: false,
-      },
-  },
-  // Project the final result
-  {
-    $project: {
-      _id: 0,
-      category: '$_id',
-      categoryName: {
-        $ifNull: ['$category.attributes.name', 'Uncategorised'],
-      },
-      amount: {
-        $abs: {
-          $toDouble: '$amount',
+    // Project only the necessary fields for further processing
+    {
+      $project: {
+        category: {
+          $ifNull: [
+            type === 'parent'
+              ? '$relationships.parentCategory.data.id'
+              : '$relationships.category.data.id',
+            'uncategorised',
+          ],
+        },
+        amount: {
+          $toDecimal: '$attributes.amount.value',
         },
       },
-      transactions: 1,
     },
-  },
-  {
-    $sort: {
-      amount: -1,
-      transactions: -1,
+    // Group documents by category and calculate the total amount and count
+    {
+      $group: {
+        _id: '$category',
+        amount: {
+          $sum: '$amount',
+        },
+        transactions: {
+          $sum: 1,
+        },
+      },
     },
-  },
-];
+    {
+      $lookup: {
+        from: 'categories',
+        localField: '_id',
+        foreignField: '_id',
+        as: 'category',
+      },
+    },
+    {
+      $unwind:
+        // So unnecessary!
+        {
+          path: '$category',
+          preserveNullAndEmptyArrays: false,
+        },
+    },
+    // Project the final result
+    {
+      $project: {
+        _id: 0,
+        category: '$_id',
+        categoryName: {
+          $ifNull: ['$category.attributes.name', 'Uncategorised'],
+        },
+        parentCategory: '$category.relationships.parent.data.id',
+        amount: {
+          $abs: {
+            $toDouble: '$amount',
+          },
+        },
+        transactions: 1,
+      },
+    },
+    {
+      $sort: {
+        amount: -1,
+        transactions: -1,
+      },
+    },
+    ...(limit ? [{ $limit: limit }] : []),
+  ];
+};
 
 /**
  * Pipeline for calculating number of transactions
@@ -549,6 +630,107 @@ const categoriesByPeriodPipeline = (
     },
   },
 ];
+
+/**
+ * Cumulative income or expenses
+ * @param dateRange
+ * @param accountId
+ * @param type
+ * @returns
+ */
+const cumulativeIOPipeline = (
+  dateRange: DateRange,
+  accountId: string,
+  type: TransactionIOEnum
+) => {
+  // $densify doesn't play nicely with timezone offsets for some reason, anyway ...
+  const utcFrom = new UTCDate(
+    dateRange.from.getUTCFullYear(),
+    dateRange.from.getUTCMonth(),
+    dateRange.from.getUTCDate()
+  );
+  return [
+    {
+      $match: {
+        'attributes.isCategorizable': true,
+        'attributes.createdAt': {
+          $gte: dateRange.from,
+          $lte: dateRange.to,
+        },
+        'attributes.amount.valueInBaseUnits': {
+          ...(type === 'income' ? { $gt: 0 } : { $lt: 0 }),
+        },
+        'relationships.account.data.id': accountId,
+      },
+    },
+    {
+      $group: {
+        _id: {
+          $dateTrunc: {
+            date: '$attributes.createdAt',
+            unit: 'day',
+          },
+        },
+        amount: {
+          $sum: '$attributes.amount.valueInBaseUnits',
+        },
+      },
+    },
+    {
+      $densify: {
+        field: '_id',
+        range: {
+          step: 1,
+          unit: 'day',
+          bounds: [
+            // Dates must be UTC (GMT+0)
+            utcFrom,
+            dateRange.to,
+          ],
+        },
+      },
+    },
+    {
+      $addFields: {
+        amount: {
+          $cond: [
+            {
+              $not: ['$amount'],
+            },
+            0,
+            '$amount',
+          ],
+        },
+      },
+    },
+    {
+      $setWindowFields: {
+        sortBy: {
+          _id: 1,
+        },
+        output: {
+          amountCumulative: {
+            $sum: '$amount',
+            window: {
+              documents: ['unbounded', 'current'],
+            },
+          },
+        },
+      },
+    },
+    {
+      $project: {
+        _id: 0,
+        Timestamp: '$_id',
+        AmountCumulative: {
+          $abs: {
+            $divide: ['$amountCumulative', 100],
+          },
+        },
+      },
+    },
+  ];
+};
 
 /**
  * Account balance over time
@@ -783,6 +965,8 @@ export {
   accountStatsPipeline,
   categoriesByPeriodPipeline,
   categoriesPipeline,
+  cumulativeIOPipeline,
+  merchantsPipeline,
   searchTransactionsPipeline,
   tagInfoPipeline,
   transactionsByDatePipeline,

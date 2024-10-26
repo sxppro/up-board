@@ -19,13 +19,6 @@ export interface AccountResource
   _id: string;
 }
 
-// Account info returned to client
-export interface AccountInfo {
-  id: string;
-  displayName: string;
-  accountType: components['schemas']['AccountTypeEnum'];
-}
-
 export interface DbTransactionResource
   extends Omit<
     components['schemas']['TransactionResource'],

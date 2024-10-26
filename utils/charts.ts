@@ -61,7 +61,11 @@ const defaultColors = {
   },
 };
 
-export const chartColors = Object.assign(
+export const chartColors: {
+  [color: string]: {
+    [key in ColorUtility]: string;
+  };
+} = Object.assign(
   {},
   defaultColors,
   ...Object.values(colours).map((colour) => ({
@@ -72,11 +76,7 @@ export const chartColors = Object.assign(
       text: `text-${colour}`,
     },
   }))
-) satisfies {
-  [color: string]: {
-    [key in ColorUtility]: string;
-  };
-};
+);
 
 export type AvailableChartColorsKeys = keyof typeof chartColors;
 

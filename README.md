@@ -4,13 +4,23 @@ Personalised insights and data visualisation for your Up account.
 
 ## Usage
 
-### Generating mock data
+### Generate mock data
 
 1. Install [tsx](https://www.npmjs.com/package/tsx) as a global dependency
 2. Add `type: "module"` to `package.json` locally
 3. Run `tsx scripts/generateMockData.ts` to generate mock account and transaction data
 
 Categories data is obtained from `https://api.up.com.au/api/v1/categories` endpoint.
+
+### Update Up API schema
+
+```zsh
+npx openapi-typescript https://raw.githubusercontent.com/up-banking/api/refs/heads/master/v1/openapi.json -o types/up-api.d.ts
+
+pnpm exec openapi-typescript https://raw.githubusercontent.com/up-banking/api/refs/heads/master/v1/openapi.json -o types/up-api.d.ts
+
+# 🚀 https://raw.githubusercontent.com/up-banking/api/refs/heads/master/v1/openapi.json -> types/up-api.d.ts
+```
 
 ## Notes
 

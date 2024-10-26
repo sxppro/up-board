@@ -5,3 +5,5 @@ export const colours: { [key: string]: string } = {
   Transport: 'up-transport',
   Uncategorised: 'up-uncategorised',
 };
+
+export const now = new Date();
