@@ -812,7 +812,7 @@ export const getAccounts = async (
           displayName: '$attributes.displayName',
           accountType: '$attributes.accountType',
           balance: {
-            $toDecimal: '$attributes.balance.value',
+            $divide: ['$attributes.balance.valueInBaseUnits', 100],
           },
         })
         .toArray();
@@ -825,11 +825,13 @@ export const getAccounts = async (
               id,
               displayName: attributes.displayName,
               accountType: attributes.accountType,
+              balance: parseFloat(attributes.balance.value),
             }))
         : accountsMock.data.map(({ id, attributes }) => ({
             id,
             displayName: attributes.displayName,
             accountType: attributes.accountType,
+            balance: parseFloat(attributes.balance.value),
           }));
     }
   } catch (err) {
