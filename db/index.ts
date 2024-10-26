@@ -788,7 +788,8 @@ export const getTags = async () => {
  * @returns
  */
 export const getAccounts = async (
-  accountType?: components['schemas']['AccountTypeEnum']
+  accountType?: components['schemas']['AccountTypeEnum'],
+  options?: RetrievalOptions
 ) => {
   try {
     const accounts = await connectToCollection<AccountResource>(
@@ -796,9 +797,15 @@ export const getAccounts = async (
       'accounts'
     );
     if (accounts) {
-      const cursor = accounts
-        .find(accountType ? { 'attributes.accountType': accountType } : {})
-        .sort({ 'attributes.displayName': 1, 'attributes.accountType': 1 })
+      const cursor = accounts.find(
+        accountType ? { 'attributes.accountType': accountType } : {}
+      );
+      if (options) {
+        const { sort, limit } = options;
+        sort && cursor.sort(sort);
+        limit && cursor.limit(limit);
+      }
+      const results = await cursor
         .project<AccountInfo>({
           _id: 0,
           id: '$_id',
@@ -808,8 +815,7 @@ export const getAccounts = async (
             $toDecimal: '$attributes.balance.value',
           },
         })
-        .sort({ balance: -1 });
-      const results = await cursor.toArray();
+        .toArray();
       return results;
     } else {
       return accountType
