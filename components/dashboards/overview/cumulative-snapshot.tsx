@@ -367,7 +367,7 @@ const CumulativeSnapshot = ({
                                   : 'bg-up-uncategorised'
                               )}
                             ></div>
-                            <p className="text-gray-700 dark:text-gray-300 truncate">
+                            <p className="text-subtle truncate">
                               {categoryName}
                             </p>
                           </div>
@@ -390,7 +390,7 @@ const CumulativeSnapshot = ({
                         key={description}
                         className="w-full flex h-8 items-center overflow-hidden"
                       >
-                        <p className="flex-1 text-gray-700 dark:text-gray-300 truncate">
+                        <p className="flex-1 text-subtle truncate">
                           {description}
                         </p>
                         <span>{formatCurrency(amount)}</span>

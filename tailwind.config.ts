@@ -54,6 +54,7 @@ export default {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))',
         },
+        subtle: 'hsl(var(--subtle))',
         // Up
         up: {
           'good-life': '#F3DC61',
