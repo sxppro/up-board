@@ -99,6 +99,19 @@ export function UserProfileDropdown({
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
+            {!user ? (
+              <DropdownMenuItem asChild>
+                <Link href={'/login'} className="cursor-pointer">
+                  Login
+                  <ArrowUpRight
+                    className="mb-1 ml-1 size-2.5 shrink-0 text-gray-500"
+                    aria-hidden="true"
+                  />
+                </Link>
+              </DropdownMenuItem>
+            ) : (
+              ''
+            )}
             <DropdownMenuItem asChild>
               <Link
                 href={'https://github.com/sxppro'}
