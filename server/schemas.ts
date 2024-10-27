@@ -1,3 +1,4 @@
+import type { DbTransactionResource } from '@/types/custom';
 import { endOfDay, startOfDay } from 'date-fns';
 import type { SortDirection } from 'mongodb';
 import { z } from 'zod';
@@ -9,6 +10,7 @@ const now = new Date();
  * @link https://github.com/colinhacks/zod/issues/52#issuecomment-629897855
  */
 const SortDirection: z.ZodType<SortDirection> = z.any();
+const DbTransactionResource: z.ZodType<DbTransactionResource> = z.any();
 
 export const DateRangeSchema = z.object({
   from: z.coerce
@@ -154,6 +156,12 @@ export const TransactionTagsModificationSchema = z.object({
 export type TransactionTagsModification = z.infer<
   typeof TransactionTagsModificationSchema
 >;
+
+export const TransactionGroupByDaySchema = z.object({
+  timestamp: z.date(),
+  transactions: z.array(DbTransactionResource),
+});
+export type TransactionGroupByDay = z.infer<typeof TransactionGroupByDaySchema>;
 
 export const AccountInfoSchema = z.object({
   id: z.string().uuid(),

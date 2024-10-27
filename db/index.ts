@@ -8,6 +8,7 @@ import {
   CumulativeIO,
   RetrievalOptions,
   TagInfoSchema,
+  TransactionGroupByDay,
   TransactionIncomeInfo,
   TransactionIOEnum,
   type AccountBalanceHistory,
@@ -33,17 +34,18 @@ import { addDays, addMonths, addYears } from 'date-fns';
 import { CollectionOptions, Document, MongoBulkWriteError } from 'mongodb';
 import client from './connect';
 import {
-  cumulativeIOByDay,
   filterByDateRange,
   findUniqueTags,
   groupBalanceByDay,
   groupByCategory,
   groupByCategoryAndMonth,
+  groupByDay,
   groupByMerchant,
   groupByTag,
   searchTransactions as searchTx,
   statsByAccount,
   statsByTag,
+  sumIOByDay,
 } from './pipelines';
 
 faker.seed(17);
@@ -395,12 +397,7 @@ export const getCategoryInfoHistory = async (
     );
     if (transactions) {
       const cursor = transactions.aggregate<TransactionCategoryInfoHistoryRaw>(
-        groupByCategoryAndMonth(
-          dateRange.from,
-          dateRange.to,
-          process.env.UP_TRANS_ACC,
-          type
-        )
+        groupByCategoryAndMonth(dateRange, process.env.UP_TRANS_ACC, type)
       );
       const results = await cursor.toArray();
       return results;
@@ -459,7 +456,7 @@ export const getCumulativeIO = async (
     );
     if (transactions) {
       const cursor = transactions.aggregate<CumulativeIO>(
-        cumulativeIOByDay(dateRange, accountId, type)
+        sumIOByDay(dateRange, accountId, type)
       );
       const results = await cursor.toArray();
       return results;
@@ -510,6 +507,45 @@ export const getTagInfo = async (tag: string): Promise<TagInfo | undefined> => {
   } catch (err) {
     console.error(err);
     return;
+  }
+};
+
+/**
+ * Group transactions by day
+ * @param accountId
+ * @param dateRange
+ * @param options
+ * @returns
+ */
+export const getTransactionsByDay = async (
+  accountId: string,
+  dateRange?: DateRange,
+  options?: RetrievalOptions
+) => {
+  try {
+    const transactions = await connectToCollection<DbTransactionResource>(
+      'up',
+      'transactions'
+    );
+    if (transactions) {
+      const cursor = transactions.aggregate<TransactionGroupByDay>(
+        groupByDay(accountId, dateRange, options)
+      );
+      const results = (await cursor.toArray()).map(
+        ({ transactions, ...rest }) => ({
+          transactions: transactions.map((transaction) =>
+            outputTransactionFields(transaction)
+          ),
+          ...rest,
+        })
+      );
+      return results;
+    } else {
+      return [];
+    }
+  } catch (err) {
+    console.error(err);
+    return [];
   }
 };
 
@@ -858,7 +894,7 @@ export const getAccountBalanceHistorical = async (
     );
     if (transactions) {
       const cursor = transactions.aggregate<AccountBalanceHistory>(
-        groupBalanceByDay(dateRange.from, dateRange.to, accountId)
+        groupBalanceByDay(dateRange, accountId)
       );
       const results = await cursor.toArray();
       return results;

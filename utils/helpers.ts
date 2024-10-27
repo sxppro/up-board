@@ -5,8 +5,16 @@ import {
 import { DbTransactionResource } from '@/types/custom';
 import type { components } from '@/types/up-api';
 import { clsx, type ClassValue } from 'clsx';
-import { format } from 'date-fns';
+import {
+  differenceInDays,
+  format,
+  formatDistanceStrict,
+  isToday,
+  isYesterday,
+} from 'date-fns';
+import { enAU } from 'date-fns/locale';
 import { twMerge } from 'tailwind-merge';
+import { now } from './constants';
 
 export const getBaseUrl = () => {
   if (typeof window !== 'undefined')
@@ -56,6 +64,22 @@ export const formatCurrency = (
   })
     .format(number ?? 0)
     .toString();
+
+/**
+ * Format date depending on distance to now
+ * @param date date to format
+ * @returns formatted date string
+ */
+export const formatDate = (date: Date) => {
+  if (isToday(date)) return 'Today';
+  if (isYesterday(date)) return 'Yesterday';
+  if (differenceInDays(now, date) > 7) return format(date, 'do MMMM');
+  return formatDistanceStrict(date, now, {
+    addSuffix: true,
+    roundingMethod: 'floor',
+    locale: enAU,
+  });
+};
 
 /**
  * Adds property `FormattedDate`, date string from day, month, year values
