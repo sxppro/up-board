@@ -7,3 +7,5 @@ export const colours: { [key: string]: string } = {
 };
 
 export const now = new Date();
+
+export const TZ = 'Australia/Melbourne';

@@ -5,22 +5,8 @@ import {
   TransactionIOEnum,
   TransactionRetrievalOptions,
 } from '@/server/schemas';
+import { TZ } from '@/utils/constants';
 import { UTCDate } from '@date-fns/utc';
-
-/**
- * Conditional aggregation to determine whether
- * transaciton is income or expense based on
- * attributes.amount.valueInBaseUnits
- */
-const labelIncomeExpense = () => ({
-  $cond: [
-    {
-      $lt: ['$attributes.amount.valueInBaseUnits', 0],
-    },
-    'expense',
-    'income',
-  ],
-});
 
 /**
  * Generates total income and expense statistics
@@ -56,6 +42,21 @@ const generateStatsIncomeExpense = (
       ],
     },
   },
+});
+
+/**
+ * Conditional aggregation to determine whether
+ * transaciton is income or expense based on
+ * attributes.amount.valueInBaseUnits
+ */
+const labelIncomeExpense = () => ({
+  $cond: [
+    {
+      $lt: ['$attributes.amount.valueInBaseUnits', 0],
+    },
+    'expense',
+    'income',
+  ],
 });
 
 /**
@@ -134,118 +135,159 @@ const lookupTransactionCategories = () => [
 ];
 
 /**
- * Creates pipeline for calculating total income,
- * expenditure and number of transactions per month
- * between from and to dates (excluding transfers)
- * for specified account
- * @param accountId account ID
- * @param dateRange date range
- * @param groupBy how to group stats
- * @returns aggregation pipeline definition
+ * Cumulative income or expenses
+ * @param dateRange
+ * @param accountId
+ * @param type
+ * @returns
  */
-const accountStatsPipeline = (
-  accountId: string,
+export const cumulativeIOByDay = (
   dateRange: DateRange,
-  groupBy?: DateRangeGroupBy
-) => [
-  /**
-   * Match documents within the desired date range
-   * and filter transfers
-   */
-  {
-    $match: {
-      'relationships.account.data.id': accountId,
-      'attributes.createdAt': {
-        $gte: dateRange.from,
-        $lte: dateRange.to,
-      },
-      // TODO: Toggle filtering transfers
-      ...(accountId === process.env.UP_TRANS_ACC && {
+  accountId: string,
+  type: TransactionIOEnum
+) => {
+  // $densify doesn't play nicely with timezone offsets for some reason, anyway ...
+  const utcFrom = new UTCDate(
+    dateRange.from.getUTCFullYear(),
+    dateRange.from.getUTCMonth(),
+    dateRange.from.getUTCDate()
+  );
+  return [
+    {
+      $match: {
         'attributes.isCategorizable': true,
-      }),
+        'attributes.createdAt': {
+          $gte: dateRange.from,
+          $lte: dateRange.to,
+        },
+        'attributes.amount.valueInBaseUnits': {
+          ...(type === 'income' ? { $gt: 0 } : { $lt: 0 }),
+        },
+        'relationships.account.data.id': accountId,
+      },
     },
-  },
-  {
-    $project: {
-      ...(groupBy === 'daily' && {
-        day: {
-          $dayOfMonth: {
+    {
+      $group: {
+        _id: {
+          $dateTrunc: {
             date: '$attributes.createdAt',
-            timezone: 'Australia/Melbourne',
+            unit: 'day',
           },
         },
-      }),
-      ...((groupBy === 'daily' || groupBy === 'monthly') && {
-        month: {
-          $month: {
-            date: '$attributes.createdAt',
-            timezone: 'Australia/Melbourne',
-          },
-        },
-      }),
-      ...(groupBy && {
-        year: {
-          $year: {
-            date: '$attributes.createdAt',
-            timezone: 'Australia/Melbourne',
-          },
-        },
-      }),
-      amount: '$attributes.amount.valueInBaseUnits',
-      type: labelIncomeExpense(),
-    },
-  },
-  // Group documents by month-year and type, calculate grouped income, expenses and number of transactions
-  {
-    $group: {
-      _id: {
-        day: '$day',
-        month: '$month',
-        year: '$year',
-      },
-      ...generateStatsIncomeExpense('type', 'amount'),
-      transactions: {
-        $sum: 1,
-      },
-    },
-  },
-  {
-    $project: {
-      _id: 0,
-      Year: '$_id.year',
-      Month: '$_id.month',
-      Income: {
-        $divide: ['$income', 100],
-      },
-      Expenses: {
-        $abs: {
-          $divide: ['$expense', 100],
+        amount: {
+          $sum: '$attributes.amount.valueInBaseUnits',
         },
       },
-      Net: {
-        $divide: [
-          {
-            $sum: ['$income', '$expense'],
-          },
-          100,
-        ],
+    },
+    {
+      $densify: {
+        field: '_id',
+        range: {
+          step: 1,
+          unit: 'day',
+          bounds: [
+            // Dates must be UTC (GMT+0)
+            utcFrom,
+            dateRange.to,
+          ],
+        },
       },
-      Transactions: '$transactions',
     },
-  },
-  {
-    $sort: {
-      Year: 1,
-      Month: 1,
+    {
+      $addFields: {
+        amount: {
+          $cond: [
+            {
+              $not: ['$amount'],
+            },
+            0,
+            '$amount',
+          ],
+        },
+      },
     },
-  },
-];
+    {
+      $setWindowFields: {
+        sortBy: {
+          _id: 1,
+        },
+        output: {
+          amountCumulative: {
+            $sum: '$amount',
+            window: {
+              documents: ['unbounded', 'current'],
+            },
+          },
+        },
+      },
+    },
+    {
+      $project: {
+        _id: 0,
+        Timestamp: '$_id',
+        AmountCumulative: {
+          $abs: {
+            $divide: ['$amountCumulative', 100],
+          },
+        },
+      },
+    },
+  ];
+};
+
+/**
+ * Retrieves transactions between dates, with sorting
+ * and readable category names
+ * @param dateRange
+ * @param options
+ * @returns
+ */
+export const filterByDateRange = (
+  options: TransactionRetrievalOptions,
+  accountId?: string
+) => {
+  const { dateRange, sort, sortDir, limit, type, transactionType } = options;
+  const sortBy =
+    sort === 'amount'
+      ? 'attributes.amount.valueInBaseUnits'
+      : 'attributes.createdAt';
+  const dir = sortDir === 'asc' ? 1 : -1;
+  return [
+    {
+      $match: {
+        'attributes.createdAt': {
+          $gte: dateRange.from,
+          $lt: dateRange.to,
+        },
+        ...(transactionType
+          ? {
+              'attributes.isCategorizable':
+                transactionType === 'transactions' ? true : false,
+            }
+          : {}),
+        ...(accountId ? { 'relationships.account.data.id': accountId } : {}),
+        ...(type
+          ? type === 'income'
+            ? { 'attributes.amount.valueInBaseUnits': { $gt: 0 } }
+            : { 'attributes.amount.valueInBaseUnits': { $lt: 0 } }
+          : []),
+      },
+    },
+    ...lookupTransactionCategories(),
+    {
+      $sort: {
+        [sortBy]: dir,
+      },
+    },
+    ...(limit ? [{ $limit: limit }] : []),
+  ];
+};
 
 /**
  * Retrieves all unique tags
  * @returns
  */
-const uniqueTagsPipeline = () => [
+export const findUniqueTags = () => [
   {
     $unwind: {
       path: '$relationships.tags.data',
@@ -270,122 +312,112 @@ const uniqueTagsPipeline = () => [
 ];
 
 /**
- * Generates stats for a specific tag
- * @param tagId
- * @param monthly
- * @returns
- */
-const tagInfoPipeline = (tagId: string, monthly?: boolean) => [
-  {
-    $match: {
-      'attributes.isCategorizable': true,
-      'relationships.tags.data.id': tagId,
-    },
-  },
-  {
-    $project: {
-      amount: '$attributes.amount.valueInBaseUnits',
-      type: labelIncomeExpense(),
-    },
-  },
-  {
-    $group: {
-      _id: 0,
-      ...generateStatsIncomeExpense('type', 'amount'),
-      transactions: {
-        $sum: 1,
-      },
-    },
-  },
-  {
-    $project: {
-      _id: 0,
-      Income: {
-        $divide: ['$income', 100],
-      },
-      Expenses: {
-        $abs: {
-          $divide: ['$expense', 100],
-        },
-      },
-      Transactions: '$transactions',
-    },
-  },
-];
-
-/**
- * Groups income by transaction description
- * (which is typically the merchant name)
+ * Account balance over time
+ * ! Note: timezone is currently hard-coded
  * @param from
  * @param to
  * @param accountId
  * @returns
  */
-const merchantsPipeline = (
-  dateRange: DateRange,
-  accountId: string,
-  options: RetrievalOptions,
-  type?: TransactionIOEnum
-) => {
-  const { limit } = options;
-  return [
-    {
-      $match: {
-        'relationships.account.data.id': accountId,
-        'attributes.createdAt': {
-          $gte: dateRange.from,
-          $lte: dateRange.to,
+export const groupBalanceByDay = (from: Date, to: Date, accountId: string) => [
+  {
+    $match: {
+      'relationships.account.data.id': accountId,
+    },
+  },
+  {
+    $group: {
+      _id: {
+        $dateTrunc: {
+          date: '$attributes.createdAt',
+          unit: 'day',
+          // Change to 'Australia/Melbourne' if/when $densify accounts for DST
+          timezone: '+10:00',
         },
-        'attributes.isCategorizable': true,
-        ...(type && {
-          'attributes.amount.valueInBaseUnits': {
-            ...(type === 'income' ? { $gt: 0 } : { $lt: 0 }),
+      },
+      amount: {
+        $sum: '$attributes.amount.valueInBaseUnits',
+      },
+    },
+  },
+  {
+    $densify: {
+      field: '_id',
+      range: {
+        step: 1,
+        unit: 'day',
+        bounds: 'full',
+      },
+    },
+  },
+  {
+    $addFields: {
+      amount: {
+        $cond: [
+          {
+            $not: ['$amount'],
           },
-        }),
+          0,
+          '$amount',
+        ],
       },
     },
-    {
-      $project: {
-        description: {
-          $ifNull: ['$attributes.description', 'null'],
-        },
-        amount: {
-          $toDecimal: '$attributes.amount.value',
-        },
+  },
+  {
+    $setWindowFields: {
+      sortBy: {
+        _id: 1,
       },
-    },
-    {
-      $group: {
-        _id: '$description',
-        amount: {
+      output: {
+        amountCumulative: {
           $sum: '$amount',
-        },
-        transactions: {
-          $sum: 1,
-        },
-      },
-    },
-    {
-      $project: {
-        _id: 0,
-        description: '$_id',
-        amount: {
-          $abs: {
-            $toDouble: '$amount',
+          window: {
+            documents: ['unbounded', 'current'],
           },
         },
-        transactions: 1,
       },
     },
-    {
-      $sort: {
-        amount: -1,
-        transactions: -1,
+  },
+  {
+    $project: {
+      _id: 0,
+      Timestamp: '$_id',
+      Year: {
+        $year: {
+          date: '$_id',
+          timezone: TZ,
+        },
+      },
+      Month: {
+        $month: {
+          date: '$_id',
+          timezone: TZ,
+        },
+      },
+      Day: {
+        $dayOfMonth: {
+          date: '$_id',
+          timezone: TZ,
+        },
+      },
+      Amount: {
+        $divide: ['$amount', 100],
+      },
+      Balance: {
+        $divide: ['$amountCumulative', 100],
       },
     },
-    ...(limit ? [{ $limit: limit }] : [{ $limit: 5 }]),
-  ];
-};
+  },
+  {
+    $match: {
+      Timestamp: {
+        $gte: from,
+        $lt: to,
+      },
+    },
+  },
+];
+
 /**
  * Pipeline for calculating number of transactions
  * and total spending per transaction category for
@@ -396,7 +428,7 @@ const merchantsPipeline = (
  * @param type category type
  * @returns aggregation pipeline definition
  */
-const categoriesPipeline = (
+export const groupByCategory = (
   dateRange: DateRange,
   accountId: string,
   type: 'child' | 'parent',
@@ -507,7 +539,7 @@ const categoriesPipeline = (
  * @param type category type
  * @returns aggregation pipeline definition
  */
-const categoriesByPeriodPipeline = (
+export const groupByCategoryAndMonth = (
   from: Date,
   to: Date,
   accountId: string,
@@ -532,13 +564,13 @@ const categoriesByPeriodPipeline = (
       month: {
         $month: {
           date: '$attributes.createdAt',
-          timezone: 'Australia/Melbourne',
+          timezone: TZ,
         },
       },
       year: {
         $year: {
           date: '$attributes.createdAt',
-          timezone: 'Australia/Melbourne',
+          timezone: TZ,
         },
       },
       category: {
@@ -632,267 +664,84 @@ const categoriesByPeriodPipeline = (
 ];
 
 /**
- * Cumulative income or expenses
- * @param dateRange
+ * Stats grouped by transaction description
+ * (which is typically the merchant name)
+ * @param from
+ * @param to
  * @param accountId
- * @param type
  * @returns
  */
-const cumulativeIOPipeline = (
+export const groupByMerchant = (
   dateRange: DateRange,
   accountId: string,
-  type: TransactionIOEnum
+  options: RetrievalOptions,
+  type?: TransactionIOEnum
 ) => {
-  // $densify doesn't play nicely with timezone offsets for some reason, anyway ...
-  const utcFrom = new UTCDate(
-    dateRange.from.getUTCFullYear(),
-    dateRange.from.getUTCMonth(),
-    dateRange.from.getUTCDate()
-  );
+  const { limit } = options;
   return [
     {
       $match: {
-        'attributes.isCategorizable': true,
+        'relationships.account.data.id': accountId,
         'attributes.createdAt': {
           $gte: dateRange.from,
           $lte: dateRange.to,
         },
-        'attributes.amount.valueInBaseUnits': {
-          ...(type === 'income' ? { $gt: 0 } : { $lt: 0 }),
+        'attributes.isCategorizable': true,
+        ...(type && {
+          'attributes.amount.valueInBaseUnits': {
+            ...(type === 'income' ? { $gt: 0 } : { $lt: 0 }),
+          },
+        }),
+      },
+    },
+    {
+      $project: {
+        description: {
+          $ifNull: ['$attributes.description', 'null'],
         },
-        'relationships.account.data.id': accountId,
+        amount: {
+          $toDecimal: '$attributes.amount.value',
+        },
       },
     },
     {
       $group: {
-        _id: {
-          $dateTrunc: {
-            date: '$attributes.createdAt',
-            unit: 'day',
-          },
-        },
+        _id: '$description',
         amount: {
-          $sum: '$attributes.amount.valueInBaseUnits',
+          $sum: '$amount',
         },
-      },
-    },
-    {
-      $densify: {
-        field: '_id',
-        range: {
-          step: 1,
-          unit: 'day',
-          bounds: [
-            // Dates must be UTC (GMT+0)
-            utcFrom,
-            dateRange.to,
-          ],
-        },
-      },
-    },
-    {
-      $addFields: {
-        amount: {
-          $cond: [
-            {
-              $not: ['$amount'],
-            },
-            0,
-            '$amount',
-          ],
-        },
-      },
-    },
-    {
-      $setWindowFields: {
-        sortBy: {
-          _id: 1,
-        },
-        output: {
-          amountCumulative: {
-            $sum: '$amount',
-            window: {
-              documents: ['unbounded', 'current'],
-            },
-          },
+        transactions: {
+          $sum: 1,
         },
       },
     },
     {
       $project: {
         _id: 0,
-        Timestamp: '$_id',
-        AmountCumulative: {
+        description: '$_id',
+        amount: {
           $abs: {
-            $divide: ['$amountCumulative', 100],
+            $toDouble: '$amount',
           },
         },
+        transactions: 1,
       },
     },
-  ];
-};
-
-/**
- * Account balance over time
- * ! Note: timezone is currently hard-coded
- * @param from
- * @param to
- * @param accountId
- * @returns
- */
-const accountBalancePipeline = (from: Date, to: Date, accountId: string) => [
-  {
-    $match: {
-      'relationships.account.data.id': accountId,
-    },
-  },
-  {
-    $group: {
-      _id: {
-        $dateTrunc: {
-          date: '$attributes.createdAt',
-          unit: 'day',
-          // Change to 'Australia/Melbourne' if/when $densify accounts for DST
-          timezone: '+10:00',
-        },
-      },
-      amount: {
-        $sum: '$attributes.amount.valueInBaseUnits',
-      },
-    },
-  },
-  {
-    $densify: {
-      field: '_id',
-      range: {
-        step: 1,
-        unit: 'day',
-        bounds: 'full',
-      },
-    },
-  },
-  {
-    $addFields: {
-      amount: {
-        $cond: [
-          {
-            $not: ['$amount'],
-          },
-          0,
-          '$amount',
-        ],
-      },
-    },
-  },
-  {
-    $setWindowFields: {
-      sortBy: {
-        _id: 1,
-      },
-      output: {
-        amountCumulative: {
-          $sum: '$amount',
-          window: {
-            documents: ['unbounded', 'current'],
-          },
-        },
-      },
-    },
-  },
-  {
-    $project: {
-      _id: 0,
-      Timestamp: '$_id',
-      Year: {
-        $year: {
-          date: '$_id',
-          timezone: 'Australia/Melbourne',
-        },
-      },
-      Month: {
-        $month: {
-          date: '$_id',
-          timezone: 'Australia/Melbourne',
-        },
-      },
-      Day: {
-        $dayOfMonth: {
-          date: '$_id',
-          timezone: 'Australia/Melbourne',
-        },
-      },
-      Amount: {
-        $divide: ['$amount', 100],
-      },
-      Balance: {
-        $divide: ['$amountCumulative', 100],
-      },
-    },
-  },
-  {
-    $match: {
-      Timestamp: {
-        $gte: from,
-        $lt: to,
-      },
-    },
-  },
-];
-
-/**
- * Retrieves transactions between dates, with sorting
- * and readable category names
- * @param dateRange
- * @param options
- * @returns
- */
-const transactionsByDatePipeline = (
-  options: TransactionRetrievalOptions,
-  accountId?: string
-) => {
-  const { dateRange, sort, sortDir, limit, type, transactionType } = options;
-  const sortBy =
-    sort === 'amount'
-      ? 'attributes.amount.valueInBaseUnits'
-      : 'attributes.createdAt';
-  const dir = sortDir === 'asc' ? 1 : -1;
-  return [
-    {
-      $match: {
-        'attributes.createdAt': {
-          $gte: dateRange.from,
-          $lt: dateRange.to,
-        },
-        ...(transactionType
-          ? {
-              'attributes.isCategorizable':
-                transactionType === 'transactions' ? true : false,
-            }
-          : {}),
-        ...(accountId ? { 'relationships.account.data.id': accountId } : {}),
-        ...(type
-          ? type === 'income'
-            ? { 'attributes.amount.valueInBaseUnits': { $gt: 0 } }
-            : { 'attributes.amount.valueInBaseUnits': { $lt: 0 } }
-          : []),
-      },
-    },
-    ...lookupTransactionCategories(),
     {
       $sort: {
-        [sortBy]: dir,
+        amount: -1,
+        transactions: -1,
       },
     },
-    ...(limit ? [{ $limit: limit }] : []),
+    ...(limit ? [{ $limit: limit }] : [{ $limit: 5 }]),
   ];
 };
 
 /**
- * Pipeline for retrieving transaction
- * IDs grouped by tag
+ * Transaction IDs grouped by tag
  * @returns
  */
-const transactionsByTagsPipeline = () => [
+export const groupByTag = () => [
   /**
    * Match only documents that have a tag
    */
@@ -937,7 +786,7 @@ const transactionsByTagsPipeline = () => [
  * @param searchTerm
  * @returns
  */
-const searchTransactionsPipeline = (searchTerm: string) => [
+export const searchTransactions = (searchTerm: string) => [
   {
     $search: {
       index: 'transactions-index',
@@ -960,16 +809,154 @@ const searchTransactionsPipeline = (searchTerm: string) => [
   },
 ];
 
-export {
-  accountBalancePipeline,
-  accountStatsPipeline,
-  categoriesByPeriodPipeline,
-  categoriesPipeline,
-  cumulativeIOPipeline,
-  merchantsPipeline,
-  searchTransactionsPipeline,
-  tagInfoPipeline,
-  transactionsByDatePipeline,
-  transactionsByTagsPipeline,
-  uniqueTagsPipeline,
-};
+/**
+ * Creates pipeline for calculating total income,
+ * expenditure and number of transactions per month
+ * between from and to dates (excluding transfers)
+ * for specified account
+ * @param accountId account ID
+ * @param dateRange date range
+ * @param groupBy how to group stats
+ * @returns aggregation pipeline definition
+ */
+export const statsByAccount = (
+  accountId: string,
+  dateRange: DateRange,
+  groupBy?: DateRangeGroupBy
+) => [
+  /**
+   * Match documents within the desired date range
+   * and filter transfers
+   */
+  {
+    $match: {
+      'relationships.account.data.id': accountId,
+      'attributes.createdAt': {
+        $gte: dateRange.from,
+        $lte: dateRange.to,
+      },
+      // TODO: Toggle filtering transfers
+      ...(accountId === process.env.UP_TRANS_ACC && {
+        'attributes.isCategorizable': true,
+      }),
+    },
+  },
+  {
+    $project: {
+      ...(groupBy === 'daily' && {
+        day: {
+          $dayOfMonth: {
+            date: '$attributes.createdAt',
+            timezone: TZ,
+          },
+        },
+      }),
+      ...((groupBy === 'daily' || groupBy === 'monthly') && {
+        month: {
+          $month: {
+            date: '$attributes.createdAt',
+            timezone: TZ,
+          },
+        },
+      }),
+      ...(groupBy && {
+        year: {
+          $year: {
+            date: '$attributes.createdAt',
+            timezone: TZ,
+          },
+        },
+      }),
+      amount: '$attributes.amount.valueInBaseUnits',
+      type: labelIncomeExpense(),
+    },
+  },
+  // Group documents by month-year and type, calculate grouped income, expenses and number of transactions
+  {
+    $group: {
+      _id: {
+        day: '$day',
+        month: '$month',
+        year: '$year',
+      },
+      ...generateStatsIncomeExpense('type', 'amount'),
+      transactions: {
+        $sum: 1,
+      },
+    },
+  },
+  {
+    $project: {
+      _id: 0,
+      Year: '$_id.year',
+      Month: '$_id.month',
+      Income: {
+        $divide: ['$income', 100],
+      },
+      Expenses: {
+        $abs: {
+          $divide: ['$expense', 100],
+        },
+      },
+      Net: {
+        $divide: [
+          {
+            $sum: ['$income', '$expense'],
+          },
+          100,
+        ],
+      },
+      Transactions: '$transactions',
+    },
+  },
+  {
+    $sort: {
+      Year: 1,
+      Month: 1,
+    },
+  },
+];
+
+/**
+ * Generates stats for a specific tag
+ * @param tagId
+ * @param monthly
+ * @returns
+ */
+export const statsByTag = (tagId: string, monthly?: boolean) => [
+  {
+    $match: {
+      'attributes.isCategorizable': true,
+      'relationships.tags.data.id': tagId,
+    },
+  },
+  {
+    $project: {
+      amount: '$attributes.amount.valueInBaseUnits',
+      type: labelIncomeExpense(),
+    },
+  },
+  {
+    $group: {
+      _id: 0,
+      ...generateStatsIncomeExpense('type', 'amount'),
+      transactions: {
+        $sum: 1,
+      },
+    },
+  },
+  {
+    $project: {
+      _id: 0,
+      Income: {
+        $divide: ['$income', 100],
+      },
+      Expenses: {
+        $abs: {
+          $divide: ['$expense', 100],
+        },
+      },
+      Transactions: '$transactions',
+    },
+  },
+];

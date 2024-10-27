@@ -10,6 +10,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { TransactionResourceFiltered } from '@/server/schemas';
+import { TZ } from '@/utils/constants';
 import { formatCurrency } from '@/utils/helpers';
 import { ColumnDef } from '@tanstack/react-table';
 import { formatDistanceToNowStrict } from 'date-fns';
@@ -66,7 +67,7 @@ export const columns: ColumnDef<TransactionResourceFiltered>[] = [
       const formattedTime = new Intl.DateTimeFormat('en-AU', {
         dateStyle: 'medium',
         timeStyle: 'short',
-        timeZone: 'Australia/Melbourne',
+        timeZone: TZ,
       }).format(time);
       return (
         <TooltipProvider>
