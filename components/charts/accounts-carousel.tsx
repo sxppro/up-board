@@ -1,15 +1,18 @@
 'use client';
 
 import { AccountInfo } from '@/server/schemas';
-import { formatCurrency } from '@/utils/helpers';
+import { cn, formatCurrency } from '@/utils/helpers';
+import { useDotButton } from '@/utils/hooks';
 import { Card } from '@tremor/react';
 import { useQueryState } from 'nuqs';
 import { useCallback, useEffect, useState } from 'react';
+import { Button } from '../ui/button';
 import {
   Carousel,
   CarouselApi,
   CarouselContent,
   CarouselItem,
+  EmblaCarouselType,
 } from '../ui/carousel';
 
 interface AccountsCarousel {
@@ -18,16 +21,16 @@ interface AccountsCarousel {
 
 const AccountsCarousel = ({ accounts }: AccountsCarousel) => {
   const [api, setApi] = useState<CarouselApi>();
-  const [account, setAccount] = useQueryState('account', {
+  const [_, setAccount] = useQueryState('account', {
     defaultValue: accounts[0]?.id,
   });
   const updateCurrent = useCallback(
-    (api: Exclude<CarouselApi, undefined>) => {
+    (api: EmblaCarouselType) => {
       setAccount(accounts[api.selectedScrollSnap()]?.id);
     },
     [accounts, setAccount]
   );
-  console.log(account);
+  const { selectedIndex, scrollSnaps, onDotButtonClick } = useDotButton(api);
 
   useEffect(() => {
     if (!api) return;
@@ -35,7 +38,11 @@ const AccountsCarousel = ({ accounts }: AccountsCarousel) => {
   }, [api, updateCurrent]);
 
   return (
-    <Carousel setApi={setApi} opts={{ containScroll: false }}>
+    <Carousel
+      setApi={setApi}
+      opts={{ containScroll: false }}
+      className="-mx-4 sm:-mx-6 lg:-mx-10"
+    >
       <CarouselContent>
         {accounts.map((account) => (
           <CarouselItem
@@ -57,6 +64,17 @@ const AccountsCarousel = ({ accounts }: AccountsCarousel) => {
           </CarouselItem>
         ))}
       </CarouselContent>
+      <div className="flex justify-center mt-2 gap-3">
+        {scrollSnaps.map((_, index) => (
+          <Button
+            key={index}
+            className={cn(
+              'size-2 p-0 transition rounded-full appearance-none touch-manipulation cursor-pointer',
+              index === selectedIndex ? 'bg-primary' : 'bg-muted-foreground'
+            )}
+          />
+        ))}
+      </div>
     </Carousel>
   );
 };
