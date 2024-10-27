@@ -11,7 +11,7 @@
     "prepare": "husky"
   },
   "dependencies": {
-    "@date-fns/utc": "^2.1.0",
+    "@date-fns/tz": "^1.1.2",
     "@headlessui/tailwindcss": "^0.2.1",
     "@next/bundle-analyzer": "^14.2.15",
     "@phosphor-icons/react": "^2.1.7",

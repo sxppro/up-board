@@ -8,9 +8,9 @@ importers:
 
   .:
     dependencies:
-      '@date-fns/utc':
-        specifier: ^2.1.0
-        version: 2.1.0
+      '@date-fns/tz':
+        specifier: ^1.1.2
+        version: 1.1.2
       '@headlessui/tailwindcss':
         specifier: ^0.2.1
         version: 0.2.1(tailwindcss@3.4.13)
@@ -230,8 +230,8 @@ packages:
     resolution: {integrity: sha512-FjoyLe754PMiYsFaN5C94ttGiOmBNYTf6pLr4xXHAT5uctHb092PBszndLDR5XA/jghQvn4n7JMHl7dmTgbm9w==}
     engines: {node: '>=6.9.0'}
 
-  '@date-fns/utc@2.1.0':
-    resolution: {integrity: sha512-176grgAgU2U303rD2/vcOmNg0kGPbhzckuH1TEP2al7n0AQipZIy9P15usd2TKQCG1g+E1jX/ZVQSzs4sUDwgA==}
+  '@date-fns/tz@1.1.2':
+    resolution: {integrity: sha512-Xmg2cPmOPQieCLAdf62KtFPU9y7wbQDq1OAzrs/bEQFvhtCPXDiks1CHDE/sTXReRfh/MICVkw/vY6OANHUGiA==}
 
   '@discoveryjs/json-ext@0.5.7':
     resolution: {integrity: sha512-dBVuXR082gk3jsFp7Rd/JI4kytwGHecnCoTtXFb7DB6CNHp4rg5k1bhg0nWdLGLnOV71lmDzGQaLMy8iPLY0pw==}
@@ -3227,7 +3227,7 @@ snapshots:
     dependencies:
       regenerator-runtime: 0.14.1
 
-  '@date-fns/utc@2.1.0': {}
+  '@date-fns/tz@1.1.2': {}
 
   '@discoveryjs/json-ext@0.5.7': {}
 

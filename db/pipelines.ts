@@ -6,7 +6,7 @@ import {
   TransactionRetrievalOptions,
 } from '@/server/schemas';
 import { TZ } from '@/utils/constants';
-import { UTCDate } from '@date-fns/utc';
+import { TZDate } from '@date-fns/tz';
 
 /**
  * Generates total income and expense statistics
@@ -932,10 +932,11 @@ export const sumIOByDay = (
   type: TransactionIOEnum
 ) => {
   // $densify doesn't play nicely with timezone offsets for some reason, anyway ...
-  const utcFrom = new UTCDate(
+  const utcFrom = new TZDate(
     dateRange.from.getUTCFullYear(),
     dateRange.from.getUTCMonth(),
-    dateRange.from.getUTCDate()
+    dateRange.from.getUTCDate(),
+    '+00:00'
   );
   return [
     {

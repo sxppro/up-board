@@ -4,6 +4,7 @@ import {
 } from '@/server/schemas';
 import { DbTransactionResource } from '@/types/custom';
 import type { components } from '@/types/up-api';
+import { tz } from '@date-fns/tz';
 import { clsx, type ClassValue } from 'clsx';
 import {
   differenceInDays,
@@ -14,7 +15,7 @@ import {
 } from 'date-fns';
 import { enAU } from 'date-fns/locale';
 import { twMerge } from 'tailwind-merge';
-import { now } from './constants';
+import { now, TZ } from './constants';
 
 export const getBaseUrl = () => {
   if (typeof window !== 'undefined')
@@ -73,7 +74,8 @@ export const formatCurrency = (
 export const formatDate = (date: Date) => {
   if (isToday(date)) return 'Today';
   if (isYesterday(date)) return 'Yesterday';
-  if (differenceInDays(now, date) > 7) return format(date, 'do MMMM');
+  if (differenceInDays(now, date) > 7)
+    return format(date, 'do MMMM', { in: tz(TZ) });
   return formatDistanceStrict(date, now, {
     addSuffix: true,
     roundingMethod: 'floor',
