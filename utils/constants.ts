@@ -1,3 +1,5 @@
+import { TZDate } from '@date-fns/tz';
+
 export const colours: { [key: string]: string } = {
   'Good Life': 'up-good-life',
   Home: 'up-home',
@@ -6,6 +8,6 @@ export const colours: { [key: string]: string } = {
   Uncategorised: 'up-uncategorised',
 };
 
-export const now = new Date();
-
 export const TZ = 'Australia/Melbourne';
+
+export const now = TZDate.tz(TZ);

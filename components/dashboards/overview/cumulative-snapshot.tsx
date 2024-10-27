@@ -2,8 +2,8 @@
 
 import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
-import { now } from '@/utils/constants';
 import { cn, formatCurrency } from '@/utils/helpers';
+import { useDateRanges } from '@/utils/hooks';
 import { trpc } from '@/utils/trpc';
 import {
   LineChart,
@@ -14,14 +14,7 @@ import {
   TabPanel,
   TabPanels,
 } from '@tremor/react';
-import {
-  endOfMonth,
-  endOfYear,
-  format,
-  startOfMonth,
-  startOfYear,
-  subYears,
-} from 'date-fns';
+import { format } from 'date-fns';
 import { useState } from 'react';
 
 interface CumulativeSnapshotProps {
@@ -34,69 +27,52 @@ const CumulativeSnapshot = ({
   savAccountId,
 }: CumulativeSnapshotProps) => {
   const [selectedTab, setSelectedTab] = useState(0);
-  const thisMonth = {
-    from: startOfMonth(now),
-    to: now,
-  };
-  const thisYear = {
-    from: startOfYear(now),
-    to: now,
-  };
+  const { thisMonthLastYear, lastYear, monthToDate, yearToDate } =
+    useDateRanges();
   const { data: mtdIncome, dataUpdatedAt: dataUpdatedAtIncome } =
     trpc.public.getCumulativeIO.useQuery({
       accountId,
-      dateRange: thisMonth,
-      compareDateRange: {
-        from: subYears(thisMonth.from, 1),
-        to: subYears(endOfMonth(now), 1),
-      },
+      dateRange: monthToDate,
+      compareDateRange: thisMonthLastYear,
       type: 'income',
     });
   const { data: ytdIncome } = trpc.public.getCumulativeIO.useQuery({
     accountId,
-    dateRange: thisYear,
-    compareDateRange: {
-      from: subYears(thisYear.from, 1),
-      to: endOfYear(subYears(now, 1)),
-    },
+    dateRange: yearToDate,
+    compareDateRange: lastYear,
     type: 'income',
   });
   const { data: mtdExpenses, dataUpdatedAt: dataUpdatedAtExpenses } =
     trpc.public.getCumulativeIO.useQuery({
       accountId,
-      dateRange: thisMonth,
-      compareDateRange: {
-        from: subYears(thisMonth.from, 1),
-        to: subYears(endOfMonth(now), 1),
-      },
+      dateRange: monthToDate,
+      compareDateRange: thisMonthLastYear,
       type: 'expense',
     });
   const { data: ytdExpenses } = trpc.public.getCumulativeIO.useQuery({
     accountId,
-    dateRange: thisYear,
-    compareDateRange: {
-      from: subYears(thisYear.from, 1),
-      to: endOfYear(subYears(now, 1)),
-    },
+    dateRange: yearToDate,
+    compareDateRange: lastYear,
     type: 'expense',
   });
+  ``;
   const { data: month } = trpc.public.getMonthlyInfo.useQuery({
     accountId,
-    dateRange: thisMonth,
+    dateRange: monthToDate,
   });
   const { data: year } = trpc.public.getMonthlyInfo.useQuery({
     accountId,
-    dateRange: thisYear,
+    dateRange: yearToDate,
   });
   const { data: transactionalBalance } = trpc.public.getAccountBalance.useQuery(
     {
       accountId,
-      dateRange: thisMonth,
+      dateRange: monthToDate,
     }
   );
   const { data: savingsBalance } = trpc.public.getAccountBalance.useQuery({
     accountId: savAccountId,
-    dateRange: thisMonth,
+    dateRange: monthToDate,
   });
   const { data: savingsAcc } = trpc.public.getAccountById.useQuery({
     accountId: savAccountId,
@@ -105,14 +81,14 @@ const CumulativeSnapshot = ({
     accountId,
   });
   const { data: expenseCategories } = trpc.public.getCategoryInfo.useQuery({
-    dateRange: selectedTab === 0 ? thisMonth : thisYear,
+    dateRange: selectedTab === 0 ? monthToDate : yearToDate,
     type: 'child',
     options: {
       limit: 4,
     },
   });
   const { data: merchants } = trpc.public.getMerchantInfo.useQuery({
-    dateRange: selectedTab === 0 ? thisMonth : thisYear,
+    dateRange: selectedTab === 0 ? monthToDate : yearToDate,
     type: 'expense',
     options: {
       limit: 4,
