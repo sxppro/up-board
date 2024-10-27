@@ -139,7 +139,7 @@ const CumulativeSnapshot = ({
           <Separator className="mt-2" />
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
-          <TabGroup className="xl:col-span-2 ">
+          <TabGroup className="xl:col-span-2">
             <TabList className="space-x-0 items-center border-b">
               <Tab className="flex-1 sm:flex-none pl-4 pr-12 py-3 border-b-2 border-transparent">
                 <div className="flex flex-col gap-1 items-start">

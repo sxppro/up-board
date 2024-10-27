@@ -47,7 +47,7 @@ const AccountsCarousel = ({ accounts }: AccountsCarousel) => {
         {accounts.map((account) => (
           <CarouselItem
             key={account.id}
-            className="basis-5/6 md:basis-1/2 lg:basis-5/12"
+            className="basis-[87.5%] md:basis-1/2 lg:basis-5/12"
           >
             <div className="border rounded-tremor-default">
               <Card
@@ -68,6 +68,7 @@ const AccountsCarousel = ({ accounts }: AccountsCarousel) => {
         {scrollSnaps.map((_, index) => (
           <Button
             key={index}
+            onClick={() => onDotButtonClick(index)}
             className={cn(
               'size-2 p-0 transition rounded-full appearance-none touch-manipulation cursor-pointer',
               index === selectedIndex ? 'bg-primary' : 'bg-muted-foreground'
