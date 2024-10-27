@@ -2,6 +2,7 @@ import { siteConfig } from '@/app/siteConfig';
 import AccountsCarousel from '@/components/charts/accounts-carousel';
 import { Separator } from '@/components/ui/separator';
 import { getAccounts, getTransactionsByDay } from '@/db';
+import { PageProps } from '@/types/custom';
 import { formatCurrency, formatDate } from '@/utils/helpers';
 import { Metadata } from 'next';
 import { NuqsAdapter } from 'nuqs/adapters/next/app';
@@ -10,14 +11,16 @@ export const metadata: Metadata = {
   title: `${siteConfig.name} — Accounts`,
 };
 
-const AccountsPage = async () => {
+const AccountsPage = async ({ searchParams }: PageProps) => {
+  const { id } = searchParams;
+  const accountId = Array.isArray(id) ? id[0] : id;
   const accounts = await getAccounts(undefined, {
     // Order by transactional accounts first
     sort: { 'attributes.accountType': -1, 'attributes.displayName': 1 },
   });
   const transactional = accounts.at(0);
   const transactions = await getTransactionsByDay(
-    transactional?.id || '',
+    accountId || transactional?.id || '',
     undefined,
     { limit: 14 }
   );

@@ -21,8 +21,9 @@ interface AccountsCarousel {
 
 const AccountsCarousel = ({ accounts }: AccountsCarousel) => {
   const [api, setApi] = useState<CarouselApi>();
-  const [_, setAccount] = useQueryState('account', {
+  const [_, setAccount] = useQueryState('id', {
     defaultValue: accounts[0]?.id,
+    shallow: false,
   });
   const updateCurrent = useCallback(
     (api: EmblaCarouselType) => {
