@@ -234,8 +234,9 @@ export default {
           'dialogContentShow 150ms cubic-bezier(0.16, 1, 0.3, 1)',
         // Drawer
         drawerSlideLeftAndFade:
-          'drawerSlideLeftAndFade 150ms cubic-bezier(0.16, 1, 0.3, 1)',
-        drawerSlideRightAndFade: 'drawerSlideRightAndFade 150ms ease-in',
+          'drawerSlideLeftAndFade 500ms cubic-bezier(0.32, 0.72, 0, 1)',
+        drawerSlideRightAndFade:
+          'drawerSlideRightAndFade 500ms cubic-bezier(0.32, 0.72, 0, 1)',
         // @shadcn/ui accordion
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
