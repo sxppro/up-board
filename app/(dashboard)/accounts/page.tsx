@@ -69,7 +69,7 @@ const AccountsPage = async ({ searchParams }: PageProps) => {
           </h1>
           <Separator className="mt-2" />
         </div>
-        <AccountsCarousel accounts={accounts} />
+        <AccountsCarousel accounts={accounts} selectedAccount={accountId} />
         <Separator className="mb-2" />
       </section>
       <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">

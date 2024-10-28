@@ -17,9 +17,10 @@ import {
 
 interface AccountsCarousel {
   accounts: AccountInfo[];
+  selectedAccount?: string;
 }
 
-const AccountsCarousel = ({ accounts }: AccountsCarousel) => {
+const AccountsCarousel = ({ accounts, selectedAccount }: AccountsCarousel) => {
   const [api, setApi] = useState<CarouselApi>();
   const [_, setAccount] = useQueryState('id', {
     defaultValue: accounts[0]?.id,
@@ -35,8 +36,10 @@ const AccountsCarousel = ({ accounts }: AccountsCarousel) => {
 
   useEffect(() => {
     if (!api) return;
+    if (selectedAccount)
+      api.scrollTo(accounts.findIndex((acc) => acc.id === selectedAccount));
     api.on('select', updateCurrent);
-  }, [api, updateCurrent]);
+  }, [api, accounts, selectedAccount, updateCurrent]);
 
   return (
     <Carousel
