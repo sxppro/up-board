@@ -8,9 +8,15 @@ import {
 import { TZ } from '@/utils/constants';
 import { TZDate } from '@date-fns/tz';
 
+const filterIO = (type: TransactionIOEnum) => ({
+  'attributes.amount.valueInBaseUnits': {
+    ...(type === 'income' ? { $gt: 0 } : { $lt: 0 }),
+  },
+});
+
 /**
  * Generates total income and expense statistics
- * for transactions labelled by `labelIncomeExpense`
+ * for transactions labelled by `labelIO`
  * ! Must be used in $group stage
  * @param typeField field name holding transaction type (income or expense)
  * @param amountField field name holding transaction amount
@@ -49,7 +55,7 @@ const generateStatsIncomeExpense = (
  * transaciton is income or expense based on
  * attributes.amount.valueInBaseUnits
  */
-const labelIncomeExpense = () => ({
+const labelIO = () => ({
   $cond: [
     {
       $lt: ['$attributes.amount.valueInBaseUnits', 0],
@@ -65,7 +71,7 @@ const labelIncomeExpense = () => ({
  * @returns
  * @requires previous stages to output unmodified transaction documents
  */
-const lookupTransactionCategories = () => [
+const lookupCategoryNames = () => [
   {
     $fill: {
       output: {
@@ -165,14 +171,10 @@ export const filterByDateRange = (
             }
           : {}),
         ...(accountId ? { 'relationships.account.data.id': accountId } : {}),
-        ...(type
-          ? type === 'income'
-            ? { 'attributes.amount.valueInBaseUnits': { $gt: 0 } }
-            : { 'attributes.amount.valueInBaseUnits': { $lt: 0 } }
-          : []),
+        ...(type && filterIO(type)),
       },
     },
-    ...lookupTransactionCategories(),
+    ...lookupCategoryNames(),
     {
       $sort: {
         [sortBy]: dir,
@@ -645,11 +647,7 @@ export const groupByMerchant = (
           $lte: dateRange.to,
         },
         'attributes.isCategorizable': true,
-        ...(type && {
-          'attributes.amount.valueInBaseUnits': {
-            ...(type === 'income' ? { $gt: 0 } : { $lt: 0 }),
-          },
-        }),
+        ...(type && filterIO(type)),
       },
     },
     {
@@ -759,7 +757,7 @@ export const searchTransactions = (searchTerm: string) => [
       },
     },
   },
-  ...lookupTransactionCategories(),
+  ...lookupCategoryNames(),
   {
     $sort: {
       'attributes.createdAt': -1,
@@ -780,7 +778,8 @@ export const searchTransactions = (searchTerm: string) => [
 export const statsByAccount = (
   accountId: string,
   dateRange: DateRange,
-  groupBy?: DateRangeGroupBy
+  groupBy?: DateRangeGroupBy,
+  avg?: boolean
 ) => [
   /**
    * Match documents within the desired date range
@@ -826,7 +825,7 @@ export const statsByAccount = (
         },
       }),
       amount: '$attributes.amount.valueInBaseUnits',
-      type: labelIncomeExpense(),
+      type: labelIO(),
     },
   },
   // Group documents by month-year and type, calculate grouped income, expenses and number of transactions
@@ -843,6 +842,25 @@ export const statsByAccount = (
       },
     },
   },
+  // Optionally average the results
+  ...(avg
+    ? [
+        {
+          $group: {
+            _id: 0,
+            income: {
+              $avg: '$income',
+            },
+            expense: {
+              $avg: '$expense',
+            },
+            transactions: {
+              $avg: '$transactions',
+            },
+          },
+        },
+      ]
+    : []),
   {
     $project: {
       _id: 0,
@@ -891,7 +909,7 @@ export const statsByTag = (tagId: string, monthly?: boolean) => [
   {
     $project: {
       amount: '$attributes.amount.valueInBaseUnits',
-      type: labelIncomeExpense(),
+      type: labelIO(),
     },
   },
   {
@@ -946,10 +964,8 @@ export const sumIOByDay = (
           $gte: dateRange.from,
           $lte: dateRange.to,
         },
-        'attributes.amount.valueInBaseUnits': {
-          ...(type === 'income' ? { $gt: 0 } : { $lt: 0 }),
-        },
         'relationships.account.data.id': accountId,
+        ...filterIO(type),
       },
     },
     {

@@ -1,12 +1,12 @@
 import {
   getAccountBalanceHistorical,
   getAccountById,
+  getAccountStats,
   getCategories,
   getCategoryInfo,
   getCategoryInfoHistory,
   getCumulativeIO,
   getMerchantInfo,
-  getMonthlyInfo,
   getTagInfo,
   getTransactionById,
 } from '@/db';
@@ -190,7 +190,7 @@ export const publicRouter = router({
     .output(z.array(AccountMonthlyInfoSchema))
     .query(async ({ input }) => {
       const { accountId, dateRange, groupBy } = input;
-      const results = await getMonthlyInfo(accountId, dateRange, groupBy);
+      const results = await getAccountStats(accountId, dateRange, groupBy);
       return results.map(({ Year, Month, ...rest }) =>
         Year && Month
           ? {

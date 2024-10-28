@@ -209,14 +209,16 @@ export const searchTransactions = async (search: string) => {
 };
 
 /**
- * Monthly transaction statistics between 2 dates
- * @param dateRange
- * @returns list of stats for each month
+ * Total or grouped transaction statistics between 2 dates
+ * @param groupBy group by day, month or year
+ * @param avg optionally average stats
+ * @returns list of stats, single element if no groupBy provided
  */
-export const getMonthlyInfo = async (
+export const getAccountStats = async (
   accountId: string,
   dateRange: DateRange,
-  groupBy?: DateRangeGroupBy
+  groupBy?: DateRangeGroupBy,
+  avg?: boolean
 ) => {
   try {
     const transactions = await connectToCollection<DbTransactionResource>(
@@ -225,7 +227,7 @@ export const getMonthlyInfo = async (
     );
     if (transactions) {
       const cursor = transactions.aggregate<AccountMonthlyInfo>(
-        statsByAccount(accountId, dateRange, groupBy)
+        statsByAccount(accountId, dateRange, groupBy, avg)
       );
       const results = await cursor.toArray();
       return results;
