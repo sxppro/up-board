@@ -197,11 +197,11 @@ export default {
           },
           to: { opacity: '1', transform: 'translate(-50%, -50%) scale(1)' },
         },
-        drawerSlideLeftAndFade: {
+        'sheet-slide-left': {
           from: { opacity: '0', transform: 'translateX(100%)' },
           to: { opacity: '1', transform: 'translateX(0)' },
         },
-        drawerSlideRightAndFade: {
+        'sheet-slide-right': {
           from: { opacity: '1', transform: 'translateX(0)' },
           to: { opacity: '0', transform: 'translateX(100%)' },
         },
@@ -232,14 +232,17 @@ export default {
           'dialogOverlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1)',
         dialogContentShow:
           'dialogContentShow 150ms cubic-bezier(0.16, 1, 0.3, 1)',
-        // Drawer
-        drawerSlideLeftAndFade:
-          'drawerSlideLeftAndFade 500ms cubic-bezier(0.32, 0.72, 0, 1)',
-        drawerSlideRightAndFade:
-          'drawerSlideRightAndFade 500ms cubic-bezier(0.32, 0.72, 0, 1)',
+        // Drawer open/close - keeping this here for reference
+        'sheet-slide-left':
+          'sheet-slide-left 500ms cubic-bezier(0.32, 0.72, 0, 1)',
+        'sheet-slide-right':
+          'sheet-slide-right 500ms cubic-bezier(0.32, 0.72, 0, 1)',
         // @shadcn/ui accordion
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
+      },
+      transitionTimingFunction: {
+        'smooth-bezier': 'cubic-bezier(0.32, 0.72, 0, 1)',
       },
     },
   },
