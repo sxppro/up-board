@@ -1,13 +1,5 @@
 import { CarouselApi, EmblaCarouselType } from '@/components/ui/carousel';
-import {
-  endOfMonth,
-  endOfYear,
-  startOfMonth,
-  startOfYear,
-  subYears,
-} from 'date-fns';
 import { useCallback, useContext, useEffect, useState } from 'react';
-import { now } from './constants';
 import { DateContext } from './contexts';
 
 type UseDotButtonType = {
@@ -22,51 +14,6 @@ export const useDate = () => {
     throw new Error('useDate must be used within DateProvider');
   }
   return context;
-};
-
-/**
- * Utility date ranges
- * @returns
- */
-export const useDateRanges = () => {
-  const thisMonth = {
-    from: startOfMonth(now),
-    to: endOfMonth(now),
-  };
-
-  const thisMonthLastYear = {
-    from: subYears(thisMonth.from, 1),
-    to: subYears(thisMonth.to, 1),
-  };
-
-  const thisYear = {
-    from: startOfYear(now),
-    to: endOfYear(now),
-  };
-
-  const lastYear = {
-    from: subYears(thisYear.from, 1),
-    to: subYears(thisYear.to, 1),
-  };
-
-  const monthToDate = {
-    from: startOfMonth(now),
-    to: now,
-  };
-
-  const yearToDate = {
-    from: startOfYear(now),
-    to: now,
-  };
-
-  return {
-    thisMonth,
-    thisYear,
-    thisMonthLastYear,
-    lastYear,
-    monthToDate,
-    yearToDate,
-  };
 };
 
 /**

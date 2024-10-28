@@ -2,8 +2,8 @@
 
 import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
+import { getDateRanges } from '@/utils/constants';
 import { cn, formatCurrency } from '@/utils/helpers';
-import { useDateRanges } from '@/utils/hooks';
 import { trpc } from '@/utils/trpc';
 import {
   LineChart,
@@ -28,7 +28,7 @@ const CumulativeSnapshot = ({
 }: CumulativeSnapshotProps) => {
   const [selectedTab, setSelectedTab] = useState(0);
   const { thisMonthLastYear, lastYear, monthToDate, yearToDate } =
-    useDateRanges();
+    getDateRanges();
   const { data: mtdIncome, dataUpdatedAt: dataUpdatedAtIncome } =
     trpc.public.getCumulativeIO.useQuery({
       accountId,
