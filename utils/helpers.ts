@@ -72,14 +72,15 @@ export const formatCurrency = (
  * @returns formatted date string
  */
 export const formatDate = (date: Date) => {
-  if (isToday(date)) return 'Today';
-  if (isYesterday(date)) return 'Yesterday';
-  if (differenceInDays(now, date) > 7)
+  if (isToday(date, { in: tz(TZ) })) return 'Today';
+  if (isYesterday(date, { in: tz(TZ) })) return 'Yesterday';
+  if (differenceInDays(now, date, { in: tz(TZ) }) > 7)
     return format(date, 'do MMMM', { in: tz(TZ) });
   return formatDistanceStrict(date, now, {
     addSuffix: true,
     roundingMethod: 'floor',
     locale: enAU,
+    in: tz(TZ),
   });
 };
 
