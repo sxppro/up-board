@@ -3,6 +3,7 @@
 import { AccountInfo } from '@/server/schemas';
 import { cn, formatCurrency } from '@/utils/helpers';
 import { useDotButton } from '@/utils/hooks';
+import { focusRing } from '@/utils/tremor';
 import { Card } from '@tremor/react';
 import { useQueryState } from 'nuqs';
 import { useCallback, useEffect, useState } from 'react';
@@ -12,6 +13,8 @@ import {
   CarouselApi,
   CarouselContent,
   CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
   EmblaCarouselType,
 } from '../ui/carousel';
 
@@ -68,17 +71,24 @@ const AccountsCarousel = ({ accounts, selectedAccount }: AccountsCarousel) => {
           </CarouselItem>
         ))}
       </CarouselContent>
-      <div className="flex justify-center mt-2 gap-3">
-        {scrollSnaps.map((_, index) => (
-          <Button
-            key={index}
-            onClick={() => onDotButtonClick(index)}
-            className={cn(
-              'size-2 p-0 transition rounded-full appearance-none touch-manipulation cursor-pointer',
-              index === selectedIndex ? 'bg-primary' : 'bg-muted-foreground'
-            )}
-          />
-        ))}
+      <div className="flex items-center justify-between mt-2 mx-4 sm:mx-6 lg:mx-10">
+        <CarouselPrevious className={cn('static translate-y-0', focusRing)} />
+        <div className="flex gap-3">
+          {scrollSnaps.map((_, index) => (
+            <Button
+              key={index}
+              onClick={() => onDotButtonClick(index)}
+              className={cn(
+                'size-2 p-0 transition-all rounded-full appearance-none touch-manipulation cursor-pointer',
+                focusRing,
+                index === selectedIndex ? 'bg-primary' : 'bg-muted-foreground'
+              )}
+            />
+          ))}
+        </div>
+        <CarouselNext
+          className={cn('static transition-all translate-y-0', focusRing)}
+        />
       </div>
     </Carousel>
   );
