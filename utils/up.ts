@@ -3,9 +3,9 @@
  */
 
 import { insertTransactions } from '@/db';
+import { filterTransactionFields } from '@/db/helpers';
 import { paths } from '@/types/up-api';
 import createClient from 'openapi-fetch';
-import { filterTransactionFields } from './helpers';
 
 const {
   GET: upGET,

@@ -1,9 +1,5 @@
-import {
-  AccountBalanceHistory,
-  TransactionResourceFiltered,
-} from '@/server/schemas';
+import { AccountBalanceHistory } from '@/server/schemas';
 import { DbTransactionResource } from '@/types/custom';
-import type { components } from '@/types/up-api';
 import { tz } from '@date-fns/tz';
 import { clsx, type ClassValue } from 'clsx';
 import {
@@ -117,39 +113,6 @@ export const addFormattedDate = (data: AccountBalanceHistory[] | undefined) => {
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
-
-/**
- * Filters properties from raw transaction
- * object to be returned to client
- * @param transactions array of raw transaction objects
- * @returns
- */
-export const filterTransactionFields = (
-  transactions?: components['schemas']['TransactionResource'][]
-): TransactionResourceFiltered[] => {
-  return (
-    transactions?.map((transaction) => {
-      const { id, attributes, relationships } = transaction;
-      return {
-        id,
-        amount: attributes.amount.value,
-        amountRaw: attributes.amount.valueInBaseUnits / 100,
-        description: attributes.description,
-        message: attributes.message,
-        category: relationships.category.data?.id ?? 'uncategorised',
-        parentCategory:
-          relationships.parentCategory.data?.id ?? 'uncategorised',
-        rawText: attributes.rawText,
-        status: attributes.status,
-        tags: relationships.tags.data.map(({ id }) => id),
-        time: attributes.createdAt,
-        transactionType: attributes.transactionType,
-        // @ts-expect-error due to Up Banking API not being updated yet
-        deepLinkURL: attributes.deepLinkURL,
-      };
-    }) || []
-  );
-};
 
 /**
  * Remaps db transaction document

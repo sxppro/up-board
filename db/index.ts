@@ -346,6 +346,7 @@ export const getCategoryById = async (id: string) => {
             id: '$_id',
             name: '$attributes.name',
             parentCategory: '$relationships.parent.data.id',
+            parentCategoryName: '$relationships.parent.data.id',
           },
         }
       );

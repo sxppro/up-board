@@ -1,5 +1,5 @@
 import { getTransactionById, replaceTransactions } from '@/db';
-import { filterTransactionFields } from '@/utils/helpers';
+import { filterTransactionFields } from '@/db/helpers';
 import { addTags, deleteTags, getTags } from '@/utils/up';
 import { TRPCError } from '@trpc/server';
 import {
@@ -49,6 +49,6 @@ export const authedRouter = router({
       if (!transaction) {
         throw new TRPCError({ code: 'NOT_FOUND' });
       }
-      return filterTransactionFields([transaction])[0];
+      return (await filterTransactionFields([transaction]))[0];
     }),
 });

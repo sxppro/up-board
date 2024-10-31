@@ -10,8 +10,7 @@ import {
   getTagInfo,
   getTransactionById,
 } from '@/db';
-import { getTransactions } from '@/db/helpers';
-import { filterTransactionFields } from '@/utils/helpers';
+import { filterTransactionFields, getTransactions } from '@/db/helpers';
 import { TRPCError } from '@trpc/server';
 import { format } from 'date-fns';
 import { z } from 'zod';
@@ -213,7 +212,7 @@ export const publicRouter = router({
       if (!transaction) {
         throw new TRPCError({ code: 'NOT_FOUND' });
       }
-      return filterTransactionFields([transaction])[0];
+      return (await filterTransactionFields([transaction]))[0];
     }),
   getTransactionsByDate: publicProcedure
     .input(TransactionRetrievalOptionsSchema)

@@ -1,7 +1,7 @@
 import { columns } from '@/app/(dashboard)/transactions/columns';
 import { DataTable } from '@/app/(dashboard)/transactions/data-table';
 import { getCategories, getTransactionsByDate, searchTransactions } from '@/db';
-import { filterTransactionFields } from '@/utils/helpers';
+import { filterTransactionFields } from '@/db/helpers';
 import { subMonths } from 'date-fns';
 
 interface TransactionTableProps {
@@ -10,7 +10,7 @@ interface TransactionTableProps {
 
 const TransactionTable = async ({ search }: TransactionTableProps) => {
   const now = new Date();
-  const data = filterTransactionFields(
+  const data = await filterTransactionFields(
     search
       ? await searchTransactions(search)
       : await getTransactionsByDate(
