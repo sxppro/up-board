@@ -1,7 +1,8 @@
 import { getTransactionById, replaceTransactions } from '@/db';
 import { filterTransactionFields } from '@/db/helpers';
-import { addTags, deleteTags, getTags } from '@/utils/up';
+import { addTags, deleteTags, getAttachment, getTags } from '@/utils/up';
 import { TRPCError } from '@trpc/server';
+import { z } from 'zod';
 import {
   TransactionIdSchema,
   TransactionResourceFilteredSchema,
@@ -50,5 +51,15 @@ export const authedRouter = router({
         throw new TRPCError({ code: 'NOT_FOUND' });
       }
       return (await filterTransactionFields([transaction]))[0];
+    }),
+  getAttachment: authedProcedure
+    .input(z.string().uuid())
+    .query(async ({ input }) => {
+      const { data, error } = await getAttachment(input);
+      if (error || !data) {
+        console.error(error);
+        throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' });
+      }
+      return data.data;
     }),
 });

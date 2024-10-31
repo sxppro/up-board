@@ -4,8 +4,9 @@ import { TransactionResourceFiltered } from '@/server/schemas';
 import { capitalise, cn, formatCurrency } from '@/utils/helpers';
 import { trpc } from '@/utils/trpc';
 import { TZDate } from '@date-fns/tz';
-import { Loader2, X } from 'lucide-react';
+import { ArrowSquareOut, CircleNotch, X } from '@phosphor-icons/react';
 import { PropsWithChildren, useState } from 'react';
+import { Button } from './ui/button';
 import { Separator } from './ui/separator';
 import {
   Sheet,
@@ -50,7 +51,7 @@ const PopoverContent = ({ tx }: { tx: TransactionResourceFiltered }) => (
           <p>{capitalise(tx.status)}</p>
         </PopoverContentCell>
         <PopoverContentCell label="Date">
-          <p>{new TZDate(tx.time, '+00:00').toLocaleString()}</p>
+          <p>{new TZDate(tx.time).toLocaleString()}</p>
         </PopoverContentCell>
         <PopoverContentCell label="Transaction Type">
           <p>{tx.transactionType}</p>
@@ -71,15 +72,33 @@ const PopoverContent = ({ tx }: { tx: TransactionResourceFiltered }) => (
       <Separator />
       <div className="flex flex-col text-sm gap-2">
         <PopoverContentCell label="Category">
-          <p>{tx.parentCategory}</p>
+          <p>{tx.parentCategoryName}</p>
         </PopoverContentCell>
         <PopoverContentCell label="Subcategory">
-          <p>{tx.category}</p>
+          <p>{tx.categoryName}</p>
         </PopoverContentCell>
       </div>
     </div>
-    <h2 className="text-lg font-medium">Notes</h2>
-    <h2 className="text-lg font-medium">Attachments</h2>
+    <div className="flex flex-col gap-2">
+      <h2 className="text-lg font-medium">Notes</h2>
+      {tx.note ? (
+        <p className="text-subtle text-sm">{tx.note}</p>
+      ) : (
+        <p className="text-muted-foreground text-sm">No note.</p>
+      )}
+    </div>
+    <div className="flex flex-col gap-2">
+      <h2 className="text-lg font-medium">Attachments</h2>
+      {tx.attachment ? (
+        // TODO: Redirect to attachment file
+        <Button variant="link" className="border">
+          View attachment
+          <ArrowSquareOut className="size-4" />
+        </Button>
+      ) : (
+        <p className="text-muted-foreground text-sm">No attachment.</p>
+      )}
+    </div>
   </div>
 );
 
@@ -104,12 +123,12 @@ const TransactionPopover = ({ children, id }: TransactionPopoverProps) => {
             <div className="flex-1 flex flex-col items-center justify-center gap-2 m-auto">
               {isLoading ? (
                 <>
-                  <Loader2 className="h-8 w-8 animate-spin" />
+                  <CircleNotch className="size-8 animate-spin" />
                   <p className="text-xl tracking-tight">Loading transaction</p>
                 </>
               ) : isError ? (
                 <>
-                  <X className="h-8 w-8" />
+                  <X className="size-8" />
                   <p className="text-xl tracking-tight">
                     Unable to load transaction
                   </p>

@@ -40,6 +40,7 @@ export const filterTransactionFields = async (
       const categoryDetails = await getCategoryById(category);
       return {
         id,
+        attachment: relationships.attachment.data?.id ?? null,
         amount: attributes.amount.value,
         amountRaw: attributes.amount.valueInBaseUnits / 100,
         description: attributes.description,

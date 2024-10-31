@@ -39,6 +39,24 @@ const getNextPage = async (link: string, store = []): Promise<never[]> => {
 };
 
 /**
+ * Retrieves attachment by id
+ * @param id attachment id
+ * @returns attachment details, including file link
+ */
+export const getAttachment = async (id: string) => {
+  return await upGET('/attachments/{id}', {
+    params: {
+      path: {
+        id,
+      },
+    },
+    headers: {
+      Authorization: `Bearer ${process.env.UP_TOKEN}`,
+    },
+  });
+};
+
+/**
  * Retrieves all tags
  * @returns array of tags
  */
