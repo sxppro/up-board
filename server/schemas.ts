@@ -122,6 +122,7 @@ export const TransactionResourceFilteredSchema = z.object({
   category: z.string(),
   parentCategory: z.string(),
   tags: z.string().array(),
+  transactionType: z.string().nullable(),
   deepLinkURL: z.string().optional(),
 });
 export type TransactionResourceFiltered = z.infer<

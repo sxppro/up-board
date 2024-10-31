@@ -85,6 +85,14 @@ export const formatDate = (date: Date) => {
 };
 
 /**
+ * Capitalise first letter of string
+ * @param str
+ * @returns
+ */
+export const capitalise = (str: string) =>
+  str.charAt(0).toLocaleUpperCase() + str.slice(1).toLocaleLowerCase();
+
+/**
  * Adds property `FormattedDate`, date string from day, month, year values
  * @param data
  * @returns
@@ -124,17 +132,18 @@ export const filterTransactionFields = (
       const { id, attributes, relationships } = transaction;
       return {
         id,
-        description: attributes.description,
-        rawText: attributes.rawText,
-        message: attributes.message,
         amount: attributes.amount.value,
         amountRaw: attributes.amount.valueInBaseUnits / 100,
-        time: attributes.createdAt,
-        status: attributes.status,
+        description: attributes.description,
+        message: attributes.message,
         category: relationships.category.data?.id ?? 'uncategorised',
         parentCategory:
           relationships.parentCategory.data?.id ?? 'uncategorised',
+        rawText: attributes.rawText,
+        status: attributes.status,
         tags: relationships.tags.data.map(({ id }) => id),
+        time: attributes.createdAt,
+        transactionType: attributes.transactionType,
         // @ts-expect-error due to Up Banking API not being updated yet
         deepLinkURL: attributes.deepLinkURL,
       };
