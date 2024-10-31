@@ -1,5 +1,6 @@
 import { siteConfig } from '@/app/siteConfig';
 import AccountsCarousel from '@/components/charts/accounts-carousel';
+import TransactionPopover from '@/components/transaction-popover';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Separator } from '@/components/ui/separator';
 import { getAccounts, getAccountStats, getTransactionsByDay } from '@/db';
@@ -80,17 +81,18 @@ const AccountsPage = async ({ searchParams }: PageProps) => {
                 <p className="text-lg font-bold">{formatDate(timestamp)}</p>
                 <Separator className="mt-1" />
                 {transactions.map(({ id, attributes }) => (
-                  <div
-                    key={id}
-                    className="flex py-1.5 px-3 -mx-3 items-center overflow-hidden rounded-lg transition-colors hover:bg-muted/50"
-                  >
-                    <p className="flex-1 text-subtle truncate">
-                      {attributes.description}
-                    </p>
-                    <span>
-                      {formatCurrency(attributes.amount.valueInBaseUnits / 100)}
-                    </span>
-                  </div>
+                  <TransactionPopover key={id} id={id}>
+                    <div className="flex py-1.5 px-3 -mx-3 items-center text-sm font-medium overflow-hidden rounded-lg transition-colors cursor-pointer hover:bg-muted/50">
+                      <p className="flex-1 text-subtle truncate">
+                        {attributes.description}
+                      </p>
+                      <span>
+                        {formatCurrency(
+                          attributes.amount.valueInBaseUnits / 100
+                        )}
+                      </span>
+                    </div>
+                  </TransactionPopover>
                 ))}
               </div>
             ))}
