@@ -44,6 +44,7 @@ export const filterTransactionFields = async (
         amount: attributes.amount.value,
         amountRaw: attributes.amount.valueInBaseUnits / 100,
         description: attributes.description,
+        isCategorizable: attributes.isCategorizable,
         message: attributes.message,
         category,
         categoryName: categoryDetails?.name ?? 'Uncategorised',

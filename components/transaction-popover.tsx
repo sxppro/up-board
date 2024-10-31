@@ -30,83 +30,103 @@ const PopoverContentCell = ({
   </div>
 );
 
-const PopoverContent = ({ tx }: { tx: TransactionResourceFiltered }) => (
-  <div className="flex flex-col mt-6 gap-9">
-    <div className="flex flex-col gap-6">
-      <div className="flex items-center gap-4 text-xl font-medium">
-        <span
-          className={cn(
-            'flex aspect-square size-12 items-center justify-center rounded-md p-2 font-normal text-white',
-            `bg-up-${tx.parentCategory}`
-          )}
-          aria-hidden="true"
-        >
-          {tx.description.slice(0, 1).toUpperCase()}
-        </span>
-        <h2 className="flex-1">{tx.description}</h2>
-        <span>{formatCurrency(tx.amountRaw)}</span>
+const PopoverContent = ({ tx }: { tx: TransactionResourceFiltered }) => {
+  const { refetch } = trpc.user.getAttachment.useQuery(tx.attachment || '', {
+    refetchOnWindowFocus: false,
+    enabled: false,
+  });
+
+  return (
+    <div className="flex flex-col mt-6 gap-9">
+      <div className="flex flex-col gap-6">
+        <div className="flex items-center gap-4 text-xl font-medium">
+          <span
+            className={cn(
+              'flex aspect-square size-12 items-center justify-center rounded-md p-2 font-normal text-white',
+              `bg-up-${tx.parentCategory}`
+            )}
+            aria-hidden="true"
+          >
+            {tx.description.slice(0, 1).toUpperCase()}
+          </span>
+          <h2 className="flex-1">{tx.description}</h2>
+          <span>{formatCurrency(tx.amountRaw)}</span>
+        </div>
+        <div className="flex flex-col text-sm gap-2">
+          <PopoverContentCell label="Status">
+            <p>{capitalise(tx.status)}</p>
+          </PopoverContentCell>
+          <PopoverContentCell label="Date">
+            <p>{new TZDate(tx.time).toLocaleString()}</p>
+          </PopoverContentCell>
+          <PopoverContentCell label="Transaction Type">
+            <p>{tx.transactionType}</p>
+          </PopoverContentCell>
+          <PopoverContentCell label="Transaction ID">
+            <p className="flex-1 text-right">{tx.id}</p>
+          </PopoverContentCell>
+        </div>
+        <Separator />
+        <div className="flex flex-col text-sm gap-2">
+          <PopoverContentCell label="Message">
+            <p>{tx.message || '—'}</p>
+          </PopoverContentCell>
+          <PopoverContentCell label="Raw Text">
+            <p>{tx.rawText || '—'}</p>
+          </PopoverContentCell>
+        </div>
+        {tx.isCategorizable && (
+          <>
+            <Separator />
+            <div className="flex flex-col text-sm gap-2">
+              <PopoverContentCell label="Category">
+                <p>{tx.parentCategoryName}</p>
+              </PopoverContentCell>
+              <PopoverContentCell label="Subcategory">
+                <p>{tx.categoryName}</p>
+              </PopoverContentCell>
+            </div>
+          </>
+        )}
       </div>
-      <div className="flex flex-col text-sm gap-2">
-        <PopoverContentCell label="Status">
-          <p>{capitalise(tx.status)}</p>
-        </PopoverContentCell>
-        <PopoverContentCell label="Date">
-          <p>{new TZDate(tx.time).toLocaleString()}</p>
-        </PopoverContentCell>
-        <PopoverContentCell label="Transaction Type">
-          <p>{tx.transactionType}</p>
-        </PopoverContentCell>
-        <PopoverContentCell label="Transaction ID">
-          <p className="flex-1 text-right">{tx.id}</p>
-        </PopoverContentCell>
+      <div className="flex flex-col gap-2">
+        <h2 className="text-lg font-medium">Notes</h2>
+        {tx.note ? (
+          <p className="text-subtle text-sm">{tx.note}</p>
+        ) : (
+          <p className="text-muted-foreground text-sm">No note.</p>
+        )}
       </div>
-      <Separator />
-      <div className="flex flex-col text-sm gap-2">
-        <PopoverContentCell label="Message">
-          <p>{tx.message || '—'}</p>
-        </PopoverContentCell>
-        <PopoverContentCell label="Raw Text">
-          <p>{tx.rawText || '—'}</p>
-        </PopoverContentCell>
-      </div>
-      <Separator />
-      <div className="flex flex-col text-sm gap-2">
-        <PopoverContentCell label="Category">
-          <p>{tx.parentCategoryName}</p>
-        </PopoverContentCell>
-        <PopoverContentCell label="Subcategory">
-          <p>{tx.categoryName}</p>
-        </PopoverContentCell>
+      <div className="flex flex-col gap-2">
+        <h2 className="text-lg font-medium">Attachments</h2>
+        {tx.attachment ? (
+          <Button
+            variant="link"
+            className="border"
+            onClick={(e) => {
+              e.preventDefault();
+              refetch().then((data) =>
+                window.open(data.data?.attributes.fileURL || '', '_blank')
+              );
+            }}
+          >
+            View attachment
+            <ArrowSquareOut className="size-4" />
+          </Button>
+        ) : (
+          <p className="text-muted-foreground text-sm">No attachment.</p>
+        )}
       </div>
     </div>
-    <div className="flex flex-col gap-2">
-      <h2 className="text-lg font-medium">Notes</h2>
-      {tx.note ? (
-        <p className="text-subtle text-sm">{tx.note}</p>
-      ) : (
-        <p className="text-muted-foreground text-sm">No note.</p>
-      )}
-    </div>
-    <div className="flex flex-col gap-2">
-      <h2 className="text-lg font-medium">Attachments</h2>
-      {tx.attachment ? (
-        // TODO: Redirect to attachment file
-        <Button variant="link" className="border">
-          View attachment
-          <ArrowSquareOut className="size-4" />
-        </Button>
-      ) : (
-        <p className="text-muted-foreground text-sm">No attachment.</p>
-      )}
-    </div>
-  </div>
-);
+  );
+};
 
 const TransactionPopover = ({ children, id }: TransactionPopoverProps) => {
   const [open, setOpen] = useState(false);
   const { data, isLoading, isError } = trpc.public.getTransactionById.useQuery(
     id,
     {
+      refetchOnWindowFocus: false,
       enabled: open,
     }
   );

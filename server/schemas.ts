@@ -115,6 +115,7 @@ export const TransactionResourceFilteredSchema = z.object({
   description: z.string(),
   rawText: z.string().nullable(),
   message: z.string().nullable(),
+  isCategorizable: z.boolean(),
   note: z.string().nullable(),
   attachment: z.string().nullable(),
   amount: z.string(),
