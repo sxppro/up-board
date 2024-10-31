@@ -115,6 +115,7 @@ export const TransactionResourceFilteredSchema = z.object({
   description: z.string(),
   rawText: z.string().nullable(),
   message: z.string().nullable(),
+  note: z.string().nullable(),
   amount: z.string(),
   amountRaw: z.number(),
   time: z.string().datetime(),
@@ -196,6 +197,14 @@ export const AccountBalanceHistorySchema = z.object({
   Balance: z.number(),
 });
 export type AccountBalanceHistory = z.infer<typeof AccountBalanceHistorySchema>;
+
+export const CategoryInfoSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  parentCategory: z.string().nullable(),
+  parentCategoryName: z.string().nullable(),
+});
+export type CategoryInfo = z.infer<typeof CategoryInfoSchema>;
 
 export const CumulativeIOSchema = z.object({
   Timestamp: z.date(),

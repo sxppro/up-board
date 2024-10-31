@@ -5,6 +5,7 @@ import transactionsMock from '@/mock/transactions.json';
 import { getMockData } from '@/scripts/generateMockData';
 import {
   AccountMonthlyInfoSchema,
+  CategoryInfo,
   CumulativeIO,
   RetrievalOptions,
   TagInfoSchema,
@@ -23,7 +24,11 @@ import {
   type TransactionCategoryType,
   type TransactionRetrievalOptions,
 } from '@/server/schemas';
-import { AccountResource, DbTransactionResource } from '@/types/custom';
+import {
+  AccountResource,
+  CategoryResource,
+  DbTransactionResource,
+} from '@/types/custom';
 import { components } from '@/types/up-api';
 import { auth } from '@/utils/auth';
 import { outputTransactionFields } from '@/utils/helpers';
@@ -318,6 +323,69 @@ export const getMerchantInfo = async (
   } catch (err) {
     console.error(err);
     return [];
+  }
+};
+
+/**
+ * Category details by id
+ * @param id
+ * @returns
+ */
+export const getCategoryById = async (id: string) => {
+  try {
+    const categories = await connectToCollection<CategoryResource>(
+      'up',
+      'categories'
+    );
+    if (categories) {
+      const category = await categories.findOne<CategoryInfo>(
+        { _id: id },
+        {
+          projection: {
+            _id: 0,
+            id: '$_id',
+            name: '$attributes.name',
+            parentCategory: '$relationships.parent.data.id',
+          },
+        }
+      );
+      if (category) {
+        if (category.parentCategory) {
+          category.parentCategoryName =
+            (
+              await categories.findOne<{ name: string }>(
+                { _id: category.parentCategory },
+                {
+                  projection: {
+                    _id: 0,
+                    name: '$attributes.name',
+                  },
+                }
+              )
+            )?.name || null;
+        }
+        return category;
+      }
+      return null;
+    } else {
+      const category = categoriesMock.data.find(
+        ({ id: categoryId }) => categoryId === id
+      );
+      if (category) {
+        return {
+          id: category.id,
+          name: category.attributes.name,
+          parentCategory: category.relationships.parent.data?.id,
+          parentCategoryName: categoriesMock.data.find(
+            ({ id }) => id === category.relationships.parent.data?.id
+          )?.attributes.name,
+        };
+      }
+      return null;
+    }
+  } catch (err) {
+    console.error(err);
+    return null;
   }
 };
 

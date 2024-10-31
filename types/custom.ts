@@ -19,6 +19,11 @@ export interface AccountResource
   _id: string;
 }
 
+export interface CategoryResource
+  extends Omit<components['schemas']['CategoryResource'], 'id'> {
+  _id: string;
+}
+
 export interface DbTransactionResource
   extends Omit<
     components['schemas']['TransactionResource'],
@@ -26,19 +31,6 @@ export interface DbTransactionResource
   > {
   _id: Binary;
   attributes: TransactionResourceAttributes;
-}
-
-export interface FilteredTransactionResource {
-  id: string;
-  description: string;
-  rawText: string | null;
-  amount: string;
-  amountRaw: number;
-  time: string;
-  status: string;
-  category: string;
-  parentCategory: string;
-  tags: string[];
 }
 
 export type DateRangeContext = {
