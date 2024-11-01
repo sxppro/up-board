@@ -10,8 +10,18 @@ export const metadata: Metadata = {
 };
 
 const DashboardPage = async () => {
-  const accounts = await getAccounts('TRANSACTIONAL');
-  const savAccounts = await getAccounts('SAVER');
+  const accounts = await getAccounts('TRANSACTIONAL', {
+    sort: {
+      'attributes.balance.valueInBaseUnits': -1,
+    },
+    limit: 1,
+  });
+  const savAccounts = await getAccounts('SAVER', {
+    sort: {
+      'attributes.balance.valueInBaseUnits': -1,
+    },
+    limit: 1,
+  });
 
   return (
     <QueryProvider>

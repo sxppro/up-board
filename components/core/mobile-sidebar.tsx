@@ -1,14 +1,13 @@
 import { siteConfig } from '@/app/siteConfig';
 import { Button } from '@/components/ui/button';
 import {
-  Drawer,
-  DrawerBody,
-  DrawerClose,
-  DrawerContent,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
-} from '@/components/ui/tremor/drawer';
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from '@/components/ui/sheet';
 import { cn } from '@/utils/helpers';
 import { focusRing } from '@/utils/tremor';
 import {
@@ -47,7 +46,7 @@ const navigation = [
     href: siteConfig.baseLinks.tags,
     icon: Tag,
   },
-] as const;
+];
 
 const shortcuts = [
   {
@@ -70,15 +69,15 @@ const shortcuts = [
     href: '#',
     icon: LinkIcon,
   },
-] as const;
+];
 
 export default function MobileSidebar() {
   const pathname = usePathname();
   const isActive = (itemHref: string) => pathname === itemHref;
   return (
     <>
-      <Drawer>
-        <DrawerTrigger asChild>
+      <Sheet>
+        <SheetTrigger asChild>
           <Button
             variant="ghost"
             aria-label="open sidebar"
@@ -86,71 +85,70 @@ export default function MobileSidebar() {
           >
             <List className="size-6 shrink-0 sm:size-5" aria-hidden="true" />
           </Button>
-        </DrawerTrigger>
-        <DrawerContent className="sm:max-w-lg">
-          <DrawerHeader>
-            <DrawerTitle>{siteConfig.name}</DrawerTitle>
-          </DrawerHeader>
-          <DrawerBody>
-            <nav
-              aria-label="core mobile navigation links"
-              className="flex flex-1 flex-col space-y-10"
-            >
-              <ul role="list" className="space-y-1.5">
-                {navigation.map((item) => (
+        </SheetTrigger>
+        <SheetContent className="sm:max-w-lg">
+          <SheetHeader>
+            <SheetTitle>{siteConfig.name}</SheetTitle>
+          </SheetHeader>
+
+          <nav
+            aria-label="mobile navigation links"
+            className="flex flex-1 flex-col space-y-10"
+          >
+            <ul role="list" className="space-y-1.5">
+              {navigation.map((item) => (
+                <li key={item.name}>
+                  <SheetClose asChild>
+                    <Link
+                      href={item.href}
+                      className={cn(
+                        isActive(item.href)
+                          ? 'text-indigo-600 dark:text-indigo-400'
+                          : 'text-gray-600 hover:text-gray-900 dark:text-gray-400 hover:dark:text-gray-50',
+                        'flex items-center gap-x-2.5 rounded-md px-2 py-1.5 text-base font-medium transition hover:bg-gray-100 sm:text-sm hover:dark:bg-gray-900',
+                        focusRing
+                      )}
+                    >
+                      <item.icon
+                        className="size-5 shrink-0"
+                        aria-hidden="true"
+                      />
+                      {item.name}
+                    </Link>
+                  </SheetClose>
+                </li>
+              ))}
+            </ul>
+            <div>
+              <span className="text-sm font-medium leading-6 text-gray-500 sm:text-xs">
+                Shortcuts
+              </span>
+              <ul aria-label="shortcuts" role="list" className="space-y-0.5">
+                {shortcuts.map((item) => (
                   <li key={item.name}>
-                    <DrawerClose asChild>
-                      <Link
-                        href={item.href}
-                        className={cn(
-                          isActive(item.href)
-                            ? 'text-indigo-600 dark:text-indigo-400'
-                            : 'text-gray-600 hover:text-gray-900 dark:text-gray-400 hover:dark:text-gray-50',
-                          'flex items-center gap-x-2.5 rounded-md px-2 py-1.5 text-base font-medium transition hover:bg-gray-100 sm:text-sm hover:dark:bg-gray-900',
-                          focusRing
-                        )}
-                      >
-                        <item.icon
-                          className="size-5 shrink-0"
-                          aria-hidden="true"
-                        />
-                        {item.name}
-                      </Link>
-                    </DrawerClose>
+                    <Link
+                      href={item.href}
+                      className={cn(
+                        pathname === item.href || pathname.includes(item.href)
+                          ? 'text-indigo-600 dark:text-indigo-400'
+                          : 'text-gray-700 hover:text-gray-900 dark:text-gray-400 hover:dark:text-gray-50',
+                        'flex items-center gap-x-2.5 rounded-md px-2 py-1.5 font-medium transition hover:bg-gray-100 sm:text-sm hover:dark:bg-gray-900',
+                        focusRing
+                      )}
+                    >
+                      <item.icon
+                        className="size-4 shrink-0"
+                        aria-hidden="true"
+                      />
+                      {item.name}
+                    </Link>
                   </li>
                 ))}
               </ul>
-              <div>
-                <span className="text-sm font-medium leading-6 text-gray-500 sm:text-xs">
-                  Shortcuts
-                </span>
-                <ul aria-label="shortcuts" role="list" className="space-y-0.5">
-                  {shortcuts.map((item) => (
-                    <li key={item.name}>
-                      <Link
-                        href={item.href}
-                        className={cn(
-                          pathname === item.href || pathname.includes(item.href)
-                            ? 'text-indigo-600 dark:text-indigo-400'
-                            : 'text-gray-700 hover:text-gray-900 dark:text-gray-400 hover:dark:text-gray-50',
-                          'flex items-center gap-x-2.5 rounded-md px-2 py-1.5 font-medium transition hover:bg-gray-100 sm:text-sm hover:dark:bg-gray-900',
-                          focusRing
-                        )}
-                      >
-                        <item.icon
-                          className="size-4 shrink-0"
-                          aria-hidden="true"
-                        />
-                        {item.name}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </nav>
-          </DrawerBody>
-        </DrawerContent>
-      </Drawer>
+            </div>
+          </nav>
+        </SheetContent>
+      </Sheet>
     </>
   );
 }

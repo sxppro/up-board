@@ -1,4 +1,4 @@
-import { getMonthlyInfo } from '@/db';
+import { getAccountStats } from '@/db';
 import { DateRangeProps } from '@/types/custom';
 import { formatCurrency } from '@/utils/helpers';
 import { startOfMonth } from 'date-fns';
@@ -12,7 +12,7 @@ interface IOProps extends DateRangeProps {
 const IOStats = async ({ accountId, start, end }: IOProps) => {
   const now = new Date();
   const stats = (
-    await getMonthlyInfo(accountId, {
+    await getAccountStats(accountId, {
       from: start || startOfMonth(now),
       to: end || now,
     })

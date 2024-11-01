@@ -1,7 +1,16 @@
+import type { DbTransactionResource } from '@/types/custom';
 import { endOfDay, startOfDay } from 'date-fns';
+import type { SortDirection } from 'mongodb';
 import { z } from 'zod';
 
 const now = new Date();
+
+/**
+ * Importing 3rd party types according to
+ * @link https://github.com/colinhacks/zod/issues/52#issuecomment-629897855
+ */
+const SortDirection: z.ZodType<SortDirection> = z.any();
+const DbTransactionResource: z.ZodType<DbTransactionResource> = z.any();
 
 export const DateRangeSchema = z.object({
   from: z.coerce
@@ -19,6 +28,7 @@ export const DateRangeGroupBySchema = z.enum(['daily', 'monthly', 'yearly']);
 export type DateRangeGroupBy = z.infer<typeof DateRangeGroupBySchema>;
 
 export const RetrievalOpts = z.object({
+  sort: z.record(z.string(), SortDirection).optional(),
   limit: z.number().optional(),
 });
 export type RetrievalOptions = z.infer<typeof RetrievalOpts>;
@@ -105,29 +115,37 @@ export const TransactionResourceFilteredSchema = z.object({
   description: z.string(),
   rawText: z.string().nullable(),
   message: z.string().nullable(),
+  isCategorizable: z.boolean(),
+  note: z.string().nullable(),
+  attachment: z.string().nullable(),
   amount: z.string(),
   amountRaw: z.number(),
   time: z.string().datetime(),
   status: TransactionStatusSchema,
   category: z.string(),
+  categoryName: z.string(),
   parentCategory: z.string(),
+  parentCategoryName: z.string(),
   tags: z.string().array(),
+  transactionType: z.string().nullable(),
   deepLinkURL: z.string().optional(),
 });
 export type TransactionResourceFiltered = z.infer<
   typeof TransactionResourceFilteredSchema
 >;
 
-export const TransactionRetrievalOptionsSchema = z
-  .object({
-    account: TransactionAccountTypeSchema,
-    dateRange: DateRangeSchema,
-    transactionType: TransactionTypeSchema,
-    sort: z.enum(['time', 'amount']),
-    sortDir: z.enum(['asc', 'desc']),
-    type: TransactionIO.optional(),
-  })
-  .merge(RetrievalOpts);
+/**
+ * TODO: Remove this schema and use RetrievalOpts instead
+ * @deprecated Use RetrievalOpts instead
+ */
+export const TransactionRetrievalOptionsSchema = RetrievalOpts.extend({
+  account: TransactionAccountTypeSchema,
+  dateRange: DateRangeSchema,
+  transactionType: TransactionTypeSchema,
+  sort: z.enum(['time', 'amount']),
+  sortDir: z.enum(['asc', 'desc']),
+  type: TransactionIO.optional(),
+});
 export type TransactionRetrievalOptions = z.infer<
   typeof TransactionRetrievalOptionsSchema
 >;
@@ -144,6 +162,12 @@ export const TransactionTagsModificationSchema = z.object({
 export type TransactionTagsModification = z.infer<
   typeof TransactionTagsModificationSchema
 >;
+
+export const TransactionGroupByDaySchema = z.object({
+  timestamp: z.date(),
+  transactions: z.array(DbTransactionResource),
+});
+export type TransactionGroupByDay = z.infer<typeof TransactionGroupByDaySchema>;
 
 export const AccountInfoSchema = z.object({
   id: z.string().uuid(),
@@ -177,6 +201,14 @@ export const AccountBalanceHistorySchema = z.object({
   Balance: z.number(),
 });
 export type AccountBalanceHistory = z.infer<typeof AccountBalanceHistorySchema>;
+
+export const CategoryInfoSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  parentCategory: z.string().nullable(),
+  parentCategoryName: z.string().nullable(),
+});
+export type CategoryInfo = z.infer<typeof CategoryInfoSchema>;
 
 export const CumulativeIOSchema = z.object({
   Timestamp: z.date(),

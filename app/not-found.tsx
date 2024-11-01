@@ -11,7 +11,7 @@ export default function NotFound() {
         Page not found
       </h1>
       <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-        Sorry, we couldn’t find the page you’re looking for.
+        Sorry, we couldn&apos;t find the page you&apos;re looking for.
       </p>
       <Button asChild className="group mt-8" variant="ghost">
         <Link href={siteConfig.baseLinks.home}>

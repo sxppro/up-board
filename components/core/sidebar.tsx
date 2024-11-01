@@ -45,7 +45,7 @@ const navigation = [
     href: siteConfig.baseLinks.tags,
     icon: Tag,
   },
-] as const;
+];
 
 const shortcuts = [
   {
@@ -68,7 +68,7 @@ const shortcuts = [
     href: '#',
     icon: LinkIcon,
   },
-] as const;
+];
 
 interface SidebarProps {
   user?: Pick<User, 'name' | 'image' | 'email'>;

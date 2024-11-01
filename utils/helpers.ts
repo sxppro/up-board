@@ -1,12 +1,17 @@
-import {
-  AccountBalanceHistory,
-  TransactionResourceFiltered,
-} from '@/server/schemas';
+import { AccountBalanceHistory } from '@/server/schemas';
 import { DbTransactionResource } from '@/types/custom';
-import type { components } from '@/types/up-api';
+import { tz } from '@date-fns/tz';
 import { clsx, type ClassValue } from 'clsx';
-import { format } from 'date-fns';
+import {
+  differenceInDays,
+  format,
+  formatDistanceStrict,
+  isToday,
+  isYesterday,
+} from 'date-fns';
+import { enAU } from 'date-fns/locale';
 import { twMerge } from 'tailwind-merge';
+import { now, TZ } from './constants';
 
 export const getBaseUrl = () => {
   if (typeof window !== 'undefined')
@@ -58,6 +63,32 @@ export const formatCurrency = (
     .toString();
 
 /**
+ * Format date depending on distance to now
+ * @param date date to format
+ * @returns formatted date string
+ */
+export const formatDate = (date: Date) => {
+  if (isToday(date, { in: tz(TZ) })) return 'Today';
+  if (isYesterday(date, { in: tz(TZ) })) return 'Yesterday';
+  if (differenceInDays(now, date, { in: tz(TZ) }) > 7)
+    return format(date, 'do MMMM', { in: tz(TZ) });
+  return formatDistanceStrict(date, now, {
+    addSuffix: true,
+    roundingMethod: 'floor',
+    locale: enAU,
+    in: tz(TZ),
+  });
+};
+
+/**
+ * Capitalise first letter of string
+ * @param str
+ * @returns
+ */
+export const capitalise = (str: string) =>
+  str.charAt(0).toLocaleUpperCase() + str.slice(1).toLocaleLowerCase();
+
+/**
  * Adds property `FormattedDate`, date string from day, month, year values
  * @param data
  * @returns
@@ -82,38 +113,6 @@ export const addFormattedDate = (data: AccountBalanceHistory[] | undefined) => {
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
-
-/**
- * Filters properties from raw transaction
- * object to be returned to client
- * @param transactions array of raw transaction objects
- * @returns
- */
-export const filterTransactionFields = (
-  transactions?: components['schemas']['TransactionResource'][]
-): TransactionResourceFiltered[] => {
-  return (
-    transactions?.map((transaction) => {
-      const { id, attributes, relationships } = transaction;
-      return {
-        id,
-        description: attributes.description,
-        rawText: attributes.rawText,
-        message: attributes.message,
-        amount: attributes.amount.value,
-        amountRaw: attributes.amount.valueInBaseUnits / 100,
-        time: attributes.createdAt,
-        status: attributes.status,
-        category: relationships.category.data?.id ?? 'uncategorised',
-        parentCategory:
-          relationships.parentCategory.data?.id ?? 'uncategorised',
-        tags: relationships.tags.data.map(({ id }) => id),
-        // @ts-expect-error due to Up Banking API not being updated yet
-        deepLinkURL: attributes.deepLinkURL,
-      };
-    }) || []
-  );
-};
 
 /**
  * Remaps db transaction document

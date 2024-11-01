@@ -3,9 +3,9 @@
  */
 
 import { insertTransactions } from '@/db';
+import { filterTransactionFields } from '@/db/helpers';
 import { paths } from '@/types/up-api';
 import createClient from 'openapi-fetch';
-import { filterTransactionFields } from './helpers';
 
 const {
   GET: upGET,
@@ -36,6 +36,24 @@ const getNextPage = async (link: string, store = []): Promise<never[]> => {
   } else {
     return store.concat(data);
   }
+};
+
+/**
+ * Retrieves attachment by id
+ * @param id attachment id
+ * @returns attachment details, including file link
+ */
+export const getAttachment = async (id: string) => {
+  return await upGET('/attachments/{id}', {
+    params: {
+      path: {
+        id,
+      },
+    },
+    headers: {
+      Authorization: `Bearer ${process.env.UP_TOKEN}`,
+    },
+  });
 };
 
 /**

@@ -2,7 +2,7 @@
 
 import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
-import { now } from '@/utils/constants';
+import { getDateRanges } from '@/utils/constants';
 import { cn, formatCurrency } from '@/utils/helpers';
 import { trpc } from '@/utils/trpc';
 import {
@@ -14,14 +14,7 @@ import {
   TabPanel,
   TabPanels,
 } from '@tremor/react';
-import {
-  endOfMonth,
-  endOfYear,
-  format,
-  startOfMonth,
-  startOfYear,
-  subYears,
-} from 'date-fns';
+import { format } from 'date-fns';
 import { useState } from 'react';
 
 interface CumulativeSnapshotProps {
@@ -34,69 +27,52 @@ const CumulativeSnapshot = ({
   savAccountId,
 }: CumulativeSnapshotProps) => {
   const [selectedTab, setSelectedTab] = useState(0);
-  const thisMonth = {
-    from: startOfMonth(now),
-    to: now,
-  };
-  const thisYear = {
-    from: startOfYear(now),
-    to: now,
-  };
+  const { thisMonthLastYear, lastYear, monthToDate, yearToDate } =
+    getDateRanges();
   const { data: mtdIncome, dataUpdatedAt: dataUpdatedAtIncome } =
     trpc.public.getCumulativeIO.useQuery({
       accountId,
-      dateRange: thisMonth,
-      compareDateRange: {
-        from: subYears(thisMonth.from, 1),
-        to: subYears(endOfMonth(now), 1),
-      },
+      dateRange: monthToDate,
+      compareDateRange: thisMonthLastYear,
       type: 'income',
     });
   const { data: ytdIncome } = trpc.public.getCumulativeIO.useQuery({
     accountId,
-    dateRange: thisYear,
-    compareDateRange: {
-      from: subYears(thisYear.from, 1),
-      to: endOfYear(subYears(now, 1)),
-    },
+    dateRange: yearToDate,
+    compareDateRange: lastYear,
     type: 'income',
   });
   const { data: mtdExpenses, dataUpdatedAt: dataUpdatedAtExpenses } =
     trpc.public.getCumulativeIO.useQuery({
       accountId,
-      dateRange: thisMonth,
-      compareDateRange: {
-        from: subYears(thisMonth.from, 1),
-        to: subYears(endOfMonth(now), 1),
-      },
+      dateRange: monthToDate,
+      compareDateRange: thisMonthLastYear,
       type: 'expense',
     });
   const { data: ytdExpenses } = trpc.public.getCumulativeIO.useQuery({
     accountId,
-    dateRange: thisYear,
-    compareDateRange: {
-      from: subYears(thisYear.from, 1),
-      to: endOfYear(subYears(now, 1)),
-    },
+    dateRange: yearToDate,
+    compareDateRange: lastYear,
     type: 'expense',
   });
+  ``;
   const { data: month } = trpc.public.getMonthlyInfo.useQuery({
     accountId,
-    dateRange: thisMonth,
+    dateRange: monthToDate,
   });
   const { data: year } = trpc.public.getMonthlyInfo.useQuery({
     accountId,
-    dateRange: thisYear,
+    dateRange: yearToDate,
   });
   const { data: transactionalBalance } = trpc.public.getAccountBalance.useQuery(
     {
       accountId,
-      dateRange: thisMonth,
+      dateRange: monthToDate,
     }
   );
   const { data: savingsBalance } = trpc.public.getAccountBalance.useQuery({
     accountId: savAccountId,
-    dateRange: thisMonth,
+    dateRange: monthToDate,
   });
   const { data: savingsAcc } = trpc.public.getAccountById.useQuery({
     accountId: savAccountId,
@@ -105,14 +81,14 @@ const CumulativeSnapshot = ({
     accountId,
   });
   const { data: expenseCategories } = trpc.public.getCategoryInfo.useQuery({
-    dateRange: selectedTab === 0 ? thisMonth : thisYear,
+    dateRange: selectedTab === 0 ? monthToDate : yearToDate,
     type: 'child',
     options: {
       limit: 4,
     },
   });
   const { data: merchants } = trpc.public.getMerchantInfo.useQuery({
-    dateRange: selectedTab === 0 ? thisMonth : thisYear,
+    dateRange: selectedTab === 0 ? monthToDate : yearToDate,
     type: 'expense',
     options: {
       limit: 4,
@@ -139,7 +115,7 @@ const CumulativeSnapshot = ({
           <Separator className="mt-2" />
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
-          <TabGroup className="xl:col-span-2 ">
+          <TabGroup className="xl:col-span-2">
             <TabList className="space-x-0 items-center border-b">
               <Tab className="flex-1 sm:flex-none pl-4 pr-12 py-3 border-b-2 border-transparent">
                 <div className="flex flex-col gap-1 items-start">
@@ -367,7 +343,7 @@ const CumulativeSnapshot = ({
                                   : 'bg-up-uncategorised'
                               )}
                             ></div>
-                            <p className="text-gray-700 dark:text-gray-300 truncate">
+                            <p className="text-subtle truncate">
                               {categoryName}
                             </p>
                           </div>
@@ -390,7 +366,7 @@ const CumulativeSnapshot = ({
                         key={description}
                         className="w-full flex h-8 items-center overflow-hidden"
                       >
-                        <p className="flex-1 text-gray-700 dark:text-gray-300 truncate">
+                        <p className="flex-1 text-subtle truncate">
                           {description}
                         </p>
                         <span>{formatCurrency(amount)}</span>

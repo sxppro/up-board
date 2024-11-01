@@ -5,9 +5,11 @@ import transactionsMock from '@/mock/transactions.json';
 import { getMockData } from '@/scripts/generateMockData';
 import {
   AccountMonthlyInfoSchema,
+  CategoryInfo,
   CumulativeIO,
   RetrievalOptions,
   TagInfoSchema,
+  TransactionGroupByDay,
   TransactionIncomeInfo,
   TransactionIOEnum,
   type AccountBalanceHistory,
@@ -22,7 +24,11 @@ import {
   type TransactionCategoryType,
   type TransactionRetrievalOptions,
 } from '@/server/schemas';
-import { AccountResource, DbTransactionResource } from '@/types/custom';
+import {
+  AccountResource,
+  CategoryResource,
+  DbTransactionResource,
+} from '@/types/custom';
 import { components } from '@/types/up-api';
 import { auth } from '@/utils/auth';
 import { outputTransactionFields } from '@/utils/helpers';
@@ -33,17 +39,18 @@ import { addDays, addMonths, addYears } from 'date-fns';
 import { CollectionOptions, Document, MongoBulkWriteError } from 'mongodb';
 import client from './connect';
 import {
-  accountBalancePipeline,
-  accountStatsPipeline,
-  categoriesByPeriodPipeline,
-  categoriesPipeline,
-  cumulativeIOPipeline,
-  merchantsPipeline,
-  searchTransactionsPipeline,
-  tagInfoPipeline,
-  transactionsByDatePipeline,
-  transactionsByTagsPipeline,
-  uniqueTagsPipeline,
+  filterByDateRange,
+  findUniqueTags,
+  groupBalanceByDay,
+  groupByCategory,
+  groupByCategoryAndMonth,
+  groupByDay,
+  groupByMerchant,
+  groupByTag,
+  searchTransactions as searchTx,
+  statsByAccount,
+  statsByTag,
+  sumIOByDay,
 } from './pipelines';
 
 faker.seed(17);
@@ -189,7 +196,7 @@ export const searchTransactions = async (search: string) => {
     );
     if (transactions) {
       const cursor = transactions.aggregate<DbTransactionResource>(
-        searchTransactionsPipeline(search)
+        searchTx(search)
       );
       const results = (await cursor.toArray()).map((transaction) =>
         outputTransactionFields(transaction)
@@ -207,14 +214,16 @@ export const searchTransactions = async (search: string) => {
 };
 
 /**
- * Monthly transaction statistics between 2 dates
- * @param dateRange
- * @returns list of stats for each month
+ * Total or grouped transaction statistics between 2 dates
+ * @param groupBy group by day, month or year
+ * @param avg optionally average stats
+ * @returns list of stats, single element if no groupBy provided
  */
-export const getMonthlyInfo = async (
+export const getAccountStats = async (
   accountId: string,
   dateRange: DateRange,
-  groupBy?: DateRangeGroupBy
+  groupBy?: DateRangeGroupBy,
+  avg?: boolean
 ) => {
   try {
     const transactions = await connectToCollection<DbTransactionResource>(
@@ -223,7 +232,7 @@ export const getMonthlyInfo = async (
     );
     if (transactions) {
       const cursor = transactions.aggregate<AccountMonthlyInfo>(
-        accountStatsPipeline(accountId, dateRange, groupBy)
+        statsByAccount(accountId, dateRange, groupBy, avg)
       );
       const results = await cursor.toArray();
       return results;
@@ -304,7 +313,7 @@ export const getMerchantInfo = async (
     );
     if (transactions) {
       const cursor = transactions.aggregate<TransactionIncomeInfo>(
-        merchantsPipeline(dateRange, process.env.UP_TRANS_ACC, options, type)
+        groupByMerchant(dateRange, process.env.UP_TRANS_ACC, options, type)
       );
       const results = await cursor.toArray();
       return results;
@@ -314,6 +323,70 @@ export const getMerchantInfo = async (
   } catch (err) {
     console.error(err);
     return [];
+  }
+};
+
+/**
+ * Category details by id
+ * @param id
+ * @returns
+ */
+export const getCategoryById = async (id: string) => {
+  try {
+    const categories = await connectToCollection<CategoryResource>(
+      'up',
+      'categories'
+    );
+    if (categories) {
+      const category = await categories.findOne<CategoryInfo>(
+        { _id: id },
+        {
+          projection: {
+            _id: 0,
+            id: '$_id',
+            name: '$attributes.name',
+            parentCategory: '$relationships.parent.data.id',
+            parentCategoryName: '$relationships.parent.data.id',
+          },
+        }
+      );
+      if (category) {
+        if (category.parentCategory) {
+          category.parentCategoryName =
+            (
+              await categories.findOne<{ name: string }>(
+                { _id: category.parentCategory },
+                {
+                  projection: {
+                    _id: 0,
+                    name: '$attributes.name',
+                  },
+                }
+              )
+            )?.name || null;
+        }
+        return category;
+      }
+      return null;
+    } else {
+      const category = categoriesMock.data.find(
+        ({ id: categoryId }) => categoryId === id
+      );
+      if (category) {
+        return {
+          id: category.id,
+          name: category.attributes.name,
+          parentCategory: category.relationships.parent.data?.id,
+          parentCategoryName: categoriesMock.data.find(
+            ({ id }) => id === category.relationships.parent.data?.id
+          )?.attributes.name,
+        };
+      }
+      return null;
+    }
+  } catch (err) {
+    console.error(err);
+    return null;
   }
 };
 
@@ -340,7 +413,7 @@ export const getCategoryInfo = async (
     );
     if (transactions) {
       const cursor = transactions.aggregate<TransactionCategoryInfo>(
-        categoriesPipeline(
+        groupByCategory(
           dateRange,
           process.env.UP_TRANS_ACC,
           type,
@@ -395,12 +468,7 @@ export const getCategoryInfoHistory = async (
     );
     if (transactions) {
       const cursor = transactions.aggregate<TransactionCategoryInfoHistoryRaw>(
-        categoriesByPeriodPipeline(
-          dateRange.from,
-          dateRange.to,
-          process.env.UP_TRANS_ACC,
-          type
-        )
+        groupByCategoryAndMonth(dateRange, process.env.UP_TRANS_ACC, type)
       );
       const results = await cursor.toArray();
       return results;
@@ -459,7 +527,7 @@ export const getCumulativeIO = async (
     );
     if (transactions) {
       const cursor = transactions.aggregate<CumulativeIO>(
-        cumulativeIOPipeline(dateRange, accountId, type)
+        sumIOByDay(dateRange, accountId, type)
       );
       const results = await cursor.toArray();
       return results;
@@ -484,7 +552,7 @@ export const getTagInfo = async (tag: string): Promise<TagInfo | undefined> => {
       'transactions'
     );
     if (transactions) {
-      const cursor = transactions.aggregate<TagInfo>(tagInfoPipeline(tag));
+      const cursor = transactions.aggregate<TagInfo>(statsByTag(tag));
       const results = await cursor.toArray();
       return results[0];
     } else {
@@ -514,6 +582,45 @@ export const getTagInfo = async (tag: string): Promise<TagInfo | undefined> => {
 };
 
 /**
+ * Group transactions by day
+ * @param accountId
+ * @param dateRange
+ * @param options
+ * @returns
+ */
+export const getTransactionsByDay = async (
+  accountId: string,
+  dateRange?: DateRange,
+  options?: RetrievalOptions
+) => {
+  try {
+    const transactions = await connectToCollection<DbTransactionResource>(
+      'up',
+      'transactions'
+    );
+    if (transactions) {
+      const cursor = transactions.aggregate<TransactionGroupByDay>(
+        groupByDay(accountId, dateRange, options)
+      );
+      const results = (await cursor.toArray()).map(
+        ({ transactions, ...rest }) => ({
+          transactions: transactions.map((transaction) =>
+            outputTransactionFields(transaction)
+          ),
+          ...rest,
+        })
+      );
+      return results;
+    } else {
+      return [];
+    }
+  } catch (err) {
+    console.error(err);
+    return [];
+  }
+};
+
+/**
  * Retrieves transactions between 2 dates
  * @param dateRange
  * @param options
@@ -530,7 +637,7 @@ const getTransactionsByDate = async (
     );
     if (transactions) {
       const cursor = transactions.aggregate<DbTransactionResource>(
-        transactionsByDatePipeline(options, accountId)
+        filterByDateRange(options, accountId)
       );
       const results = (await cursor.toArray()).map((transaction) =>
         outputTransactionFields(transaction)
@@ -704,7 +811,7 @@ export const getTransactionsByTags = async () => {
       'transactions'
     );
     if (transactions) {
-      const cursor = transactions.aggregate(transactionsByTagsPipeline());
+      const cursor = transactions.aggregate(groupByTag());
       const results = await cursor.toArray();
       return results;
     } else {
@@ -769,7 +876,7 @@ export const getTags = async () => {
     );
     if (transactions) {
       const cursor = transactions.aggregate<{ tags: string[] }>(
-        uniqueTagsPipeline()
+        findUniqueTags()
       );
       const results = await cursor.toArray();
       return results[0];
@@ -788,7 +895,8 @@ export const getTags = async () => {
  * @returns
  */
 export const getAccounts = async (
-  accountType?: components['schemas']['AccountTypeEnum']
+  accountType?: components['schemas']['AccountTypeEnum'],
+  options?: RetrievalOptions
 ) => {
   try {
     const accounts = await connectToCollection<AccountResource>(
@@ -796,20 +904,25 @@ export const getAccounts = async (
       'accounts'
     );
     if (accounts) {
-      const cursor = accounts
-        .find(accountType ? { 'attributes.accountType': accountType } : {})
-        .sort({ 'attributes.displayName': 1, 'attributes.accountType': 1 })
+      const cursor = accounts.find(
+        accountType ? { 'attributes.accountType': accountType } : {}
+      );
+      if (options) {
+        const { sort, limit } = options;
+        sort && cursor.sort(sort);
+        limit && cursor.limit(limit);
+      }
+      const results = await cursor
         .project<AccountInfo>({
           _id: 0,
           id: '$_id',
           displayName: '$attributes.displayName',
           accountType: '$attributes.accountType',
           balance: {
-            $toDecimal: '$attributes.balance.value',
+            $divide: ['$attributes.balance.valueInBaseUnits', 100],
           },
         })
-        .sort({ balance: -1 });
-      const results = await cursor.toArray();
+        .toArray();
       return results;
     } else {
       return accountType
@@ -819,11 +932,13 @@ export const getAccounts = async (
               id,
               displayName: attributes.displayName,
               accountType: attributes.accountType,
+              balance: parseFloat(attributes.balance.value),
             }))
         : accountsMock.data.map(({ id, attributes }) => ({
             id,
             displayName: attributes.displayName,
             accountType: attributes.accountType,
+            balance: parseFloat(attributes.balance.value),
           }));
     }
   } catch (err) {
@@ -850,7 +965,7 @@ export const getAccountBalanceHistorical = async (
     );
     if (transactions) {
       const cursor = transactions.aggregate<AccountBalanceHistory>(
-        accountBalancePipeline(dateRange.from, dateRange.to, accountId)
+        groupBalanceByDay(dateRange, accountId)
       );
       const results = await cursor.toArray();
       return results;

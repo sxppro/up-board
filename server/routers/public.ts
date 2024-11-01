@@ -1,17 +1,16 @@
 import {
   getAccountBalanceHistorical,
   getAccountById,
+  getAccountStats,
   getCategories,
   getCategoryInfo,
   getCategoryInfoHistory,
   getCumulativeIO,
   getMerchantInfo,
-  getMonthlyInfo,
   getTagInfo,
   getTransactionById,
 } from '@/db';
-import { getTransactions } from '@/db/helpers';
-import { filterTransactionFields } from '@/utils/helpers';
+import { filterTransactionFields, getTransactions } from '@/db/helpers';
 import { TRPCError } from '@trpc/server';
 import { format } from 'date-fns';
 import { z } from 'zod';
@@ -190,7 +189,7 @@ export const publicRouter = router({
     .output(z.array(AccountMonthlyInfoSchema))
     .query(async ({ input }) => {
       const { accountId, dateRange, groupBy } = input;
-      const results = await getMonthlyInfo(accountId, dateRange, groupBy);
+      const results = await getAccountStats(accountId, dateRange, groupBy);
       return results.map(({ Year, Month, ...rest }) =>
         Year && Month
           ? {
@@ -213,7 +212,7 @@ export const publicRouter = router({
       if (!transaction) {
         throw new TRPCError({ code: 'NOT_FOUND' });
       }
-      return filterTransactionFields([transaction])[0];
+      return (await filterTransactionFields([transaction]))[0];
     }),
   getTransactionsByDate: publicProcedure
     .input(TransactionRetrievalOptionsSchema)

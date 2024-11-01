@@ -54,6 +54,7 @@ export default {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))',
         },
+        subtle: 'hsl(var(--subtle))',
         // Up
         up: {
           'good-life': '#F3DC61',
@@ -75,14 +76,14 @@ export default {
           background: {
             muted: colors.gray[50],
             subtle: colors.gray[100],
-            DEFAULT: colors.white,
+            DEFAULT: 'hsl(var(--background))',
             emphasis: colors.gray[700],
           },
           border: {
-            DEFAULT: colors.gray[200],
+            DEFAULT: 'hsl(var(--border))',
           },
           ring: {
-            DEFAULT: colors.gray[200],
+            DEFAULT: 'hsl(var(--ring))',
           },
           content: {
             subtle: colors.gray[400],
@@ -105,14 +106,14 @@ export default {
           background: {
             muted: '#131A2B',
             subtle: colors.gray[800],
-            DEFAULT: colors.gray[900],
+            DEFAULT: 'hsl(var(--background))',
             emphasis: colors.gray[300],
           },
           border: {
-            DEFAULT: colors.gray[800],
+            DEFAULT: 'hsl(var(--border))',
           },
           ring: {
-            DEFAULT: colors.gray[800],
+            DEFAULT: 'hsl(var(--ring))',
           },
           content: {
             subtle: colors.gray[600],
@@ -196,11 +197,11 @@ export default {
           },
           to: { opacity: '1', transform: 'translate(-50%, -50%) scale(1)' },
         },
-        drawerSlideLeftAndFade: {
+        'sheet-slide-left': {
           from: { opacity: '0', transform: 'translateX(100%)' },
           to: { opacity: '1', transform: 'translateX(0)' },
         },
-        drawerSlideRightAndFade: {
+        'sheet-slide-right': {
           from: { opacity: '1', transform: 'translateX(0)' },
           to: { opacity: '0', transform: 'translateX(100%)' },
         },
@@ -231,13 +232,17 @@ export default {
           'dialogOverlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1)',
         dialogContentShow:
           'dialogContentShow 150ms cubic-bezier(0.16, 1, 0.3, 1)',
-        // Drawer
-        drawerSlideLeftAndFade:
-          'drawerSlideLeftAndFade 150ms cubic-bezier(0.16, 1, 0.3, 1)',
-        drawerSlideRightAndFade: 'drawerSlideRightAndFade 150ms ease-in',
+        // Drawer open/close - keeping this here for reference
+        'sheet-slide-left':
+          'sheet-slide-left 500ms cubic-bezier(0.32, 0.72, 0, 1)',
+        'sheet-slide-right':
+          'sheet-slide-right 500ms cubic-bezier(0.32, 0.72, 0, 1)',
         // @shadcn/ui accordion
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
+      },
+      transitionTimingFunction: {
+        'smooth-bezier': 'cubic-bezier(0.32, 0.72, 0, 1)',
       },
     },
   },
