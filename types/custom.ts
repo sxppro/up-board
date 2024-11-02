@@ -1,4 +1,4 @@
-import { Color } from '@tremor/react';
+import { BarChartProps, Color } from '@tremor/react';
 import { components } from './up-api';
 
 import type { Binary } from 'bson';
@@ -46,6 +46,10 @@ export interface DateRangeProps {
 export type PageProps = {
   params: { slug: string };
   searchParams: { [key: string]: string | string[] | undefined };
+};
+
+export type BarChartConfig = Pick<BarChartProps, 'data' | 'index'> & {
+  categories: any[];
 };
 
 export type StatCardInfo = {

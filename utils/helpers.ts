@@ -134,7 +134,7 @@ export const outputTransactionFields = (transaction: DbTransactionResource) => {
 };
 
 /**
- *
+ * Map search params
  */
 export const getSearchParams = (
   ...params: (string | string[] | undefined)[]

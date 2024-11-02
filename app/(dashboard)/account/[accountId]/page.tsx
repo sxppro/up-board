@@ -1,6 +1,5 @@
 import { siteConfig } from '@/app/siteConfig';
 import IOStats from '@/components/charts/io-stats';
-import DateRangePicker from '@/components/core/date-range-picker';
 import StatCard from '@/components/core/stat-card';
 import DateProvider from '@/components/providers/date-provider';
 import QueryProvider from '@/components/providers/query-provider';
@@ -44,13 +43,7 @@ const AccountPage = async ({ params, searchParams }: AccountPageProps) => {
 
   return (
     <>
-      <div className="w-full flex flex-col md:flex-row justify-between gap-2">
-        <h1 className="text-2xl font-bold tracking-tight">{displayName}</h1>
-        <DateRangePicker
-          start={startDate ? new Date(startDate) : startOfMonth(now)}
-          end={endDate ? new Date(endDate) : now}
-        />
-      </div>
+      <h1 className="text-2xl font-bold tracking-tight">{displayName}</h1>
       <div className="w-full flex flex-col mt-2 gap-6">
         <Grid numItemsMd={3} className="gap-4">
           <Suspense
