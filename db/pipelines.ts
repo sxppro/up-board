@@ -437,135 +437,152 @@ export const groupByCategory = (
 /**
  * Pipeline for calculating number of transactions
  * and total spending per transaction category
- * per month for specified account
+ * per day/month/year for specified account
  * @param from
  * @param to
  * @param accountId account ID
  * @param type category type
  * @returns aggregation pipeline definition
  */
-export const groupByCategoryAndMonth = (
+export const groupByCategoryAndDate = (
   dateRange: DateRange,
   accountId: string,
-  type: 'child' | 'parent'
-) => [
-  {
-    $match: {
-      'relationships.account.data.id': accountId,
-      'attributes.createdAt': {
-        $gte: dateRange.from,
-        $lte: dateRange.to,
-      },
-      'attributes.isCategorizable': true,
-      'attributes.amount.valueInBaseUnits': {
-        $lt: 0,
-      },
-    },
-  },
-  // Grab month, year, category and amount
-  {
-    $project: {
-      month: {
-        $month: {
-          date: '$attributes.createdAt',
-          timezone: TZ,
+  type: 'child' | 'parent',
+  options: RetrievalOptions
+) => {
+  const { groupBy } = options;
+  return [
+    {
+      $match: {
+        'relationships.account.data.id': accountId,
+        'attributes.createdAt': {
+          $gte: dateRange.from,
+          $lte: dateRange.to,
+        },
+        'attributes.isCategorizable': true,
+        'attributes.amount.valueInBaseUnits': {
+          $lt: 0,
         },
       },
-      year: {
-        $year: {
-          date: '$attributes.createdAt',
-          timezone: TZ,
+    },
+    // Grab month, year, category and amount
+    {
+      $project: {
+        ...(groupBy === 'daily' && {
+          day: {
+            $dayOfMonth: {
+              date: '$attributes.createdAt',
+              timezone: TZ,
+            },
+          },
+        }),
+        ...((groupBy === 'daily' || groupBy === 'monthly') && {
+          month: {
+            $month: {
+              date: '$attributes.createdAt',
+              timezone: TZ,
+            },
+          },
+        }),
+        year: {
+          $year: {
+            date: '$attributes.createdAt',
+            timezone: TZ,
+          },
+        },
+        category: {
+          $ifNull: [
+            type === 'parent'
+              ? '$relationships.parentCategory.data.id'
+              : '$relationships.category.data.id',
+            'uncategorised',
+          ],
+        },
+        amount: {
+          $toDecimal: '$attributes.amount.value',
         },
       },
-      category: {
-        $ifNull: [
-          type === 'parent'
-            ? '$relationships.parentCategory.data.id'
-            : '$relationships.category.data.id',
-          'uncategorised',
-        ],
-      },
-      amount: {
-        $toDecimal: '$attributes.amount.value',
-      },
     },
-  },
-  // Group by month, year and category, sum amounts and no of transactions
-  {
-    $group: {
-      _id: {
-        month: '$month',
-        year: '$year',
-        category: '$category',
-      },
-      amount: {
-        $sum: '$amount',
-      },
-      transactions: {
-        $sum: 1,
-      },
-    },
-  },
-  // Converting category ids to names
-  {
-    $lookup: {
-      from: 'categories',
-      localField: '_id.category',
-      foreignField: '_id',
-      as: 'category',
-    },
-  },
-  {
-    $unwind: {
-      path: '$category',
-      preserveNullAndEmptyArrays: false,
-    },
-  },
-  // Set uncategorised transactions
-  {
-    $project: {
-      category: {
-        $ifNull: ['$category.attributes.name', 'Uncategorised'],
-      },
-      amount: {
-        $abs: {
-          $toDouble: '$amount',
+    // Group by month, year and category, sum amounts and no of transactions
+    {
+      $group: {
+        _id: {
+          day: '$day',
+          month: '$month',
+          year: '$year',
+          category: '$category',
+        },
+        amount: {
+          $sum: '$amount',
+        },
+        transactions: {
+          $sum: 1,
         },
       },
-      transactions: 1,
     },
-  },
-  // Group by month to collate categories by each month
-  {
-    $group: {
-      _id: {
+    // Converting category ids to names
+    {
+      $lookup: {
+        from: 'categories',
+        localField: '_id.category',
+        foreignField: '_id',
+        as: 'category',
+      },
+    },
+    {
+      $unwind: {
+        path: '$category',
+        preserveNullAndEmptyArrays: false,
+      },
+    },
+    // Set uncategorised transactions
+    {
+      $project: {
+        category: {
+          $ifNull: ['$category.attributes.name', 'Uncategorised'],
+        },
+        amount: {
+          $abs: {
+            $toDouble: '$amount',
+          },
+        },
+        transactions: 1,
+      },
+    },
+    // Group by month to collate categories by each month
+    {
+      $group: {
+        _id: {
+          day: '$_id.day',
+          month: '$_id.month',
+          year: '$_id.year',
+        },
+        categories: {
+          $addToSet: {
+            category: '$category',
+            amount: '$amount',
+            transactions: '$transactions',
+          },
+        },
+      },
+    },
+    {
+      $project: {
+        _id: 0,
+        day: '$_id.day',
         month: '$_id.month',
         year: '$_id.year',
-      },
-      categories: {
-        $addToSet: {
-          category: '$category',
-          amount: '$amount',
-          transactions: '$transactions',
-        },
+        categories: '$categories',
       },
     },
-  },
-  {
-    $project: {
-      _id: 0,
-      month: '$_id.month',
-      year: '$_id.year',
-      categories: '$categories',
+    {
+      $sort: {
+        year: 1,
+        month: 1,
+      },
     },
-  },
-  {
-    $sort: {
-      year: 1,
-      month: 1,
-    },
-  },
-];
+  ];
+};
 
 /**
  * Group transactions by day

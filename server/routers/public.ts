@@ -114,10 +114,16 @@ export const publicRouter = router({
         type,
         options || {}
       );
-      return results.map(({ month, year, categories }) => {
+      return results.map(({ day, month, year, categories }) => {
+        const date =
+          day && month
+            ? format(new Date(year, month - 1, day), 'd LLL yy')
+            : month
+            ? format(new Date(year, month - 1), 'LLL yy')
+            : format(new Date(year, 0, 1), 'yyyy');
         // @ts-expect-error
         const remappedElem: TransactionCategoryInfoHistory = {
-          FormattedDate: format(new Date(year, month - 1), 'LLL yy'),
+          FormattedDate: date,
         };
         categories.map(
           ({ amount, category }) => (remappedElem[category] = amount)

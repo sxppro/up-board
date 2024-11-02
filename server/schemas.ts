@@ -86,7 +86,8 @@ export type TransactionCategoryInfoHistory = z.infer<
 >;
 
 export const TransactionCategoryInfoHistoryRawSchema = z.object({
-  month: z.number(),
+  day: z.number().optional(),
+  month: z.number().optional(),
   year: z.number(),
   categories: z.array(
     TransactionCategoryInfoSchema.omit({ categoryName: true })

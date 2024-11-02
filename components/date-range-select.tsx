@@ -5,6 +5,7 @@
  * query param state
  */
 
+import { DateRangePresets } from '@/types/custom';
 import { useQueryState } from 'nuqs';
 import {
   Select,
@@ -14,15 +15,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from './ui/select';
-
-enum DateRangePresets {
-  TODAY = '24h',
-  WEEK = '7d',
-  MONTH = '30d',
-  THREE_MONTHS = '3m',
-  SIX_MONTHS = '6m',
-  YEAR = '12m',
-}
 
 export default function DateRangeSelect({ selected }: { selected?: string }) {
   const [_, setDateRange] = useQueryState('range', {

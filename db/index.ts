@@ -43,7 +43,7 @@ import {
   findUniqueTags,
   groupBalanceByDay,
   groupByCategory,
-  groupByCategoryAndMonth,
+  groupByCategoryAndDate,
   groupByDay,
   groupByMerchant,
   groupByTag,
@@ -456,7 +456,8 @@ export const getCategoryInfo = async (
  */
 export const getCategoryInfoHistory = async (
   dateRange: DateRange,
-  type: TransactionCategoryType
+  type: TransactionCategoryType,
+  options: RetrievalOptions
 ) => {
   try {
     if (!process.env.UP_TRANS_ACC) {
@@ -468,7 +469,12 @@ export const getCategoryInfoHistory = async (
     );
     if (transactions) {
       const cursor = transactions.aggregate<TransactionCategoryInfoHistoryRaw>(
-        groupByCategoryAndMonth(dateRange, process.env.UP_TRANS_ACC, type)
+        groupByCategoryAndDate(
+          dateRange,
+          process.env.UP_TRANS_ACC,
+          type,
+          options
+        )
       );
       const results = await cursor.toArray();
       return results;
@@ -495,6 +501,7 @@ export const getCategoryInfoHistory = async (
               amount: parseFloat(faker.finance.amount()),
               transactions: faker.number.int({ max: 100 }),
             })),
+          day: date.getDate(),
           month: date.getMonth() + 1,
           year: date.getFullYear(),
         }));
