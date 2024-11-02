@@ -52,6 +52,15 @@ export type BarChartConfig = Pick<BarChartProps, 'data' | 'index'> & {
   categories: any[];
 };
 
+export enum DateRangePresets {
+  TODAY = '24h',
+  WEEK = '7d',
+  MONTH = '30d',
+  THREE_MONTHS = '3m',
+  SIX_MONTHS = '6m',
+  YEAR = '12m',
+}
+
 export type StatCardInfo = {
   title?: string;
   metric?: string | number | undefined;

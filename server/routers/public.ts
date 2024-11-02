@@ -103,12 +103,17 @@ export const publicRouter = router({
       z.object({
         dateRange: DateRangeSchema,
         type: TransactionCategoryTypeSchema,
+        options: RetrievalOpts.optional(),
       })
     )
     .output(z.array(TransactionCategoryInfoHistorySchema))
     .query(async ({ input }) => {
-      const { dateRange, type } = input;
-      const results = await getCategoryInfoHistory(dateRange, type);
+      const { dateRange, type, options } = input;
+      const results = await getCategoryInfoHistory(
+        dateRange,
+        type,
+        options || {}
+      );
       return results.map(({ month, year, categories }) => {
         // @ts-expect-error
         const remappedElem: TransactionCategoryInfoHistory = {

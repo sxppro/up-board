@@ -30,6 +30,7 @@ export type DateRangeGroupBy = z.infer<typeof DateRangeGroupBySchema>;
 export const RetrievalOpts = z.object({
   sort: z.record(z.string(), SortDirection).optional(),
   limit: z.number().optional(),
+  groupBy: DateRangeGroupBySchema.optional(),
 });
 export type RetrievalOptions = z.infer<typeof RetrievalOpts>;
 
