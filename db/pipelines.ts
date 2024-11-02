@@ -336,7 +336,7 @@ export const groupByCategory = (
   options: RetrievalOptions,
   parentCategory?: string
 ) => {
-  const { limit } = options;
+  const { limit, sort } = options;
   return [
     /**
      * Match documents within the desired date range
@@ -420,12 +420,16 @@ export const groupByCategory = (
         transactions: 1,
       },
     },
-    {
-      $sort: {
-        amount: -1,
-        transactions: -1,
-      },
-    },
+    ...(sort
+      ? [{ $sort: sort }]
+      : [
+          {
+            $sort: {
+              amount: -1,
+              transactions: -1,
+            },
+          },
+        ]),
     ...(limit ? [{ $limit: limit }] : []),
   ];
 };
