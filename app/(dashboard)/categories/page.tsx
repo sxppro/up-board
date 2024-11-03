@@ -1,10 +1,17 @@
 import ExpenseCategoriesBar from '@/components/charts/expense-categories-bar';
 import DateRangeSelect from '@/components/date-range-select';
 import { Separator } from '@/components/ui/separator';
-import { getCategories, getCategoryInfoHistory } from '@/db';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/tremor/accordion';
+import { getCategories, getCategoryInfo, getCategoryInfoHistory } from '@/db';
 import { DateRangeGroupBy } from '@/server/schemas';
 import { DateRangePresets, PageProps } from '@/types/custom';
 import { getDateRanges } from '@/utils/constants';
+import { cn, formatCurrency } from '@/utils/helpers';
 import { format } from 'date-fns';
 import { NuqsAdapter } from 'nuqs/adapters/next/app';
 
@@ -21,12 +28,12 @@ const CategoriesPage = async ({ searchParams }: PageProps) => {
   ) {
     groupBy = 'daily';
   }
-  const categoryStats = await getCategoryInfoHistory(
+  const categoryStatsHistory = await getCategoryInfoHistory(
     dateRange ? map.get(dateRange) || last30days : last30days,
     'parent',
     { groupBy }
   );
-  const chartCategoryStats = categoryStats.map(
+  const chartCategoryStats = categoryStatsHistory.map(
     ({ day, month, year, categories }) => {
       const date =
         day && month
@@ -34,8 +41,7 @@ const CategoriesPage = async ({ searchParams }: PageProps) => {
           : month
           ? format(new Date(year, month - 1), 'LLL yy')
           : format(new Date(year, 0, 1), 'yyyy');
-      // @ts-expect-error
-      const remappedElem: TransactionCategoryInfoHistory = {
+      const remappedElem: any = {
         FormattedDate: date,
       };
       categories.map(
@@ -45,6 +51,22 @@ const CategoriesPage = async ({ searchParams }: PageProps) => {
     }
   );
   const categories = await getCategories('parent');
+  const categoryStats = await getCategoryInfo(
+    dateRange ? map.get(dateRange) || last30days : last30days,
+    'parent',
+    {}
+  );
+  const subCategoryStats = await Promise.all(
+    categoryStats.map(
+      async ({ category }) =>
+        await getCategoryInfo(
+          dateRange ? map.get(dateRange) || last30days : last30days,
+          'child',
+          {},
+          category
+        )
+    )
+  );
 
   return (
     <NuqsAdapter>
@@ -55,12 +77,12 @@ const CategoriesPage = async ({ searchParams }: PageProps) => {
         <div>
           <div className="flex items-center justify-between">
             <h1
-              id="accounts-overview"
+              id="categories-overview"
               className="text-2xl font-semibold tracking-tight"
             >
               Categories
             </h1>
-            <DateRangeSelect selected={dateRange} />
+            <DateRangeSelect selected={dateRange || DateRangePresets.MONTH} />
           </div>
           <Separator className="mt-2" />
         </div>
@@ -69,6 +91,43 @@ const CategoriesPage = async ({ searchParams }: PageProps) => {
           categories={categories}
           index="FormattedDate"
         />
+        <Accordion type="single" collapsible>
+          {categoryStats.map(({ category, categoryName, amount }, index) => {
+            return (
+              <AccordionItem key={category} value={category}>
+                <AccordionTrigger className="py-2 gap-2">
+                  <div
+                    className={cn(
+                      'inline-block h-6 w-1 rounded-full',
+                      `bg-up-${category}`
+                    )}
+                  />
+                  <div className="flex-1 flex justify-between">
+                    <p>{categoryName}</p>
+                    <p>{formatCurrency(amount)}</p>
+                  </div>
+                </AccordionTrigger>
+                <AccordionContent>
+                  <ul role="list">
+                    {subCategoryStats[index].map(
+                      ({ category, categoryName, amount }) => (
+                        <li
+                          key={category}
+                          className="w-full flex h-8 items-center overflow-hidden"
+                        >
+                          <p className="flex-1 text-subtle truncate">
+                            {categoryName}
+                          </p>
+                          <span>{formatCurrency(amount)}</span>
+                        </li>
+                      )
+                    )}
+                  </ul>
+                </AccordionContent>
+              </AccordionItem>
+            );
+          })}
+        </Accordion>
       </section>
     </NuqsAdapter>
   );

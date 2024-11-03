@@ -342,7 +342,7 @@ const CumulativeSnapshot = ({
                                   ? `bg-up-${parentCategory}`
                                   : 'bg-up-uncategorised'
                               )}
-                            ></div>
+                            />
                             <p className="text-subtle truncate">
                               {categoryName}
                             </p>
