@@ -579,6 +579,7 @@ export const groupByCategoryAndDate = (
       $sort: {
         year: 1,
         month: 1,
+        day: 1,
       },
     },
   ];

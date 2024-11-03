@@ -1,9 +1,12 @@
+import { DateRangePresets } from '@/types/custom';
 import { TZDate } from '@date-fns/tz';
 import {
   endOfMonth,
   endOfYear,
   startOfMonth,
   startOfYear,
+  subDays,
+  subMonths,
   subYears,
 } from 'date-fns';
 
@@ -54,6 +57,36 @@ export const getDateRanges = () => {
     to: now,
   };
 
+  const last24hours = {
+    from: subDays(now, 1),
+    to: now,
+  };
+
+  const last7days = {
+    from: subDays(now, 7),
+    to: now,
+  };
+
+  const last30days = {
+    from: subDays(now, 30),
+    to: now,
+  };
+
+  const last3months = {
+    from: subMonths(now, 3),
+    to: now,
+  };
+
+  const last6months = {
+    from: subMonths(now, 6),
+    to: now,
+  };
+
+  const last12months = {
+    from: subYears(now, 1),
+    to: now,
+  };
+
   return {
     thisMonth,
     thisYear,
@@ -61,5 +94,16 @@ export const getDateRanges = () => {
     lastYear,
     monthToDate,
     yearToDate,
+    last30days,
+    map: new Map(
+      Object.entries({
+        [DateRangePresets.TODAY]: last24hours,
+        [DateRangePresets.WEEK]: last7days,
+        [DateRangePresets.MONTH]: last30days,
+        [DateRangePresets.THREE_MONTHS]: last3months,
+        [DateRangePresets.SIX_MONTHS]: last6months,
+        [DateRangePresets.YEAR]: last12months,
+      })
+    ),
   };
 };

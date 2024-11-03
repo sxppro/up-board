@@ -2,26 +2,41 @@ import ExpenseCategoriesBar from '@/components/charts/expense-categories-bar';
 import DateRangeSelect from '@/components/date-range-select';
 import { Separator } from '@/components/ui/separator';
 import { getCategories, getCategoryInfoHistory } from '@/db';
-import { PageProps } from '@/types/custom';
-import { now } from '@/utils/constants';
-import { format, subMonths } from 'date-fns';
+import { DateRangeGroupBy } from '@/server/schemas';
+import { DateRangePresets, PageProps } from '@/types/custom';
+import { getDateRanges } from '@/utils/constants';
+import { format } from 'date-fns';
 import { NuqsAdapter } from 'nuqs/adapters/next/app';
 
 const CategoriesPage = async ({ searchParams }: PageProps) => {
   const { range } = searchParams;
   const dateRange = Array.isArray(range) ? range[0] : range;
+  const { last30days, map } = getDateRanges();
+  let groupBy: DateRangeGroupBy = 'monthly';
+
+  if (
+    dateRange === DateRangePresets.TODAY ||
+    dateRange === DateRangePresets.WEEK ||
+    !dateRange
+  ) {
+    groupBy = 'daily';
+  }
   const categoryStats = await getCategoryInfoHistory(
-    {
-      from: subMonths(now, 3),
-      to: now,
-    },
-    'parent'
+    dateRange ? map.get(dateRange) || last30days : last30days,
+    'parent',
+    { groupBy }
   );
   const chartCategoryStats = categoryStats.map(
-    ({ month, year, categories }) => {
+    ({ day, month, year, categories }) => {
+      const date =
+        day && month
+          ? format(new Date(year, month - 1, day), 'd LLL yy')
+          : month
+          ? format(new Date(year, month - 1), 'LLL yy')
+          : format(new Date(year, 0, 1), 'yyyy');
       // @ts-expect-error
       const remappedElem: TransactionCategoryInfoHistory = {
-        FormattedDate: format(new Date(year, month - 1), 'LLL yy'),
+        FormattedDate: date,
       };
       categories.map(
         ({ amount, category }) => (remappedElem[category] = amount)
