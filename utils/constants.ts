@@ -94,7 +94,6 @@ export const getDateRanges = () => {
     lastYear,
     monthToDate,
     yearToDate,
-    last30days,
     map: new Map(
       Object.entries({
         [DateRangePresets.TODAY]: last24hours,

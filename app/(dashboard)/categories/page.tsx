@@ -1,5 +1,4 @@
 import ExpenseCategoriesBar from '@/components/charts/expense-categories-bar';
-import DateRangeSelect from '@/components/date-range-select';
 import { Separator } from '@/components/ui/separator';
 import {
   Accordion,
@@ -8,30 +7,21 @@ import {
   AccordionTrigger,
 } from '@/components/ui/tremor/accordion';
 import { getCategories, getCategoryInfo, getCategoryInfoHistory } from '@/db';
-import { DateRangeGroupBy } from '@/server/schemas';
-import { DateRangePresets, PageProps } from '@/types/custom';
-import { getDateRanges } from '@/utils/constants';
+import { getDateRanges, now } from '@/utils/constants';
 import { cn, formatCurrency } from '@/utils/helpers';
-import { format } from 'date-fns';
+import { format, startOfMonth, subMonths } from 'date-fns';
 import { NuqsAdapter } from 'nuqs/adapters/next/app';
 
-const CategoriesPage = async ({ searchParams }: PageProps) => {
-  const { range } = searchParams;
-  const dateRange = Array.isArray(range) ? range[0] : range;
-  const { last30days, map } = getDateRanges();
-  let groupBy: DateRangeGroupBy = 'monthly';
-
-  if (
-    dateRange === DateRangePresets.TODAY ||
-    dateRange === DateRangePresets.WEEK ||
-    !dateRange
-  ) {
-    groupBy = 'daily';
-  }
+const CategoriesPage = async () => {
+  const dateRange = {
+    from: startOfMonth(subMonths(now, 3)),
+    to: now,
+  };
+  const { thisMonth } = getDateRanges();
   const categoryStatsHistory = await getCategoryInfoHistory(
-    dateRange ? map.get(dateRange) || last30days : last30days,
+    dateRange,
     'parent',
-    { groupBy }
+    { groupBy: 'monthly' }
   );
   const chartCategoryStats = categoryStatsHistory.map(
     ({ day, month, year, categories }) => {
@@ -51,20 +41,11 @@ const CategoriesPage = async ({ searchParams }: PageProps) => {
     }
   );
   const categories = await getCategories('parent');
-  const categoryStats = await getCategoryInfo(
-    dateRange ? map.get(dateRange) || last30days : last30days,
-    'parent',
-    {}
-  );
+  const categoryStats = await getCategoryInfo(thisMonth, 'parent', {});
   const subCategoryStats = await Promise.all(
     categoryStats.map(
       async ({ category }) =>
-        await getCategoryInfo(
-          dateRange ? map.get(dateRange) || last30days : last30days,
-          'child',
-          {},
-          category
-        )
+        await getCategoryInfo(thisMonth, 'child', {}, category)
     )
   );
 
@@ -75,15 +56,12 @@ const CategoriesPage = async ({ searchParams }: PageProps) => {
         className="flex flex-col gap-3"
       >
         <div>
-          <div className="flex items-center justify-between">
-            <h1
-              id="categories-overview"
-              className="text-2xl font-semibold tracking-tight"
-            >
-              Categories
-            </h1>
-            <DateRangeSelect selected={dateRange || DateRangePresets.MONTH} />
-          </div>
+          <h1
+            id="categories-overview"
+            className="text-2xl font-semibold tracking-tight"
+          >
+            Spending
+          </h1>
           <Separator className="mt-2" />
         </div>
         <ExpenseCategoriesBar
@@ -91,43 +69,46 @@ const CategoriesPage = async ({ searchParams }: PageProps) => {
           categories={categories}
           index="FormattedDate"
         />
-        <Accordion type="single" collapsible>
-          {categoryStats.map(({ category, categoryName, amount }, index) => {
-            return (
-              <AccordionItem key={category} value={category}>
-                <AccordionTrigger className="py-2 gap-2">
-                  <div
-                    className={cn(
-                      'inline-block h-6 w-1 rounded-full',
-                      `bg-up-${category}`
-                    )}
-                  />
-                  <div className="flex-1 flex justify-between">
-                    <p>{categoryName}</p>
-                    <p>{formatCurrency(amount)}</p>
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent>
-                  <ul role="list">
-                    {subCategoryStats[index].map(
-                      ({ category, categoryName, amount }) => (
-                        <li
-                          key={category}
-                          className="w-full flex h-8 items-center overflow-hidden"
-                        >
-                          <p className="flex-1 text-subtle truncate">
-                            {categoryName}
-                          </p>
-                          <span>{formatCurrency(amount)}</span>
-                        </li>
-                      )
-                    )}
-                  </ul>
-                </AccordionContent>
-              </AccordionItem>
-            );
-          })}
-        </Accordion>
+        <div>
+          <h2 className="text-lg font-semibold">This month</h2>
+          <Accordion type="single" collapsible>
+            {categoryStats.map(({ category, categoryName, amount }, index) => {
+              return (
+                <AccordionItem key={category} value={category}>
+                  <AccordionTrigger className="py-2 gap-2">
+                    <div
+                      className={cn(
+                        'inline-block h-6 w-1 rounded-full',
+                        `bg-up-${category}`
+                      )}
+                    />
+                    <div className="flex-1 flex justify-between text-base">
+                      <p>{categoryName}</p>
+                      <p>{formatCurrency(amount)}</p>
+                    </div>
+                  </AccordionTrigger>
+                  <AccordionContent>
+                    <ul role="list">
+                      {subCategoryStats[index].map(
+                        ({ category, categoryName, amount }) => (
+                          <li
+                            key={category}
+                            className="w-full flex h-8 items-center overflow-hidden"
+                          >
+                            <p className="flex-1 text-subtle truncate">
+                              {categoryName}
+                            </p>
+                            <span>{formatCurrency(amount)}</span>
+                          </li>
+                        )
+                      )}
+                    </ul>
+                  </AccordionContent>
+                </AccordionItem>
+              );
+            })}
+          </Accordion>
+        </div>
       </section>
     </NuqsAdapter>
   );

@@ -16,9 +16,15 @@ import {
   SelectValue,
 } from './ui/select';
 
-export default function DateRangeSelect({ selected }: { selected?: string }) {
+export default function DateRangeSelect({
+  defaultValue,
+  selected,
+}: {
+  defaultValue?: string;
+  selected?: string;
+}) {
   const [_, setDateRange] = useQueryState('range', {
-    defaultValue: DateRangePresets.MONTH,
+    defaultValue: defaultValue || DateRangePresets.MONTH,
     shallow: false,
   });
 
@@ -39,7 +45,7 @@ export default function DateRangeSelect({ selected }: { selected?: string }) {
   };
   return (
     <Select
-      defaultValue="30d"
+      defaultValue={defaultValue || DateRangePresets.MONTH}
       value={selected}
       onValueChange={(selection) => onValueChange(selection)}
     >
