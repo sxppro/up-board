@@ -304,16 +304,19 @@ export const getMerchantInfo = async (
   type?: TransactionIOEnum
 ) => {
   try {
-    if (!process.env.UP_TRANS_ACC) {
-      throw new Error('Up transaction account not defined');
-    }
     const transactions = await connectToCollection<DbTransactionResource>(
       'up',
       'transactions'
     );
-    if (transactions) {
+    const transactionAcc = await getAccounts('TRANSACTIONAL', {
+      sort: {
+        'attributes.balance.valueInBaseUnits': -1,
+      },
+      limit: 1,
+    });
+    if (transactions && transactionAcc[0]) {
       const cursor = transactions.aggregate<TransactionIncomeInfo>(
-        groupByMerchant(dateRange, process.env.UP_TRANS_ACC, options, type)
+        groupByMerchant(dateRange, transactionAcc[0].id, options, type)
       );
       const results = await cursor.toArray();
       return results;
@@ -404,18 +407,21 @@ export const getCategoryInfo = async (
   parentCategory?: string
 ) => {
   try {
-    if (!process.env.UP_TRANS_ACC) {
-      throw new Error('Up transaction account not defined');
-    }
     const transactions = await connectToCollection<DbTransactionResource>(
       'up',
       'transactions'
     );
-    if (transactions) {
+    const transactionAcc = await getAccounts('TRANSACTIONAL', {
+      sort: {
+        'attributes.balance.valueInBaseUnits': -1,
+      },
+      limit: 1,
+    });
+    if (transactions && transactionAcc[0]) {
       const cursor = transactions.aggregate<TransactionCategoryInfo>(
         groupByCategory(
           dateRange,
-          process.env.UP_TRANS_ACC,
+          transactionAcc[0].id,
           type,
           options || {},
           parentCategory
@@ -460,21 +466,19 @@ export const getCategoryInfoHistory = async (
   options: RetrievalOptions
 ) => {
   try {
-    if (!process.env.UP_TRANS_ACC) {
-      throw new Error('Up transaction account not defined');
-    }
     const transactions = await connectToCollection<DbTransactionResource>(
       'up',
       'transactions'
     );
-    if (transactions) {
+    const transactionAcc = await getAccounts('TRANSACTIONAL', {
+      sort: {
+        'attributes.balance.valueInBaseUnits': -1,
+      },
+      limit: 1,
+    });
+    if (transactions && transactionAcc[0]) {
       const cursor = transactions.aggregate<TransactionCategoryInfoHistoryRaw>(
-        groupByCategoryAndDate(
-          dateRange,
-          process.env.UP_TRANS_ACC,
-          type,
-          options
-        )
+        groupByCategoryAndDate(dateRange, transactionAcc[0].id, type, options)
       );
       const results = await cursor.toArray();
       return results;
