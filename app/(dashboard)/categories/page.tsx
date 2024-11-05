@@ -127,6 +127,7 @@ const CategoriesPage = async () => {
             </Card>
           </div>
           <AnimatedTabs
+            queryParam="category"
             tabs={categories.map(({ id, name }) => ({
               id,
               label: name,

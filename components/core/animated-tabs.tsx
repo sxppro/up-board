@@ -3,14 +3,19 @@
 import { cn } from '@/utils/helpers';
 import { focusRing } from '@/utils/tremor';
 import { AnimatePresence, m } from 'framer-motion';
-import { useState } from 'react';
+import { useQueryState } from 'nuqs';
 
+/**
+ * Animated tabs with query param state
+ */
 export default function AnimatedTabs({
   tabs,
+  queryParam,
 }: {
   tabs: { id: string; label: string; colour?: string }[];
+  queryParam: string;
 }) {
-  let [activeTab, setActiveTab] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useQueryState(queryParam);
 
   return (
     <div className="flex flex-wrap space-x-1">
