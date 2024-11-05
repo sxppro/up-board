@@ -48,7 +48,7 @@ export type PageProps = {
   searchParams: { [key: string]: string | string[] | undefined };
 };
 
-export type BarChartConfig = Pick<BarChartProps, 'data' | 'index'> & {
+export type BarChartConfig = Omit<BarChartProps, 'categories'> & {
   categories: any[];
 };
 

@@ -4,7 +4,12 @@ import { BarChartConfig } from '@/types/custom';
 import { formatCurrency } from '@/utils/helpers';
 import { BarChart } from '@tremor/react';
 
-const ExpenseCategoriesBar = ({ data, categories, index }: BarChartConfig) => {
+const ExpenseCategoriesBar = ({
+  data,
+  categories,
+  index,
+  ...props
+}: BarChartConfig) => {
   return (
     <BarChart
       data={data || []}
@@ -23,6 +28,7 @@ const ExpenseCategoriesBar = ({ data, categories, index }: BarChartConfig) => {
       ]}
       valueFormatter={(number: number) => formatCurrency(number, false)}
       showAnimation
+      {...props}
     />
   );
 };
