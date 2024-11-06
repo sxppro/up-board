@@ -27,6 +27,15 @@ export type DateRange = z.infer<typeof DateRangeSchema>;
 export const DateRangeGroupBySchema = z.enum(['daily', 'monthly', 'yearly']);
 export type DateRangeGroupBy = z.infer<typeof DateRangeGroupBySchema>;
 
+export const Merchant = z.object({
+  name: z.string(),
+  category: z.string(),
+  categoryName: z.string().optional(),
+  parentCategory: z.string(),
+  parentCategoryName: z.string().optional(),
+});
+export type Merchant = z.infer<typeof Merchant>;
+
 export const RetrievalOpts = z.object({
   match: z.record(z.string(), z.any()).optional(),
   sort: z.record(z.string(), SortDirection).optional(),

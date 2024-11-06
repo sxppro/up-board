@@ -185,10 +185,63 @@ export const filterByDateRange = (
 };
 
 /**
+ * Retrieves distinct merchants and category
+ * @param options
+ * @returns
+ */
+export const findDistinctMerchants = (options: RetrievalOptions) => {
+  const { sort } = options;
+  return [
+    {
+      $match: {
+        'attributes.isCategorizable': true,
+      },
+    },
+    {
+      $sort: {
+        'attributes.createdAt': 1,
+      },
+    },
+    {
+      $group: {
+        _id: '$attributes.description',
+        category: {
+          $last: '$relationships.category.data.id',
+        },
+        parentCategory: {
+          $last: '$relationships.parentCategory.data.id',
+        },
+      },
+    },
+    {
+      $project: {
+        _id: 0,
+        name: '$_id',
+        category: {
+          $ifNull: ['$category', 'uncategorised'],
+        },
+        parentCategory: {
+          $ifNull: ['$parentCategory', 'uncategorised'],
+        },
+      },
+    },
+    ...(sort
+      ? [{ $sort: sort }]
+      : [
+          {
+            $sort: {
+              name: 1,
+            },
+          },
+        ]),
+  ];
+};
+
+/**
  * Retrieves all unique tags
  * @returns
  */
-export const findUniqueTags = () => [
+export const findDistinctTags = () => [
   {
     $unwind: {
       path: '$relationships.tags.data',

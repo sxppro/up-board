@@ -7,6 +7,7 @@ import {
   AccountMonthlyInfoSchema,
   CategoryInfo,
   CumulativeIO,
+  Merchant,
   RetrievalOptions,
   TagInfoSchema,
   TransactionGroupByDay,
@@ -40,7 +41,8 @@ import { CollectionOptions, Document, MongoBulkWriteError } from 'mongodb';
 import client from './connect';
 import {
   filterByDateRange,
-  findUniqueTags,
+  findDistinctMerchants,
+  findDistinctTags,
   groupBalanceByDay,
   groupByCategory,
   groupByCategoryAndDate,
@@ -151,6 +153,18 @@ export const insertTransactions = async (
 };
 
 /**
+ * Map categories IDs to names
+ * @param categoryType
+ * @returns Map
+ */
+const mapCategories = async (categoryType: TransactionCategoryType) => {
+  const categories = await getCategories(categoryType);
+  const map = new Map<string, string>();
+  categories.forEach(({ id, name }) => map.set(id, name));
+  return map;
+};
+
+/**
  * Replaces transactions in db by their ids
  * with data from Up
  * @param transactionIds array of transaction IDs
@@ -210,6 +224,163 @@ export const searchTransactions = async (search: string) => {
   } catch (err) {
     console.error(err);
     return [];
+  }
+};
+
+/**
+ * Retrieves list of accounts
+ * @param accountType transactional or saver
+ * @returns
+ */
+export const getAccounts = async (
+  accountType?: components['schemas']['AccountTypeEnum'],
+  options?: RetrievalOptions
+) => {
+  try {
+    const accounts = await connectToCollection<AccountResource>(
+      'up',
+      'accounts'
+    );
+    if (accounts) {
+      const cursor = accounts.find(
+        accountType ? { 'attributes.accountType': accountType } : {}
+      );
+      if (options) {
+        const { sort, limit } = options;
+        sort && cursor.sort(sort);
+        limit && cursor.limit(limit);
+      }
+      const results = await cursor
+        .project<AccountInfo>({
+          _id: 0,
+          id: '$_id',
+          displayName: '$attributes.displayName',
+          accountType: '$attributes.accountType',
+          balance: {
+            $divide: ['$attributes.balance.valueInBaseUnits', 100],
+          },
+        })
+        .toArray();
+      return results;
+    } else {
+      return accountType
+        ? accountsMock.data
+            .filter(({ attributes }) => attributes.accountType === accountType)
+            .map(({ id, attributes }) => ({
+              id,
+              displayName: attributes.displayName,
+              accountType: attributes.accountType,
+              balance: parseFloat(attributes.balance.value),
+            }))
+        : accountsMock.data.map(({ id, attributes }) => ({
+            id,
+            displayName: attributes.displayName,
+            accountType: attributes.accountType,
+            balance: parseFloat(attributes.balance.value),
+          }));
+    }
+  } catch (err) {
+    console.error(err);
+    return [];
+  }
+};
+
+/**
+ * Retrieves account balance between 2 dates
+ * @param start
+ * @param end
+ * @param accountId
+ * @returns
+ */
+export const getAccountBalanceHistorical = async (
+  dateRange: DateRange,
+  accountId: string
+) => {
+  try {
+    const transactions = await connectToCollection<DbTransactionResource>(
+      'up',
+      'transactions'
+    );
+    if (transactions) {
+      const cursor = transactions.aggregate<AccountBalanceHistory>(
+        groupBalanceByDay(dateRange, accountId)
+      );
+      const results = await cursor.toArray();
+      return results;
+    } else {
+      if (dateRange.from < dateRange.to) {
+        const startingBalance = parseFloat(
+          faker.finance.amount({ max: 10000 })
+        );
+        let date = new Date(
+          dateRange.from.getFullYear(),
+          dateRange.from.getMonth(),
+          dateRange.from.getDate()
+        );
+        const days = [];
+        while (date < dateRange.to) {
+          days.push(date);
+          date = addDays(date, 1);
+        }
+        return days.map((date) => ({
+          Year: date.getFullYear(),
+          Month: date.getMonth() + 1,
+          Day: date.getDate(),
+          Timestamp: date,
+          Amount: parseFloat(faker.finance.amount({ min: -1000 })),
+          Balance:
+            startingBalance + parseFloat(faker.finance.amount({ min: -1000 })),
+        }));
+      }
+      return [];
+    }
+  } catch (err) {
+    console.error(err);
+    return [];
+  }
+};
+
+/**
+ * Retrieves specific account information
+ * @param accountId UUID string
+ * @returns
+ */
+export const getAccountById = async (accountId: string) => {
+  try {
+    const accounts = await connectToCollection<AccountResource>(
+      'up',
+      'accounts'
+    );
+    if (accounts) {
+      const account = await accounts.findOne<AccountInfo>(
+        { _id: accountId },
+        {
+          projection: {
+            _id: 0,
+            id: '$_id',
+            displayName: '$attributes.displayName',
+            balance: {
+              $toDouble: '$attributes.balance.value',
+            },
+            accountType: '$attributes.accountType',
+          },
+        }
+      );
+      return account;
+    } else {
+      const account = accountsMock.data.find(({ id }) => id === accountId);
+      return account
+        ? {
+            id: account.id,
+            displayName: account.attributes.displayName,
+            accountType: account.attributes.accountType,
+            balance: parseFloat(account.attributes.balance.value),
+          }
+        : null;
+    }
+  } catch (err) {
+    console.error(err);
+    return;
   }
 };
 
@@ -286,6 +457,39 @@ export const getAccountStats = async (
         console.error(res.error);
         return [];
       }
+    }
+  } catch (err) {
+    console.error(err);
+    return [];
+  }
+};
+
+/**
+ * List of all merchants
+ * @returns
+ */
+export const getMerchants = async (options: RetrievalOptions) => {
+  try {
+    const transactions = await connectToCollection<DbTransactionResource>(
+      'up',
+      'transactions'
+    );
+    if (transactions) {
+      const cursor = transactions.aggregate<Merchant>(
+        findDistinctMerchants(options)
+      );
+      const merchants = await cursor.toArray();
+      const categories = await mapCategories('child');
+      const parentCategories = await mapCategories('parent');
+      return merchants.map(({ category, parentCategory, ...rest }) => ({
+        ...rest,
+        category,
+        parentCategory,
+        categoryName: categories.get(category),
+        parentCategoryName: parentCategories.get(parentCategory),
+      }));
+    } else {
+      return [];
     }
   } catch (err) {
     console.error(err);
@@ -390,6 +594,48 @@ export const getCategoryById = async (id: string) => {
   } catch (err) {
     console.error(err);
     return null;
+  }
+};
+
+/**
+ * Retrieves category details
+ * @param type child or parent categories
+ * @returns
+ */
+export const getCategories = async (type: TransactionCategoryType) => {
+  try {
+    const categories = await connectToCollection('up', 'categories');
+    if (categories) {
+      const cursor = categories
+        .find({
+          'relationships.parent.data': type === 'child' ? { $ne: null } : null,
+        })
+        .sort({ 'attributes.name': 1 })
+        .project<TransactionCategoryOption>({
+          _id: 0,
+          id: '$_id',
+          value: '$attributes.name',
+          name: '$attributes.name',
+        });
+      const results = await cursor.toArray();
+      return results;
+    } else {
+      return categoriesMock.data
+        .filter(({ relationships }) =>
+          type === 'parent'
+            ? relationships.parent.data === null
+            : relationships.parent.data !== null
+        )
+        .map(({ id, attributes }) => ({
+          id,
+          value: attributes.name,
+          name: attributes.name,
+        }))
+        .sort((a, b) => (a.name.toUpperCase() < b.name.toUpperCase() ? -1 : 1));
+    }
+  } catch (err) {
+    console.error(err);
+    return [];
   }
 };
 
@@ -778,6 +1024,26 @@ const getTransactionById = async (id: string) => {
 };
 
 /**
+ * List of all transaction types
+ * @returns
+ */
+export const getTransactionTypes = async () => {
+  try {
+    const transactions = await connectToCollection<DbTransactionResource>(
+      'up',
+      'transactions'
+    );
+    if (transactions) {
+      const txTypes = await transactions.distinct('attributes.transactionType');
+      return txTypes;
+    }
+  } catch (err) {
+    console.error(err);
+    return [];
+  }
+};
+
+/**
  * Retrieves transactions by specific tag
  * @param tag
  * @returns
@@ -835,48 +1101,6 @@ export const getTransactionsByTags = async () => {
 };
 
 /**
- * Retrieves category details
- * @param type child or parent categories
- * @returns
- */
-export const getCategories = async (type: TransactionCategoryType) => {
-  try {
-    const categories = await connectToCollection('up', 'categories');
-    if (categories) {
-      const cursor = categories
-        .find({
-          'relationships.parent.data': type === 'child' ? { $ne: null } : null,
-        })
-        .sort({ 'attributes.name': 1 })
-        .project<TransactionCategoryOption>({
-          _id: 0,
-          id: '$_id',
-          value: '$attributes.name',
-          name: '$attributes.name',
-        });
-      const results = await cursor.toArray();
-      return results;
-    } else {
-      return categoriesMock.data
-        .filter(({ relationships }) =>
-          type === 'parent'
-            ? relationships.parent.data === null
-            : relationships.parent.data !== null
-        )
-        .map(({ id, attributes }) => ({
-          id,
-          value: attributes.name,
-          name: attributes.name,
-        }))
-        .sort((a, b) => (a.name.toUpperCase() < b.name.toUpperCase() ? -1 : 1));
-    }
-  } catch (err) {
-    console.error(err);
-    return [];
-  }
-};
-
-/**
  * Retrieves all unique transaction tags
  */
 export const getTags = async () => {
@@ -887,7 +1111,7 @@ export const getTags = async () => {
     );
     if (transactions) {
       const cursor = transactions.aggregate<{ tags: string[] }>(
-        findUniqueTags()
+        findDistinctTags()
       );
       const results = await cursor.toArray();
       return results[0];
@@ -897,163 +1121,6 @@ export const getTags = async () => {
   } catch (err) {
     console.error(err);
     return { tags: [] };
-  }
-};
-
-/**
- * Retrieves list of accounts
- * @param accountType transactional or saver
- * @returns
- */
-export const getAccounts = async (
-  accountType?: components['schemas']['AccountTypeEnum'],
-  options?: RetrievalOptions
-) => {
-  try {
-    const accounts = await connectToCollection<AccountResource>(
-      'up',
-      'accounts'
-    );
-    if (accounts) {
-      const cursor = accounts.find(
-        accountType ? { 'attributes.accountType': accountType } : {}
-      );
-      if (options) {
-        const { sort, limit } = options;
-        sort && cursor.sort(sort);
-        limit && cursor.limit(limit);
-      }
-      const results = await cursor
-        .project<AccountInfo>({
-          _id: 0,
-          id: '$_id',
-          displayName: '$attributes.displayName',
-          accountType: '$attributes.accountType',
-          balance: {
-            $divide: ['$attributes.balance.valueInBaseUnits', 100],
-          },
-        })
-        .toArray();
-      return results;
-    } else {
-      return accountType
-        ? accountsMock.data
-            .filter(({ attributes }) => attributes.accountType === accountType)
-            .map(({ id, attributes }) => ({
-              id,
-              displayName: attributes.displayName,
-              accountType: attributes.accountType,
-              balance: parseFloat(attributes.balance.value),
-            }))
-        : accountsMock.data.map(({ id, attributes }) => ({
-            id,
-            displayName: attributes.displayName,
-            accountType: attributes.accountType,
-            balance: parseFloat(attributes.balance.value),
-          }));
-    }
-  } catch (err) {
-    console.error(err);
-    return [];
-  }
-};
-
-/**
- * Retrieves account balance between 2 dates
- * @param start
- * @param end
- * @param accountId
- * @returns
- */
-export const getAccountBalanceHistorical = async (
-  dateRange: DateRange,
-  accountId: string
-) => {
-  try {
-    const transactions = await connectToCollection<DbTransactionResource>(
-      'up',
-      'transactions'
-    );
-    if (transactions) {
-      const cursor = transactions.aggregate<AccountBalanceHistory>(
-        groupBalanceByDay(dateRange, accountId)
-      );
-      const results = await cursor.toArray();
-      return results;
-    } else {
-      if (dateRange.from < dateRange.to) {
-        const startingBalance = parseFloat(
-          faker.finance.amount({ max: 10000 })
-        );
-        let date = new Date(
-          dateRange.from.getFullYear(),
-          dateRange.from.getMonth(),
-          dateRange.from.getDate()
-        );
-        const days = [];
-        while (date < dateRange.to) {
-          days.push(date);
-          date = addDays(date, 1);
-        }
-        return days.map((date) => ({
-          Year: date.getFullYear(),
-          Month: date.getMonth() + 1,
-          Day: date.getDate(),
-          Timestamp: date,
-          Amount: parseFloat(faker.finance.amount({ min: -1000 })),
-          Balance:
-            startingBalance + parseFloat(faker.finance.amount({ min: -1000 })),
-        }));
-      }
-      return [];
-    }
-  } catch (err) {
-    console.error(err);
-    return [];
-  }
-};
-
-/**
- * Retrieves specific account information
- * @param accountId UUID string
- * @returns
- */
-export const getAccountById = async (accountId: string) => {
-  try {
-    const accounts = await connectToCollection<AccountResource>(
-      'up',
-      'accounts'
-    );
-    if (accounts) {
-      const account = await accounts.findOne<AccountInfo>(
-        { _id: accountId },
-        {
-          projection: {
-            _id: 0,
-            id: '$_id',
-            displayName: '$attributes.displayName',
-            balance: {
-              $toDouble: '$attributes.balance.value',
-            },
-            accountType: '$attributes.accountType',
-          },
-        }
-      );
-      return account;
-    } else {
-      const account = accountsMock.data.find(({ id }) => id === accountId);
-      return account
-        ? {
-            id: account.id,
-            displayName: account.attributes.displayName,
-            accountType: account.attributes.accountType,
-            balance: parseFloat(account.attributes.balance.value),
-          }
-        : null;
-    }
-  } catch (err) {
-    console.error(err);
-    return;
   }
 };
 
