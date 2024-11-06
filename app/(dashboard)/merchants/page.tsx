@@ -1,6 +1,8 @@
+import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { getMerchants } from '@/db';
 import { cn } from '@/utils/helpers';
+import Link from 'next/link';
 
 const MerchantsPage = async () => {
   const merchants = await getMerchants({});
@@ -31,7 +33,13 @@ const MerchantsPage = async () => {
             >
               {name.slice(0, 1).toUpperCase()}
             </span>
-            <h2 className="flex-1 text-xl">{name}</h2>
+            <Button
+              variant="link"
+              className="flex-1 px-0 justify-start text-xl"
+              asChild
+            >
+              <Link href={`/merchant/${encodeURIComponent(name)}`}>{name}</Link>
+            </Button>
             <span>{categoryName}</span>
           </div>
         ))}

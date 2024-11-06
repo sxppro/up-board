@@ -109,7 +109,7 @@ const SpendingPage = async ({ searchParams }: PageProps) => {
               id="categories-overview"
               className="text-2xl font-semibold tracking-tight"
             >
-              Spending
+              {category?.name || 'Spending'}
             </h1>
             <Separator className="mt-2" />
           </div>
@@ -140,7 +140,9 @@ const SpendingPage = async ({ searchParams }: PageProps) => {
               </p>
             </Card>
             <Card className="ring-border bg-background p-3">
-              <p className="text-muted-foreground">Average (last 3 months)</p>
+              <p className="text-muted-foreground">
+                Average per month (last 3 months)
+              </p>
               <p className="text-2xl font-semibold">
                 {formatCurrency(avgStats[0]?.Expenses)}
               </p>
@@ -177,7 +179,8 @@ const SpendingPage = async ({ searchParams }: PageProps) => {
           />
           {category ? (
             <div>
-              <h2 className="text-lg font-semibold">{category.name}</h2>
+              <h2 className="text-lg font-semibold">Subcategories</h2>
+              <h2 className="text-lg font-semibold">Transactions</h2>
             </div>
           ) : (
             <div>
