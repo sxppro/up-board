@@ -4,8 +4,8 @@ import { siteConfig } from '@/app/siteConfig';
 import { cn } from '@/utils/helpers';
 import { focusRing } from '@/utils/tremor';
 import {
-  Bookmarks,
   ChartLine,
+  CurrencyDollar,
   Link as LinkIcon,
   ListBullets,
   Storefront,
@@ -24,12 +24,12 @@ import { UserProfileDesktop, UserProfileMobile } from './user-profile';
 
 const navigation = [
   { name: 'Overview', href: siteConfig.baseLinks.home, icon: ChartLine },
-  { name: 'Accounts', href: siteConfig.baseLinks.accounts, icon: UserList },
   {
-    name: 'Categories',
-    href: siteConfig.baseLinks.categories,
-    icon: Bookmarks,
+    name: 'Spending',
+    href: siteConfig.baseLinks.spending,
+    icon: CurrencyDollar,
   },
+  { name: 'Accounts', href: siteConfig.baseLinks.accounts, icon: UserList },
   {
     name: 'Merchants',
     href: siteConfig.baseLinks.merchants,

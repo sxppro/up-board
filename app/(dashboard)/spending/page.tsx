@@ -15,14 +15,24 @@ import {
   getCategoryInfo,
   getCategoryInfoHistory,
 } from '@/db';
+import { PageProps } from '@/types/custom';
 import { getDateRanges, now } from '@/utils/constants';
 import { cn, formatCurrency } from '@/utils/helpers';
 import { Card } from '@tremor/react';
 import { endOfMonth, format, startOfMonth, subMonths } from 'date-fns';
 import { domMax, LazyMotion } from 'framer-motion';
+import { redirect } from 'next/navigation';
 import { NuqsAdapter } from 'nuqs/adapters/next/app';
 
-const CategoriesPage = async () => {
+const SpendingPage = async ({ searchParams }: PageProps) => {
+  const { category: id } = searchParams;
+  const category = Array.isArray(id) ? id[0] : id;
+  const categories = await getCategories('parent');
+
+  if (category && !categories.find(({ id }) => id === category)) {
+    return redirect('/spending');
+  }
+
   const dateRange = {
     from: startOfMonth(subMonths(now, 3)),
     to: now,
@@ -68,7 +78,6 @@ const CategoriesPage = async () => {
       return remappedElem;
     }
   );
-  const categories = await getCategories('parent');
   const categoryStats = await getCategoryInfo(thisMonth, 'parent', {});
   const subCategoryStats = await Promise.all(
     categoryStats.map(
@@ -188,4 +197,4 @@ const CategoriesPage = async () => {
   );
 };
 
-export default CategoriesPage;
+export default SpendingPage;
