@@ -26,17 +26,23 @@ import { NuqsAdapter } from 'nuqs/adapters/next/app';
 
 const SpendingPage = async ({ searchParams }: PageProps) => {
   const { category: id } = searchParams;
-  const category = Array.isArray(id) ? id[0] : id;
+  const categoryId = Array.isArray(id) ? id[0] : id;
   const categories = await getCategories('parent');
+  const category = categories.find(({ id }) => id === categoryId);
 
-  if (category && !categories.find(({ id }) => id === category)) {
+  if (categoryId && !category) {
     return redirect('/spending');
   }
 
-  const dateRange = {
-    from: startOfMonth(subMonths(now, 3)),
-    to: now,
-  };
+  const dateRange = category
+    ? {
+        from: startOfMonth(subMonths(now, 12)),
+        to: now,
+      }
+    : {
+        from: startOfMonth(subMonths(now, 3)),
+        to: now,
+      };
   const { thisMonth } = getDateRanges();
   const transactionAcc = await getAccounts('TRANSACTIONAL', {
     sort: { 'attributes.balance.valueInBaseUnits': -1 },
@@ -59,7 +65,12 @@ const SpendingPage = async ({ searchParams }: PageProps) => {
   const categoryStatsHistory = await getCategoryInfoHistory(
     dateRange,
     'parent',
-    { groupBy: 'monthly' }
+    {
+      groupBy: 'monthly',
+      ...(category && {
+        match: { 'relationships.parentCategory.data.id': category.id },
+      }),
+    }
   );
   const chartCategoryStats = categoryStatsHistory.map(
     ({ day, month, year, categories }) => {
@@ -145,52 +156,73 @@ const SpendingPage = async ({ searchParams }: PageProps) => {
           />
           <ExpenseCategoriesBar
             data={chartCategoryStats}
-            categories={categories}
+            categories={
+              category
+                ? [category.name]
+                : [...categories?.map(({ name }) => name), 'Uncategorised']
+            }
+            colors={
+              category
+                ? [`up-${category.id}`]
+                : [
+                    'up-good-life',
+                    'up-home',
+                    'up-personal',
+                    'up-transport',
+                    'gray-300',
+                  ]
+            }
             index="FormattedDate"
             showLegend={false}
           />
-          <div>
-            <h2 className="text-lg font-semibold">This month</h2>
-            <Accordion type="single" collapsible>
-              {categoryStats.map(
-                ({ category, categoryName, amount }, index) => {
-                  return (
-                    <AccordionItem key={category} value={category}>
-                      <AccordionTrigger className="py-2 gap-2">
-                        <div
-                          className={cn(
-                            'inline-block h-6 w-1 rounded-full',
-                            `bg-up-${category}`
-                          )}
-                        />
-                        <div className="flex-1 flex justify-between text-base">
-                          <p>{categoryName}</p>
-                          <p>{formatCurrency(amount)}</p>
-                        </div>
-                      </AccordionTrigger>
-                      <AccordionContent>
-                        <ul role="list">
-                          {subCategoryStats[index].map(
-                            ({ category, categoryName, amount }) => (
-                              <li
-                                key={category}
-                                className="w-full flex h-8 items-center overflow-hidden"
-                              >
-                                <p className="flex-1 text-subtle truncate">
-                                  {categoryName}
-                                </p>
-                                <span>{formatCurrency(amount)}</span>
-                              </li>
-                            )
-                          )}
-                        </ul>
-                      </AccordionContent>
-                    </AccordionItem>
-                  );
-                }
-              )}
-            </Accordion>
-          </div>
+          {category ? (
+            <div>
+              <h2 className="text-lg font-semibold">{category.name}</h2>
+            </div>
+          ) : (
+            <div>
+              <h2 className="text-lg font-semibold">This month</h2>
+              <Accordion type="single" collapsible>
+                {categoryStats.map(
+                  ({ category, categoryName, amount }, index) => {
+                    return (
+                      <AccordionItem key={category} value={category}>
+                        <AccordionTrigger className="py-2 gap-2">
+                          <div
+                            className={cn(
+                              'inline-block h-6 w-1 rounded-full',
+                              `bg-up-${category}`
+                            )}
+                          />
+                          <div className="flex-1 flex justify-between text-base">
+                            <p>{categoryName}</p>
+                            <p>{formatCurrency(amount)}</p>
+                          </div>
+                        </AccordionTrigger>
+                        <AccordionContent>
+                          <ul role="list">
+                            {subCategoryStats[index].map(
+                              ({ category, categoryName, amount }) => (
+                                <li
+                                  key={category}
+                                  className="w-full flex h-8 items-center overflow-hidden"
+                                >
+                                  <p className="flex-1 text-subtle truncate">
+                                    {categoryName}
+                                  </p>
+                                  <span>{formatCurrency(amount)}</span>
+                                </li>
+                              )
+                            )}
+                          </ul>
+                        </AccordionContent>
+                      </AccordionItem>
+                    );
+                  }
+                )}
+              </Accordion>
+            </div>
+          )}
         </section>
       </LazyMotion>
     </NuqsAdapter>

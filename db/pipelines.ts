@@ -450,7 +450,7 @@ export const groupByCategoryAndDate = (
   type: 'child' | 'parent',
   options: RetrievalOptions
 ) => {
-  const { groupBy } = options;
+  const { match, groupBy } = options;
   return [
     {
       $match: {
@@ -463,6 +463,7 @@ export const groupByCategoryAndDate = (
         'attributes.amount.valueInBaseUnits': {
           $lt: 0,
         },
+        ...(match && match),
       },
     },
     // Grab month, year, category and amount

@@ -28,6 +28,7 @@ export const DateRangeGroupBySchema = z.enum(['daily', 'monthly', 'yearly']);
 export type DateRangeGroupBy = z.infer<typeof DateRangeGroupBySchema>;
 
 export const RetrievalOpts = z.object({
+  match: z.record(z.string(), z.any()).optional(),
   sort: z.record(z.string(), SortDirection).optional(),
   limit: z.number().optional(),
   groupBy: DateRangeGroupBySchema.optional(),

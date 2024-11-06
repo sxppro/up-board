@@ -15,7 +15,9 @@ export default function AnimatedTabs({
   tabs: { id: string; label: string; colour?: string }[];
   queryParam: string;
 }) {
-  const [activeTab, setActiveTab] = useQueryState(queryParam);
+  const [activeTab, setActiveTab] = useQueryState(queryParam, {
+    shallow: false,
+  });
 
   return (
     <div className="flex flex-wrap space-x-1">
