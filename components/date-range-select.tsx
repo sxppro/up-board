@@ -6,6 +6,7 @@
  */
 
 import { DateRangePresets } from '@/types/custom';
+import { cn } from '@/utils/helpers';
 import { useQueryState } from 'nuqs';
 import {
   Select,
@@ -19,9 +20,11 @@ import {
 export default function DateRangeSelect({
   defaultValue,
   selected,
+  className,
 }: {
   defaultValue?: string;
   selected?: string;
+  className?: string;
 }) {
   const [_, setDateRange] = useQueryState('range', {
     defaultValue: defaultValue || DateRangePresets.MONTH,
@@ -49,7 +52,9 @@ export default function DateRangeSelect({
       value={selected}
       onValueChange={(selection) => onValueChange(selection)}
     >
-      <SelectTrigger className="py-0 px-2 sm:py-2 sm:px-3 w-[180px]">
+      <SelectTrigger
+        className={cn('py-0 px-2 sm:py-2 sm:px-3 w-[180px]', className)}
+      >
         <SelectValue placeholder="Last 30 days" />
       </SelectTrigger>
       <SelectContent>

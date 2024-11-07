@@ -11,16 +11,18 @@ import { useQueryState } from 'nuqs';
 export default function AnimatedTabs({
   tabs,
   queryParam,
+  className,
 }: {
   tabs: { id: string; label: string; colour?: string }[];
   queryParam: string;
+  className?: string;
 }) {
   const [activeTab, setActiveTab] = useQueryState(queryParam, {
     shallow: false,
   });
 
   return (
-    <div className="flex flex-wrap space-x-1">
+    <div className={cn('flex flex-wrap space-x-1', className)}>
       {tabs.map((tab) => (
         <button
           key={tab.id}

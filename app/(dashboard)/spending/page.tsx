@@ -1,13 +1,10 @@
-import ExpenseCategoriesBar from '@/components/charts/expense-categories-bar';
 import AnimatedTabs from '@/components/core/animated-tabs';
+import SpendingBarChart from '@/components/dashboards/spending/bar-chart';
+import SpendingDetails from '@/components/dashboards/spending/details';
+import DateRangeSelect from '@/components/date-range-select';
+import DateProvider from '@/components/providers/date-provider';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from '@/components/ui/tremor/accordion';
 import {
   getAccounts,
   getAccountStats,
@@ -15,11 +12,11 @@ import {
   getCategoryInfo,
   getCategoryInfoHistory,
 } from '@/db';
-import { PageProps } from '@/types/custom';
+import { DateRangePresets, PageProps } from '@/types/custom';
 import { getDateRanges, now } from '@/utils/constants';
 import { cn, formatCurrency } from '@/utils/helpers';
 import { Card } from '@tremor/react';
-import { endOfMonth, format, startOfMonth, subMonths } from 'date-fns';
+import { endOfMonth, startOfMonth, subMonths } from 'date-fns';
 import { domMax, LazyMotion } from 'framer-motion';
 import { redirect } from 'next/navigation';
 import { NuqsAdapter } from 'nuqs/adapters/next/app';
@@ -72,23 +69,6 @@ const SpendingPage = async ({ searchParams }: PageProps) => {
       }),
     }
   );
-  const chartCategoryStats = categoryStatsHistory.map(
-    ({ day, month, year, categories }) => {
-      const date =
-        day && month
-          ? format(new Date(year, month - 1, day), 'd LLL yy')
-          : month
-          ? format(new Date(year, month - 1), 'LLL yy')
-          : format(new Date(year, 0, 1), 'yyyy');
-      const remappedElem: any = {
-        FormattedDate: date,
-      };
-      categories.map(
-        ({ amount, category }) => (remappedElem[category] = amount)
-      );
-      return remappedElem;
-    }
-  );
   const categoryStats = await getCategoryInfo(thisMonth, 'parent', {});
   const subCategoryStats = await Promise.all(
     categoryStats.map(
@@ -113,7 +93,7 @@ const SpendingPage = async ({ searchParams }: PageProps) => {
             </h1>
             <Separator className="mt-2" />
           </div>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4">
             <Card className="ring-border bg-background p-3">
               <div className="flex gap-1">
                 <p className="text-muted-foreground">This month</p>
@@ -148,84 +128,33 @@ const SpendingPage = async ({ searchParams }: PageProps) => {
               </p>
             </Card>
           </div>
-          <AnimatedTabs
-            queryParam="category"
-            tabs={categories.map(({ id, name }) => ({
-              id,
-              label: name,
-              colour: `bg-up-${id}`,
-            }))}
-          />
-          <ExpenseCategoriesBar
-            data={chartCategoryStats}
-            categories={
-              category
-                ? [category.name]
-                : [...categories?.map(({ name }) => name), 'Uncategorised']
-            }
-            colors={
-              category
-                ? [`up-${category.id}`]
-                : [
-                    'up-good-life',
-                    'up-home',
-                    'up-personal',
-                    'up-transport',
-                    'gray-300',
-                  ]
-            }
-            index="FormattedDate"
-            showLegend={false}
-          />
-          {category ? (
-            <div>
-              <h2 className="text-lg font-semibold">Subcategories</h2>
-              <h2 className="text-lg font-semibold">Transactions</h2>
-            </div>
-          ) : (
-            <div>
-              <h2 className="text-lg font-semibold">This month</h2>
-              <Accordion type="single" collapsible>
-                {categoryStats.map(
-                  ({ category, categoryName, amount }, index) => {
-                    return (
-                      <AccordionItem key={category} value={category}>
-                        <AccordionTrigger className="py-2 gap-2">
-                          <div
-                            className={cn(
-                              'inline-block h-6 w-1 rounded-full',
-                              `bg-up-${category}`
-                            )}
-                          />
-                          <div className="flex-1 flex justify-between text-base">
-                            <p>{categoryName}</p>
-                            <p>{formatCurrency(amount)}</p>
-                          </div>
-                        </AccordionTrigger>
-                        <AccordionContent>
-                          <ul role="list">
-                            {subCategoryStats[index].map(
-                              ({ category, categoryName, amount }) => (
-                                <li
-                                  key={category}
-                                  className="w-full flex h-8 items-center overflow-hidden"
-                                >
-                                  <p className="flex-1 text-subtle truncate">
-                                    {categoryName}
-                                  </p>
-                                  <span>{formatCurrency(amount)}</span>
-                                </li>
-                              )
-                            )}
-                          </ul>
-                        </AccordionContent>
-                      </AccordionItem>
-                    );
-                  }
-                )}
-              </Accordion>
-            </div>
-          )}
+          <div className="flex flex-col-reverse sm:flex-row sm:justify-between gap-2">
+            <AnimatedTabs
+              className="justify-center"
+              queryParam="category"
+              tabs={categories.map(({ id, name }) => ({
+                id,
+                label: name,
+                colour: `bg-up-${id}`,
+              }))}
+            />
+            <DateRangeSelect
+              defaultValue={DateRangePresets.YEAR}
+              className="w-full sm:w-40"
+            />
+          </div>
+          <DateProvider start={thisMonth.from} end={thisMonth.to}>
+            <SpendingBarChart
+              stats={categoryStatsHistory}
+              categories={categories}
+              selectedCategory={category}
+            />
+            <SpendingDetails
+              categoryStats={categoryStats}
+              subCategoryStats={subCategoryStats}
+              selectedCategory={category}
+            />
+          </DateProvider>
         </section>
       </LazyMotion>
     </NuqsAdapter>
