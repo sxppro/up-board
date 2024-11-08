@@ -67,9 +67,11 @@ const SpendingDetails = ({
             showAnimation
           />
         ) : (
-          <div className="flex items-center self-center gap-1">
-            <CircleNotch className="size-4 animate-spin" />
-            <p>Retrieving subcategories</p>
+          <div className="flex flex-col gap-1">
+            <Skeleton className="w-full h-8" />
+            <Skeleton className="w-48 h-8" />
+            <Skeleton className="w-[160px] h-8" />
+            <Skeleton className="w-[120px] h-8" />
           </div>
         )}
       </div>

@@ -1,7 +1,6 @@
 import AnimatedTabs from '@/components/core/animated-tabs';
 import SpendingBarChart from '@/components/dashboards/spending/bar-chart';
 import SpendingDetails from '@/components/dashboards/spending/details';
-import DateRangeSelect from '@/components/date-range-select';
 import DateProvider from '@/components/providers/date-provider';
 import QueryProvider from '@/components/providers/query-provider';
 import { Badge } from '@/components/ui/badge';
@@ -13,7 +12,7 @@ import {
   getCategoryInfo,
   getCategoryInfoHistory,
 } from '@/db';
-import { DateRangePresets, PageProps } from '@/types/custom';
+import { PageProps } from '@/types/custom';
 import { getDateRanges, now } from '@/utils/constants';
 import { cn, formatCurrency } from '@/utils/helpers';
 import { Card } from '@tremor/react';
@@ -129,21 +128,15 @@ const SpendingPage = async ({ searchParams }: PageProps) => {
               </p>
             </Card>
           </div>
-          <div className="flex flex-col-reverse sm:flex-row sm:justify-between gap-2">
-            <AnimatedTabs
-              className="justify-center"
-              queryParam="category"
-              tabs={categories.map(({ id, name }) => ({
-                id,
-                label: name,
-                colour: `bg-up-${id}`,
-              }))}
-            />
-            <DateRangeSelect
-              defaultValue={DateRangePresets.YEAR}
-              className="w-full sm:w-40"
-            />
-          </div>
+          <AnimatedTabs
+            className="justify-center"
+            queryParam="category"
+            tabs={categories.map(({ id, name }) => ({
+              id,
+              label: name,
+              colour: `bg-up-${id}`,
+            }))}
+          />
           <QueryProvider>
             <DateProvider start={thisMonth.from} end={thisMonth.to}>
               <SpendingBarChart
