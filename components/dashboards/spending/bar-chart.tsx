@@ -45,7 +45,6 @@ const SpendingBarChart = ({
       const { FormattedDate } = e;
       const date = parse(FormattedDate, 'LLL yy', TZDate.tz(TZ));
       setDate({ from: startOfMonth(date), to: endOfMonth(date) });
-      console.log(date);
     } else {
       setDate(thisMonth);
     }

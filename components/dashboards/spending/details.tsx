@@ -17,6 +17,7 @@ import { cn, formatCurrency } from '@/utils/helpers';
 import { useDate } from '@/utils/hooks';
 import { trpc } from '@/utils/trpc';
 import { CircleNotch } from '@phosphor-icons/react';
+import { BarList } from '@tremor/react';
 
 interface SpendingDetailsProps {
   categoryStats: TransactionCategoryInfo[];
@@ -41,11 +42,36 @@ const SpendingDetails = ({
     },
     { enabled: !!selectedCategory }
   );
+  const { data: selectedSubcategory } = trpc.public.getCategoryInfo.useQuery(
+    {
+      dateRange: date || {},
+      type: 'child',
+      options: {},
+      parentCategory: selectedCategory?.id,
+    },
+    { enabled: !!selectedCategory }
+  );
 
   return selectedCategory ? (
     <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-      <div className="xl:col-span-2">
+      <div className="xl:col-span-2 flex flex-col gap-2">
         <h2 className="text-lg font-semibold">Subcategories</h2>
+        {selectedSubcategory ? (
+          <BarList
+            data={selectedSubcategory.map(({ categoryName, amount }) => ({
+              name: categoryName,
+              value: amount,
+            }))}
+            color={`up-${selectedCategory.id}`}
+            valueFormatter={formatCurrency}
+            showAnimation
+          />
+        ) : (
+          <div className="flex items-center self-center gap-1">
+            <CircleNotch className="size-4 animate-spin" />
+            <p>Retrieving subcategories</p>
+          </div>
+        )}
       </div>
       <div className="flex flex-col">
         {data ? (

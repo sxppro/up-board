@@ -1,9 +1,8 @@
 import type { DbTransactionResource } from '@/types/custom';
+import { now } from '@/utils/constants';
 import { endOfDay, startOfDay } from 'date-fns';
 import type { SortDirection } from 'mongodb';
 import { z } from 'zod';
-
-const now = new Date();
 
 /**
  * Importing 3rd party types according to
