@@ -660,6 +660,7 @@ export const groupByDay = (
             $lte: dateRange.to,
           },
         }),
+        ...(options?.match && options.match),
         'relationships.account.data.id': accountId,
       },
     },

@@ -67,7 +67,7 @@ export const formatCurrency = (
  * @param date date to format
  * @returns formatted date string
  */
-export const formatDate = (date: Date) => {
+export const formatDate = (date: Date | string) => {
   if (isToday(date, { in: tz(TZ) })) return 'Today';
   if (isYesterday(date, { in: tz(TZ) })) return 'Yesterday';
   if (differenceInDays(now, date, { in: tz(TZ) }) > 7)

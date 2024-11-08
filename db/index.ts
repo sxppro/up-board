@@ -950,14 +950,37 @@ const getTransactionsByDate = async (
  * @param category category id
  * @returns list of transactions
  */
-const getTransactionsByCategory = async (category: string) => {
+export const getTransactionsByCategory = async (
+  category: string,
+  type: TransactionCategoryType,
+  dateRange?: DateRange
+) => {
   try {
     const transactions = await connectToCollection<DbTransactionResource>(
       'up',
       'transactions'
     );
-    if (transactions) {
-      const cursor = transactions.find({ $text: { $search: category } });
+    const transactionAcc = await getAccounts('TRANSACTIONAL', {
+      sort: {
+        'attributes.balance.valueInBaseUnits': -1,
+      },
+      limit: 1,
+    });
+    if (transactions && transactionAcc[0]) {
+      const cursor = transactions
+        .find({
+          ...(type === 'child'
+            ? { 'relationships.category.data.id': category }
+            : { 'relationships.parentCategory.data.id': category }),
+          ...(dateRange && {
+            'attributes.createdAt': {
+              $gte: dateRange.from,
+              $lte: dateRange.to,
+            },
+          }),
+          'relationships.account.data.id': transactionAcc[0].id,
+        })
+        .sort({ 'attributes.createdAt': -1 });
       const results = (await cursor.toArray()).map((transaction) =>
         outputTransactionFields(transaction)
       );
@@ -1124,4 +1147,4 @@ export const getTags = async () => {
   }
 };
 
-export { getTransactionById, getTransactionsByCategory, getTransactionsByDate };
+export { getTransactionById, getTransactionsByDate };

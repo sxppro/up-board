@@ -1,6 +1,7 @@
 import {
   getAccountBalanceHistorical,
   getAccountById,
+  getAccounts,
   getAccountStats,
   getCategories,
   getCategoryInfo,
@@ -9,6 +10,8 @@ import {
   getMerchantInfo,
   getTagInfo,
   getTransactionById,
+  getTransactionsByCategory,
+  getTransactionsByDay,
 } from '@/db';
 import { filterTransactionFields, getTransactions } from '@/db/helpers';
 import { TRPCError } from '@trpc/server';
@@ -224,6 +227,43 @@ export const publicRouter = router({
         throw new TRPCError({ code: 'NOT_FOUND' });
       }
       return (await filterTransactionFields([transaction]))[0];
+    }),
+  getTransactionsByDay: publicProcedure
+    .input(
+      z.object({
+        dateRange: DateRangeSchema.optional(),
+        options: RetrievalOpts.optional(),
+      })
+    )
+    .query(async ({ input }) => {
+      const transactionAcc = await getAccounts('TRANSACTIONAL', {
+        sort: {
+          'attributes.balance.valueInBaseUnits': -1,
+        },
+        limit: 1,
+      });
+      if (transactionAcc[0]) {
+        const { dateRange, options } = input;
+        return await getTransactionsByDay(
+          transactionAcc[0].id,
+          dateRange,
+          options
+        );
+      } else {
+        throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' });
+      }
+    }),
+  getTransactionsByCategory: publicProcedure
+    .input(
+      z.object({
+        category: z.string(),
+        type: TransactionCategoryTypeSchema,
+        dateRange: DateRangeSchema.optional(),
+      })
+    )
+    .query(async ({ input }) => {
+      const { category, type, dateRange } = input;
+      return await getTransactionsByCategory(category, type, dateRange);
     }),
   getTransactionsByDate: publicProcedure
     .input(TransactionRetrievalOptionsSchema)
