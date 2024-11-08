@@ -1,5 +1,8 @@
 'use client';
 
+import TransactionsList from '@/components/tables/transactions-list';
+import { Separator } from '@/components/ui/separator';
+import { Skeleton } from '@/components/ui/skeleton';
 import {
   Accordion,
   AccordionContent,
@@ -11,6 +14,9 @@ import {
   TransactionCategoryOption,
 } from '@/server/schemas';
 import { cn, formatCurrency } from '@/utils/helpers';
+import { useDate } from '@/utils/hooks';
+import { trpc } from '@/utils/trpc';
+import { CircleNotch } from '@phosphor-icons/react';
 
 interface SpendingDetailsProps {
   categoryStats: TransactionCategoryInfo[];
@@ -23,13 +29,41 @@ const SpendingDetails = ({
   subCategoryStats,
   selectedCategory,
 }: SpendingDetailsProps) => {
+  const { date } = useDate();
+  const { data, isError } = trpc.public.getTransactionsByDay.useQuery(
+    {
+      dateRange: date,
+      options: {
+        match: {
+          'relationships.parentCategory.data.id': selectedCategory?.id || '',
+        },
+      },
+    },
+    { enabled: !!selectedCategory }
+  );
+
   return selectedCategory ? (
     <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
       <div className="xl:col-span-2">
         <h2 className="text-lg font-semibold">Subcategories</h2>
       </div>
-      <div className="row-start-1 sm:row-auto flex flex-col gap-3">
-        <h2 className="text-lg font-semibold">Transactions</h2>
+      <div className="flex flex-col">
+        {data ? (
+          <TransactionsList transactions={data} />
+        ) : isError ? (
+          <p className="text-muted-foreground">
+            Failed to retrieve transactions.
+          </p>
+        ) : (
+          <div className="flex flex-col items-center justify-center gap-1">
+            <Skeleton className="w-40 h-7 self-start" />
+            <Separator />
+            <div className="flex items-center gap-1">
+              <CircleNotch className="size-4 animate-spin" />
+              <p>Retrieving transactions</p>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   ) : (

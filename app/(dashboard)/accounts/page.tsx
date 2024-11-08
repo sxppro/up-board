@@ -1,13 +1,13 @@
 import { siteConfig } from '@/app/siteConfig';
 import AccountsCarousel from '@/components/charts/accounts-carousel';
 import QueryProvider from '@/components/providers/query-provider';
-import TransactionPopover from '@/components/transaction-popover';
+import TransactionsList from '@/components/tables/transactions-list';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Separator } from '@/components/ui/separator';
 import { getAccounts, getAccountStats, getTransactionsByDay } from '@/db';
 import { PageProps } from '@/types/custom';
 import { now } from '@/utils/constants';
-import { cn, formatCurrency, formatDate } from '@/utils/helpers';
+import { cn, formatCurrency } from '@/utils/helpers';
 import {
   CurrencyDollar,
   HandCoins,
@@ -78,26 +78,7 @@ const AccountsPage = async ({ searchParams }: PageProps) => {
         <section aria-label="transactions" className="xl:col-span-2">
           <div className="flex flex-col gap-4">
             <QueryProvider>
-              {transactions.map(({ timestamp, transactions }) => (
-                <div key={timestamp.toISOString()}>
-                  <p className="text-lg font-bold">{formatDate(timestamp)}</p>
-                  <Separator className="mt-1" />
-                  {transactions.map(({ id, attributes }) => (
-                    <TransactionPopover key={id} id={id}>
-                      <div className="flex py-1.5 px-3 -mx-3 items-center text-sm font-medium overflow-hidden rounded-lg transition-colors cursor-pointer hover:bg-muted/50">
-                        <p className="flex-1 text-subtle truncate">
-                          {attributes.description}
-                        </p>
-                        <span>
-                          {formatCurrency(
-                            attributes.amount.valueInBaseUnits / 100
-                          )}
-                        </span>
-                      </div>
-                    </TransactionPopover>
-                  ))}
-                </div>
-              ))}
+              <TransactionsList transactions={transactions} />
             </QueryProvider>
           </div>
         </section>

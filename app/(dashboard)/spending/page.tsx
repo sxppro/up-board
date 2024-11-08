@@ -3,6 +3,7 @@ import SpendingBarChart from '@/components/dashboards/spending/bar-chart';
 import SpendingDetails from '@/components/dashboards/spending/details';
 import DateRangeSelect from '@/components/date-range-select';
 import DateProvider from '@/components/providers/date-provider';
+import QueryProvider from '@/components/providers/query-provider';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import {
@@ -143,18 +144,20 @@ const SpendingPage = async ({ searchParams }: PageProps) => {
               className="w-full sm:w-40"
             />
           </div>
-          <DateProvider start={thisMonth.from} end={thisMonth.to}>
-            <SpendingBarChart
-              stats={categoryStatsHistory}
-              categories={categories}
-              selectedCategory={category}
-            />
-            <SpendingDetails
-              categoryStats={categoryStats}
-              subCategoryStats={subCategoryStats}
-              selectedCategory={category}
-            />
-          </DateProvider>
+          <QueryProvider>
+            <DateProvider start={thisMonth.from} end={thisMonth.to}>
+              <SpendingBarChart
+                stats={categoryStatsHistory}
+                categories={categories}
+                selectedCategory={category}
+              />
+              <SpendingDetails
+                categoryStats={categoryStats}
+                subCategoryStats={subCategoryStats}
+                selectedCategory={category}
+              />
+            </DateProvider>
+          </QueryProvider>
         </section>
       </LazyMotion>
     </NuqsAdapter>

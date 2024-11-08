@@ -18,6 +18,9 @@ interface TransactionsListProps {
  * @returns
  */
 const TransactionsList = ({ transactions }: TransactionsListProps) => {
+  if (transactions.length === 0) {
+    return <p className="text-muted-foreground">No transactions found.</p>;
+  }
   return transactions.map(({ timestamp, transactions }) => (
     // Timestamp may be a string or a Date object depending on
     // whether data is fetched on server or client
