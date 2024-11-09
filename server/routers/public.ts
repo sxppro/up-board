@@ -22,7 +22,6 @@ import {
   AccountInfoSchema,
   AccountMonthlyInfoSchema,
   CumulativeIOSchema,
-  DateRangeGroupBySchema,
   DateRangeSchema,
   RetrievalOpts,
   TransactionCategoryInfoHistory,
@@ -197,13 +196,13 @@ export const publicRouter = router({
       z.object({
         accountId: z.string().uuid(),
         dateRange: DateRangeSchema,
-        groupBy: DateRangeGroupBySchema.optional(),
+        options: RetrievalOpts.optional(),
       })
     )
     .output(z.array(AccountMonthlyInfoSchema))
     .query(async ({ input }) => {
-      const { accountId, dateRange, groupBy } = input;
-      const results = await getAccountStats(accountId, dateRange, groupBy);
+      const { accountId, dateRange, options } = input;
+      const results = await getAccountStats(accountId, dateRange, options);
       return results.map(({ Year, Month, ...rest }) =>
         Year && Month
           ? {

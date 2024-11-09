@@ -52,7 +52,7 @@ const SpendingPage = async ({ searchParams }: PageProps) => {
       from: startOfMonth(subMonths(now, 3)),
       to: endOfMonth(subMonths(now, 1)),
     },
-    'monthly',
+    { groupBy: 'monthly' },
     true
   );
   const monthlyChange =

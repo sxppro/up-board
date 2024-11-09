@@ -15,7 +15,7 @@ const MonthlyInOut = ({ accountId }: { accountId: string }) => {
       from: startOfMonth(subYears(currentDate, 1)),
       to: currentDate,
     },
-    groupBy: 'monthly',
+    options: { groupBy: 'monthly' },
   });
 
   return (

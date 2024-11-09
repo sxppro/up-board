@@ -51,7 +51,7 @@ const AccountsPage = async ({ searchParams }: PageProps) => {
         from: startOfMonth(subMonths(now, 13)),
         to: endOfMonth(subMonths(now, 1)),
       },
-      'monthly',
+      { groupBy: 'monthly' },
       true
     )
   ).at(0);
