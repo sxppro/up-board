@@ -31,7 +31,7 @@ const MerchantsDataTable = <TData, TValue>({
   });
   return (
     <div>
-      <DataTable table={table} header={false} />
+      <DataTable table={table} header={false} className={{ cell: 'px-2' }} />
       <DataTablePagination table={table} />
     </div>
   );

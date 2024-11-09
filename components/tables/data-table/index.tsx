@@ -14,7 +14,7 @@ import { cn } from '@/utils/helpers';
 
 interface DataTableProps<TData> {
   table: TanstackTable<TData>;
-  className?: string;
+  className?: { container?: string; cell?: string };
   header?: boolean;
 }
 
@@ -24,7 +24,7 @@ export function DataTable<TData>({
   header = true,
 }: DataTableProps<TData>) {
   return (
-    <div className={cn('rounded-md', className)}>
+    <div className={cn('rounded-md', className?.container)}>
       <Table>
         {header ? (
           <TableHeader>
@@ -56,7 +56,10 @@ export function DataTable<TData>({
                 data-state={row.getIsSelected() && 'selected'}
               >
                 {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id} className="py-2.5">
+                  <TableCell
+                    key={cell.id}
+                    className={cn('py-2.5', className?.cell)}
+                  >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>
                 ))}
