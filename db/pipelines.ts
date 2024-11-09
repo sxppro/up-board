@@ -1,6 +1,5 @@
 import {
   DateRange,
-  DateRangeGroupBy,
   RetrievalOptions,
   TransactionIOEnum,
   TransactionRetrievalOptions,
@@ -855,120 +854,124 @@ export const searchTransactions = (searchTerm: string) => [
 export const statsByAccount = (
   accountId: string,
   dateRange: DateRange,
-  groupBy?: DateRangeGroupBy,
+  options: RetrievalOptions,
   avg?: boolean
-) => [
-  /**
-   * Match documents within the desired date range
-   * and filter transfers
-   */
-  {
-    $match: {
-      'relationships.account.data.id': accountId,
-      'attributes.createdAt': {
-        $gte: dateRange.from,
-        $lte: dateRange.to,
-      },
-      // TODO: Toggle filtering transfers
-      ...(accountId === process.env.UP_TRANS_ACC && {
-        'attributes.isCategorizable': true,
-      }),
-    },
-  },
-  {
-    $project: {
-      ...(groupBy === 'daily' && {
-        day: {
-          $dayOfMonth: {
-            date: '$attributes.createdAt',
-            timezone: TZ,
-          },
+) => {
+  const { groupBy, match } = options;
+  return [
+    /**
+     * Match documents within the desired date range
+     * and filter transfers
+     */
+    {
+      $match: {
+        'relationships.account.data.id': accountId,
+        'attributes.createdAt': {
+          $gte: dateRange.from,
+          $lte: dateRange.to,
         },
-      }),
-      ...((groupBy === 'daily' || groupBy === 'monthly') && {
-        month: {
-          $month: {
-            date: '$attributes.createdAt',
-            timezone: TZ,
-          },
-        },
-      }),
-      ...(groupBy && {
-        year: {
-          $year: {
-            date: '$attributes.createdAt',
-            timezone: TZ,
-          },
-        },
-      }),
-      amount: '$attributes.amount.valueInBaseUnits',
-      type: labelIO(),
-    },
-  },
-  // Group documents by month-year and type, calculate grouped income, expenses and number of transactions
-  {
-    $group: {
-      _id: {
-        day: '$day',
-        month: '$month',
-        year: '$year',
-      },
-      ...generateStatsIncomeExpense('type', 'amount'),
-      transactions: {
-        $sum: 1,
+        // TODO: Toggle filtering transfers
+        ...(accountId === process.env.UP_TRANS_ACC && {
+          'attributes.isCategorizable': true,
+        }),
+        ...(match && match),
       },
     },
-  },
-  // Optionally average the results
-  ...(avg
-    ? [
-        {
-          $group: {
-            _id: 0,
-            income: {
-              $avg: '$income',
-            },
-            expense: {
-              $avg: '$expense',
-            },
-            transactions: {
-              $avg: '$transactions',
+    {
+      $project: {
+        ...(groupBy === 'daily' && {
+          day: {
+            $dayOfMonth: {
+              date: '$attributes.createdAt',
+              timezone: TZ,
             },
           },
-        },
-      ]
-    : []),
-  {
-    $project: {
-      _id: 0,
-      Year: '$_id.year',
-      Month: '$_id.month',
-      Income: {
-        $divide: ['$income', 100],
+        }),
+        ...((groupBy === 'daily' || groupBy === 'monthly') && {
+          month: {
+            $month: {
+              date: '$attributes.createdAt',
+              timezone: TZ,
+            },
+          },
+        }),
+        ...(groupBy && {
+          year: {
+            $year: {
+              date: '$attributes.createdAt',
+              timezone: TZ,
+            },
+          },
+        }),
+        amount: '$attributes.amount.valueInBaseUnits',
+        type: labelIO(),
       },
-      Expenses: {
-        $abs: {
-          $divide: ['$expense', 100],
+    },
+    // Group documents by month-year and type, calculate grouped income, expenses and number of transactions
+    {
+      $group: {
+        _id: {
+          day: '$day',
+          month: '$month',
+          year: '$year',
+        },
+        ...generateStatsIncomeExpense('type', 'amount'),
+        transactions: {
+          $sum: 1,
         },
       },
-      Net: {
-        $divide: [
+    },
+    // Optionally average the results
+    ...(avg
+      ? [
           {
-            $sum: ['$income', '$expense'],
+            $group: {
+              _id: 0,
+              income: {
+                $avg: '$income',
+              },
+              expense: {
+                $avg: '$expense',
+              },
+              transactions: {
+                $avg: '$transactions',
+              },
+            },
           },
-          100,
-        ],
+        ]
+      : []),
+    {
+      $project: {
+        _id: 0,
+        Year: '$_id.year',
+        Month: '$_id.month',
+        Income: {
+          $divide: ['$income', 100],
+        },
+        Expenses: {
+          $abs: {
+            $divide: ['$expense', 100],
+          },
+        },
+        Net: {
+          $divide: [
+            {
+              $sum: ['$income', '$expense'],
+            },
+            100,
+          ],
+        },
+        Transactions: '$transactions',
       },
-      Transactions: '$transactions',
     },
-  },
-  {
-    $sort: {
-      Year: 1,
-      Month: 1,
+    {
+      $sort: {
+        Year: 1,
+        Month: 1,
+      },
     },
-  },
-];
+  ];
+};
 
 /**
  * Generates stats for a specific tag

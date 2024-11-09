@@ -17,7 +17,6 @@ import {
   type AccountInfo,
   type AccountMonthlyInfo,
   type DateRange,
-  type DateRangeGroupBy,
   type TagInfo,
   type TransactionCategoryInfo,
   type TransactionCategoryInfoHistoryRaw,
@@ -36,7 +35,11 @@ import { outputTransactionFields } from '@/utils/helpers';
 import { getTransactionById as getUpTransactionById } from '@/utils/up';
 import { faker } from '@faker-js/faker';
 import { UUID } from 'bson';
-import { addDays, addMonths, addYears } from 'date-fns';
+import {
+  eachDayOfInterval,
+  eachMonthOfInterval,
+  eachYearOfInterval,
+} from 'date-fns';
 import { CollectionOptions, Document, MongoBulkWriteError } from 'mongodb';
 import client from './connect';
 import {
@@ -312,16 +315,10 @@ export const getAccountBalanceHistorical = async (
         const startingBalance = parseFloat(
           faker.finance.amount({ max: 10000 })
         );
-        let date = new Date(
-          dateRange.from.getFullYear(),
-          dateRange.from.getMonth(),
-          dateRange.from.getDate()
-        );
-        const days = [];
-        while (date < dateRange.to) {
-          days.push(date);
-          date = addDays(date, 1);
-        }
+        const days = eachDayOfInterval({
+          start: dateRange.from,
+          end: dateRange.to,
+        });
         return days.map((date) => ({
           Year: date.getFullYear(),
           Month: date.getMonth() + 1,
@@ -386,14 +383,13 @@ export const getAccountById = async (accountId: string) => {
 
 /**
  * Total or grouped transaction statistics between 2 dates
- * @param groupBy group by day, month or year
  * @param avg optionally average stats
  * @returns list of stats, single element if no groupBy provided
  */
 export const getAccountStats = async (
   accountId: string,
   dateRange: DateRange,
-  groupBy?: DateRangeGroupBy,
+  options?: RetrievalOptions,
   avg?: boolean
 ) => {
   try {
@@ -403,27 +399,18 @@ export const getAccountStats = async (
     );
     if (transactions) {
       const cursor = transactions.aggregate<AccountMonthlyInfo>(
-        statsByAccount(accountId, dateRange, groupBy, avg)
+        statsByAccount(accountId, dateRange, options || {}, avg)
       );
       const results = await cursor.toArray();
       return results;
     } else {
-      if (groupBy && dateRange.from < dateRange.to) {
-        let date = new Date(
-          dateRange.from.getFullYear(),
-          dateRange.from.getMonth(),
-          dateRange.from.getDate()
-        );
-        const dates = [];
-        while (date < dateRange.to) {
-          dates.push(date);
-          date =
-            groupBy === 'monthly'
-              ? addMonths(date, 1)
-              : groupBy === 'yearly'
-              ? addYears(date, 1)
-              : addDays(date, 1);
-        }
+      if (options?.groupBy && dateRange.from < dateRange.to) {
+        const dates =
+          options.groupBy === 'yearly'
+            ? eachYearOfInterval({ start: dateRange.from, end: dateRange.to })
+            : options.groupBy === 'monthly'
+            ? eachMonthOfInterval({ start: dateRange.from, end: dateRange.to })
+            : eachDayOfInterval({ start: dateRange.from, end: dateRange.to });
 
         return dates.map((date) => {
           const income = parseFloat(faker.finance.amount({ max: 5000 }));
@@ -730,15 +717,10 @@ export const getCategoryInfoHistory = async (
       return results;
     } else {
       if (dateRange.from < dateRange.to) {
-        let date = new Date(
-          dateRange.from.getFullYear(),
-          dateRange.from.getMonth()
-        );
-        const months = [];
-        while (date < dateRange.to) {
-          months.push(date);
-          date = addMonths(date, 1);
-        }
+        const months = eachMonthOfInterval({
+          start: dateRange.from,
+          end: dateRange.to,
+        });
         return months.map((date) => ({
           categories: categoriesMock.data
             .filter(({ relationships }) =>
