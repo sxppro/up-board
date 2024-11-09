@@ -3,6 +3,8 @@ import { Separator } from '@/components/ui/separator';
 import { getMerchants } from '@/db';
 import { cn } from '@/utils/helpers';
 import Link from 'next/link';
+import { columns } from './columns';
+import MerchantsDataTable from './data-table';
 
 const MerchantsPage = async () => {
   const merchants = await getMerchants({});
@@ -21,6 +23,7 @@ const MerchantsPage = async () => {
         </h1>
         <Separator className="mt-2" />
       </div>
+      <MerchantsDataTable data={merchants} columns={columns} />
       <div className="flex flex-col gap-2">
         {merchants?.map(({ name, categoryName, parentCategory }) => (
           <div key={name} className="flex items-center gap-4 font-medium">

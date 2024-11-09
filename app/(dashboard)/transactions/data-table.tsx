@@ -1,6 +1,7 @@
 'use client';
 
 import { DataTable } from '@/components/tables/data-table';
+import { DataTablePagination } from '@/components/tables/data-table/pagination';
 import { TransactionCategoryOption } from '@/server/schemas';
 import { cn } from '@/utils/helpers';
 import {
@@ -14,7 +15,6 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import { useState } from 'react';
-import { DataTablePagination } from './data-table-pagination';
 import { DataTableToolbar } from './data-table-toolbar';
 
 interface DataTableProps<TData, TValue> {
@@ -45,7 +45,7 @@ export const TransactionsDataTable = <TData, TValue>({
     getSortedRowModel: getSortedRowModel(),
     initialState: {
       pagination: {
-        pageSize: 8,
+        pageSize: 25,
       },
       columnFilters: [
         {
@@ -59,7 +59,6 @@ export const TransactionsDataTable = <TData, TValue>({
       sorting,
     },
   });
-  console.log(table.initialState);
 
   return (
     <div className={cn('w-full space-y-4', className)}>
