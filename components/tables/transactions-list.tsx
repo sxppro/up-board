@@ -1,9 +1,12 @@
 import {
+  cn,
   formatCurrency,
   formatDate,
   outputTransactionFields,
 } from '@/utils/helpers';
+import { focusRing } from '@/utils/tremor';
 import TransactionPopover from '../transaction-popover';
+import { Button } from '../ui/button';
 import { Separator } from '../ui/separator';
 
 interface TransactionsListProps {
@@ -27,18 +30,26 @@ const TransactionsList = ({ transactions }: TransactionsListProps) => {
     <div key={timestamp instanceof Date ? timestamp.toISOString() : timestamp}>
       <p className="text-lg font-bold">{formatDate(timestamp)}</p>
       <Separator className="mt-1" />
-      {transactions.map(({ id, attributes }) => (
-        <TransactionPopover key={id} id={id}>
-          <div className="flex py-1.5 px-3 -mx-3 items-center text-sm font-medium overflow-hidden rounded-lg transition-colors cursor-pointer hover:bg-muted/50">
-            <p className="flex-1 text-subtle truncate">
-              {attributes.description}
-            </p>
-            <span>
-              {formatCurrency(attributes.amount.valueInBaseUnits / 100)}
-            </span>
-          </div>
-        </TransactionPopover>
-      ))}
+      <div className="flex flex-col">
+        {transactions.map(({ id, attributes }) => (
+          <TransactionPopover key={id} id={id}>
+            <Button
+              className={cn(
+                'h-8 flex -mx-3 items-center text-sm font-medium overflow-hidden rounded-lg hover:bg-muted/80',
+                focusRing
+              )}
+              variant="ghost"
+            >
+              <p className="flex-1 text-left text-subtle truncate">
+                {attributes.description}
+              </p>
+              <span>
+                {formatCurrency(attributes.amount.valueInBaseUnits / 100)}
+              </span>
+            </Button>
+          </TransactionPopover>
+        ))}
+      </div>
     </div>
   ));
 };
