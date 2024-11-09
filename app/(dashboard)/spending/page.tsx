@@ -45,14 +45,25 @@ const SpendingPage = async ({ searchParams }: PageProps) => {
     sort: { 'attributes.balance.valueInBaseUnits': -1 },
     limit: 1,
   });
-  const monthStats = await getAccountStats(transactionAcc[0].id, thisMonth);
+  const monthStats = await getAccountStats(
+    transactionAcc[0].id,
+    thisMonth,
+    category && {
+      match: { 'relationships.parentCategory.data.id': category.id },
+    }
+  );
   const avgStats = await getAccountStats(
     transactionAcc[0].id,
     {
       from: startOfMonth(subMonths(now, 3)),
       to: endOfMonth(subMonths(now, 1)),
     },
-    { groupBy: 'monthly' },
+    {
+      groupBy: 'monthly',
+      ...(category && {
+        match: { 'relationships.parentCategory.data.id': category.id },
+      }),
+    },
     true
   );
   const monthlyChange =
