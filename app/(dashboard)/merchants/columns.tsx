@@ -47,6 +47,7 @@ export const columns: ColumnDef<Merchant>[] = [
         </Button>
       );
     },
+    filterFn: 'includesString',
   },
   {
     accessorKey: 'categoryName',

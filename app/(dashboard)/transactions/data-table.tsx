@@ -39,6 +39,7 @@ export const TransactionsDataTable = <TData, TValue>({
       value: search,
     },
   ]);
+
   const table = useReactTable({
     data,
     columns,
