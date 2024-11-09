@@ -1,16 +1,12 @@
 import { siteConfig } from '@/app/siteConfig';
-import IOStats from '@/components/charts/io-stats';
-import StatCard from '@/components/core/stat-card';
 import DateProvider from '@/components/providers/date-provider';
 import QueryProvider from '@/components/providers/query-provider';
 import { getAccountById } from '@/db';
 import { PageProps } from '@/types/custom';
 import { getSearchParams } from '@/utils/helpers';
-import { Grid } from '@tremor/react';
 import { startOfMonth } from 'date-fns';
 import { X } from 'lucide-react';
 import { Metadata } from 'next';
-import { Suspense } from 'react';
 import AccountCharts from './charts';
 
 type AccountPageProps = {
@@ -45,23 +41,6 @@ const AccountPage = async ({ params, searchParams }: AccountPageProps) => {
     <>
       <h1 className="text-2xl font-bold tracking-tight">{displayName}</h1>
       <div className="w-full flex flex-col mt-2 gap-6">
-        <Grid numItemsMd={3} className="gap-4">
-          <Suspense
-            fallback={
-              <>
-                <StatCard info={{ title: 'Loading ...', isLoading: true }} />
-                <StatCard info={{ title: 'Loading ...', isLoading: true }} />
-                <StatCard info={{ title: 'Loading ...', isLoading: true }} />
-              </>
-            }
-          >
-            <IOStats
-              accountId={accountId}
-              start={startDate ? new Date(startDate) : startOfMonth(now)}
-              end={endDate ? new Date(endDate) : now}
-            />
-          </Suspense>
-        </Grid>
         <QueryProvider>
           <DateProvider
             start={startDate ? new Date(startDate) : startOfMonth(now)}
