@@ -9,7 +9,7 @@ import Link from 'next/link';
 
 export const columns: ColumnDef<Merchant>[] = [
   {
-    accessorKey: 'name',
+    accessorKey: 'icon',
     header: '',
     cell: (props) => {
       const { row } = props;
@@ -26,9 +26,6 @@ export const columns: ColumnDef<Merchant>[] = [
           {name.slice(0, 1).toUpperCase()}
         </span>
       );
-    },
-    meta: {
-      size: 'w-8',
     },
   },
   {
