@@ -33,7 +33,12 @@ export const TransactionsDataTable = <TData, TValue>({
   search,
 }: DataTableProps<TData, TValue>) => {
   const [sorting, setSorting] = useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([
+    {
+      id: 'description',
+      value: search,
+    },
+  ]);
   const table = useReactTable({
     data,
     columns,
@@ -47,12 +52,6 @@ export const TransactionsDataTable = <TData, TValue>({
       pagination: {
         pageSize: 25,
       },
-      columnFilters: [
-        {
-          id: 'description',
-          value: search,
-        },
-      ],
     },
     state: {
       columnFilters,
