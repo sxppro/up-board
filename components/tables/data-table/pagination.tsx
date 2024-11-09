@@ -16,20 +16,25 @@ import {
 
 interface DataTablePaginationProps<TData> {
   table: Table<TData>;
+  itemName: string;
 }
 
 export function DataTablePagination<TData>({
   table,
+  itemName,
 }: DataTablePaginationProps<TData>) {
   return (
     <div className="flex items-center justify-center sm:justify-between px-2">
       <div className="flex-1 hidden sm:block text-sm text-muted-foreground">
-        {table.getFilteredSelectedRowModel().rows.length} of{' '}
-        {table.getFilteredRowModel().rows.length} transaction(s) selected
+        {table.getFilteredSelectedRowModel().rows.length > 0
+          ? `${table.getFilteredSelectedRowModel().rows.length} of ${
+              table.getFilteredRowModel().rows.length
+            } ${itemName}(s) selected`
+          : `${table.getFilteredRowModel().rows.length} ${itemName}(s)`}
       </div>
       <div className="flex items-center space-x-4 lg:space-x-8">
         <div className="flex items-center space-x-2">
-          <p className="text-sm font-medium">Rows per page</p>
+          <p className="text-sm font-medium">Items per page</p>
           <Select
             value={`${table.getState().pagination.pageSize}`}
             onValueChange={(value) => table.setPageSize(Number(value))}

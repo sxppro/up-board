@@ -64,7 +64,7 @@ export const TransactionsDataTable = <TData, TValue>({
     <div className={cn('w-full space-y-4', className)}>
       <DataTableToolbar table={table} options={options} />
       <DataTable table={table} />
-      <DataTablePagination table={table} />
+      <DataTablePagination table={table} itemName="transaction" />
     </div>
   );
 };
