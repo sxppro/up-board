@@ -24,8 +24,8 @@ const PopoverContentCell = ({
   label,
   children,
 }: { label: string } & PropsWithChildren) => (
-  <div className="flex items-center justify-between overflow-hidden">
-    <p className="text-subtle font-semibold truncate">{label}</p>
+  <div className="flex items-center justify-between gap-2">
+    <p className="text-subtle font-semibold">{label}</p>
     {children}
   </div>
 );
@@ -69,7 +69,7 @@ const PopoverContent = ({ tx }: { tx: TransactionResourceFiltered }) => {
         <Separator />
         <div className="flex flex-col text-sm gap-2">
           <PopoverContentCell label="Message">
-            <p>{tx.message || '—'}</p>
+            <p className="text-right">{tx.message || '—'}</p>
           </PopoverContentCell>
           <PopoverContentCell label="Raw Text">
             <p>{tx.rawText || '—'}</p>

@@ -6,6 +6,7 @@ import {
   differenceInDays,
   format,
   formatDistanceStrict,
+  isThisYear,
   isToday,
   isYesterday,
 } from 'date-fns';
@@ -71,7 +72,9 @@ export const formatDate = (date: Date | string) => {
   if (isToday(date, { in: tz(TZ) })) return 'Today';
   if (isYesterday(date, { in: tz(TZ) })) return 'Yesterday';
   if (differenceInDays(now, date, { in: tz(TZ) }) > 7)
-    return format(date, 'do MMMM', { in: tz(TZ) });
+    return isThisYear(date, { in: tz(TZ) })
+      ? format(date, 'do MMMM', { in: tz(TZ) })
+      : format(date, 'do MMMM yyyy', { in: tz(TZ) });
   return formatDistanceStrict(date, now, {
     addSuffix: true,
     roundingMethod: 'floor',

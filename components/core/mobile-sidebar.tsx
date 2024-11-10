@@ -81,9 +81,9 @@ export default function MobileSidebar() {
           <Button
             variant="ghost"
             aria-label="open sidebar"
-            className="group flex items-center rounded-md p-2 text-sm font-medium hover:bg-gray-100 data-[state=open]:bg-gray-100 data-[state=open]:bg-gray-400/10 hover:dark:bg-gray-400/10"
+            className="group flex items-center rounded-md size-10 text-sm font-medium hover:bg-gray-100 data-[state=open]:bg-gray-100 data-[state=open]:bg-gray-400/10 hover:dark:bg-gray-400/10"
           >
-            <List className="size-6 shrink-0 sm:size-5" aria-hidden="true" />
+            <List aria-hidden="true" />
           </Button>
         </SheetTrigger>
         <SheetContent className="sm:max-w-lg">
