@@ -4,7 +4,7 @@ import QueryProvider from '@/components/providers/query-provider';
 import TransactionsList from '@/components/tables/transactions-list';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Separator } from '@/components/ui/separator';
-import { getAccounts, getAccountStats, getTransactionsByDay } from '@/db';
+import { getAccounts, getIOStats, getTransactionsByDay } from '@/db';
 import { PageProps } from '@/types/custom';
 import { now } from '@/utils/constants';
 import { cn, formatCurrency } from '@/utils/helpers';
@@ -48,13 +48,13 @@ const AccountsPage = async ({ searchParams }: PageProps) => {
     accountId
   );
   const avgMonthStats = (
-    await getAccountStats(
-      accountId,
+    await getIOStats(
+      { groupBy: 'monthly' },
       {
         from: startOfMonth(subMonths(now, 13)),
         to: endOfMonth(subMonths(now, 1)),
       },
-      { groupBy: 'monthly' },
+      accountId,
       true
     )
   ).at(0);

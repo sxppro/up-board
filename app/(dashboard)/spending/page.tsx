@@ -7,14 +7,14 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import {
   getAccounts,
-  getAccountStats,
   getCategories,
   getCategoryInfo,
   getCategoryInfoHistory,
+  getIOStats,
 } from '@/db';
 import { PageProps } from '@/types/custom';
 import { getDateRanges, now } from '@/utils/constants';
-import { cn, formatCurrency } from '@/utils/helpers';
+import { calcPercentDiff, cn, formatCurrency } from '@/utils/helpers';
 import { Card } from '@tremor/react';
 import { endOfMonth, startOfMonth, subMonths } from 'date-fns';
 import { domMax, LazyMotion } from 'framer-motion';
@@ -45,31 +45,31 @@ const SpendingPage = async ({ searchParams }: PageProps) => {
     sort: { 'attributes.balance.valueInBaseUnits': -1 },
     limit: 1,
   });
-  const monthStats = await getAccountStats(
-    transactionAcc[0].id,
-    thisMonth,
+  const monthStats = await getIOStats(
     category && {
       match: { 'relationships.parentCategory.data.id': category.id },
-    }
-  );
-  const avgStats = await getAccountStats(
-    transactionAcc[0].id,
-    {
-      from: startOfMonth(subMonths(now, 3)),
-      to: endOfMonth(subMonths(now, 1)),
     },
+    thisMonth,
+    transactionAcc[0].id
+  );
+  const avgStats = await getIOStats(
     {
       groupBy: 'monthly',
       ...(category && {
         match: { 'relationships.parentCategory.data.id': category.id },
       }),
     },
+    {
+      from: startOfMonth(subMonths(now, 3)),
+      to: endOfMonth(subMonths(now, 1)),
+    },
+    transactionAcc[0].id,
     true
   );
-  const monthlyChange =
-    ((monthStats[0]?.Expenses - avgStats[0]?.Expenses) /
-      avgStats[0]?.Expenses) *
-    100;
+  const monthlyChange = calcPercentDiff(
+    monthStats[0]?.Expenses,
+    avgStats[0]?.Expenses
+  );
   const categoryStatsHistory = await getCategoryInfoHistory(
     dateRange,
     'parent',

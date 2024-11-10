@@ -2,11 +2,11 @@ import {
   getAccountBalanceHistorical,
   getAccountById,
   getAccounts,
-  getAccountStats,
   getCategories,
   getCategoryInfo,
   getCategoryInfoHistory,
   getCumulativeIO,
+  getIOStats,
   getMerchantInfo,
   getTagInfo,
   getTransactionById,
@@ -191,7 +191,7 @@ export const publicRouter = router({
       const { dateRange, options, type } = input;
       return await getMerchantInfo(options || {}, dateRange, type);
     }),
-  getMonthlyInfo: publicProcedure
+  getIOStats: publicProcedure
     .input(
       z.object({
         accountId: z.string().uuid(),
@@ -202,7 +202,7 @@ export const publicRouter = router({
     .output(z.array(AccountMonthlyInfoSchema))
     .query(async ({ input }) => {
       const { accountId, dateRange, options } = input;
-      const results = await getAccountStats(accountId, dateRange, options);
+      const results = await getIOStats(options, dateRange, accountId);
       return results.map(({ Year, Month, ...rest }) =>
         Year && Month
           ? {

@@ -813,9 +813,9 @@ export const searchTransactions = (searchTerm: string) => [
  * @returns aggregation pipeline definition
  */
 export const statsByAccount = (
-  accountId: string,
-  dateRange: DateRange,
   options: RetrievalOptions,
+  dateRange?: DateRange,
+  accountId?: string,
   avg?: boolean
 ) => {
   const { groupBy, match } = options;
@@ -826,11 +826,15 @@ export const statsByAccount = (
      */
     {
       $match: {
-        'relationships.account.data.id': accountId,
-        'attributes.createdAt': {
-          $gte: dateRange.from,
-          $lte: dateRange.to,
-        },
+        ...(dateRange && {
+          'attributes.createdAt': {
+            $gte: dateRange.from,
+            $lte: dateRange.to,
+          },
+        }),
+        ...(accountId && {
+          'relationships.account.data.id': accountId,
+        }),
         // TODO: Toggle filtering transfers
         ...(accountId === process.env.UP_TRANS_ACC && {
           'attributes.isCategorizable': true,

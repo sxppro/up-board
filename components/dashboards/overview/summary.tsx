@@ -48,7 +48,7 @@ const Summary = ({ accountId }: SummaryProps) => {
     },
     type: 'income',
   });
-  const { data: monthly } = trpc.public.getMonthlyInfo.useQuery({
+  const { data: monthly } = trpc.public.getIOStats.useQuery({
     accountId,
     dateRange: {
       from: dateRange?.from,

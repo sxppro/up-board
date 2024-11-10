@@ -89,6 +89,15 @@ export const capitalise = (str: string) =>
   str.charAt(0).toLocaleUpperCase() + str.slice(1).toLocaleLowerCase();
 
 /**
+ * Percentage difference of a
+ * relative to b
+ * @param a
+ * @param b
+ * @returns
+ */
+export const calcPercentDiff = (a: number, b: number) => ((a - b) / b) * 100;
+
+/**
  * Adds property `FormattedDate`, date string from day, month, year values
  * @param data
  * @returns

@@ -57,11 +57,11 @@ const CumulativeSnapshot = ({
     type: 'expense',
   });
   ``;
-  const { data: month } = trpc.public.getMonthlyInfo.useQuery({
+  const { data: month } = trpc.public.getIOStats.useQuery({
     accountId,
     dateRange: monthToDate,
   });
-  const { data: year } = trpc.public.getMonthlyInfo.useQuery({
+  const { data: year } = trpc.public.getIOStats.useQuery({
     accountId,
     dateRange: yearToDate,
   });

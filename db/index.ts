@@ -410,10 +410,10 @@ export const getAccountById = async (accountId: string) => {
  * @param avg optionally average stats
  * @returns list of stats, single element if no groupBy provided
  */
-export const getAccountStats = async (
-  accountId: string,
-  dateRange: DateRange,
+export const getIOStats = async (
   options?: RetrievalOptions,
+  dateRange?: DateRange,
+  accountId?: string,
   avg?: boolean
 ) => {
   try {
@@ -423,12 +423,12 @@ export const getAccountStats = async (
     );
     if (transactions) {
       const cursor = transactions.aggregate<AccountMonthlyInfo>(
-        statsByAccount(accountId, dateRange, options || {}, avg)
+        statsByAccount(options || {}, dateRange, accountId, avg)
       );
       const results = await cursor.toArray();
       return results;
     } else {
-      if (options?.groupBy && dateRange.from < dateRange.to) {
+      if (options?.groupBy && dateRange && dateRange.from < dateRange.to) {
         const dates =
           options.groupBy === 'yearly'
             ? eachYearOfInterval({ start: dateRange.from, end: dateRange.to })
