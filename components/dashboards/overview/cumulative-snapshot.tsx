@@ -195,7 +195,12 @@ const CumulativeSnapshot = ({
           </TabGroup>
           <div className="flex flex-col py-4 sm:p-4">
             <div className="flex-1 flex flex-col gap-1">
-              <p className="font-bold">Transaction account</p>
+              <div className="flex gap-0.5">
+                <span className="font-bold">Transaction account</span>
+                <InfoTooltip>
+                  <p>Current balance of transactional account</p>
+                </InfoTooltip>
+              </div>
               {transactionalBalance && transactionalAcc ? (
                 <>
                   <p className="text-2xl">
@@ -214,7 +219,12 @@ const CumulativeSnapshot = ({
             </div>
             <Separator className="my-4" />
             <div className="flex-1 flex flex-col gap-1">
-              <p className="font-bold">Savings</p>
+              <div className="flex gap-0.5">
+                <span className="font-bold">Savings</span>
+                <InfoTooltip>
+                  <p>Current balance of largest saver account</p>
+                </InfoTooltip>
+              </div>
               {savingsBalance && savingsAcc ? (
                 <>
                   <p className="text-2xl">
@@ -330,7 +340,7 @@ const CumulativeSnapshot = ({
           </TabGroup>
           <div className="flex flex-col py-4 sm:p-4">
             <div className="flex-1 flex flex-col gap-1">
-              <div className="flex gap-1">
+              <div className="flex gap-0.5">
                 <span className="font-bold">Top Categories</span>
                 <InfoTooltip>
                   <p>Subcategories ordered by total expenditure</p>
@@ -368,7 +378,7 @@ const CumulativeSnapshot = ({
             </div>
             <Separator className="my-4" />
             <div className="flex-1 flex flex-col gap-1">
-              <div className="flex gap-1">
+              <div className="flex gap-0.5">
                 <span className="font-bold">Top Merchants</span>
                 <InfoTooltip>
                   <p>Merchants ordered by total expenditure</p>
