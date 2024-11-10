@@ -18,9 +18,9 @@ import { TRPCError } from '@trpc/server';
 import { format } from 'date-fns';
 import { z } from 'zod';
 import {
-  AccountBalanceHistorySchema,
   AccountInfoSchema,
   AccountMonthlyInfoSchema,
+  BalanceHistorySchema,
   CumulativeIOSchema,
   DateRangeSchema,
   Merchant,
@@ -44,9 +44,7 @@ export const publicRouter = router({
         accountId: z.string().uuid(),
       })
     )
-    .output(
-      z.array(AccountBalanceHistorySchema.extend({ FormattedDate: z.string() }))
-    )
+    .output(z.array(BalanceHistorySchema.extend({ FormattedDate: z.string() })))
     .query(async ({ input }) => {
       const { dateRange, accountId } = input;
       const accountBalance = await getAccountBalanceHistorical(

@@ -319,6 +319,102 @@ export const groupBalanceByDay = (dateRange: DateRange, accountId: string) => [
 ];
 
 /**
+ * Merchant expenditure by month
+ * @param merchant
+ * @param dateRange from should be start of month
+ * @returns
+ */
+export const groupMerchantByDay = (merchant: string, dateRange: DateRange) => [
+  {
+    $match: {
+      'attributes.description': merchant,
+    },
+  },
+  {
+    $group: {
+      _id: {
+        $dateTrunc: {
+          date: '$attributes.createdAt',
+          unit: 'month',
+        },
+      },
+      amount: {
+        $sum: '$attributes.amount.valueInBaseUnits',
+      },
+    },
+  },
+  {
+    $densify: {
+      field: '_id',
+      range: {
+        step: 1,
+        unit: 'month',
+        bounds: [dateRange.from, dateRange.to],
+      },
+    },
+  },
+  {
+    $addFields: {
+      amount: {
+        $cond: [
+          {
+            $not: ['$amount'],
+          },
+          0,
+          '$amount',
+        ],
+      },
+    },
+  },
+  {
+    $setWindowFields: {
+      sortBy: {
+        _id: 1,
+      },
+      output: {
+        amountCumulative: {
+          $sum: '$amount',
+          window: {
+            documents: ['unbounded', 'current'],
+          },
+        },
+      },
+    },
+  },
+  {
+    $project: {
+      _id: 0,
+      Timestamp: '$_id',
+      Year: {
+        $year: {
+          date: '$_id',
+        },
+      },
+      Month: {
+        $month: {
+          date: '$_id',
+        },
+      },
+      Day: {
+        $dayOfMonth: {
+          date: '$_id',
+        },
+      },
+      Amount: {
+        $abs: {
+          $divide: ['$amount', 100],
+        },
+      },
+      Balance: {
+        $abs: {
+          $divide: ['$amountCumulative', 100],
+        },
+      },
+    },
+  },
+];
+
+/**
  * Pipeline for calculating number of transactions
  * and total spending per transaction category for
  * specified account

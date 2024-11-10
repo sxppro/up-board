@@ -1,4 +1,4 @@
-import { AccountBalanceHistory } from '@/server/schemas';
+import { BalanceHistory } from '@/server/schemas';
 import { DbTransactionResource } from '@/types/custom';
 import { tz } from '@date-fns/tz';
 import { clsx, type ClassValue } from 'clsx';
@@ -102,7 +102,7 @@ export const calcPercentDiff = (a: number, b: number) => ((a - b) / b) * 100;
  * @param data
  * @returns
  */
-export const addFormattedDate = (data: AccountBalanceHistory[] | undefined) => {
+export const addFormattedDate = (data: BalanceHistory[] | undefined) => {
   return data
     ? data.map(({ Day, Month, Year, ...rest }) => {
         const date = new Date(Year, Month - 1, Day);

@@ -3,9 +3,9 @@ import QueryProvider from '@/components/providers/query-provider';
 import TransactionsList from '@/components/tables/transactions-list';
 import { Separator } from '@/components/ui/separator';
 import {
-  getCategoryInfoHistory,
   getIOStats,
   getMerchantInfo,
+  getMerchantInfoHistory,
   getTransactionsByDay,
 } from '@/db';
 import { now } from '@/utils/constants';
@@ -31,31 +31,17 @@ const MerchantPage = async ({ params }: { params: { name: string } }) => {
   const stats = await getIOStats({
     match: { 'attributes.description': merchant },
   });
-  const statsHistorical = await getCategoryInfoHistory(
-    {
-      from: startOfMonth(subMonths(now, 12)),
-      to: now,
-    },
-    'parent',
-    { match: { 'attributes.description': merchant }, groupBy: 'monthly' }
-  );
-  // Map of categories a merchant is categorised as
-  // (to account for multiple categories a
-  // merchant can be categorised as)
-  const merchantCategoryMap = new Map<string, string>();
-  const chartStats = statsHistorical.map(({ month, year, categories }) => {
-    const date =
-      month && year
-        ? format(new Date(year, month - 1), 'LLL yy')
-        : format(new Date(year, 0, 1), 'yyyy');
-    const remappedElem: any = {
-      FormattedDate: date,
+  const statsHistorical = await getMerchantInfoHistory(merchant, {
+    from: startOfMonth(subMonths(now, 12)),
+    to: now,
+  });
+  const chartStats = statsHistorical.map(({ Timestamp, ...rest }) => {
+    const formattedDate = format(Timestamp, 'LLL yy');
+    return {
+      ...rest,
+      Timestamp,
+      FormattedDate: formattedDate,
     };
-    categories.forEach(({ amount, category, categoryName }) => {
-      merchantCategoryMap.set(category, categoryName);
-      remappedElem[categoryName] = amount;
-    });
-    return remappedElem;
   });
 
   return (
@@ -89,8 +75,8 @@ const MerchantPage = async ({ params }: { params: { name: string } }) => {
       <ExpenseCategoriesBar
         data={chartStats}
         index="FormattedDate"
-        categories={Array.from(merchantCategoryMap, ([_, value]) => value)}
-        colors={Array.from(merchantCategoryMap, ([key]) => `up-${key}`)}
+        categories={['Amount']}
+        colors={[`up-${merchantInfo[0].parentCategory}`]}
       />
       <QueryProvider>
         <TransactionsList transactions={transactions} />

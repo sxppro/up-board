@@ -12,9 +12,9 @@ import {
   TagInfoSchema,
   TransactionGroupByDay,
   TransactionIOEnum,
-  type AccountBalanceHistory,
   type AccountInfo,
   type AccountMonthlyInfo,
+  type BalanceHistory,
   type DateRange,
   type TagInfo,
   type TransactionCategoryInfo,
@@ -50,6 +50,7 @@ import {
   groupByDay,
   groupByMerchant,
   groupByTag,
+  groupMerchantByDay,
   searchTransactions as searchTx,
   statsByTag,
   statsIO,
@@ -303,7 +304,7 @@ export const getAccountBalanceHistorical = async (
       'transactions'
     );
     if (transactions) {
-      const cursor = transactions.aggregate<AccountBalanceHistory>(
+      const cursor = transactions.aggregate<BalanceHistory>(
         groupBalanceByDay(dateRange, accountId)
       );
       const results = await cursor.toArray();
@@ -484,6 +485,36 @@ export const getMerchantInfo = async (
         categoryName: categories.get(category),
         parentCategoryName: parentCategories.get(parentCategory),
       }));
+    } else {
+      return [];
+    }
+  } catch (err) {
+    console.error(err);
+    return [];
+  }
+};
+
+/**
+ * Grouped statistics by merchant by month
+ * @param merchant
+ * @param dateRange
+ * @returns
+ */
+export const getMerchantInfoHistory = async (
+  merchant: string,
+  dateRange: DateRange
+) => {
+  try {
+    const transactions = await connectToCollection<DbTransactionResource>(
+      'up',
+      'transactions'
+    );
+    if (transactions) {
+      const cursor = transactions.aggregate<BalanceHistory>(
+        groupMerchantByDay(merchant, dateRange)
+      );
+      const results = await cursor.toArray();
+      return results;
     } else {
       return [];
     }

@@ -198,7 +198,7 @@ export type AccountMonthlyInfo = z.infer<typeof AccountMonthlyInfoSchema>;
  * ! Note: until you add a data transformer to the query client
  * ! timestamp is an ISO string on the client
  */
-export const AccountBalanceHistorySchema = z.object({
+export const BalanceHistorySchema = z.object({
   Timestamp: z.date(),
   Year: z.number(),
   Month: z.number(),
@@ -206,7 +206,7 @@ export const AccountBalanceHistorySchema = z.object({
   Amount: z.number(),
   Balance: z.number(),
 });
-export type AccountBalanceHistory = z.infer<typeof AccountBalanceHistorySchema>;
+export type BalanceHistory = z.infer<typeof BalanceHistorySchema>;
 
 export const CategoryInfoSchema = z.object({
   id: z.string(),
