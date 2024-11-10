@@ -1,5 +1,6 @@
 'use client';
 
+import InfoTooltip from '@/components/core/info-tooltip';
 import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
 import { getDateRanges } from '@/utils/constants';
@@ -92,6 +93,10 @@ const CumulativeSnapshot = ({
     type: 'expense',
     options: {
       limit: 4,
+      sort: {
+        amount: 1,
+        transactions: -1,
+      },
     },
   });
 
@@ -325,7 +330,12 @@ const CumulativeSnapshot = ({
           </TabGroup>
           <div className="flex flex-col py-4 sm:p-4">
             <div className="flex-1 flex flex-col gap-1">
-              <p className="font-bold">Top Categories</p>
+              <div className="flex gap-1">
+                <span className="font-bold">Top Categories</span>
+                <InfoTooltip>
+                  <p>Subcategories ordered by total expenditure</p>
+                </InfoTooltip>
+              </div>
               <div className="flex flex-col gap-1">
                 {expenseCategories
                   ? expenseCategories.map(
@@ -358,17 +368,20 @@ const CumulativeSnapshot = ({
             </div>
             <Separator className="my-4" />
             <div className="flex-1 flex flex-col gap-1">
-              <p className="font-bold">Top Merchants</p>
-              <div className="flex flex-col gap-1">
+              <div className="flex gap-1">
+                <span className="font-bold">Top Merchants</span>
+                <InfoTooltip>
+                  <p>Merchants ordered by total expenditure</p>
+                </InfoTooltip>
+              </div>
+              <div className="flex flex-col items-center gap-1">
                 {merchants
-                  ? merchants.map(({ description, amount }) => (
+                  ? merchants.map(({ name, amount }) => (
                       <div
-                        key={description}
+                        key={name}
                         className="w-full flex h-8 items-center overflow-hidden"
                       >
-                        <p className="flex-1 text-subtle truncate">
-                          {description}
-                        </p>
+                        <p className="flex-1 text-subtle truncate">{name}</p>
                         <span>{formatCurrency(amount)}</span>
                       </div>
                     ))

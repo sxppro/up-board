@@ -28,6 +28,8 @@ export type DateRangeGroupBy = z.infer<typeof DateRangeGroupBySchema>;
 
 export const Merchant = z.object({
   name: z.string(),
+  amount: z.number(),
+  transactions: z.number(),
   category: z.string(),
   categoryName: z.string().optional(),
   parentCategory: z.string(),
@@ -105,13 +107,6 @@ export const TransactionCategoryInfoHistoryRawSchema = z.object({
 export type TransactionCategoryInfoHistoryRaw = z.infer<
   typeof TransactionCategoryInfoHistoryRawSchema
 >;
-
-export const TransactionIncomeInfoSchema = z.object({
-  description: z.string(),
-  amount: z.number(),
-  transactions: z.number(),
-});
-export type TransactionIncomeInfo = z.infer<typeof TransactionIncomeInfoSchema>;
 
 export const TransactionIO = z.enum(['income', 'expense']);
 export type TransactionIOEnum = z.infer<typeof TransactionIO>;

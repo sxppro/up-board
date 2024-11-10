@@ -188,12 +188,17 @@ export const filterByDateRange = (
  * @param options
  * @returns
  */
-export const findDistinctMerchants = (options: RetrievalOptions) => {
-  const { sort } = options;
+export const findDistinctMerchants = (
+  merchant?: string,
+  options?: RetrievalOptions
+) => {
   return [
     {
       $match: {
         'attributes.isCategorizable': true,
+        ...(merchant && {
+          'attributes.description': merchant,
+        }),
       },
     },
     {
@@ -224,8 +229,8 @@ export const findDistinctMerchants = (options: RetrievalOptions) => {
         },
       },
     },
-    ...(sort
-      ? [{ $sort: sort }]
+    ...(options?.sort
+      ? [{ $sort: options.sort }]
       : [
           {
             $sort: {
@@ -708,63 +713,77 @@ export const groupByDay = (
  * @returns
  */
 export const groupByMerchant = (
-  dateRange: DateRange,
-  accountId: string,
   options: RetrievalOptions,
+  dateRange?: DateRange,
+  accountId?: string,
   type?: TransactionIOEnum
 ) => {
-  const { limit } = options;
+  const { match, limit, sort } = options;
   return [
     {
       $match: {
-        'relationships.account.data.id': accountId,
-        'attributes.createdAt': {
-          $gte: dateRange.from,
-          $lte: dateRange.to,
-        },
         'attributes.isCategorizable': true,
+        ...(dateRange && {
+          'attributes.createdAt': {
+            $gte: dateRange.from,
+            $lte: dateRange.to,
+          },
+        }),
+        ...(accountId && {
+          'relationships.account.data.id': accountId,
+        }),
+        ...(match && match),
         ...(type && filterIO(type)),
       },
     },
     {
-      $project: {
-        description: {
-          $ifNull: ['$attributes.description', 'null'],
-        },
-        amount: {
-          $toDecimal: '$attributes.amount.value',
-        },
+      $sort: {
+        'attributes.createdAt': 1,
       },
     },
     {
       $group: {
-        _id: '$description',
+        _id: { $ifNull: ['$attributes.description', 'Unidentified Merchant'] },
         amount: {
-          $sum: '$amount',
+          $sum: '$attributes.amount.valueInBaseUnits',
         },
         transactions: {
           $sum: 1,
+        },
+        category: {
+          $last: '$relationships.category.data.id',
+        },
+        parentCategory: {
+          $last: '$relationships.parentCategory.data.id',
         },
       },
     },
     {
       $project: {
         _id: 0,
-        description: '$_id',
+        name: '$_id',
         amount: {
-          $abs: {
-            $toDouble: '$amount',
-          },
+          $divide: ['$amount', 100],
         },
         transactions: 1,
+        category: {
+          $ifNull: ['$category', 'uncategorised'],
+        },
+        parentCategory: {
+          $ifNull: ['$parentCategory', 'uncategorised'],
+        },
       },
     },
-    {
-      $sort: {
-        amount: -1,
-        transactions: -1,
-      },
-    },
+    ...(sort
+      ? [{ $sort: sort }]
+      : [
+          {
+            $sort: {
+              amount: -1,
+              transactions: -1,
+            },
+          },
+        ]),
     ...(limit ? [{ $limit: limit }] : [{ $limit: 5 }]),
   ];
 };

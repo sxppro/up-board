@@ -11,7 +11,6 @@ import {
   RetrievalOptions,
   TagInfoSchema,
   TransactionGroupByDay,
-  TransactionIncomeInfo,
   TransactionIOEnum,
   type AccountBalanceHistory,
   type AccountInfo,
@@ -455,7 +454,10 @@ export const getAccountStats = async (
  * List of all merchants
  * @returns
  */
-export const getMerchants = async (options: RetrievalOptions) => {
+export const getMerchants = async (
+  merchant?: string,
+  options?: RetrievalOptions
+) => {
   try {
     const transactions = await connectToCollection<DbTransactionResource>(
       'up',
@@ -463,7 +465,7 @@ export const getMerchants = async (options: RetrievalOptions) => {
     );
     if (transactions) {
       const cursor = transactions.aggregate<Merchant>(
-        findDistinctMerchants(options)
+        findDistinctMerchants(merchant, options)
       );
       const merchants = await cursor.toArray();
       const categories = await mapCategories('child');
@@ -485,13 +487,13 @@ export const getMerchants = async (options: RetrievalOptions) => {
 };
 
 /**
- * Group income by merchant
+ * Grouped statistics by merchant
  * @param dateRange
  * @returns
  */
 export const getMerchantInfo = async (
-  dateRange: DateRange,
   options: RetrievalOptions,
+  dateRange?: DateRange,
   type?: TransactionIOEnum
 ) => {
   try {
@@ -506,11 +508,19 @@ export const getMerchantInfo = async (
       limit: 1,
     });
     if (transactions && transactionAcc[0]) {
-      const cursor = transactions.aggregate<TransactionIncomeInfo>(
-        groupByMerchant(dateRange, transactionAcc[0].id, options, type)
+      const cursor = transactions.aggregate<Merchant>(
+        groupByMerchant(options, dateRange, undefined, type)
       );
       const results = await cursor.toArray();
-      return results;
+      const categories = await mapCategories('child');
+      const parentCategories = await mapCategories('parent');
+      return results.map(({ category, parentCategory, ...rest }) => ({
+        ...rest,
+        category,
+        parentCategory,
+        categoryName: categories.get(category),
+        parentCategoryName: parentCategories.get(parentCategory),
+      }));
     } else {
       return [];
     }

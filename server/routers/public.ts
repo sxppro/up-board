@@ -23,13 +23,13 @@ import {
   AccountMonthlyInfoSchema,
   CumulativeIOSchema,
   DateRangeSchema,
+  Merchant,
   RetrievalOpts,
   TransactionCategoryInfoHistory,
   TransactionCategoryInfoHistorySchema,
   TransactionCategoryInfoSchema,
   TransactionCategoryTypeSchema,
   TransactionIdSchema,
-  TransactionIncomeInfoSchema,
   TransactionIO,
   TransactionResourceFilteredSchema,
   TransactionRetrievalOptionsSchema,
@@ -186,10 +186,10 @@ export const publicRouter = router({
         type: TransactionIO.optional(),
       })
     )
-    .output(z.array(TransactionIncomeInfoSchema))
+    .output(z.array(Merchant))
     .query(async ({ input }) => {
       const { dateRange, options, type } = input;
-      return await getMerchantInfo(dateRange, options || {}, type);
+      return await getMerchantInfo(options || {}, dateRange, type);
     }),
   getMonthlyInfo: publicProcedure
     .input(
