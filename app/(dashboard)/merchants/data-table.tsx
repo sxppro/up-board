@@ -13,7 +13,7 @@ import {
   getPaginationRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -24,6 +24,7 @@ const MerchantsDataTable = <TData, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) => {
+  const inputRef = useRef<HTMLInputElement>(null);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
   const table = useReactTable({
@@ -42,6 +43,29 @@ const MerchantsDataTable = <TData, TValue>({
       columnFilters,
     },
   });
+
+  const focus = () => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  };
+
+  /**
+   * Focus the search input when pressing Cmd/Ctrl + F
+   */
+  useEffect(() => {
+    const down = (e: KeyboardEvent) => {
+      console.log(e);
+
+      if (e.key === 'f' && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault();
+        focus();
+      }
+    };
+    document.addEventListener('keydown', down);
+    return () => document.removeEventListener('keydown', down);
+  }, []);
+
   return (
     <div>
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
@@ -63,6 +87,7 @@ const MerchantsDataTable = <TData, TValue>({
             onChange={(e) =>
               table.getColumn('name')?.setFilterValue(e.target.value)
             }
+            ref={inputRef}
           />
         </div>
       </div>
