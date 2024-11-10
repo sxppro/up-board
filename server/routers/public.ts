@@ -244,9 +244,9 @@ export const publicRouter = router({
       if (transactionAcc[0]) {
         const { dateRange, options } = input;
         return await getTransactionsByDay(
+          options,
           transactionAcc[0].id,
-          dateRange,
-          options
+          dateRange
         );
       } else {
         throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' });

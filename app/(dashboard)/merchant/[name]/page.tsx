@@ -1,14 +1,21 @@
+import QueryProvider from '@/components/providers/query-provider';
+import TransactionsList from '@/components/tables/transactions-list';
 import { Separator } from '@/components/ui/separator';
+import { checkMerchant, getTransactionsByDay } from '@/db';
 import { redirect } from 'next/navigation';
 
-const MerchantPage = ({ params }: { params: { name: string } }) => {
+const MerchantPage = async ({ params }: { params: { name: string } }) => {
   const { name } = params;
+  const merchant = decodeURIComponent(name);
+  const check = await checkMerchant(merchant);
 
-  if (!name) {
+  if (!check) {
     return redirect('/merchants');
   }
 
-  const merchant = decodeURIComponent(name);
+  const transactions = await getTransactionsByDay({
+    match: { 'attributes.description': merchant },
+  });
 
   return (
     <section
@@ -24,6 +31,9 @@ const MerchantPage = ({ params }: { params: { name: string } }) => {
         </h1>
         <Separator className="mt-2" />
       </div>
+      <QueryProvider>
+        <TransactionsList transactions={transactions} />
+      </QueryProvider>
     </section>
   );
 };

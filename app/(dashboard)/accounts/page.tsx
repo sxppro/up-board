@@ -41,9 +41,12 @@ const AccountsPage = async ({ searchParams }: PageProps) => {
   const transactional = accounts.at(0);
   const accountId = queryAccountId || transactional?.id || '';
   const account = accounts.find((account) => account.id === accountId);
-  const transactions = await getTransactionsByDay(accountId, undefined, {
-    limit: 7,
-  });
+  const transactions = await getTransactionsByDay(
+    {
+      limit: 7,
+    },
+    accountId
+  );
   const avgMonthStats = (
     await getAccountStats(
       accountId,

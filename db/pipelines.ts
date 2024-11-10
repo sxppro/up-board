@@ -593,9 +593,9 @@ export const groupByCategoryAndDate = (
  * @returns limit otherwise last 60 days
  */
 export const groupByDay = (
-  accountId: string,
-  dateRange?: DateRange,
-  options?: RetrievalOptions
+  options?: RetrievalOptions,
+  accountId?: string,
+  dateRange?: DateRange
 ) => {
   return [
     {
@@ -606,8 +606,8 @@ export const groupByDay = (
             $lte: dateRange.to,
           },
         }),
+        ...(accountId && { 'relationships.account.data.id': accountId }),
         ...(options?.match && options.match),
-        'relationships.account.data.id': accountId,
       },
     },
     {

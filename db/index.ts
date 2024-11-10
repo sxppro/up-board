@@ -229,6 +229,32 @@ export const searchTransactions = async (search: string) => {
 };
 
 /**
+ * Check if merchant exists
+ * @param merchant
+ * @returns
+ */
+export const checkMerchant = async (merchant: string) => {
+  try {
+    const transactions = await connectToCollection<DbTransactionResource>(
+      'up',
+      'transactions'
+    );
+    if (transactions) {
+      const cursor = transactions.find({ 'attributes.description': merchant });
+      const results = await cursor.toArray();
+      return results.length > 0;
+    } else {
+      return !!transactionsMock.data.find(
+        ({ attributes }) => attributes.description === merchant
+      );
+    }
+  } catch (err) {
+    console.error(err);
+    return false;
+  }
+};
+
+/**
  * Retrieves list of accounts
  * @param accountType transactional or saver
  * @returns
@@ -801,9 +827,9 @@ export const getTagInfo = async (tag: string): Promise<TagInfo | undefined> => {
  * @returns
  */
 export const getTransactionsByDay = async (
-  accountId: string,
-  dateRange?: DateRange,
-  options?: RetrievalOptions
+  options?: RetrievalOptions,
+  accountId?: string,
+  dateRange?: DateRange
 ) => {
   try {
     const transactions = await connectToCollection<DbTransactionResource>(
@@ -812,7 +838,7 @@ export const getTransactionsByDay = async (
     );
     if (transactions) {
       const cursor = transactions.aggregate<TransactionGroupByDay>(
-        groupByDay(accountId, dateRange, options)
+        groupByDay(options, accountId, dateRange)
       );
       const results = (await cursor.toArray()).map(
         ({ transactions, ...rest }) => ({
