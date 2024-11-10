@@ -10,6 +10,7 @@ import {
 } from '@/db';
 import { now } from '@/utils/constants';
 import { formatCurrency } from '@/utils/helpers';
+import { tz } from '@date-fns/tz';
 import { Card } from '@tremor/react';
 import { format, startOfMonth, subMonths } from 'date-fns';
 import { redirect } from 'next/navigation';
@@ -32,7 +33,7 @@ const MerchantPage = async ({ params }: { params: { name: string } }) => {
     match: { 'attributes.description': merchant },
   });
   const statsHistorical = await getMerchantInfoHistory(merchant, {
-    from: startOfMonth(subMonths(now, 12)),
+    from: startOfMonth(subMonths(now, 12), { in: tz('+00:00') }),
     to: now,
   });
   const chartStats = statsHistorical.map(({ Timestamp, ...rest }) => {
