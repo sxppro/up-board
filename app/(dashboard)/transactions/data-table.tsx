@@ -33,12 +33,16 @@ export const TransactionsDataTable = <TData, TValue>({
   search,
 }: DataTableProps<TData, TValue>) => {
   const [sorting, setSorting] = useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([
-    {
-      id: 'description',
-      value: search,
-    },
-  ]);
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>(
+    search
+      ? [
+          {
+            id: 'description',
+            value: search,
+          },
+        ]
+      : []
+  );
 
   const table = useReactTable({
     data,

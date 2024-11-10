@@ -324,7 +324,11 @@ export const groupBalanceByDay = (dateRange: DateRange, accountId: string) => [
  * @param dateRange from should be start of month
  * @returns
  */
-export const groupMerchantByDay = (merchant: string, dateRange: DateRange) => [
+export const groupMerchantByDay = (
+  merchant: string,
+  dateRange: DateRange,
+  earliestTx?: Date
+) => [
   {
     $match: {
       'attributes.description': merchant,
@@ -349,7 +353,10 @@ export const groupMerchantByDay = (merchant: string, dateRange: DateRange) => [
       range: {
         step: 1,
         unit: 'month',
-        bounds: [dateRange.from, dateRange.to],
+        bounds:
+          earliestTx && earliestTx < dateRange.from
+            ? [earliestTx, dateRange.to]
+            : [dateRange.from, dateRange.to],
       },
     },
   },

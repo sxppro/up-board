@@ -510,8 +510,17 @@ export const getMerchantInfoHistory = async (
       'transactions'
     );
     if (transactions) {
+      const tx = transactions
+        .find({ 'attributes.description': merchant })
+        .sort({ 'attributes.createdAt': 1 })
+        .limit(1);
+      const earliestTx = (await tx.toArray())[0];
       const cursor = transactions.aggregate<BalanceHistory>(
-        groupMerchantByDay(merchant, dateRange)
+        groupMerchantByDay(
+          merchant,
+          dateRange,
+          earliestTx?.attributes?.createdAt
+        )
       );
       const results = await cursor.toArray();
       return results;

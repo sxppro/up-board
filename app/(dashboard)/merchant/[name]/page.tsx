@@ -28,6 +28,7 @@ const MerchantPage = async ({ params }: { params: { name: string } }) => {
 
   const transactions = await getTransactionsByDay({
     match: { 'attributes.description': merchant },
+    limit: 200,
   });
   const stats = await getIOStats({
     match: { 'attributes.description': merchant },
