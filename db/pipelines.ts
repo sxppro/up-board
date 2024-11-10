@@ -184,64 +184,6 @@ export const filterByDateRange = (
 };
 
 /**
- * Retrieves distinct merchants and category
- * @param options
- * @returns
- */
-export const findDistinctMerchants = (
-  merchant?: string,
-  options?: RetrievalOptions
-) => {
-  return [
-    {
-      $match: {
-        'attributes.isCategorizable': true,
-        ...(merchant && {
-          'attributes.description': merchant,
-        }),
-      },
-    },
-    {
-      $sort: {
-        'attributes.createdAt': 1,
-      },
-    },
-    {
-      $group: {
-        _id: '$attributes.description',
-        category: {
-          $last: '$relationships.category.data.id',
-        },
-        parentCategory: {
-          $last: '$relationships.parentCategory.data.id',
-        },
-      },
-    },
-    {
-      $project: {
-        _id: 0,
-        name: '$_id',
-        category: {
-          $ifNull: ['$category', 'uncategorised'],
-        },
-        parentCategory: {
-          $ifNull: ['$parentCategory', 'uncategorised'],
-        },
-      },
-    },
-    ...(options?.sort
-      ? [{ $sort: options.sort }]
-      : [
-          {
-            $sort: {
-              name: 1,
-            },
-          },
-        ]),
-  ];
-};
-
-/**
  * Retrieves all unique tags
  * @returns
  */
@@ -784,7 +726,7 @@ export const groupByMerchant = (
             },
           },
         ]),
-    ...(limit ? [{ $limit: limit }] : [{ $limit: 5 }]),
+    ...(limit ? [{ $limit: limit }] : []),
   ];
 };
 

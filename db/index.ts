@@ -43,7 +43,6 @@ import { CollectionOptions, Document, MongoBulkWriteError } from 'mongodb';
 import client from './connect';
 import {
   filterByDateRange,
-  findDistinctMerchants,
   findDistinctTags,
   groupBalanceByDay,
   groupByCategory,
@@ -443,42 +442,6 @@ export const getAccountStats = async (
         console.error(res.error);
         return [];
       }
-    }
-  } catch (err) {
-    console.error(err);
-    return [];
-  }
-};
-
-/**
- * List of all merchants
- * @returns
- */
-export const getMerchants = async (
-  merchant?: string,
-  options?: RetrievalOptions
-) => {
-  try {
-    const transactions = await connectToCollection<DbTransactionResource>(
-      'up',
-      'transactions'
-    );
-    if (transactions) {
-      const cursor = transactions.aggregate<Merchant>(
-        findDistinctMerchants(merchant, options)
-      );
-      const merchants = await cursor.toArray();
-      const categories = await mapCategories('child');
-      const parentCategories = await mapCategories('parent');
-      return merchants.map(({ category, parentCategory, ...rest }) => ({
-        ...rest,
-        category,
-        parentCategory,
-        categoryName: categories.get(category),
-        parentCategoryName: parentCategories.get(parentCategory),
-      }));
-    } else {
-      return [];
     }
   } catch (err) {
     console.error(err);
