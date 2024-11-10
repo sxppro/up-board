@@ -37,7 +37,9 @@ const SpendingBarChart = ({
     const remappedElem: any = {
       FormattedDate: date,
     };
-    categories.map(({ amount, category }) => (remappedElem[category] = amount));
+    categories.map(
+      ({ amount, categoryName }) => (remappedElem[categoryName] = amount)
+    );
     return remappedElem;
   });
   const onValueChange = (e: EventProps & { FormattedDate: string }) => {

@@ -51,8 +51,8 @@ import {
   groupByMerchant,
   groupByTag,
   searchTransactions as searchTx,
-  statsByAccount,
   statsByTag,
+  statsIO,
   sumIOByDay,
 } from './pipelines';
 
@@ -229,32 +229,6 @@ export const searchTransactions = async (search: string) => {
 };
 
 /**
- * Check if merchant exists
- * @param merchant
- * @returns
- */
-export const checkMerchant = async (merchant: string) => {
-  try {
-    const transactions = await connectToCollection<DbTransactionResource>(
-      'up',
-      'transactions'
-    );
-    if (transactions) {
-      const cursor = transactions.find({ 'attributes.description': merchant });
-      const results = await cursor.toArray();
-      return results.length > 0;
-    } else {
-      return !!transactionsMock.data.find(
-        ({ attributes }) => attributes.description === merchant
-      );
-    }
-  } catch (err) {
-    console.error(err);
-    return false;
-  }
-};
-
-/**
  * Retrieves list of accounts
  * @param accountType transactional or saver
  * @returns
@@ -423,7 +397,7 @@ export const getIOStats = async (
     );
     if (transactions) {
       const cursor = transactions.aggregate<AccountMonthlyInfo>(
-        statsByAccount(options || {}, dateRange, accountId, avg)
+        statsIO(options || {}, dateRange, accountId, avg)
       );
       const results = await cursor.toArray();
       return results;
@@ -710,7 +684,7 @@ export const getCategoryInfoHistory = async (
     });
     if (transactions && transactionAcc[0]) {
       const cursor = transactions.aggregate<TransactionCategoryInfoHistoryRaw>(
-        groupByCategoryAndDate(dateRange, transactionAcc[0].id, type, options)
+        groupByCategoryAndDate(options, type, dateRange, transactionAcc[0].id)
       );
       const results = await cursor.toArray();
       return results;
@@ -727,8 +701,9 @@ export const getCategoryInfoHistory = async (
                 ? relationships.parent.data === null
                 : relationships.parent.data !== null
             )
-            .map(({ attributes }) => ({
-              category: attributes.name,
+            .map(({ id, attributes }) => ({
+              category: id,
+              categoryName: attributes.name,
               amount: parseFloat(faker.finance.amount()),
               transactions: faker.number.int({ max: 100 }),
             })),

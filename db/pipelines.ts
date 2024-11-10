@@ -444,24 +444,23 @@ export const groupByCategory = (
  * @returns aggregation pipeline definition
  */
 export const groupByCategoryAndDate = (
-  dateRange: DateRange,
-  accountId: string,
+  options: RetrievalOptions,
   type: 'child' | 'parent',
-  options: RetrievalOptions
+  dateRange?: DateRange,
+  accountId?: string
 ) => {
   const { match, groupBy } = options;
   return [
     {
       $match: {
-        'relationships.account.data.id': accountId,
-        'attributes.createdAt': {
-          $gte: dateRange.from,
-          $lte: dateRange.to,
-        },
+        ...(dateRange && {
+          'attributes.createdAt': {
+            $gte: dateRange.from,
+            $lte: dateRange.to,
+          },
+        }),
+        ...(accountId && { 'relationships.account.data.id': accountId }),
         'attributes.isCategorizable': true,
-        'attributes.amount.valueInBaseUnits': {
-          $lt: 0,
-        },
         ...(match && match),
       },
     },
@@ -539,6 +538,9 @@ export const groupByCategoryAndDate = (
     {
       $project: {
         category: {
+          $ifNull: ['$category._id', 'uncategorised'],
+        },
+        categoryName: {
           $ifNull: ['$category.attributes.name', 'Uncategorised'],
         },
         amount: {
@@ -560,6 +562,7 @@ export const groupByCategoryAndDate = (
         categories: {
           $addToSet: {
             category: '$category',
+            categoryName: '$categoryName',
             amount: '$amount',
             transactions: '$transactions',
           },
@@ -812,7 +815,7 @@ export const searchTransactions = (searchTerm: string) => [
  * @param groupBy how to group stats
  * @returns aggregation pipeline definition
  */
-export const statsByAccount = (
+export const statsIO = (
   options: RetrievalOptions,
   dateRange?: DateRange,
   accountId?: string,

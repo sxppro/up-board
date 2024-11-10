@@ -128,7 +128,7 @@ export const publicRouter = router({
           FormattedDate: date,
         };
         categories.map(
-          ({ amount, category }) => (remappedElem[category] = amount)
+          ({ amount, categoryName }) => (remappedElem[categoryName] = amount)
         );
         return remappedElem;
       });
