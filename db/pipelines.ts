@@ -538,13 +538,13 @@ export const groupByCategory = (
 };
 
 /**
- * Pipeline for calculating number of transactions
- * and total spending per transaction category
- * per day/month/year for specified account
- * @param from
- * @param to
- * @param accountId account ID
+ * Number of expenses and total spending per
+ * transaction category grouped by day/month/year
+ * for specified account
+ * @param options
  * @param type category type
+ * @param dateRange
+ * @param accountId
  * @returns aggregation pipeline definition
  */
 export const groupByCategoryAndDate = (
@@ -565,6 +565,10 @@ export const groupByCategoryAndDate = (
         }),
         ...(accountId && { 'relationships.account.data.id': accountId }),
         'attributes.isCategorizable': true,
+        // Expenses only
+        'attributes.amount.valueInBaseUnits': {
+          $lt: 0,
+        },
         ...(match && match),
       },
     },
