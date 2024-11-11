@@ -5,7 +5,8 @@ import {
   TransactionRetrievalOptions,
 } from '@/server/schemas';
 import { TZ } from '@/utils/constants';
-import { TZDate } from '@date-fns/tz';
+import { tz, TZDate } from '@date-fns/tz';
+import { startOfMonth } from 'date-fns';
 
 const filterIO = (type: TransactionIOEnum) => ({
   'attributes.amount.valueInBaseUnits': {
@@ -355,7 +356,7 @@ export const groupMerchantByDay = (
         unit: 'month',
         bounds:
           earliestTx && earliestTx < dateRange.from
-            ? [earliestTx, dateRange.to]
+            ? [startOfMonth(earliestTx, { in: tz('+00:00') }), dateRange.to]
             : [dateRange.from, dateRange.to],
       },
     },
