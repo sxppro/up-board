@@ -46,7 +46,7 @@ export const UserProfileMobile = ({ user }: UserProfileProps) => {
         aria-label="User settings"
         variant="ghost"
         className={cn(
-          'group flex items-center rounded-md p-1 text-sm font-medium text-gray-900 dark:text-gray-50 hover:bg-gray-100 data-[state=open]:bg-gray-100 data-[state=open]:bg-gray-400/10 hover:dark:bg-gray-400/10'
+          'group flex items-center rounded-full p-1 text-sm font-medium text-gray-900 dark:text-gray-50 hover:bg-gray-100 data-[state=open]:bg-gray-100 data-[state=open]:bg-gray-400/10 hover:dark:bg-gray-400/10'
         )}
       >
         <Avatar className="size-8">

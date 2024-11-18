@@ -1,13 +1,13 @@
 import { siteConfig } from '@/app/siteConfig';
 import AccountsCarousel from '@/components/charts/accounts-carousel';
 import QueryProvider from '@/components/providers/query-provider';
-import TransactionPopover from '@/components/transaction-popover';
+import TransactionsList from '@/components/tables/transactions-list';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Separator } from '@/components/ui/separator';
-import { getAccounts, getAccountStats, getTransactionsByDay } from '@/db';
+import { getAccounts, getIOStats, getTransactionsByDay } from '@/db';
 import { PageProps } from '@/types/custom';
 import { now } from '@/utils/constants';
-import { cn, formatCurrency, formatDate } from '@/utils/helpers';
+import { cn, formatCurrency } from '@/utils/helpers';
 import {
   CurrencyDollar,
   HandCoins,
@@ -41,17 +41,20 @@ const AccountsPage = async ({ searchParams }: PageProps) => {
   const transactional = accounts.at(0);
   const accountId = queryAccountId || transactional?.id || '';
   const account = accounts.find((account) => account.id === accountId);
-  const transactions = await getTransactionsByDay(accountId, undefined, {
-    limit: 7,
-  });
+  const transactions = await getTransactionsByDay(
+    {
+      limit: 7,
+    },
+    accountId
+  );
   const avgMonthStats = (
-    await getAccountStats(
-      accountId,
+    await getIOStats(
+      { groupBy: 'monthly' },
       {
         from: startOfMonth(subMonths(now, 13)),
         to: endOfMonth(subMonths(now, 1)),
       },
-      'monthly',
+      accountId,
       true
     )
   ).at(0);
@@ -71,33 +74,14 @@ const AccountsPage = async ({ searchParams }: PageProps) => {
           </h1>
           <Separator className="mt-2" />
         </div>
-        <AccountsCarousel accounts={accounts} selectedAccount={accountId} />
+        <AccountsCarousel accounts={accounts} />
         <Separator className="mb-2" />
       </section>
       <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
         <section aria-label="transactions" className="xl:col-span-2">
           <div className="flex flex-col gap-4">
             <QueryProvider>
-              {transactions.map(({ timestamp, transactions }) => (
-                <div key={timestamp.toISOString()}>
-                  <p className="text-lg font-bold">{formatDate(timestamp)}</p>
-                  <Separator className="mt-1" />
-                  {transactions.map(({ id, attributes }) => (
-                    <TransactionPopover key={id} id={id}>
-                      <div className="flex py-1.5 px-3 -mx-3 items-center text-sm font-medium overflow-hidden rounded-lg transition-colors cursor-pointer hover:bg-muted/50">
-                        <p className="flex-1 text-subtle truncate">
-                          {attributes.description}
-                        </p>
-                        <span>
-                          {formatCurrency(
-                            attributes.amount.valueInBaseUnits / 100
-                          )}
-                        </span>
-                      </div>
-                    </TransactionPopover>
-                  ))}
-                </div>
-              ))}
+              <TransactionsList transactions={transactions} />
             </QueryProvider>
           </div>
         </section>

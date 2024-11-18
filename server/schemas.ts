@@ -1,9 +1,8 @@
 import type { DbTransactionResource } from '@/types/custom';
+import { now } from '@/utils/constants';
 import { endOfDay, startOfDay } from 'date-fns';
 import type { SortDirection } from 'mongodb';
 import { z } from 'zod';
-
-const now = new Date();
 
 /**
  * Importing 3rd party types according to
@@ -27,9 +26,22 @@ export type DateRange = z.infer<typeof DateRangeSchema>;
 export const DateRangeGroupBySchema = z.enum(['daily', 'monthly', 'yearly']);
 export type DateRangeGroupBy = z.infer<typeof DateRangeGroupBySchema>;
 
+export const Merchant = z.object({
+  name: z.string(),
+  amount: z.number(),
+  transactions: z.number(),
+  category: z.string(),
+  categoryName: z.string().optional(),
+  parentCategory: z.string(),
+  parentCategoryName: z.string().optional(),
+});
+export type Merchant = z.infer<typeof Merchant>;
+
 export const RetrievalOpts = z.object({
+  match: z.record(z.string(), z.any()).optional(),
   sort: z.record(z.string(), SortDirection).optional(),
   limit: z.number().optional(),
+  groupBy: DateRangeGroupBySchema.optional(),
 });
 export type RetrievalOptions = z.infer<typeof RetrievalOpts>;
 
@@ -85,22 +97,16 @@ export type TransactionCategoryInfoHistory = z.infer<
 >;
 
 export const TransactionCategoryInfoHistoryRawSchema = z.object({
-  month: z.number(),
+  day: z.number().optional(),
+  month: z.number().optional(),
   year: z.number(),
   categories: z.array(
-    TransactionCategoryInfoSchema.omit({ categoryName: true })
+    TransactionCategoryInfoSchema.omit({ parentCategory: true })
   ),
 });
 export type TransactionCategoryInfoHistoryRaw = z.infer<
   typeof TransactionCategoryInfoHistoryRawSchema
 >;
-
-export const TransactionIncomeInfoSchema = z.object({
-  description: z.string(),
-  amount: z.number(),
-  transactions: z.number(),
-});
-export type TransactionIncomeInfo = z.infer<typeof TransactionIncomeInfoSchema>;
 
 export const TransactionIO = z.enum(['income', 'expense']);
 export type TransactionIOEnum = z.infer<typeof TransactionIO>;
@@ -192,7 +198,7 @@ export type AccountMonthlyInfo = z.infer<typeof AccountMonthlyInfoSchema>;
  * ! Note: until you add a data transformer to the query client
  * ! timestamp is an ISO string on the client
  */
-export const AccountBalanceHistorySchema = z.object({
+export const BalanceHistorySchema = z.object({
   Timestamp: z.date(),
   Year: z.number(),
   Month: z.number(),
@@ -200,7 +206,7 @@ export const AccountBalanceHistorySchema = z.object({
   Amount: z.number(),
   Balance: z.number(),
 });
-export type AccountBalanceHistory = z.infer<typeof AccountBalanceHistorySchema>;
+export type BalanceHistory = z.infer<typeof BalanceHistorySchema>;
 
 export const CategoryInfoSchema = z.object({
   id: z.string(),

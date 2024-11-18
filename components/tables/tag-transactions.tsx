@@ -1,5 +1,5 @@
 import { columns } from '@/app/(dashboard)/transactions/columns';
-import { DataTable } from '@/app/(dashboard)/transactions/data-table';
+import { TransactionsDataTable } from '@/app/(dashboard)/transactions/data-table';
 import { getCategories, getTransactionsByTag, searchTransactions } from '@/db';
 import { filterTransactionFields } from '@/db/helpers';
 
@@ -15,7 +15,7 @@ const TransactionsByTag = async ({ tag, search }: TransactionsByTagProps) => {
   const categories = await getCategories('child');
 
   return (
-    <DataTable
+    <TransactionsDataTable
       columns={columns}
       data={data}
       options={categories}

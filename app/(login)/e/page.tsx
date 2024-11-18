@@ -1,6 +1,6 @@
 import { siteConfig } from '@/app/siteConfig';
 import { getCurrentUser } from '@/utils/auth';
-import { X } from 'lucide-react';
+import { X } from '@phosphor-icons/react/dist/ssr';
 import { Metadata, NextPage } from 'next';
 import { redirect } from 'next/navigation';
 

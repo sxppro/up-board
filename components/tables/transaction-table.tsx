@@ -1,5 +1,5 @@
 import { columns } from '@/app/(dashboard)/transactions/columns';
-import { DataTable } from '@/app/(dashboard)/transactions/data-table';
+import { TransactionsDataTable } from '@/app/(dashboard)/transactions/data-table';
 import { getCategories, getTransactionsByDate, searchTransactions } from '@/db';
 import { filterTransactionFields } from '@/db/helpers';
 import { subMonths } from 'date-fns';
@@ -27,7 +27,7 @@ const TransactionTable = async ({ search }: TransactionTableProps) => {
   const categories = await getCategories('child');
 
   return (
-    <DataTable
+    <TransactionsDataTable
       columns={columns}
       data={data}
       options={categories}

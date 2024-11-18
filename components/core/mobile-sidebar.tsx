@@ -11,8 +11,8 @@ import {
 import { cn } from '@/utils/helpers';
 import { focusRing } from '@/utils/tremor';
 import {
-  Bookmarks,
   ChartLine,
+  CurrencyDollar,
   Link as LinkIcon,
   List,
   ListBullets,
@@ -25,12 +25,12 @@ import { usePathname } from 'next/navigation';
 
 const navigation = [
   { name: 'Overview', href: siteConfig.baseLinks.home, icon: ChartLine },
-  { name: 'Accounts', href: siteConfig.baseLinks.accounts, icon: UserList },
   {
-    name: 'Categories',
-    href: siteConfig.baseLinks.categories,
-    icon: Bookmarks,
+    name: 'Spending',
+    href: siteConfig.baseLinks.spending,
+    icon: CurrencyDollar,
   },
+  { name: 'Accounts', href: siteConfig.baseLinks.accounts, icon: UserList },
   {
     name: 'Merchants',
     href: siteConfig.baseLinks.merchants,
@@ -81,9 +81,9 @@ export default function MobileSidebar() {
           <Button
             variant="ghost"
             aria-label="open sidebar"
-            className="group flex items-center rounded-md p-2 text-sm font-medium hover:bg-gray-100 data-[state=open]:bg-gray-100 data-[state=open]:bg-gray-400/10 hover:dark:bg-gray-400/10"
+            className="group flex items-center rounded-md size-10 text-sm font-medium hover:bg-gray-100 data-[state=open]:bg-gray-100 data-[state=open]:bg-gray-400/10 hover:dark:bg-gray-400/10"
           >
-            <List className="size-6 shrink-0 sm:size-5" aria-hidden="true" />
+            <List aria-hidden="true" />
           </Button>
         </SheetTrigger>
         <SheetContent className="sm:max-w-lg">

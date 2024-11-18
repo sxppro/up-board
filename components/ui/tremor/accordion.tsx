@@ -1,4 +1,5 @@
 // Tremor Accordion [v0.0.1]
+'use client';
 
 import { cn } from '@/utils/helpers';
 import * as AccordionPrimitives from '@radix-ui/react-accordion';

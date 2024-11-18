@@ -5,7 +5,7 @@ export const siteConfig = {
   baseLinks: {
     home: '/',
     accounts: '/accounts',
-    categories: '/categories',
+    spending: '/spending',
     merchants: '/merchants',
     transactions: '/transactions',
     tags: '/tags',

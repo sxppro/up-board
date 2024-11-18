@@ -7,16 +7,15 @@ import {
   AccountMonthlyInfoSchema,
   CategoryInfo,
   CumulativeIO,
+  Merchant,
   RetrievalOptions,
   TagInfoSchema,
   TransactionGroupByDay,
-  TransactionIncomeInfo,
   TransactionIOEnum,
-  type AccountBalanceHistory,
   type AccountInfo,
   type AccountMonthlyInfo,
+  type BalanceHistory,
   type DateRange,
-  type DateRangeGroupBy,
   type TagInfo,
   type TransactionCategoryInfo,
   type TransactionCategoryInfoHistoryRaw,
@@ -35,21 +34,26 @@ import { outputTransactionFields } from '@/utils/helpers';
 import { getTransactionById as getUpTransactionById } from '@/utils/up';
 import { faker } from '@faker-js/faker';
 import { UUID } from 'bson';
-import { addDays, addMonths, addYears } from 'date-fns';
+import {
+  eachDayOfInterval,
+  eachMonthOfInterval,
+  eachYearOfInterval,
+} from 'date-fns';
 import { CollectionOptions, Document, MongoBulkWriteError } from 'mongodb';
 import client from './connect';
 import {
   filterByDateRange,
-  findUniqueTags,
+  findDistinctTags,
   groupBalanceByDay,
   groupByCategory,
-  groupByCategoryAndMonth,
+  groupByCategoryAndDate,
   groupByDay,
   groupByMerchant,
   groupByTag,
+  groupMerchantByDay,
   searchTransactions as searchTx,
-  statsByAccount,
   statsByTag,
+  statsIO,
   sumIOByDay,
 } from './pipelines';
 
@@ -151,6 +155,18 @@ export const insertTransactions = async (
 };
 
 /**
+ * Map categories IDs to names
+ * @param categoryType
+ * @returns Map
+ */
+const mapCategories = async (categoryType: TransactionCategoryType) => {
+  const categories = await getCategories(categoryType);
+  const map = new Map<string, string>();
+  categories.forEach(({ id, name }) => map.set(id, name));
+  return map;
+};
+
+/**
  * Replaces transactions in db by their ids
  * with data from Up
  * @param transactionIds array of transaction IDs
@@ -214,15 +230,165 @@ export const searchTransactions = async (search: string) => {
 };
 
 /**
+ * Retrieves list of accounts
+ * @param accountType transactional or saver
+ * @returns
+ */
+export const getAccounts = async (
+  accountType?: components['schemas']['AccountTypeEnum'],
+  options?: RetrievalOptions
+) => {
+  try {
+    const accounts = await connectToCollection<AccountResource>(
+      'up',
+      'accounts'
+    );
+    if (accounts) {
+      const cursor = accounts.find(
+        accountType ? { 'attributes.accountType': accountType } : {}
+      );
+      if (options) {
+        const { sort, limit } = options;
+        sort && cursor.sort(sort);
+        limit && cursor.limit(limit);
+      }
+      const results = await cursor
+        .project<AccountInfo>({
+          _id: 0,
+          id: '$_id',
+          displayName: '$attributes.displayName',
+          accountType: '$attributes.accountType',
+          balance: {
+            $divide: ['$attributes.balance.valueInBaseUnits', 100],
+          },
+        })
+        .toArray();
+      return results;
+    } else {
+      return accountType
+        ? accountsMock.data
+            .filter(({ attributes }) => attributes.accountType === accountType)
+            .map(({ id, attributes }) => ({
+              id,
+              displayName: attributes.displayName,
+              accountType: attributes.accountType,
+              balance: parseFloat(attributes.balance.value),
+            }))
+        : accountsMock.data.map(({ id, attributes }) => ({
+            id,
+            displayName: attributes.displayName,
+            accountType: attributes.accountType,
+            balance: parseFloat(attributes.balance.value),
+          }));
+    }
+  } catch (err) {
+    console.error(err);
+    return [];
+  }
+};
+
+/**
+ * Retrieves account balance between 2 dates
+ * @param start
+ * @param end
+ * @param accountId
+ * @returns
+ */
+export const getAccountBalanceHistorical = async (
+  dateRange: DateRange,
+  accountId: string
+) => {
+  try {
+    const transactions = await connectToCollection<DbTransactionResource>(
+      'up',
+      'transactions'
+    );
+    if (transactions) {
+      const cursor = transactions.aggregate<BalanceHistory>(
+        groupBalanceByDay(dateRange, accountId)
+      );
+      const results = await cursor.toArray();
+      return results;
+    } else {
+      if (dateRange.from < dateRange.to) {
+        const startingBalance = parseFloat(
+          faker.finance.amount({ max: 10000 })
+        );
+        const days = eachDayOfInterval({
+          start: dateRange.from,
+          end: dateRange.to,
+        });
+        return days.map((date) => ({
+          Year: date.getFullYear(),
+          Month: date.getMonth() + 1,
+          Day: date.getDate(),
+          Timestamp: date,
+          Amount: parseFloat(faker.finance.amount({ min: -1000 })),
+          Balance:
+            startingBalance + parseFloat(faker.finance.amount({ min: -1000 })),
+        }));
+      }
+      return [];
+    }
+  } catch (err) {
+    console.error(err);
+    return [];
+  }
+};
+
+/**
+ * Retrieves specific account information
+ * @param accountId UUID string
+ * @returns
+ */
+export const getAccountById = async (accountId: string) => {
+  try {
+    const accounts = await connectToCollection<AccountResource>(
+      'up',
+      'accounts'
+    );
+    if (accounts) {
+      const account = await accounts.findOne<AccountInfo>(
+        { _id: accountId },
+        {
+          projection: {
+            _id: 0,
+            id: '$_id',
+            displayName: '$attributes.displayName',
+            balance: {
+              $toDouble: '$attributes.balance.value',
+            },
+            accountType: '$attributes.accountType',
+          },
+        }
+      );
+      return account;
+    } else {
+      const account = accountsMock.data.find(({ id }) => id === accountId);
+      return account
+        ? {
+            id: account.id,
+            displayName: account.attributes.displayName,
+            accountType: account.attributes.accountType,
+            balance: parseFloat(account.attributes.balance.value),
+          }
+        : null;
+    }
+  } catch (err) {
+    console.error(err);
+    return;
+  }
+};
+
+/**
  * Total or grouped transaction statistics between 2 dates
- * @param groupBy group by day, month or year
  * @param avg optionally average stats
  * @returns list of stats, single element if no groupBy provided
  */
-export const getAccountStats = async (
-  accountId: string,
-  dateRange: DateRange,
-  groupBy?: DateRangeGroupBy,
+export const getIOStats = async (
+  options?: RetrievalOptions,
+  dateRange?: DateRange,
+  accountId?: string,
   avg?: boolean
 ) => {
   try {
@@ -232,27 +398,18 @@ export const getAccountStats = async (
     );
     if (transactions) {
       const cursor = transactions.aggregate<AccountMonthlyInfo>(
-        statsByAccount(accountId, dateRange, groupBy, avg)
+        statsIO(options || {}, dateRange, accountId, avg)
       );
       const results = await cursor.toArray();
       return results;
     } else {
-      if (groupBy && dateRange.from < dateRange.to) {
-        let date = new Date(
-          dateRange.from.getFullYear(),
-          dateRange.from.getMonth(),
-          dateRange.from.getDate()
-        );
-        const dates = [];
-        while (date < dateRange.to) {
-          dates.push(date);
-          date =
-            groupBy === 'monthly'
-              ? addMonths(date, 1)
-              : groupBy === 'yearly'
-              ? addYears(date, 1)
-              : addDays(date, 1);
-        }
+      if (options?.groupBy && dateRange && dateRange.from < dateRange.to) {
+        const dates =
+          options.groupBy === 'yearly'
+            ? eachYearOfInterval({ start: dateRange.from, end: dateRange.to })
+            : options.groupBy === 'monthly'
+            ? eachMonthOfInterval({ start: dateRange.from, end: dateRange.to })
+            : eachDayOfInterval({ start: dateRange.from, end: dateRange.to });
 
         return dates.map((date) => {
           const income = parseFloat(faker.finance.amount({ max: 5000 }));
@@ -294,26 +451,76 @@ export const getAccountStats = async (
 };
 
 /**
- * Group income by merchant
+ * Grouped statistics by merchant
  * @param dateRange
  * @returns
  */
 export const getMerchantInfo = async (
-  dateRange: DateRange,
   options: RetrievalOptions,
+  dateRange?: DateRange,
   type?: TransactionIOEnum
 ) => {
   try {
-    if (!process.env.UP_TRANS_ACC) {
-      throw new Error('Up transaction account not defined');
+    const transactions = await connectToCollection<DbTransactionResource>(
+      'up',
+      'transactions'
+    );
+    const transactionAcc = await getAccounts('TRANSACTIONAL', {
+      sort: {
+        'attributes.balance.valueInBaseUnits': -1,
+      },
+      limit: 1,
+    });
+    if (transactions && transactionAcc[0]) {
+      const cursor = transactions.aggregate<Merchant>(
+        groupByMerchant(options, dateRange, undefined, type)
+      );
+      const results = await cursor.toArray();
+      const categories = await mapCategories('child');
+      const parentCategories = await mapCategories('parent');
+      return results.map(({ category, parentCategory, ...rest }) => ({
+        ...rest,
+        category,
+        parentCategory,
+        categoryName: categories.get(category),
+        parentCategoryName: parentCategories.get(parentCategory),
+      }));
+    } else {
+      return [];
     }
+  } catch (err) {
+    console.error(err);
+    return [];
+  }
+};
+
+/**
+ * Grouped statistics by merchant by month
+ * @param merchant
+ * @param dateRange
+ * @returns
+ */
+export const getMerchantInfoHistory = async (
+  merchant: string,
+  dateRange: DateRange
+) => {
+  try {
     const transactions = await connectToCollection<DbTransactionResource>(
       'up',
       'transactions'
     );
     if (transactions) {
-      const cursor = transactions.aggregate<TransactionIncomeInfo>(
-        groupByMerchant(dateRange, process.env.UP_TRANS_ACC, options, type)
+      const tx = transactions
+        .find({ 'attributes.description': merchant })
+        .sort({ 'attributes.createdAt': 1 })
+        .limit(1);
+      const earliestTx = (await tx.toArray())[0];
+      const cursor = transactions.aggregate<BalanceHistory>(
+        groupMerchantByDay(
+          merchant,
+          dateRange,
+          earliestTx?.attributes?.createdAt
+        )
       );
       const results = await cursor.toArray();
       return results;
@@ -391,6 +598,48 @@ export const getCategoryById = async (id: string) => {
 };
 
 /**
+ * Retrieves category details
+ * @param type child or parent categories
+ * @returns
+ */
+export const getCategories = async (type: TransactionCategoryType) => {
+  try {
+    const categories = await connectToCollection('up', 'categories');
+    if (categories) {
+      const cursor = categories
+        .find({
+          'relationships.parent.data': type === 'child' ? { $ne: null } : null,
+        })
+        .sort({ 'attributes.name': 1 })
+        .project<TransactionCategoryOption>({
+          _id: 0,
+          id: '$_id',
+          value: '$attributes.name',
+          name: '$attributes.name',
+        });
+      const results = await cursor.toArray();
+      return results;
+    } else {
+      return categoriesMock.data
+        .filter(({ relationships }) =>
+          type === 'parent'
+            ? relationships.parent.data === null
+            : relationships.parent.data !== null
+        )
+        .map(({ id, attributes }) => ({
+          id,
+          value: attributes.name,
+          name: attributes.name,
+        }))
+        .sort((a, b) => (a.name.toUpperCase() < b.name.toUpperCase() ? -1 : 1));
+    }
+  } catch (err) {
+    console.error(err);
+    return [];
+  }
+};
+
+/**
  * Generates category stats for transactions
  * between 2 dates
  * @param dateRange
@@ -404,18 +653,21 @@ export const getCategoryInfo = async (
   parentCategory?: string
 ) => {
   try {
-    if (!process.env.UP_TRANS_ACC) {
-      throw new Error('Up transaction account not defined');
-    }
     const transactions = await connectToCollection<DbTransactionResource>(
       'up',
       'transactions'
     );
-    if (transactions) {
+    const transactionAcc = await getAccounts('TRANSACTIONAL', {
+      sort: {
+        'attributes.balance.valueInBaseUnits': -1,
+      },
+      limit: 1,
+    });
+    if (transactions && transactionAcc[0]) {
       const cursor = transactions.aggregate<TransactionCategoryInfo>(
         groupByCategory(
           dateRange,
-          process.env.UP_TRANS_ACC,
+          transactionAcc[0].id,
           type,
           options || {},
           parentCategory
@@ -456,33 +708,32 @@ export const getCategoryInfo = async (
  */
 export const getCategoryInfoHistory = async (
   dateRange: DateRange,
-  type: TransactionCategoryType
+  type: TransactionCategoryType,
+  options: RetrievalOptions
 ) => {
   try {
-    if (!process.env.UP_TRANS_ACC) {
-      throw new Error('Up transaction account not defined');
-    }
     const transactions = await connectToCollection<DbTransactionResource>(
       'up',
       'transactions'
     );
-    if (transactions) {
+    const transactionAcc = await getAccounts('TRANSACTIONAL', {
+      sort: {
+        'attributes.balance.valueInBaseUnits': -1,
+      },
+      limit: 1,
+    });
+    if (transactions && transactionAcc[0]) {
       const cursor = transactions.aggregate<TransactionCategoryInfoHistoryRaw>(
-        groupByCategoryAndMonth(dateRange, process.env.UP_TRANS_ACC, type)
+        groupByCategoryAndDate(options, type, dateRange, transactionAcc[0].id)
       );
       const results = await cursor.toArray();
       return results;
     } else {
       if (dateRange.from < dateRange.to) {
-        let date = new Date(
-          dateRange.from.getFullYear(),
-          dateRange.from.getMonth()
-        );
-        const months = [];
-        while (date < dateRange.to) {
-          months.push(date);
-          date = addMonths(date, 1);
-        }
+        const months = eachMonthOfInterval({
+          start: dateRange.from,
+          end: dateRange.to,
+        });
         return months.map((date) => ({
           categories: categoriesMock.data
             .filter(({ relationships }) =>
@@ -490,11 +741,13 @@ export const getCategoryInfoHistory = async (
                 ? relationships.parent.data === null
                 : relationships.parent.data !== null
             )
-            .map(({ attributes }) => ({
-              category: attributes.name,
+            .map(({ id, attributes }) => ({
+              category: id,
+              categoryName: attributes.name,
               amount: parseFloat(faker.finance.amount()),
               transactions: faker.number.int({ max: 100 }),
             })),
+          day: date.getDate(),
           month: date.getMonth() + 1,
           year: date.getFullYear(),
         }));
@@ -589,9 +842,9 @@ export const getTagInfo = async (tag: string): Promise<TagInfo | undefined> => {
  * @returns
  */
 export const getTransactionsByDay = async (
-  accountId: string,
-  dateRange?: DateRange,
-  options?: RetrievalOptions
+  options?: RetrievalOptions,
+  accountId?: string,
+  dateRange?: DateRange
 ) => {
   try {
     const transactions = await connectToCollection<DbTransactionResource>(
@@ -600,7 +853,7 @@ export const getTransactionsByDay = async (
     );
     if (transactions) {
       const cursor = transactions.aggregate<TransactionGroupByDay>(
-        groupByDay(accountId, dateRange, options)
+        groupByDay(options, accountId, dateRange)
       );
       const results = (await cursor.toArray()).map(
         ({ transactions, ...rest }) => ({
@@ -693,14 +946,37 @@ const getTransactionsByDate = async (
  * @param category category id
  * @returns list of transactions
  */
-const getTransactionsByCategory = async (category: string) => {
+export const getTransactionsByCategory = async (
+  category: string,
+  type: TransactionCategoryType,
+  dateRange?: DateRange
+) => {
   try {
     const transactions = await connectToCollection<DbTransactionResource>(
       'up',
       'transactions'
     );
-    if (transactions) {
-      const cursor = transactions.find({ $text: { $search: category } });
+    const transactionAcc = await getAccounts('TRANSACTIONAL', {
+      sort: {
+        'attributes.balance.valueInBaseUnits': -1,
+      },
+      limit: 1,
+    });
+    if (transactions && transactionAcc[0]) {
+      const cursor = transactions
+        .find({
+          ...(type === 'child'
+            ? { 'relationships.category.data.id': category }
+            : { 'relationships.parentCategory.data.id': category }),
+          ...(dateRange && {
+            'attributes.createdAt': {
+              $gte: dateRange.from,
+              $lte: dateRange.to,
+            },
+          }),
+          'relationships.account.data.id': transactionAcc[0].id,
+        })
+        .sort({ 'attributes.createdAt': -1 });
       const results = (await cursor.toArray()).map((transaction) =>
         outputTransactionFields(transaction)
       );
@@ -767,6 +1043,26 @@ const getTransactionById = async (id: string) => {
 };
 
 /**
+ * List of all transaction types
+ * @returns
+ */
+export const getTransactionTypes = async () => {
+  try {
+    const transactions = await connectToCollection<DbTransactionResource>(
+      'up',
+      'transactions'
+    );
+    if (transactions) {
+      const txTypes = await transactions.distinct('attributes.transactionType');
+      return txTypes;
+    }
+  } catch (err) {
+    console.error(err);
+    return [];
+  }
+};
+
+/**
  * Retrieves transactions by specific tag
  * @param tag
  * @returns
@@ -824,48 +1120,6 @@ export const getTransactionsByTags = async () => {
 };
 
 /**
- * Retrieves category details
- * @param type child or parent categories
- * @returns
- */
-export const getCategories = async (type: TransactionCategoryType) => {
-  try {
-    const categories = await connectToCollection('up', 'categories');
-    if (categories) {
-      const cursor = categories
-        .find({
-          'relationships.parent.data': type === 'child' ? { $ne: null } : null,
-        })
-        .sort({ 'attributes.name': 1 })
-        .project<TransactionCategoryOption>({
-          _id: 0,
-          id: '$_id',
-          value: '$attributes.name',
-          name: '$attributes.name',
-        });
-      const results = await cursor.toArray();
-      return results;
-    } else {
-      return categoriesMock.data
-        .filter(({ relationships }) =>
-          type === 'parent'
-            ? relationships.parent.data === null
-            : relationships.parent.data !== null
-        )
-        .map(({ id, attributes }) => ({
-          id,
-          value: attributes.name,
-          name: attributes.name,
-        }))
-        .sort((a, b) => (a.name.toUpperCase() < b.name.toUpperCase() ? -1 : 1));
-    }
-  } catch (err) {
-    console.error(err);
-    return [];
-  }
-};
-
-/**
  * Retrieves all unique transaction tags
  */
 export const getTags = async () => {
@@ -876,7 +1130,7 @@ export const getTags = async () => {
     );
     if (transactions) {
       const cursor = transactions.aggregate<{ tags: string[] }>(
-        findUniqueTags()
+        findDistinctTags()
       );
       const results = await cursor.toArray();
       return results[0];
@@ -889,161 +1143,4 @@ export const getTags = async () => {
   }
 };
 
-/**
- * Retrieves list of accounts
- * @param accountType transactional or saver
- * @returns
- */
-export const getAccounts = async (
-  accountType?: components['schemas']['AccountTypeEnum'],
-  options?: RetrievalOptions
-) => {
-  try {
-    const accounts = await connectToCollection<AccountResource>(
-      'up',
-      'accounts'
-    );
-    if (accounts) {
-      const cursor = accounts.find(
-        accountType ? { 'attributes.accountType': accountType } : {}
-      );
-      if (options) {
-        const { sort, limit } = options;
-        sort && cursor.sort(sort);
-        limit && cursor.limit(limit);
-      }
-      const results = await cursor
-        .project<AccountInfo>({
-          _id: 0,
-          id: '$_id',
-          displayName: '$attributes.displayName',
-          accountType: '$attributes.accountType',
-          balance: {
-            $divide: ['$attributes.balance.valueInBaseUnits', 100],
-          },
-        })
-        .toArray();
-      return results;
-    } else {
-      return accountType
-        ? accountsMock.data
-            .filter(({ attributes }) => attributes.accountType === accountType)
-            .map(({ id, attributes }) => ({
-              id,
-              displayName: attributes.displayName,
-              accountType: attributes.accountType,
-              balance: parseFloat(attributes.balance.value),
-            }))
-        : accountsMock.data.map(({ id, attributes }) => ({
-            id,
-            displayName: attributes.displayName,
-            accountType: attributes.accountType,
-            balance: parseFloat(attributes.balance.value),
-          }));
-    }
-  } catch (err) {
-    console.error(err);
-    return [];
-  }
-};
-
-/**
- * Retrieves account balance between 2 dates
- * @param start
- * @param end
- * @param accountId
- * @returns
- */
-export const getAccountBalanceHistorical = async (
-  dateRange: DateRange,
-  accountId: string
-) => {
-  try {
-    const transactions = await connectToCollection<DbTransactionResource>(
-      'up',
-      'transactions'
-    );
-    if (transactions) {
-      const cursor = transactions.aggregate<AccountBalanceHistory>(
-        groupBalanceByDay(dateRange, accountId)
-      );
-      const results = await cursor.toArray();
-      return results;
-    } else {
-      if (dateRange.from < dateRange.to) {
-        const startingBalance = parseFloat(
-          faker.finance.amount({ max: 10000 })
-        );
-        let date = new Date(
-          dateRange.from.getFullYear(),
-          dateRange.from.getMonth(),
-          dateRange.from.getDate()
-        );
-        const days = [];
-        while (date < dateRange.to) {
-          days.push(date);
-          date = addDays(date, 1);
-        }
-        return days.map((date) => ({
-          Year: date.getFullYear(),
-          Month: date.getMonth() + 1,
-          Day: date.getDate(),
-          Timestamp: date,
-          Amount: parseFloat(faker.finance.amount({ min: -1000 })),
-          Balance:
-            startingBalance + parseFloat(faker.finance.amount({ min: -1000 })),
-        }));
-      }
-      return [];
-    }
-  } catch (err) {
-    console.error(err);
-    return [];
-  }
-};
-
-/**
- * Retrieves specific account information
- * @param accountId UUID string
- * @returns
- */
-export const getAccountById = async (accountId: string) => {
-  try {
-    const accounts = await connectToCollection<AccountResource>(
-      'up',
-      'accounts'
-    );
-    if (accounts) {
-      const account = await accounts.findOne<AccountInfo>(
-        { _id: accountId },
-        {
-          projection: {
-            _id: 0,
-            id: '$_id',
-            displayName: '$attributes.displayName',
-            balance: {
-              $toDouble: '$attributes.balance.value',
-            },
-            accountType: '$attributes.accountType',
-          },
-        }
-      );
-      return account;
-    } else {
-      const account = accountsMock.data.find(({ id }) => id === accountId);
-      return account
-        ? {
-            id: account.id,
-            displayName: account.attributes.displayName,
-            accountType: account.attributes.accountType,
-            balance: parseFloat(account.attributes.balance.value),
-          }
-        : null;
-    }
-  } catch (err) {
-    console.error(err);
-    return;
-  }
-};
-
-export { getTransactionById, getTransactionsByCategory, getTransactionsByDate };
+export { getTransactionById, getTransactionsByDate };

@@ -1,4 +1,4 @@
-import { AccountBalanceHistory } from '@/server/schemas';
+import { BalanceHistory } from '@/server/schemas';
 import { DbTransactionResource } from '@/types/custom';
 import { tz } from '@date-fns/tz';
 import { clsx, type ClassValue } from 'clsx';
@@ -6,6 +6,7 @@ import {
   differenceInDays,
   format,
   formatDistanceStrict,
+  isThisYear,
   isToday,
   isYesterday,
 } from 'date-fns';
@@ -67,17 +68,32 @@ export const formatCurrency = (
  * @param date date to format
  * @returns formatted date string
  */
-export const formatDate = (date: Date) => {
+export const formatDate = (date: Date | string) => {
   if (isToday(date, { in: tz(TZ) })) return 'Today';
   if (isYesterday(date, { in: tz(TZ) })) return 'Yesterday';
   if (differenceInDays(now, date, { in: tz(TZ) }) > 7)
-    return format(date, 'do MMMM', { in: tz(TZ) });
+    return isThisYear(date, { in: tz(TZ) })
+      ? format(date, 'do MMMM', { in: tz(TZ) })
+      : format(date, 'do MMMM yyyy', { in: tz(TZ) });
   return formatDistanceStrict(date, now, {
     addSuffix: true,
     roundingMethod: 'floor',
     locale: enAU,
     in: tz(TZ),
   });
+};
+
+/**
+ * Format date with time
+ * @param date date to format
+ * @returns formatted date string
+ */
+export const formatDateWithTime = (date: Date | string) => {
+  if (isToday(date, { in: tz(TZ) }))
+    return `Today, ${format(date, 'p', { in: tz(TZ) })}`;
+  if (isYesterday(date, { in: tz(TZ) }))
+    return `Yesterday, ${format(date, 'p', { in: tz(TZ) })}`;
+  return format(date, 'dd/LL/yy, p', { in: tz(TZ) });
 };
 
 /**
@@ -89,11 +105,20 @@ export const capitalise = (str: string) =>
   str.charAt(0).toLocaleUpperCase() + str.slice(1).toLocaleLowerCase();
 
 /**
+ * Percentage difference of a
+ * relative to b
+ * @param a
+ * @param b
+ * @returns
+ */
+export const calcPercentDiff = (a: number, b: number) => ((a - b) / b) * 100;
+
+/**
  * Adds property `FormattedDate`, date string from day, month, year values
  * @param data
  * @returns
  */
-export const addFormattedDate = (data: AccountBalanceHistory[] | undefined) => {
+export const addFormattedDate = (data: BalanceHistory[] | undefined) => {
   return data
     ? data.map(({ Day, Month, Year, ...rest }) => {
         const date = new Date(Year, Month - 1, Day);
@@ -134,7 +159,7 @@ export const outputTransactionFields = (transaction: DbTransactionResource) => {
 };
 
 /**
- *
+ * Map search params
  */
 export const getSearchParams = (
   ...params: (string | string[] | undefined)[]

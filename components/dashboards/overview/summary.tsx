@@ -48,7 +48,7 @@ const Summary = ({ accountId }: SummaryProps) => {
     },
     type: 'income',
   });
-  const { data: monthly } = trpc.public.getMonthlyInfo.useQuery({
+  const { data: monthly } = trpc.public.getIOStats.useQuery({
     accountId,
     dateRange: {
       from: dateRange?.from,
@@ -126,9 +126,9 @@ const Summary = ({ accountId }: SummaryProps) => {
                   </AccordionTrigger>
                   <AccordionContent>
                     <ul role="list" className="space-y-2">
-                      {income.map(({ description, amount }, index) => (
+                      {income.map(({ name, amount }, index) => (
                         <li
-                          key={description}
+                          key={name}
                           className="flex items-center gap-2 text-xs"
                         >
                           <span
@@ -139,7 +139,7 @@ const Summary = ({ accountId }: SummaryProps) => {
                             aria-hidden="true"
                           />
                           <span className="text-gray-900 dark:text-gray-50">
-                            {description}
+                            {name}
                           </span>
                           <span className="text-gray-600 dark:text-gray-400">
                             ({formatCurrency(amount)} /{' '}

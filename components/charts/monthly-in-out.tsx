@@ -9,13 +9,13 @@ import DashboardCard from '../core/dashboard-card';
 const currentDate = new Date();
 
 const MonthlyInOut = ({ accountId }: { accountId: string }) => {
-  const { data } = trpc.public.getMonthlyInfo.useQuery({
+  const { data } = trpc.public.getIOStats.useQuery({
     accountId,
     dateRange: {
       from: startOfMonth(subYears(currentDate, 1)),
       to: currentDate,
     },
-    groupBy: 'monthly',
+    options: { groupBy: 'monthly' },
   });
 
   return (
