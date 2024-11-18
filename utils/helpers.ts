@@ -84,6 +84,19 @@ export const formatDate = (date: Date | string) => {
 };
 
 /**
+ * Format date with time
+ * @param date date to format
+ * @returns formatted date string
+ */
+export const formatDateWithTime = (date: Date | string) => {
+  if (isToday(date, { in: tz(TZ) }))
+    return `Today, ${format(date, 'p', { in: tz(TZ) })}`;
+  if (isYesterday(date, { in: tz(TZ) }))
+    return `Yesterday, ${format(date, 'p', { in: tz(TZ) })}`;
+  return format(date, 'dd/LL/yy, p', { in: tz(TZ) });
+};
+
+/**
  * Capitalise first letter of string
  * @param str
  * @returns
