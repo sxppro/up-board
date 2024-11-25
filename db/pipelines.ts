@@ -434,12 +434,12 @@ export const groupMerchantByDay = (
  */
 export const groupByCategory = (
   dateRange: DateRange,
-  accountId: string,
   type: 'child' | 'parent',
   options: RetrievalOptions,
-  parentCategory?: string
+  parentCategory?: string,
+  accountId?: string
 ) => {
-  const { limit, sort } = options;
+  const { match, limit, sort } = options;
   return [
     /**
      * Match documents within the desired date range
@@ -447,19 +447,20 @@ export const groupByCategory = (
      */
     {
       $match: {
-        'relationships.account.data.id': accountId,
         'attributes.createdAt': {
           $gte: dateRange.from,
           $lte: dateRange.to,
         },
         'attributes.isCategorizable': true,
-        // Only expenses
-        'attributes.amount.valueInBaseUnits': {
-          $lt: 0,
+        // ! Exclude income
+        'attributes.transactionType': {
+          $nin: ['Salary', 'Direct Credit'],
         },
+        ...(accountId && { 'relationships.account.data.id': accountId }),
         ...(parentCategory && {
           'relationships.parentCategory.data.id': parentCategory,
         }),
+        ...(match && match),
       },
     },
     // Project only the necessary fields for further processing
@@ -566,9 +567,9 @@ export const groupByCategoryAndDate = (
         }),
         ...(accountId && { 'relationships.account.data.id': accountId }),
         'attributes.isCategorizable': true,
-        // Expenses only
-        'attributes.amount.valueInBaseUnits': {
-          $lt: 0,
+        // ! Exclude income
+        'attributes.transactionType': {
+          $nin: ['Salary', 'Direct Credit'],
         },
         ...(match && match),
       },
@@ -928,8 +929,9 @@ export const searchTransactions = (searchTerm: string) => [
 export const statsIO = (
   options: RetrievalOptions,
   dateRange?: DateRange,
+  avg?: boolean,
   accountId?: string,
-  avg?: boolean
+  accountType?: string
 ) => {
   const { groupBy, match } = options;
   return [
@@ -949,9 +951,13 @@ export const statsIO = (
           'relationships.account.data.id': accountId,
         }),
         // TODO: Toggle filtering transfers
-        ...(accountId === process.env.UP_TRANS_ACC && {
-          'attributes.isCategorizable': true,
-        }),
+        ...(!accountId ||
+        accountId === process.env.UP_TRANS_ACC ||
+        accountType === 'TRANSACTIONAL'
+          ? {
+              'attributes.isCategorizable': true,
+            }
+          : {}),
         ...(match && match),
       },
     },

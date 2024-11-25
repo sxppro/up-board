@@ -398,7 +398,7 @@ export const getIOStats = async (
     );
     if (transactions) {
       const cursor = transactions.aggregate<AccountMonthlyInfo>(
-        statsIO(options || {}, dateRange, accountId, avg)
+        statsIO(options || {}, dateRange, avg, accountId)
       );
       const results = await cursor.toArray();
       return results;
@@ -665,13 +665,7 @@ export const getCategoryInfo = async (
     });
     if (transactions && transactionAcc[0]) {
       const cursor = transactions.aggregate<TransactionCategoryInfo>(
-        groupByCategory(
-          dateRange,
-          transactionAcc[0].id,
-          type,
-          options || {},
-          parentCategory
-        )
+        groupByCategory(dateRange, type, options || {}, parentCategory)
       );
       const results = await cursor.toArray();
       return results;
