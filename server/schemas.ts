@@ -80,6 +80,7 @@ export const TransactionCategoryInfoSchema = z.object({
   category: z.string(),
   categoryName: z.string(),
   amount: z.number(),
+  absAmount: z.number(),
   transactions: z.number(),
   parentCategory: z.string().optional(),
 });

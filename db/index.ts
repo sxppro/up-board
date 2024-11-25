@@ -676,6 +676,9 @@ export const getCategoryInfo = async (
       const results = await cursor.toArray();
       return results;
     } else {
+      const amount = parseFloat(
+        faker.finance.amount({ min: -5000, max: 5000 })
+      );
       const filteredCategories = categoriesMock.data.filter(
         ({ relationships }) =>
           parentCategory
@@ -689,7 +692,8 @@ export const getCategoryInfo = async (
         .map(({ id, attributes }) => ({
           category: id,
           categoryName: attributes.name,
-          amount: parseFloat(faker.finance.amount()),
+          amount,
+          absAmount: Math.abs(amount),
           transactions: faker.number.int({ max: 100 }),
         }))
         .sort((a, b) => (a.amount < b.amount ? 1 : -1));
@@ -716,15 +720,9 @@ export const getCategoryInfoHistory = async (
       'up',
       'transactions'
     );
-    const transactionAcc = await getAccounts('TRANSACTIONAL', {
-      sort: {
-        'attributes.balance.valueInBaseUnits': -1,
-      },
-      limit: 1,
-    });
-    if (transactions && transactionAcc[0]) {
+    if (transactions) {
       const cursor = transactions.aggregate<TransactionCategoryInfoHistoryRaw>(
-        groupByCategoryAndDate(options, type, dateRange, transactionAcc[0].id)
+        groupByCategoryAndDate(options, type, dateRange)
       );
       const results = await cursor.toArray();
       return results;
@@ -741,12 +739,18 @@ export const getCategoryInfoHistory = async (
                 ? relationships.parent.data === null
                 : relationships.parent.data !== null
             )
-            .map(({ id, attributes }) => ({
-              category: id,
-              categoryName: attributes.name,
-              amount: parseFloat(faker.finance.amount()),
-              transactions: faker.number.int({ max: 100 }),
-            })),
+            .map(({ id, attributes }) => {
+              const amount = parseFloat(
+                faker.finance.amount({ min: -5000, max: 5000 })
+              );
+              return {
+                category: id,
+                categoryName: attributes.name,
+                amount,
+                absAmount: Math.abs(amount),
+                transactions: faker.number.int({ max: 100 }),
+              };
+            }),
           day: date.getDate(),
           month: date.getMonth() + 1,
           year: date.getFullYear(),

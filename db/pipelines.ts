@@ -515,7 +515,8 @@ export const groupByCategory = (
           $ifNull: ['$category.attributes.name', 'Uncategorised'],
         },
         parentCategory: '$category.relationships.parent.data.id',
-        amount: {
+        amount: { $toDouble: '$amount' },
+        absAmount: {
           $abs: {
             $toDouble: '$amount',
           },
@@ -652,9 +653,7 @@ export const groupByCategoryAndDate = (
           $ifNull: ['$category.attributes.name', 'Uncategorised'],
         },
         amount: {
-          $abs: {
-            $toDouble: '$amount',
-          },
+          $toDouble: '$amount',
         },
         transactions: 1,
       },
@@ -672,6 +671,9 @@ export const groupByCategoryAndDate = (
             category: '$category',
             categoryName: '$categoryName',
             amount: '$amount',
+            absAmount: {
+              $abs: '$amount',
+            },
             transactions: '$transactions',
           },
         },

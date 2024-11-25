@@ -58,9 +58,9 @@ const SpendingDetails = ({
         <h2 className="text-lg font-semibold">Subcategories</h2>
         {selectedSubcategory ? (
           <BarList
-            data={selectedSubcategory.map(({ categoryName, amount }) => ({
+            data={selectedSubcategory.map(({ categoryName, absAmount }) => ({
               name: categoryName,
-              value: amount,
+              value: absAmount,
             }))}
             color={`up-${selectedCategory.id}`}
             valueFormatter={formatCurrency}
@@ -98,7 +98,7 @@ const SpendingDetails = ({
     <div>
       <h2 className="text-lg font-semibold">This month</h2>
       <Accordion type="single" collapsible>
-        {categoryStats.map(({ category, categoryName, amount }, index) => {
+        {categoryStats.map(({ category, categoryName, absAmount }, index) => {
           return (
             <AccordionItem key={category} value={category}>
               <AccordionTrigger className="py-2 gap-2">
@@ -110,13 +110,13 @@ const SpendingDetails = ({
                 />
                 <div className="flex-1 flex justify-between text-base">
                   <p>{categoryName}</p>
-                  <p>{formatCurrency(amount)}</p>
+                  <p>{formatCurrency(absAmount)}</p>
                 </div>
               </AccordionTrigger>
               <AccordionContent>
                 <ul role="list">
                   {subCategoryStats[index].map(
-                    ({ category, categoryName, amount }) => (
+                    ({ category, categoryName, absAmount }) => (
                       <li
                         key={category}
                         className="w-full flex h-8 items-center overflow-hidden"
@@ -124,7 +124,7 @@ const SpendingDetails = ({
                         <p className="flex-1 text-subtle truncate">
                           {categoryName}
                         </p>
-                        <span>{formatCurrency(amount)}</span>
+                        <span>{formatCurrency(absAmount)}</span>
                       </li>
                     )
                   )}
