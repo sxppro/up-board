@@ -841,8 +841,8 @@ export const getTagInfo = async (tag: string): Promise<TagInfo | undefined> => {
  */
 export const getTransactionsByDay = async (
   options?: RetrievalOptions,
-  accountId?: string,
-  dateRange?: DateRange
+  dateRange?: DateRange,
+  accountId?: string
 ) => {
   try {
     const transactions = await connectToCollection<DbTransactionResource>(
@@ -851,7 +851,7 @@ export const getTransactionsByDay = async (
     );
     if (transactions) {
       const cursor = transactions.aggregate<TransactionGroupByDay>(
-        groupByDay(options, accountId, dateRange)
+        groupByDay(options, dateRange, accountId)
       );
       const results = (await cursor.toArray()).map(
         ({ transactions, ...rest }) => ({

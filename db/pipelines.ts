@@ -708,8 +708,8 @@ export const groupByCategoryAndDate = (
  */
 export const groupByDay = (
   options?: RetrievalOptions,
-  accountId?: string,
-  dateRange?: DateRange
+  dateRange?: DateRange,
+  accountId?: string
 ) => {
   return [
     {

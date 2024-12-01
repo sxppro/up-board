@@ -159,7 +159,7 @@ const CumulativeSnapshot = ({
                     className="h-64 sm:h-80"
                     data={mtdIncome}
                     index="FormattedDate"
-                    categories={['AmountCumulative', 'AmountCumulativePast']}
+                    categories={['This year', 'Last year']}
                     valueFormatter={(number: number) =>
                       formatCurrency(number, false)
                     }
@@ -178,7 +178,7 @@ const CumulativeSnapshot = ({
                     className="h-64 sm:h-80"
                     data={ytdIncome}
                     index="FormattedDate"
-                    categories={['AmountCumulative', 'AmountCumulativePast']}
+                    categories={['This year', 'Last year']}
                     valueFormatter={(number: number) =>
                       formatCurrency(number, false)
                     }
@@ -304,7 +304,7 @@ const CumulativeSnapshot = ({
                     className="h-64 sm:h-80"
                     data={mtdExpenses}
                     index="FormattedDate"
-                    categories={['AmountCumulative', 'AmountCumulativePast']}
+                    categories={['This year', 'Last year']}
                     valueFormatter={(number: number) =>
                       formatCurrency(number, false)
                     }
@@ -323,7 +323,7 @@ const CumulativeSnapshot = ({
                     className="h-64 sm:h-80"
                     data={ytdExpenses}
                     index="FormattedDate"
-                    categories={['AmountCumulative', 'AmountCumulativePast']}
+                    categories={['This year', 'Last year']}
                     valueFormatter={(number: number) =>
                       formatCurrency(number, false)
                     }
