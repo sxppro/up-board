@@ -40,6 +40,11 @@ const Summary = ({ accountId }: SummaryProps) => {
       to: dateRange?.to,
     },
     type: 'parent',
+    options: {
+      sort: {
+        absAmount: -1,
+      },
+    },
   });
   const { data: income } = trpc.public.getMerchantInfo.useQuery({
     dateRange: {
@@ -176,7 +181,7 @@ const Summary = ({ accountId }: SummaryProps) => {
                   </AccordionTrigger>
                   <AccordionContent>
                     <ul role="list" className="space-y-2">
-                      {expenses.map(({ category, categoryName, amount }) => (
+                      {expenses.map(({ category, categoryName, absAmount }) => (
                         <li
                           key={category}
                           className="flex items-center gap-2 text-xs"
@@ -192,8 +197,10 @@ const Summary = ({ accountId }: SummaryProps) => {
                             {categoryName}
                           </span>
                           <span className="text-gray-600 dark:text-gray-400">
-                            ({formatCurrency(amount)} /{' '}
-                            {((amount / monthly[0].Expenses) * 100).toFixed(1)}
+                            ({formatCurrency(absAmount)} /{' '}
+                            {((absAmount / monthly[0].Expenses) * 100).toFixed(
+                              1
+                            )}
                             %)
                           </span>
                         </li>
