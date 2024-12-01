@@ -465,13 +465,7 @@ export const getMerchantInfo = async (
       'up',
       'transactions'
     );
-    const transactionAcc = await getAccounts('TRANSACTIONAL', {
-      sort: {
-        'attributes.balance.valueInBaseUnits': -1,
-      },
-      limit: 1,
-    });
-    if (transactions && transactionAcc[0]) {
+    if (transactions) {
       const cursor = transactions.aggregate<Merchant>(
         groupByMerchant(options, dateRange, undefined, type)
       );
@@ -657,13 +651,7 @@ export const getCategoryInfo = async (
       'up',
       'transactions'
     );
-    const transactionAcc = await getAccounts('TRANSACTIONAL', {
-      sort: {
-        'attributes.balance.valueInBaseUnits': -1,
-      },
-      limit: 1,
-    });
-    if (transactions && transactionAcc[0]) {
+    if (transactions) {
       const cursor = transactions.aggregate<TransactionCategoryInfo>(
         groupByCategory(dateRange, type, options || {}, parentCategory)
       );
@@ -954,13 +942,7 @@ export const getTransactionsByCategory = async (
       'up',
       'transactions'
     );
-    const transactionAcc = await getAccounts('TRANSACTIONAL', {
-      sort: {
-        'attributes.balance.valueInBaseUnits': -1,
-      },
-      limit: 1,
-    });
-    if (transactions && transactionAcc[0]) {
+    if (transactions) {
       const cursor = transactions
         .find({
           ...(type === 'child'
@@ -972,7 +954,6 @@ export const getTransactionsByCategory = async (
               $lte: dateRange.to,
             },
           }),
-          'relationships.account.data.id': transactionAcc[0].id,
         })
         .sort({ 'attributes.createdAt': -1 });
       const results = (await cursor.toArray()).map((transaction) =>
