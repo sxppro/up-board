@@ -409,9 +409,7 @@ export const groupMerchantByDay = (
         },
       },
       Amount: {
-        $abs: {
-          $divide: ['$amount', 100],
-        },
+        $divide: ['$amount', 100],
       },
       Balance: {
         $abs: {
