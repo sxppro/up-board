@@ -2,10 +2,12 @@
 
 import { TransactionResourceFiltered } from '@/server/schemas';
 import { capitalise, cn, formatCurrency } from '@/utils/helpers';
+import { focusRing } from '@/utils/tremor';
 import { trpc } from '@/utils/trpc';
 import { TZDate } from '@date-fns/tz';
 import { ArrowSquareOut, CircleNotch, X } from '@phosphor-icons/react';
-import { PropsWithChildren, useState } from 'react';
+import Link from 'next/link';
+import { CSSProperties, PropsWithChildren, useState } from 'react';
 import { Button } from './ui/button';
 import { Separator } from './ui/separator';
 import {
@@ -49,7 +51,21 @@ const PopoverContent = ({ tx }: { tx: TransactionResourceFiltered }) => {
           >
             {tx.description.slice(0, 1).toUpperCase()}
           </span>
-          <h2 className="flex-1">{tx.description}</h2>
+          <h2 className="flex-1">
+            {tx.isCategorizable ? (
+              <Button
+                variant="link"
+                className={cn('p-0 text-xl', focusRing)}
+                asChild
+              >
+                <Link href={`/merchant/${encodeURIComponent(tx.description)}`}>
+                  {tx.description}
+                </Link>
+              </Button>
+            ) : (
+              tx.description
+            )}
+          </h2>
           <span>{formatCurrency(tx.amountRaw)}</span>
         </div>
         <div className="flex flex-col text-sm gap-2">
@@ -117,6 +133,36 @@ const PopoverContent = ({ tx }: { tx: TransactionResourceFiltered }) => {
           <p className="text-muted-foreground text-sm">No attachment.</p>
         )}
       </div>
+      {tx.deepLinkURL && (
+        <div
+          className="flex self-center items-center gap-x-1 rounded-full bg-gray-950 p-1 text-sm shadow-xl shadow-black/20 ring-1 ring-white/10 transition border border-transparent [background:padding-box_var(--bg-color),border-box_var(--border-color)]"
+          style={
+            {
+              '--background': '30 41 59',
+              '--highlight': '210 40% 98%',
+
+              '--bg-color':
+                'linear-gradient(rgb(var(--background)), rgb(var(--background)))',
+              '--border-color': `linear-gradient(145deg,
+            rgb(var(--highlight)) 0%,
+            rgb(var(--highlight) / 0.3) 33.33%,
+            rgb(var(--highlight) / 0.14) 66.67%,
+            rgb(var(--highlight) / 0.1) 100%)
+          `,
+            } as CSSProperties
+          }
+        >
+          <Button
+            className={cn(
+              'rounded-full bg-gradient-to-b from-white to-gray-200 font-semibold text-primary dark:text-primary-foreground',
+              focusRing
+            )}
+            asChild
+          >
+            <Link href={tx.deepLinkURL}>Open in Up</Link>
+          </Button>
+        </div>
+      )}
     </div>
   );
 };
