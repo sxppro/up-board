@@ -133,36 +133,6 @@ const PopoverContent = ({ tx }: { tx: TransactionResourceFiltered }) => {
           <p className="text-muted-foreground text-sm">No attachment.</p>
         )}
       </div>
-      {tx.deepLinkURL && (
-        <div
-          className="flex self-center items-center gap-x-1 rounded-full bg-gray-950 p-1 text-sm shadow-xl shadow-black/20 ring-1 ring-white/10 transition border border-transparent [background:padding-box_var(--bg-color),border-box_var(--border-color)]"
-          style={
-            {
-              '--background': '30 41 59',
-              '--highlight': '210 40% 98%',
-
-              '--bg-color':
-                'linear-gradient(rgb(var(--background)), rgb(var(--background)))',
-              '--border-color': `linear-gradient(145deg,
-            rgb(var(--highlight)) 0%,
-            rgb(var(--highlight) / 0.3) 33.33%,
-            rgb(var(--highlight) / 0.14) 66.67%,
-            rgb(var(--highlight) / 0.1) 100%)
-          `,
-            } as CSSProperties
-          }
-        >
-          <Button
-            className={cn(
-              'rounded-full bg-gradient-to-b from-white to-gray-200 font-semibold text-primary dark:text-primary-foreground',
-              focusRing
-            )}
-            asChild
-          >
-            <Link href={tx.deepLinkURL}>Open in Up</Link>
-          </Button>
-        </div>
-      )}
     </div>
   );
 };
@@ -183,6 +153,35 @@ const TransactionPopover = ({ children, id }: TransactionPopoverProps) => {
       <SheetContent className="w-full sm:max-w-lg">
         <SheetHeader>
           <SheetTitle className="font-medium">Transaction</SheetTitle>
+          {data?.deepLinkURL && (
+            <div
+              className="flex self-center items-center rounded-full gap-x-1 p-1 text-sm shadow-sm shadow-black/20 ring-1 ring-white/10 transition border border-transparent [background:padding-box_var(--bg-color),border-box_var(--border-color)]"
+              style={
+                {
+                  '--highlight': '210 40% 98%',
+
+                  '--bg-color':
+                    'linear-gradient(hsl(var(--background)), hsl(var(--background)))',
+                  '--border-color': `linear-gradient(145deg,
+            rgb(var(--highlight)) 0%,
+            rgb(var(--highlight) / 0.3) 33.33%,
+            rgb(var(--highlight) / 0.14) 66.67%,
+            rgb(var(--highlight) / 0.1) 100%)
+          `,
+                } as CSSProperties
+              }
+            >
+              <Button
+                className={cn(
+                  'rounded-full bg-transparent hover:bg-transparent h-4 font-semibold text-primary text-xs',
+                  focusRing
+                )}
+                asChild
+              >
+                <Link href={data.deepLinkURL}>Open in Up</Link>
+              </Button>
+            </div>
+          )}
         </SheetHeader>
         {isLoading || isError ? (
           <div className="flex flex-col w-full h-full">
