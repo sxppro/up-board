@@ -11,6 +11,11 @@ export const viewport: Viewport = {
     { media: '(prefers-color-scheme: light)', color: 'white' },
     { media: '(prefers-color-scheme: dark)', color: 'black' },
   ],
+  initialScale: 1,
+  maximumScale: 1,
+  width: 'device-width',
+  height: 'device-height',
+  viewportFit: 'cover',
 };
 
 export const metadata: Metadata = {
