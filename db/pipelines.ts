@@ -819,6 +819,11 @@ export const groupByMerchant = (
         amount: {
           $divide: ['$amount', 100],
         },
+        absAmount: {
+          $abs: {
+            $divide: ['$amount', 100],
+          },
+        },
         transactions: 1,
         category: {
           $ifNull: ['$category', 'uncategorised'],
