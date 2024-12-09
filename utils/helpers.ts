@@ -64,6 +64,16 @@ export const formatCurrency = (
     .toString();
 
 /**
+ * Append '+' to formatted currency if
+ * absolute amount is equal to original amount
+ * @param absAmount absolute monetary amount
+ * @param amount monetary amount
+ * @returns
+ */
+export const formatCurrencyAbsolute = (absAmount: number, amount: number) =>
+  `${amount === absAmount ? '+' : ''}${formatCurrency(absAmount)}`;
+
+/**
  * Format date depending on distance to now
  * @param date date to format
  * @returns formatted date string

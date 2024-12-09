@@ -4,7 +4,7 @@ import InfoTooltip from '@/components/core/info-tooltip';
 import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
 import { getDateRanges } from '@/utils/constants';
-import { cn, formatCurrency } from '@/utils/helpers';
+import { cn, formatCurrency, formatCurrencyAbsolute } from '@/utils/helpers';
 import { trpc } from '@/utils/trpc';
 import {
   LineChart,
@@ -86,6 +86,10 @@ const CumulativeSnapshot = ({
     type: 'child',
     options: {
       limit: 4,
+      sort: {
+        amount: 1,
+        transactions: -1,
+      },
     },
   });
   const { data: merchants } = trpc.public.getMerchantInfo.useQuery({
@@ -349,7 +353,13 @@ const CumulativeSnapshot = ({
               <div className="flex flex-col gap-1">
                 {expenseCategories
                   ? expenseCategories.map(
-                      ({ category, categoryName, amount, parentCategory }) => (
+                      ({
+                        category,
+                        categoryName,
+                        amount,
+                        absAmount,
+                        parentCategory,
+                      }) => (
                         <div
                           key={category}
                           className="w-full flex h-8 items-center"
@@ -367,7 +377,9 @@ const CumulativeSnapshot = ({
                               {categoryName}
                             </p>
                           </div>
-                          <span>{formatCurrency(amount)}</span>
+                          <span>
+                            {formatCurrencyAbsolute(absAmount, amount)}
+                          </span>
                         </div>
                       )
                     )
@@ -384,15 +396,15 @@ const CumulativeSnapshot = ({
                   <p>Merchants ordered by total expenditure</p>
                 </InfoTooltip>
               </div>
-              <div className="flex flex-col items-center gap-1">
+              <div className="flex flex-col gap-1">
                 {merchants
-                  ? merchants.map(({ name, amount }) => (
+                  ? merchants.map(({ name, amount, absAmount }) => (
                       <div
                         key={name}
                         className="w-full flex h-8 items-center overflow-hidden"
                       >
                         <p className="flex-1 text-subtle truncate">{name}</p>
-                        <span>{formatCurrency(amount)}</span>
+                        <span>{formatCurrencyAbsolute(absAmount, amount)}</span>
                       </div>
                     ))
                   : [...Array(4).keys()].map((i) => (
