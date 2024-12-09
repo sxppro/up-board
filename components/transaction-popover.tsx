@@ -5,9 +5,19 @@ import { capitalise, cn, formatCurrency } from '@/utils/helpers';
 import { focusRing } from '@/utils/tremor';
 import { trpc } from '@/utils/trpc';
 import { TZDate } from '@date-fns/tz';
-import { ArrowSquareOut, CircleNotch, X } from '@phosphor-icons/react';
+import {
+  ArrowSquareOut,
+  CircleNotch,
+  ClipboardText,
+  X,
+} from '@phosphor-icons/react';
 import Link from 'next/link';
-import { CSSProperties, PropsWithChildren, useState } from 'react';
+import {
+  CSSProperties,
+  MouseEventHandler,
+  PropsWithChildren,
+  useState,
+} from 'react';
 import { Button } from './ui/button';
 import { Separator } from './ui/separator';
 import {
@@ -17,6 +27,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from './ui/sheet';
+import { useToast } from './ui/use-toast';
 
 interface TransactionPopoverProps extends PropsWithChildren {
   id: string;
@@ -24,9 +35,18 @@ interface TransactionPopoverProps extends PropsWithChildren {
 
 const PopoverContentCell = ({
   label,
+  className,
   children,
-}: { label: string } & PropsWithChildren) => (
-  <div className="flex items-center justify-between gap-2">
+  onClick,
+}: {
+  label: string;
+  className?: string;
+  onClick?: MouseEventHandler<HTMLDivElement>;
+} & PropsWithChildren) => (
+  <div
+    className={cn('flex items-center justify-between gap-2', className)}
+    onClick={onClick}
+  >
     <p className="text-subtle font-semibold">{label}</p>
     {children}
   </div>
@@ -37,6 +57,7 @@ const PopoverContent = ({ tx }: { tx: TransactionResourceFiltered }) => {
     refetchOnWindowFocus: false,
     enabled: false,
   });
+  const { toast } = useToast();
 
   return (
     <div className="flex flex-col mt-6 gap-9">
@@ -78,7 +99,22 @@ const PopoverContent = ({ tx }: { tx: TransactionResourceFiltered }) => {
           <PopoverContentCell label="Transaction Type">
             <p>{tx.transactionType}</p>
           </PopoverContentCell>
-          <PopoverContentCell label="Transaction ID">
+          <PopoverContentCell
+            label="Transaction ID"
+            className="cursor-pointer"
+            onClick={(e) => {
+              e.preventDefault();
+              navigator.clipboard.writeText(tx.id);
+              toast({
+                description: (
+                  <div className="flex gap-2 items-center">
+                    <ClipboardText className="h-5 w-5" />
+                    <span>Transaction ID copied</span>
+                  </div>
+                ),
+              });
+            }}
+          >
             <p className="flex-1 text-right">{tx.id}</p>
           </PopoverContentCell>
         </div>
