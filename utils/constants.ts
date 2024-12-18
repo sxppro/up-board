@@ -18,6 +18,8 @@ export const colours: { [key: string]: string } = {
   Uncategorised: 'up-uncategorised',
 };
 
+export const DB_NAME = 'up';
+
 export const TZ = 'Australia/Melbourne';
 
 export const now = TZDate.tz(TZ);

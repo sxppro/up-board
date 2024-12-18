@@ -30,8 +30,12 @@ import {
 } from '@/types/custom';
 import { components } from '@/types/up-api';
 import { auth } from '@/utils/auth';
+import { DB_NAME } from '@/utils/constants';
 import { outputTransactionFields } from '@/utils/helpers';
-import { getTransactionById as getUpTransactionById } from '@/utils/up';
+import {
+  getTransactionByAccount,
+  getTransactionById as getUpTransactionById,
+} from '@/utils/up';
 import { faker } from '@faker-js/faker';
 import { UUID } from 'bson';
 import {
@@ -58,6 +62,61 @@ import {
 } from './pipelines';
 
 faker.seed(17);
+
+/**
+ * Utility to check transactions between Up and db
+ * @param accountId
+ * @returns
+ */
+export const checkTransactions = async (accountId: string) => {
+  try {
+    const transactions = await getTransactionByAccount(accountId);
+    console.log(`Transactions: ${transactions.length}`);
+    const database = client.db(DB_NAME);
+    const db = database.collection<DbTransactionResource>('transactions');
+    const diff: any = [];
+
+    const existingTransactions = await db
+      .find({
+        'relationships.account.data.id': accountId,
+      })
+      .project({
+        _id: 0,
+        id: '$_id',
+        value: '$attributes.amount.valueInBaseUnits',
+      })
+      .toArray();
+    console.log(`Existing transactions: ${existingTransactions.length}`);
+
+    transactions.forEach((tx) => {
+      const transaction = existingTransactions.find(
+        (t) => t.id.toString() === tx.id
+      );
+      if (!transaction) {
+        diff.push({
+          id: tx.id,
+          oldValue: null,
+          newValue: tx.attributes.amount.valueInBaseUnits,
+        });
+      }
+      if (
+        transaction &&
+        transaction.value !== tx.attributes.amount.valueInBaseUnits
+      ) {
+        diff.push({
+          id: tx.id,
+          oldValue: transaction.value,
+          newValue: tx.attributes.amount.valueInBaseUnits,
+        });
+      }
+    });
+
+    console.log(`Diff: `, diff);
+    return;
+  } catch (error) {
+    console.error('Error checking and storing transactions:', error);
+  }
+};
 
 /**
  * Connects to a collection within a database
