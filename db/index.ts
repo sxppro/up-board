@@ -172,7 +172,7 @@ export const insertTransactions = async (
     return;
   }
   try {
-    const db = client.db('up');
+    const db = client.db(DB_NAME);
     const transactions = db.collection<DbTransactionResource>('transactions');
     /**
      * Remaps id to _id as BSON UUID & ISO date strings
@@ -233,7 +233,7 @@ const mapCategories = async (categoryType: TransactionCategoryType) => {
  */
 export const replaceTransactions = async (transactionIds: string[]) => {
   try {
-    const transactions = await connectToCollection('up', 'transactions');
+    const transactions = await connectToCollection(DB_NAME, 'transactions');
     if (transactions) {
       let replacedTransactions = 0;
       await Promise.all(
@@ -266,7 +266,7 @@ export const replaceTransactions = async (transactionIds: string[]) => {
 export const searchTransactions = async (search: string) => {
   try {
     const transactions = await connectToCollection<DbTransactionResource>(
-      'up',
+      DB_NAME,
       'transactions'
     );
     if (transactions) {
@@ -299,7 +299,7 @@ export const getAccounts = async (
 ) => {
   try {
     const accounts = await connectToCollection<AccountResource>(
-      'up',
+      DB_NAME,
       'accounts'
     );
     if (accounts) {
@@ -359,7 +359,7 @@ export const getAccountBalanceHistorical = async (
 ) => {
   try {
     const transactions = await connectToCollection<DbTransactionResource>(
-      'up',
+      DB_NAME,
       'transactions'
     );
     if (transactions) {
@@ -403,7 +403,7 @@ export const getAccountBalanceHistorical = async (
 export const getAccountById = async (accountId: string) => {
   try {
     const accounts = await connectToCollection<AccountResource>(
-      'up',
+      DB_NAME,
       'accounts'
     );
     if (accounts) {
@@ -452,7 +452,7 @@ export const getIOStats = async (
 ) => {
   try {
     const transactions = await connectToCollection<DbTransactionResource>(
-      'up',
+      DB_NAME,
       'transactions'
     );
     if (transactions) {
@@ -521,7 +521,7 @@ export const getMerchantInfo = async (
 ) => {
   try {
     const transactions = await connectToCollection<DbTransactionResource>(
-      'up',
+      DB_NAME,
       'transactions'
     );
     if (transactions) {
@@ -559,7 +559,7 @@ export const getMerchantInfoHistory = async (
 ) => {
   try {
     const transactions = await connectToCollection<DbTransactionResource>(
-      'up',
+      DB_NAME,
       'transactions'
     );
     if (transactions) {
@@ -594,7 +594,7 @@ export const getMerchantInfoHistory = async (
 export const getCategoryById = async (id: string) => {
   try {
     const categories = await connectToCollection<CategoryResource>(
-      'up',
+      DB_NAME,
       'categories'
     );
     if (categories) {
@@ -657,7 +657,7 @@ export const getCategoryById = async (id: string) => {
  */
 export const getCategories = async (type: TransactionCategoryType) => {
   try {
-    const categories = await connectToCollection('up', 'categories');
+    const categories = await connectToCollection(DB_NAME, 'categories');
     if (categories) {
       const cursor = categories
         .find({
@@ -707,7 +707,7 @@ export const getCategoryInfo = async (
 ) => {
   try {
     const transactions = await connectToCollection<DbTransactionResource>(
-      'up',
+      DB_NAME,
       'transactions'
     );
     if (transactions) {
@@ -758,7 +758,7 @@ export const getCategoryInfoHistory = async (
 ) => {
   try {
     const transactions = await connectToCollection<DbTransactionResource>(
-      'up',
+      DB_NAME,
       'transactions'
     );
     if (transactions) {
@@ -820,7 +820,7 @@ export const getCumulativeIO = async (
 ) => {
   try {
     const transactions = await connectToCollection<DbTransactionResource>(
-      'up',
+      DB_NAME,
       'transactions'
     );
     if (transactions) {
@@ -846,7 +846,7 @@ export const getCumulativeIO = async (
 export const getTagInfo = async (tag: string): Promise<TagInfo | undefined> => {
   try {
     const transactions = await connectToCollection<DbTransactionResource>(
-      'up',
+      DB_NAME,
       'transactions'
     );
     if (transactions) {
@@ -893,7 +893,7 @@ export const getTransactionsByDay = async (
 ) => {
   try {
     const transactions = await connectToCollection<DbTransactionResource>(
-      'up',
+      DB_NAME,
       'transactions'
     );
     if (transactions) {
@@ -930,7 +930,7 @@ const getTransactionsByDate = async (
 ) => {
   try {
     const transactions = await connectToCollection<DbTransactionResource>(
-      'up',
+      DB_NAME,
       'transactions'
     );
     if (transactions) {
@@ -998,7 +998,7 @@ export const getTransactionsByCategory = async (
 ) => {
   try {
     const transactions = await connectToCollection<DbTransactionResource>(
-      'up',
+      DB_NAME,
       'transactions'
     );
     if (transactions) {
@@ -1059,7 +1059,7 @@ export const getTransactionsByCategory = async (
 const getTransactionById = async (id: string) => {
   try {
     const transactions = await connectToCollection<DbTransactionResource>(
-      'up',
+      DB_NAME,
       'transactions'
     );
     if (transactions) {
@@ -1087,7 +1087,7 @@ const getTransactionById = async (id: string) => {
 export const getTransactionTypes = async () => {
   try {
     const transactions = await connectToCollection<DbTransactionResource>(
-      'up',
+      DB_NAME,
       'transactions'
     );
     if (transactions) {
@@ -1108,7 +1108,7 @@ export const getTransactionTypes = async () => {
 export const getTransactionsByTag = async (tag: string) => {
   try {
     const transactions = await connectToCollection<DbTransactionResource>(
-      'up',
+      DB_NAME,
       'transactions'
     );
     if (transactions) {
@@ -1141,7 +1141,7 @@ export const getTransactionsByTag = async (tag: string) => {
 export const getTransactionsByTags = async () => {
   try {
     const transactions = await connectToCollection<DbTransactionResource>(
-      'up',
+      DB_NAME,
       'transactions'
     );
     if (transactions) {
@@ -1163,7 +1163,7 @@ export const getTransactionsByTags = async () => {
 export const getTags = async () => {
   try {
     const transactions = await connectToCollection<DbTransactionResource>(
-      'up',
+      DB_NAME,
       'transactions'
     );
     if (transactions) {
