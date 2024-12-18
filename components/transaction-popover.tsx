@@ -76,7 +76,7 @@ const PopoverContent = ({ tx }: { tx: TransactionResourceFiltered }) => {
             {tx.isCategorizable ? (
               <Button
                 variant="link"
-                className={cn('p-0 text-xl', focusRing)}
+                className={cn('p-0 text-xl text-wrap', focusRing)}
                 asChild
               >
                 <Link href={`/merchant/${encodeURIComponent(tx.description)}`}>
