@@ -20,11 +20,14 @@ export const authedRouter = router({
       const { transactionId, tags } = input;
       const { error, response } = await addTags(transactionId, tags);
       if (error) {
-        console.error(error);
+        console.error(error, response);
         throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' });
-      }
-      const res = await replaceTransactions([transactionId]);
-      if (!response.ok || res !== 1) {
+      } else if (response.ok) {
+        const res = await replaceTransactions([transactionId]);
+        if (res !== 1) {
+          throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' });
+        }
+      } else {
         throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' });
       }
     }),
@@ -34,11 +37,14 @@ export const authedRouter = router({
       const { transactionId, tags } = input;
       const { error, response } = await deleteTags(transactionId, tags);
       if (error) {
-        console.error(error);
+        console.error(error, response);
         throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' });
-      }
-      const res = await replaceTransactions([transactionId]);
-      if (!response.ok || res !== 1) {
+      } else if (response.ok) {
+        const res = await replaceTransactions([transactionId]);
+        if (res !== 1) {
+          throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' });
+        }
+      } else {
         throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' });
       }
     }),
