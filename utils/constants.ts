@@ -24,6 +24,11 @@ export const TZ = 'Australia/Melbourne';
 
 export const now = TZDate.tz(TZ);
 
+export const CachePresets = {
+  FIVE_MINUTES_IN_MS: 5 * 60 * 1000,
+  ONE_DAY_IN_SECONDS: 60 * 60 * 24,
+};
+
 /**
  * Utility date ranges
  * @returns
