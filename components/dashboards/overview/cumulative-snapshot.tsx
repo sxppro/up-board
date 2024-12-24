@@ -1,6 +1,10 @@
 'use client';
 
-import InfoTooltip from '@/components/core/info-tooltip';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
 import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
@@ -204,10 +208,18 @@ const CumulativeSnapshot = ({
           <div className="flex flex-col py-4 sm:p-4">
             <div className="flex-1 flex flex-col gap-1">
               <div className="flex gap-0.5">
-                <span className="font-bold">Transaction account</span>
-                <InfoTooltip>
-                  <p>Current balance of transactional account</p>
-                </InfoTooltip>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <span className="font-bold underline underline-offset-4 cursor-pointer">
+                      Transaction account
+                    </span>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto">
+                    <p className="text-sm">
+                      Current balance of transactional account
+                    </p>
+                  </PopoverContent>
+                </Popover>
               </div>
               {transactionalBalance && transactionalAcc ? (
                 <>
@@ -228,10 +240,18 @@ const CumulativeSnapshot = ({
             <Separator className="my-4" />
             <div className="flex-1 flex flex-col gap-1">
               <div className="flex gap-0.5">
-                <span className="font-bold">Savings</span>
-                <InfoTooltip>
-                  <p>Current balance of largest saver account</p>
-                </InfoTooltip>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <span className="font-bold underline underline-offset-4 cursor-pointer">
+                      Savings
+                    </span>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto">
+                    <p className="text-sm">
+                      Current balance of largest saver account
+                    </p>
+                  </PopoverContent>
+                </Popover>
               </div>
               {savingsBalance && savingsAcc ? (
                 <>
@@ -349,10 +369,18 @@ const CumulativeSnapshot = ({
           <div className="flex flex-col py-4 sm:p-4">
             <div className="flex-1 flex flex-col gap-1">
               <div className="flex gap-0.5">
-                <span className="font-bold">Top Categories</span>
-                <InfoTooltip>
-                  <p>Subcategories ordered by total expenditure</p>
-                </InfoTooltip>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <span className="font-bold underline underline-offset-4 cursor-pointer">
+                      Top Categories
+                    </span>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto">
+                    <p className="text-sm">
+                      Categories ordered by total expenditure
+                    </p>
+                  </PopoverContent>
+                </Popover>
               </div>
               <div className="flex flex-col gap-1">
                 {expenseCategories
@@ -395,10 +423,18 @@ const CumulativeSnapshot = ({
             <Separator className="my-4" />
             <div className="flex-1 flex flex-col gap-1">
               <div className="flex gap-0.5">
-                <span className="font-bold">Top Merchants</span>
-                <InfoTooltip>
-                  <p>Merchants ordered by total expenditure</p>
-                </InfoTooltip>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <span className="font-bold underline underline-offset-4 cursor-pointer">
+                      Top Merchants
+                    </span>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto">
+                    <p className="text-sm">
+                      Merchants ordered by total expenditure
+                    </p>
+                  </PopoverContent>
+                </Popover>
               </div>
               <div className="flex flex-col gap-1">
                 {merchants
