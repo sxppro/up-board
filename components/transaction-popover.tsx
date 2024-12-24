@@ -1,6 +1,7 @@
 'use client';
 
 import { TransactionResourceFiltered } from '@/server/schemas';
+import { CachePresets } from '@/utils/constants';
 import { capitalise, cn, formatCurrency } from '@/utils/helpers';
 import { focusRing } from '@/utils/tremor';
 import { trpc } from '@/utils/trpc';
@@ -11,6 +12,7 @@ import {
   ClipboardText,
   X,
 } from '@phosphor-icons/react';
+import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import {
   CSSProperties,
@@ -18,6 +20,8 @@ import {
   PropsWithChildren,
   useState,
 } from 'react';
+import TransactionTagsCombobox from './core/transaction-tags-combobox';
+import { Badge } from './ui/badge';
 import { Button } from './ui/button';
 import { Separator } from './ui/separator';
 import {
@@ -53,11 +57,15 @@ const PopoverContentCell = ({
 );
 
 const PopoverContent = ({ tx }: { tx: TransactionResourceFiltered }) => {
+  const { toast } = useToast();
+  const { data: session } = useSession();
   const { refetch } = trpc.user.getAttachment.useQuery(tx.attachment || '', {
     refetchOnWindowFocus: false,
     enabled: false,
   });
-  const { toast } = useToast();
+  const { data: tags } = trpc.user.getTags.useQuery(undefined, {
+    enabled: !!session,
+  });
 
   return (
     <div className="flex flex-col mt-6 gap-9">
@@ -101,7 +109,7 @@ const PopoverContent = ({ tx }: { tx: TransactionResourceFiltered }) => {
           </PopoverContentCell>
           <PopoverContentCell
             label="Transaction ID"
-            className="cursor-pointer"
+            className="cursor-pointer transition hover:text-muted-foreground"
             onClick={(e) => {
               e.preventDefault();
               navigator.clipboard.writeText(tx.id);
@@ -142,6 +150,26 @@ const PopoverContent = ({ tx }: { tx: TransactionResourceFiltered }) => {
         )}
       </div>
       <div className="flex flex-col gap-2">
+        <div className="flex justify-between gap-1">
+          <h2 className="text-lg font-medium">Tags</h2>
+          {session ? (
+            <TransactionTagsCombobox
+              txId={tx.id}
+              title="Add tags"
+              options={tags || []}
+              initialState={tx.tags}
+            />
+          ) : null}
+        </div>
+        <div className="flex gap-1">
+          {tx.tags.length > 0 ? (
+            tx.tags.map((tag) => <Badge key={tag}>{tag}</Badge>)
+          ) : (
+            <p className="text-muted-foreground text-sm">No tags.</p>
+          )}
+        </div>
+      </div>
+      <div className="flex flex-col gap-2">
         <h2 className="text-lg font-medium">Notes</h2>
         {tx.note ? (
           <p className="text-subtle text-sm">{tx.note}</p>
@@ -151,7 +179,7 @@ const PopoverContent = ({ tx }: { tx: TransactionResourceFiltered }) => {
       </div>
       <div className="flex flex-col gap-2">
         <h2 className="text-lg font-medium">Attachments</h2>
-        {tx.attachment ? (
+        {tx.attachment && session ? (
           <Button
             variant="link"
             className="border"
@@ -180,13 +208,14 @@ const TransactionPopover = ({ children, id }: TransactionPopoverProps) => {
     {
       refetchOnWindowFocus: false,
       enabled: open,
+      staleTime: CachePresets.FIVE_MINUTES_IN_MS,
     }
   );
 
   return (
     <Sheet onOpenChange={(open) => setOpen(open)}>
       <SheetTrigger asChild>{children}</SheetTrigger>
-      <SheetContent className="w-full sm:max-w-lg">
+      <SheetContent className="w-full sm:max-w-lg overflow-scroll">
         <SheetHeader>
           <SheetTitle className="font-medium">Transaction</SheetTitle>
           {data?.deepLinkURL && (
