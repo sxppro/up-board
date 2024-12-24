@@ -1,14 +1,21 @@
 import { BalanceHistory } from '@/server/schemas';
-import { DbTransactionResource } from '@/types/custom';
+import { DateRangePresets, DbTransactionResource } from '@/types/custom';
 import { tz } from '@date-fns/tz';
 import { clsx, type ClassValue } from 'clsx';
 import {
   differenceInDays,
+  endOfMonth,
+  endOfYear,
   format,
   formatDistanceStrict,
   isThisYear,
   isToday,
   isYesterday,
+  startOfMonth,
+  startOfYear,
+  subDays,
+  subMonths,
+  subYears,
 } from 'date-fns';
 import { enAU } from 'date-fns/locale';
 import { twMerge } from 'tailwind-merge';
@@ -175,4 +182,89 @@ export const getSearchParams = (
   ...params: (string | string[] | undefined)[]
 ) => {
   return params.map((param) => (Array.isArray(param) ? param[0] : param));
+};
+
+/**
+ * Utility date ranges
+ * @returns
+ */
+export const getDateRanges = () => {
+  const thisMonth = {
+    from: startOfMonth(now),
+    to: endOfMonth(now),
+  };
+
+  const thisMonthLastYear = {
+    from: subYears(thisMonth.from, 1),
+    to: subYears(thisMonth.to, 1),
+  };
+
+  const thisYear = {
+    from: startOfYear(now),
+    to: endOfYear(now),
+  };
+
+  const lastYear = {
+    from: subYears(thisYear.from, 1),
+    to: subYears(thisYear.to, 1),
+  };
+
+  const monthToDate = {
+    from: startOfMonth(now),
+    to: now,
+  };
+
+  const yearToDate = {
+    from: startOfYear(now),
+    to: now,
+  };
+
+  const last24hours = {
+    from: subDays(now, 1),
+    to: now,
+  };
+
+  const last7days = {
+    from: subDays(now, 7),
+    to: now,
+  };
+
+  const last30days = {
+    from: subDays(now, 30),
+    to: now,
+  };
+
+  const last3months = {
+    from: subMonths(now, 3),
+    to: now,
+  };
+
+  const last6months = {
+    from: subMonths(now, 6),
+    to: now,
+  };
+
+  const last12months = {
+    from: subYears(now, 1),
+    to: now,
+  };
+
+  return {
+    thisMonth,
+    thisYear,
+    thisMonthLastYear,
+    lastYear,
+    monthToDate,
+    yearToDate,
+    map: new Map(
+      Object.entries({
+        [DateRangePresets.TODAY]: last24hours,
+        [DateRangePresets.WEEK]: last7days,
+        [DateRangePresets.MONTH]: last30days,
+        [DateRangePresets.THREE_MONTHS]: last3months,
+        [DateRangePresets.SIX_MONTHS]: last6months,
+        [DateRangePresets.YEAR]: last12months,
+      })
+    ),
+  };
 };
