@@ -5,7 +5,8 @@ import {
   TransactionCategoryInfoHistoryRaw,
   TransactionCategoryOption,
 } from '@/server/schemas';
-import { getDateRanges, TZ } from '@/utils/constants';
+import { TZ } from '@/utils/constants';
+import { getDateRanges } from '@/utils/helpers';
 import { useDate } from '@/utils/hooks';
 import { TZDate } from '@date-fns/tz';
 import { EventProps } from '@tremor/react';
@@ -38,7 +39,7 @@ const SpendingBarChart = ({
       FormattedDate: date,
     };
     categories.map(
-      ({ amount, categoryName }) => (remappedElem[categoryName] = amount)
+      ({ absAmount, categoryName }) => (remappedElem[categoryName] = absAmount)
     );
     return remappedElem;
   });

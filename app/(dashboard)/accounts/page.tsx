@@ -45,6 +45,7 @@ const AccountsPage = async ({ searchParams }: PageProps) => {
     {
       limit: 7,
     },
+    undefined,
     accountId
   );
   const avgMonthStats = (

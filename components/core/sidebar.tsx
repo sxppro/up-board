@@ -49,23 +49,8 @@ const navigation = [
 
 const shortcuts = [
   {
-    name: 'Add new user',
-    href: '#',
-    icon: LinkIcon,
-  },
-  {
-    name: 'Workspace usage',
-    href: '#',
-    icon: LinkIcon,
-  },
-  {
-    name: 'Cost spend control',
-    href: '#',
-    icon: LinkIcon,
-  },
-  {
-    name: 'Overview – Rows written',
-    href: '#',
+    name: 'Good Life',
+    href: '/spending?category=good-life',
     icon: LinkIcon,
   },
 ];

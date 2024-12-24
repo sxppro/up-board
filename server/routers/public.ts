@@ -1,7 +1,6 @@
 import {
   getAccountBalanceHistorical,
   getAccountById,
-  getAccounts,
   getCategories,
   getCategoryInfo,
   getCategoryInfoHistory,
@@ -21,7 +20,6 @@ import {
   AccountInfoSchema,
   AccountMonthlyInfoSchema,
   BalanceHistorySchema,
-  CumulativeIOSchema,
   DateRangeSchema,
   Merchant,
   RetrievalOpts,
@@ -140,14 +138,6 @@ export const publicRouter = router({
         type: TransactionIO,
       })
     )
-    .output(
-      z.array(
-        CumulativeIOSchema.extend({
-          FormattedDate: z.string(),
-          AmountCumulativePast: z.number().optional(),
-        })
-      )
-    )
     .query(async ({ input }) => {
       const { dateRange, compareDateRange, accountId, type } = input;
       const results = await getCumulativeIO(accountId, dateRange, type);
@@ -163,8 +153,8 @@ export const publicRouter = router({
             return {
               ...rest,
               Timestamp,
-              AmountCumulativePast: AmountCumulative,
-              AmountCumulative: results[index]?.AmountCumulative ?? null,
+              'Last year': AmountCumulative,
+              'This year': results[index]?.AmountCumulative ?? null,
               FormattedDate,
             };
           }
@@ -233,22 +223,8 @@ export const publicRouter = router({
       })
     )
     .query(async ({ input }) => {
-      const transactionAcc = await getAccounts('TRANSACTIONAL', {
-        sort: {
-          'attributes.balance.valueInBaseUnits': -1,
-        },
-        limit: 1,
-      });
-      if (transactionAcc[0]) {
-        const { dateRange, options } = input;
-        return await getTransactionsByDay(
-          options,
-          transactionAcc[0].id,
-          dateRange
-        );
-      } else {
-        throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' });
-      }
+      const { dateRange, options } = input;
+      return await getTransactionsByDay(options, dateRange);
     }),
   getTransactionsByCategory: publicProcedure
     .input(

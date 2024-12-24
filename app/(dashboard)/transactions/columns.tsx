@@ -67,7 +67,9 @@ export const columns: ColumnDef<TransactionResourceFiltered>[] = [
       const amount = parseFloat(row.getValue('amount'));
       const formatted = formatCurrency(amount);
       return (
-        <div className="float-right text-end font-medium">{formatted}</div>
+        <div className="float-right text-nowrap text-end font-medium">
+          {formatted}
+        </div>
       );
     },
   },

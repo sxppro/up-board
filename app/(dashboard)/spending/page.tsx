@@ -6,15 +6,19 @@ import QueryProvider from '@/components/providers/query-provider';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import {
-  getAccounts,
   getCategories,
   getCategoryInfo,
   getCategoryInfoHistory,
   getIOStats,
 } from '@/db';
 import { PageProps } from '@/types/custom';
-import { getDateRanges, now } from '@/utils/constants';
-import { calcPercentDiff, cn, formatCurrency } from '@/utils/helpers';
+import { now } from '@/utils/constants';
+import {
+  calcPercentDiff,
+  cn,
+  formatCurrency,
+  getDateRanges,
+} from '@/utils/helpers';
 import { Card } from '@tremor/react';
 import { endOfMonth, startOfMonth, subMonths } from 'date-fns';
 import { domMax, LazyMotion } from 'framer-motion';
@@ -41,16 +45,11 @@ const SpendingPage = async ({ searchParams }: PageProps) => {
         to: now,
       };
   const { thisMonth } = getDateRanges();
-  const transactionAcc = await getAccounts('TRANSACTIONAL', {
-    sort: { 'attributes.balance.valueInBaseUnits': -1 },
-    limit: 1,
-  });
   const monthStats = await getIOStats(
     category && {
       match: { 'relationships.parentCategory.data.id': category.id },
     },
-    thisMonth,
-    transactionAcc[0].id
+    thisMonth
   );
   const avgStats = await getIOStats(
     {
@@ -63,7 +62,7 @@ const SpendingPage = async ({ searchParams }: PageProps) => {
       from: startOfMonth(subMonths(now, 3)),
       to: endOfMonth(subMonths(now, 1)),
     },
-    transactionAcc[0].id,
+    undefined,
     true
   );
   const monthlyChange = calcPercentDiff(

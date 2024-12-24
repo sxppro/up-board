@@ -30,8 +30,12 @@ import {
 } from '@/types/custom';
 import { components } from '@/types/up-api';
 import { auth } from '@/utils/auth';
+import { DB_NAME } from '@/utils/constants';
 import { outputTransactionFields } from '@/utils/helpers';
-import { getTransactionById as getUpTransactionById } from '@/utils/up';
+import {
+  getTransactionByAccount,
+  getTransactionById as getUpTransactionById,
+} from '@/utils/up';
 import { faker } from '@faker-js/faker';
 import { UUID } from 'bson';
 import {
@@ -58,6 +62,61 @@ import {
 } from './pipelines';
 
 faker.seed(17);
+
+/**
+ * Utility to check transactions between Up and db
+ * @param accountId
+ * @returns
+ */
+export const checkTransactions = async (accountId: string) => {
+  try {
+    const transactions = await getTransactionByAccount(accountId);
+    console.log(`Transactions: ${transactions.length}`);
+    const database = client.db(DB_NAME);
+    const db = database.collection<DbTransactionResource>('transactions');
+    const diff: any = [];
+
+    const existingTransactions = await db
+      .find({
+        'relationships.account.data.id': accountId,
+      })
+      .project({
+        _id: 0,
+        id: '$_id',
+        value: '$attributes.amount.valueInBaseUnits',
+      })
+      .toArray();
+    console.log(`Existing transactions: ${existingTransactions.length}`);
+
+    transactions.forEach((tx) => {
+      const transaction = existingTransactions.find(
+        (t) => t.id.toString() === tx.id
+      );
+      if (!transaction) {
+        diff.push({
+          id: tx.id,
+          oldValue: null,
+          newValue: tx.attributes.amount.valueInBaseUnits,
+        });
+      }
+      if (
+        transaction &&
+        transaction.value !== tx.attributes.amount.valueInBaseUnits
+      ) {
+        diff.push({
+          id: tx.id,
+          oldValue: transaction.value,
+          newValue: tx.attributes.amount.valueInBaseUnits,
+        });
+      }
+    });
+
+    console.log(`Diff: `, diff);
+    return;
+  } catch (error) {
+    console.error('Error checking and storing transactions:', error);
+  }
+};
 
 /**
  * Connects to a collection within a database
@@ -113,7 +172,7 @@ export const insertTransactions = async (
     return;
   }
   try {
-    const db = client.db('up');
+    const db = client.db(DB_NAME);
     const transactions = db.collection<DbTransactionResource>('transactions');
     /**
      * Remaps id to _id as BSON UUID & ISO date strings
@@ -174,7 +233,7 @@ const mapCategories = async (categoryType: TransactionCategoryType) => {
  */
 export const replaceTransactions = async (transactionIds: string[]) => {
   try {
-    const transactions = await connectToCollection('up', 'transactions');
+    const transactions = await connectToCollection(DB_NAME, 'transactions');
     if (transactions) {
       let replacedTransactions = 0;
       await Promise.all(
@@ -207,7 +266,7 @@ export const replaceTransactions = async (transactionIds: string[]) => {
 export const searchTransactions = async (search: string) => {
   try {
     const transactions = await connectToCollection<DbTransactionResource>(
-      'up',
+      DB_NAME,
       'transactions'
     );
     if (transactions) {
@@ -240,7 +299,7 @@ export const getAccounts = async (
 ) => {
   try {
     const accounts = await connectToCollection<AccountResource>(
-      'up',
+      DB_NAME,
       'accounts'
     );
     if (accounts) {
@@ -300,7 +359,7 @@ export const getAccountBalanceHistorical = async (
 ) => {
   try {
     const transactions = await connectToCollection<DbTransactionResource>(
-      'up',
+      DB_NAME,
       'transactions'
     );
     if (transactions) {
@@ -344,7 +403,7 @@ export const getAccountBalanceHistorical = async (
 export const getAccountById = async (accountId: string) => {
   try {
     const accounts = await connectToCollection<AccountResource>(
-      'up',
+      DB_NAME,
       'accounts'
     );
     if (accounts) {
@@ -393,12 +452,12 @@ export const getIOStats = async (
 ) => {
   try {
     const transactions = await connectToCollection<DbTransactionResource>(
-      'up',
+      DB_NAME,
       'transactions'
     );
     if (transactions) {
       const cursor = transactions.aggregate<AccountMonthlyInfo>(
-        statsIO(options || {}, dateRange, accountId, avg)
+        statsIO(options || {}, dateRange, avg, accountId)
       );
       const results = await cursor.toArray();
       return results;
@@ -462,16 +521,10 @@ export const getMerchantInfo = async (
 ) => {
   try {
     const transactions = await connectToCollection<DbTransactionResource>(
-      'up',
+      DB_NAME,
       'transactions'
     );
-    const transactionAcc = await getAccounts('TRANSACTIONAL', {
-      sort: {
-        'attributes.balance.valueInBaseUnits': -1,
-      },
-      limit: 1,
-    });
-    if (transactions && transactionAcc[0]) {
+    if (transactions) {
       const cursor = transactions.aggregate<Merchant>(
         groupByMerchant(options, dateRange, undefined, type)
       );
@@ -506,7 +559,7 @@ export const getMerchantInfoHistory = async (
 ) => {
   try {
     const transactions = await connectToCollection<DbTransactionResource>(
-      'up',
+      DB_NAME,
       'transactions'
     );
     if (transactions) {
@@ -541,7 +594,7 @@ export const getMerchantInfoHistory = async (
 export const getCategoryById = async (id: string) => {
   try {
     const categories = await connectToCollection<CategoryResource>(
-      'up',
+      DB_NAME,
       'categories'
     );
     if (categories) {
@@ -604,7 +657,7 @@ export const getCategoryById = async (id: string) => {
  */
 export const getCategories = async (type: TransactionCategoryType) => {
   try {
-    const categories = await connectToCollection('up', 'categories');
+    const categories = await connectToCollection(DB_NAME, 'categories');
     if (categories) {
       const cursor = categories
         .find({
@@ -654,28 +707,19 @@ export const getCategoryInfo = async (
 ) => {
   try {
     const transactions = await connectToCollection<DbTransactionResource>(
-      'up',
+      DB_NAME,
       'transactions'
     );
-    const transactionAcc = await getAccounts('TRANSACTIONAL', {
-      sort: {
-        'attributes.balance.valueInBaseUnits': -1,
-      },
-      limit: 1,
-    });
-    if (transactions && transactionAcc[0]) {
+    if (transactions) {
       const cursor = transactions.aggregate<TransactionCategoryInfo>(
-        groupByCategory(
-          dateRange,
-          transactionAcc[0].id,
-          type,
-          options || {},
-          parentCategory
-        )
+        groupByCategory(dateRange, type, options || {}, parentCategory)
       );
       const results = await cursor.toArray();
       return results;
     } else {
+      const amount = parseFloat(
+        faker.finance.amount({ min: -5000, max: 5000 })
+      );
       const filteredCategories = categoriesMock.data.filter(
         ({ relationships }) =>
           parentCategory
@@ -689,7 +733,8 @@ export const getCategoryInfo = async (
         .map(({ id, attributes }) => ({
           category: id,
           categoryName: attributes.name,
-          amount: parseFloat(faker.finance.amount()),
+          amount,
+          absAmount: Math.abs(amount),
           transactions: faker.number.int({ max: 100 }),
         }))
         .sort((a, b) => (a.amount < b.amount ? 1 : -1));
@@ -713,18 +758,12 @@ export const getCategoryInfoHistory = async (
 ) => {
   try {
     const transactions = await connectToCollection<DbTransactionResource>(
-      'up',
+      DB_NAME,
       'transactions'
     );
-    const transactionAcc = await getAccounts('TRANSACTIONAL', {
-      sort: {
-        'attributes.balance.valueInBaseUnits': -1,
-      },
-      limit: 1,
-    });
-    if (transactions && transactionAcc[0]) {
+    if (transactions) {
       const cursor = transactions.aggregate<TransactionCategoryInfoHistoryRaw>(
-        groupByCategoryAndDate(options, type, dateRange, transactionAcc[0].id)
+        groupByCategoryAndDate(options, type, dateRange)
       );
       const results = await cursor.toArray();
       return results;
@@ -741,12 +780,18 @@ export const getCategoryInfoHistory = async (
                 ? relationships.parent.data === null
                 : relationships.parent.data !== null
             )
-            .map(({ id, attributes }) => ({
-              category: id,
-              categoryName: attributes.name,
-              amount: parseFloat(faker.finance.amount()),
-              transactions: faker.number.int({ max: 100 }),
-            })),
+            .map(({ id, attributes }) => {
+              const amount = parseFloat(
+                faker.finance.amount({ min: -5000, max: 5000 })
+              );
+              return {
+                category: id,
+                categoryName: attributes.name,
+                amount,
+                absAmount: Math.abs(amount),
+                transactions: faker.number.int({ max: 100 }),
+              };
+            }),
           day: date.getDate(),
           month: date.getMonth() + 1,
           year: date.getFullYear(),
@@ -775,7 +820,7 @@ export const getCumulativeIO = async (
 ) => {
   try {
     const transactions = await connectToCollection<DbTransactionResource>(
-      'up',
+      DB_NAME,
       'transactions'
     );
     if (transactions) {
@@ -801,7 +846,7 @@ export const getCumulativeIO = async (
 export const getTagInfo = async (tag: string): Promise<TagInfo | undefined> => {
   try {
     const transactions = await connectToCollection<DbTransactionResource>(
-      'up',
+      DB_NAME,
       'transactions'
     );
     if (transactions) {
@@ -843,17 +888,17 @@ export const getTagInfo = async (tag: string): Promise<TagInfo | undefined> => {
  */
 export const getTransactionsByDay = async (
   options?: RetrievalOptions,
-  accountId?: string,
-  dateRange?: DateRange
+  dateRange?: DateRange,
+  accountId?: string
 ) => {
   try {
     const transactions = await connectToCollection<DbTransactionResource>(
-      'up',
+      DB_NAME,
       'transactions'
     );
     if (transactions) {
       const cursor = transactions.aggregate<TransactionGroupByDay>(
-        groupByDay(options, accountId, dateRange)
+        groupByDay(options, dateRange, accountId)
       );
       const results = (await cursor.toArray()).map(
         ({ transactions, ...rest }) => ({
@@ -885,7 +930,7 @@ const getTransactionsByDate = async (
 ) => {
   try {
     const transactions = await connectToCollection<DbTransactionResource>(
-      'up',
+      DB_NAME,
       'transactions'
     );
     if (transactions) {
@@ -953,16 +998,10 @@ export const getTransactionsByCategory = async (
 ) => {
   try {
     const transactions = await connectToCollection<DbTransactionResource>(
-      'up',
+      DB_NAME,
       'transactions'
     );
-    const transactionAcc = await getAccounts('TRANSACTIONAL', {
-      sort: {
-        'attributes.balance.valueInBaseUnits': -1,
-      },
-      limit: 1,
-    });
-    if (transactions && transactionAcc[0]) {
+    if (transactions) {
       const cursor = transactions
         .find({
           ...(type === 'child'
@@ -974,7 +1013,6 @@ export const getTransactionsByCategory = async (
               $lte: dateRange.to,
             },
           }),
-          'relationships.account.data.id': transactionAcc[0].id,
         })
         .sort({ 'attributes.createdAt': -1 });
       const results = (await cursor.toArray()).map((transaction) =>
@@ -1021,7 +1059,7 @@ export const getTransactionsByCategory = async (
 const getTransactionById = async (id: string) => {
   try {
     const transactions = await connectToCollection<DbTransactionResource>(
-      'up',
+      DB_NAME,
       'transactions'
     );
     if (transactions) {
@@ -1049,7 +1087,7 @@ const getTransactionById = async (id: string) => {
 export const getTransactionTypes = async () => {
   try {
     const transactions = await connectToCollection<DbTransactionResource>(
-      'up',
+      DB_NAME,
       'transactions'
     );
     if (transactions) {
@@ -1070,7 +1108,7 @@ export const getTransactionTypes = async () => {
 export const getTransactionsByTag = async (tag: string) => {
   try {
     const transactions = await connectToCollection<DbTransactionResource>(
-      'up',
+      DB_NAME,
       'transactions'
     );
     if (transactions) {
@@ -1103,7 +1141,7 @@ export const getTransactionsByTag = async (tag: string) => {
 export const getTransactionsByTags = async () => {
   try {
     const transactions = await connectToCollection<DbTransactionResource>(
-      'up',
+      DB_NAME,
       'transactions'
     );
     if (transactions) {
@@ -1125,7 +1163,7 @@ export const getTransactionsByTags = async () => {
 export const getTags = async () => {
   try {
     const transactions = await connectToCollection<DbTransactionResource>(
-      'up',
+      DB_NAME,
       'transactions'
     );
     if (transactions) {

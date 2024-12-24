@@ -409,9 +409,7 @@ export const groupMerchantByDay = (
         },
       },
       Amount: {
-        $abs: {
-          $divide: ['$amount', 100],
-        },
+        $divide: ['$amount', 100],
       },
       Balance: {
         $abs: {
@@ -434,12 +432,12 @@ export const groupMerchantByDay = (
  */
 export const groupByCategory = (
   dateRange: DateRange,
-  accountId: string,
   type: 'child' | 'parent',
   options: RetrievalOptions,
-  parentCategory?: string
+  parentCategory?: string,
+  accountId?: string
 ) => {
-  const { limit, sort } = options;
+  const { match, limit, sort } = options;
   return [
     /**
      * Match documents within the desired date range
@@ -447,19 +445,20 @@ export const groupByCategory = (
      */
     {
       $match: {
-        'relationships.account.data.id': accountId,
         'attributes.createdAt': {
           $gte: dateRange.from,
           $lte: dateRange.to,
         },
         'attributes.isCategorizable': true,
-        // Only expenses
-        'attributes.amount.valueInBaseUnits': {
-          $lt: 0,
+        // ! Exclude income
+        'attributes.transactionType': {
+          $nin: ['Salary', 'Direct Credit'],
         },
+        ...(accountId && { 'relationships.account.data.id': accountId }),
         ...(parentCategory && {
           'relationships.parentCategory.data.id': parentCategory,
         }),
+        ...(match && match),
       },
     },
     // Project only the necessary fields for further processing
@@ -515,7 +514,8 @@ export const groupByCategory = (
           $ifNull: ['$category.attributes.name', 'Uncategorised'],
         },
         parentCategory: '$category.relationships.parent.data.id',
-        amount: {
+        amount: { $toDouble: '$amount' },
+        absAmount: {
           $abs: {
             $toDouble: '$amount',
           },
@@ -565,9 +565,9 @@ export const groupByCategoryAndDate = (
         }),
         ...(accountId && { 'relationships.account.data.id': accountId }),
         'attributes.isCategorizable': true,
-        // Expenses only
-        'attributes.amount.valueInBaseUnits': {
-          $lt: 0,
+        // ! Exclude income
+        'attributes.transactionType': {
+          $nin: ['Salary', 'Direct Credit'],
         },
         ...(match && match),
       },
@@ -652,9 +652,7 @@ export const groupByCategoryAndDate = (
           $ifNull: ['$category.attributes.name', 'Uncategorised'],
         },
         amount: {
-          $abs: {
-            $toDouble: '$amount',
-          },
+          $toDouble: '$amount',
         },
         transactions: 1,
       },
@@ -672,6 +670,9 @@ export const groupByCategoryAndDate = (
             category: '$category',
             categoryName: '$categoryName',
             amount: '$amount',
+            absAmount: {
+              $abs: '$amount',
+            },
             transactions: '$transactions',
           },
         },
@@ -705,8 +706,8 @@ export const groupByCategoryAndDate = (
  */
 export const groupByDay = (
   options?: RetrievalOptions,
-  accountId?: string,
-  dateRange?: DateRange
+  dateRange?: DateRange,
+  accountId?: string
 ) => {
   return [
     {
@@ -818,6 +819,11 @@ export const groupByMerchant = (
         amount: {
           $divide: ['$amount', 100],
         },
+        absAmount: {
+          $abs: {
+            $divide: ['$amount', 100],
+          },
+        },
         transactions: 1,
         category: {
           $ifNull: ['$category', 'uncategorised'],
@@ -926,8 +932,9 @@ export const searchTransactions = (searchTerm: string) => [
 export const statsIO = (
   options: RetrievalOptions,
   dateRange?: DateRange,
+  avg?: boolean,
   accountId?: string,
-  avg?: boolean
+  accountType?: string
 ) => {
   const { groupBy, match } = options;
   return [
@@ -947,9 +954,13 @@ export const statsIO = (
           'relationships.account.data.id': accountId,
         }),
         // TODO: Toggle filtering transfers
-        ...(accountId === process.env.UP_TRANS_ACC && {
-          'attributes.isCategorizable': true,
-        }),
+        ...(!accountId ||
+        accountId === process.env.UP_TRANS_ACC ||
+        accountType === 'TRANSACTIONAL'
+          ? {
+              'attributes.isCategorizable': true,
+            }
+          : {}),
         ...(match && match),
       },
     },

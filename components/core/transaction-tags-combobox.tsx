@@ -18,7 +18,6 @@ import { TransactionTagsModification } from '@/server/schemas';
 import { cn } from '@/utils/helpers';
 import { trpc } from '@/utils/trpc';
 import { CheckIcon, PlusCircleIcon } from 'lucide-react';
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 interface TxTagsComboboxProps {
@@ -43,16 +42,14 @@ const TransactionTagsCombobox = ({
   );
   const [input, setInput] = useState<string>('');
   const selectedValues = new Set<string>(filterValues);
-  const router = useRouter();
   const utils = trpc.useUtils();
   const addTags = trpc.user.addTags.useMutation();
   const deleteTags = trpc.user.deleteTags.useMutation();
 
   const invalidateQueries = (input: TransactionTagsModification) => {
     const { transactionId } = input;
-    utils.user.getTransactionById.invalidate(transactionId);
+    utils.public.getTransactionById.invalidate(transactionId);
     utils.user.getTags.invalidate();
-    router.refresh();
   };
 
   const handleSelectTag = async (value: string) => {

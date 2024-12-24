@@ -1,11 +1,27 @@
 'use client';
 
 import { TransactionResourceFiltered } from '@/server/schemas';
+import { CachePresets } from '@/utils/constants';
 import { capitalise, cn, formatCurrency } from '@/utils/helpers';
+import { focusRing } from '@/utils/tremor';
 import { trpc } from '@/utils/trpc';
 import { TZDate } from '@date-fns/tz';
-import { ArrowSquareOut, CircleNotch, X } from '@phosphor-icons/react';
-import { PropsWithChildren, useState } from 'react';
+import {
+  ArrowSquareOut,
+  CircleNotch,
+  ClipboardText,
+  X,
+} from '@phosphor-icons/react';
+import { useSession } from 'next-auth/react';
+import Link from 'next/link';
+import {
+  CSSProperties,
+  MouseEventHandler,
+  PropsWithChildren,
+  useState,
+} from 'react';
+import TransactionTagsCombobox from './core/transaction-tags-combobox';
+import { Badge } from './ui/badge';
 import { Button } from './ui/button';
 import { Separator } from './ui/separator';
 import {
@@ -15,6 +31,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from './ui/sheet';
+import { useToast } from './ui/use-toast';
 
 interface TransactionPopoverProps extends PropsWithChildren {
   id: string;
@@ -22,18 +39,32 @@ interface TransactionPopoverProps extends PropsWithChildren {
 
 const PopoverContentCell = ({
   label,
+  className,
   children,
-}: { label: string } & PropsWithChildren) => (
-  <div className="flex items-center justify-between gap-2">
+  onClick,
+}: {
+  label: string;
+  className?: string;
+  onClick?: MouseEventHandler<HTMLDivElement>;
+} & PropsWithChildren) => (
+  <div
+    className={cn('flex items-center justify-between gap-2', className)}
+    onClick={onClick}
+  >
     <p className="text-subtle font-semibold">{label}</p>
     {children}
   </div>
 );
 
 const PopoverContent = ({ tx }: { tx: TransactionResourceFiltered }) => {
+  const { toast } = useToast();
+  const { data: session } = useSession();
   const { refetch } = trpc.user.getAttachment.useQuery(tx.attachment || '', {
     refetchOnWindowFocus: false,
     enabled: false,
+  });
+  const { data: tags } = trpc.user.getTags.useQuery(undefined, {
+    enabled: !!session,
   });
 
   return (
@@ -49,7 +80,21 @@ const PopoverContent = ({ tx }: { tx: TransactionResourceFiltered }) => {
           >
             {tx.description.slice(0, 1).toUpperCase()}
           </span>
-          <h2 className="flex-1">{tx.description}</h2>
+          <h2 className="flex-1">
+            {tx.isCategorizable ? (
+              <Button
+                variant="link"
+                className={cn('p-0 text-xl text-wrap', focusRing)}
+                asChild
+              >
+                <Link href={`/merchant/${encodeURIComponent(tx.description)}`}>
+                  {tx.description}
+                </Link>
+              </Button>
+            ) : (
+              tx.description
+            )}
+          </h2>
           <span>{formatCurrency(tx.amountRaw)}</span>
         </div>
         <div className="flex flex-col text-sm gap-2">
@@ -62,7 +107,22 @@ const PopoverContent = ({ tx }: { tx: TransactionResourceFiltered }) => {
           <PopoverContentCell label="Transaction Type">
             <p>{tx.transactionType}</p>
           </PopoverContentCell>
-          <PopoverContentCell label="Transaction ID">
+          <PopoverContentCell
+            label="Transaction ID"
+            className="cursor-pointer transition hover:text-muted-foreground"
+            onClick={(e) => {
+              e.preventDefault();
+              navigator.clipboard.writeText(tx.id);
+              toast({
+                description: (
+                  <div className="flex gap-2 items-center">
+                    <ClipboardText className="h-5 w-5" />
+                    <span>Transaction ID copied</span>
+                  </div>
+                ),
+              });
+            }}
+          >
             <p className="flex-1 text-right">{tx.id}</p>
           </PopoverContentCell>
         </div>
@@ -90,6 +150,26 @@ const PopoverContent = ({ tx }: { tx: TransactionResourceFiltered }) => {
         )}
       </div>
       <div className="flex flex-col gap-2">
+        <div className="flex justify-between gap-1">
+          <h2 className="text-lg font-medium">Tags</h2>
+          {session ? (
+            <TransactionTagsCombobox
+              txId={tx.id}
+              title="Add tags"
+              options={tags || []}
+              initialState={tx.tags}
+            />
+          ) : null}
+        </div>
+        <div className="flex gap-1">
+          {tx.tags.length > 0 ? (
+            tx.tags.map((tag) => <Badge key={tag}>{tag}</Badge>)
+          ) : (
+            <p className="text-muted-foreground text-sm">No tags.</p>
+          )}
+        </div>
+      </div>
+      <div className="flex flex-col gap-2">
         <h2 className="text-lg font-medium">Notes</h2>
         {tx.note ? (
           <p className="text-subtle text-sm">{tx.note}</p>
@@ -99,7 +179,7 @@ const PopoverContent = ({ tx }: { tx: TransactionResourceFiltered }) => {
       </div>
       <div className="flex flex-col gap-2">
         <h2 className="text-lg font-medium">Attachments</h2>
-        {tx.attachment ? (
+        {tx.attachment && session ? (
           <Button
             variant="link"
             className="border"
@@ -128,15 +208,45 @@ const TransactionPopover = ({ children, id }: TransactionPopoverProps) => {
     {
       refetchOnWindowFocus: false,
       enabled: open,
+      staleTime: CachePresets.FIVE_MINUTES_IN_MS,
     }
   );
 
   return (
     <Sheet onOpenChange={(open) => setOpen(open)}>
       <SheetTrigger asChild>{children}</SheetTrigger>
-      <SheetContent className="w-full sm:max-w-lg">
+      <SheetContent className="w-full sm:max-w-lg overflow-scroll">
         <SheetHeader>
           <SheetTitle className="font-medium">Transaction</SheetTitle>
+          {data?.deepLinkURL && (
+            <div
+              className="flex self-center items-center rounded-full gap-x-1 p-1 text-sm shadow-sm shadow-black/20 ring-1 ring-white/10 transition border border-transparent [background:padding-box_var(--bg-color),border-box_var(--border-color)]"
+              style={
+                {
+                  '--highlight': '210 40% 98%',
+
+                  '--bg-color':
+                    'linear-gradient(hsl(var(--background)), hsl(var(--background)))',
+                  '--border-color': `linear-gradient(145deg,
+            rgb(var(--highlight)) 0%,
+            rgb(var(--highlight) / 0.3) 33.33%,
+            rgb(var(--highlight) / 0.14) 66.67%,
+            rgb(var(--highlight) / 0.1) 100%)
+          `,
+                } as CSSProperties
+              }
+            >
+              <Button
+                className={cn(
+                  'rounded-full bg-transparent hover:bg-transparent h-4 font-semibold text-primary text-xs',
+                  focusRing
+                )}
+                asChild
+              >
+                <Link href={data.deepLinkURL}>Open in Up</Link>
+              </Button>
+            </div>
+          )}
         </SheetHeader>
         {isLoading || isError ? (
           <div className="flex flex-col w-full h-full">

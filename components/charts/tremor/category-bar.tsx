@@ -173,6 +173,13 @@ const CategoryBar = React.forwardRef<HTMLDivElement, CategoryBarProps>(
                 />
               );
             })}
+            {values.length === 0 ? (
+              <div
+                key={`item-fallback`}
+                className="h-full rounded-full border border-dashed border-gray-500"
+                style={{ width: '100%' }}
+              />
+            ) : null}
           </div>
 
           {marker !== undefined ? (
