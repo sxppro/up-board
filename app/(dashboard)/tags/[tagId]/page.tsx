@@ -1,6 +1,7 @@
 import { siteConfig } from '@/app/siteConfig';
 import TableSkeleton from '@/components/core/table-skeleton';
 import TagDashboard from '@/components/dashboards/tag';
+import QueryProvider from '@/components/providers/query-provider';
 import TransactionsByTag from '@/components/tables/tag-transactions';
 import { getTagInfo } from '@/db';
 import { X } from 'lucide-react';
@@ -26,7 +27,7 @@ const TagPage = async ({ params }: TagPageProps) => {
   const tagInfo = await getTagInfo(decodedTagId);
 
   return (
-    <>
+    <QueryProvider>
       {tagInfo ? (
         <>
           <h1 className="text-2xl font-bold tracking-tight">{decodedTagId}</h1>
@@ -43,7 +44,7 @@ const TagPage = async ({ params }: TagPageProps) => {
           </div>
         </div>
       )}
-    </>
+    </QueryProvider>
   );
 };
 
