@@ -45,7 +45,11 @@ export const columns: ColumnDef<TransactionResourceFiltered>[] = [
           className="h-6 p-0 gap-1 truncate font-medium flex-start"
           asChild
         >
-          <Link href={`/merchant/${row.getValue('description')}`}>
+          <Link
+            href={`/merchant/${encodeURIComponent(
+              row.getValue('description')
+            )}`}
+          >
             {row.getValue('description')}
             {row.original.tags.length > 0 && (
               <Tag className="size-4 fill-fuchsia-600" />
