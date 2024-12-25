@@ -8,7 +8,10 @@ interface TransactionsByTagProps {
   search?: string;
 }
 
-const TransactionsByTag = async ({ tag, search }: TransactionsByTagProps) => {
+const TransactionTableByTag = async ({
+  tag,
+  search,
+}: TransactionsByTagProps) => {
   const data = await filterTransactionFields(
     search ? await searchTransactions(search) : await getTransactionsByTag(tag)
   );
@@ -24,4 +27,4 @@ const TransactionsByTag = async ({ tag, search }: TransactionsByTagProps) => {
   );
 };
 
-export default TransactionsByTag;
+export default TransactionTableByTag;

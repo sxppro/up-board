@@ -1112,7 +1112,9 @@ export const getTransactionsByTag = async (tag: string) => {
       'transactions'
     );
     if (transactions) {
-      const cursor = transactions.find({ 'relationships.tags.data.id': tag });
+      const cursor = transactions
+        .find({ 'relationships.tags.data.id': tag })
+        .sort({ 'attributes.createdAt': -1 });
       const results = (await cursor.toArray()).map((transaction) =>
         outputTransactionFields(transaction)
       );

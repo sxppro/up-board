@@ -3,7 +3,6 @@
 import { TagInfo } from '@/server/schemas';
 import { formatCurrency } from '@/utils/helpers';
 import { Color, Grid } from '@tremor/react';
-import { List, Minus, Plus } from 'lucide-react';
 import StatCard from '../core/stat-card';
 
 interface TagDashboardProps {
@@ -15,25 +14,21 @@ const TagDashboard = ({ tagInfo }: TagDashboardProps) => {
   const parsedTagInfo: {
     title: string;
     metric: string | number | undefined;
-    icon: any;
     color: Color;
   }[] = [
     {
-      title: 'Income',
+      title: 'Money In',
       metric: formatCurrency(Income),
-      icon: Plus,
       color: 'indigo',
     },
     {
-      title: 'Expenses',
+      title: 'Money Out',
       metric: formatCurrency(Expenses),
-      icon: Minus,
       color: 'fuchsia',
     },
     {
       title: 'Transactions',
       metric: Transactions,
-      icon: List,
       color: 'amber',
     },
   ];

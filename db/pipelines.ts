@@ -1069,7 +1069,6 @@ export const statsIO = (
 export const statsByTag = (tagId: string, monthly?: boolean) => [
   {
     $match: {
-      'attributes.isCategorizable': true,
       'relationships.tags.data.id': tagId,
     },
   },
