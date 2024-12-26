@@ -31,7 +31,7 @@ const TagPage = async () => {
             </h1>
             <Separator className="mt-2" />
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-6">
             {data.tags &&
               data.tags.map((tag) => (
                 <Suspense key={tag} fallback={<TagCardFallback id={tag} />}>

@@ -3,7 +3,8 @@ import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
 import { getTagInfo } from '@/db';
-import { formatCurrency } from '@/utils/helpers';
+import { cn, formatCurrency } from '@/utils/helpers';
+import { focusRing } from '@/utils/tremor';
 import { ArrowRight } from '@phosphor-icons/react/dist/ssr';
 import { Card } from '@tremor/react';
 import Link from 'next/link';
@@ -50,7 +51,10 @@ const TagCard = async ({ id }: { id: string }) => {
       <Separator />
       <Button
         variant="link"
-        className="h-auto justify-end p-3 text-fuchsia-600 dark:text-fuchsia-400"
+        className={cn(
+          'h-auto justify-end p-3 text-fuchsia-600 dark:text-fuchsia-400',
+          focusRing
+        )}
         asChild
       >
         <Link className="flex items-center gap-x-1" href={`/tags/${id}`}>

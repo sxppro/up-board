@@ -1,10 +1,12 @@
 import { siteConfig } from '@/app/siteConfig';
 import TableSkeleton from '@/components/core/table-skeleton';
-import TagDashboard from '@/components/dashboards/tag';
 import QueryProvider from '@/components/providers/query-provider';
 import TransactionsByTag from '@/components/tables/transaction-table-tag';
+import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { getTagInfo } from '@/db';
+import { formatCurrency } from '@/utils/helpers';
+import { Card } from '@tremor/react';
 import { X } from 'lucide-react';
 import { Metadata, ResolvingMetadata } from 'next';
 import { Suspense } from 'react';
@@ -25,11 +27,11 @@ export async function generateMetadata(
 const TagPage = async ({ params }: TagPageProps) => {
   const { tagId } = params;
   const decodedTagId = decodeURIComponent(tagId);
-  const tagInfo = await getTagInfo(decodedTagId);
+  const stats = await getTagInfo(decodedTagId);
 
   return (
     <QueryProvider>
-      {tagInfo ? (
+      {stats ? (
         <section
           aria-labelledby="tags-overview"
           className="flex flex-col gap-3"
@@ -40,7 +42,30 @@ const TagPage = async ({ params }: TagPageProps) => {
             </h1>
             <Separator className="mt-2" />
           </div>
-          <TagDashboard tagInfo={tagInfo} />
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-2">
+            <Card className="ring-border bg-background p-3">
+              <p className="text-muted-foreground">Average</p>
+              <p className="text-2xl font-semibold">
+                {formatCurrency(stats.Net / stats.Transactions)}
+              </p>
+            </Card>
+            <Card className="ring-border bg-background p-3">
+              <p className="text-muted-foreground">All time</p>
+              <p className="text-2xl font-semibold">
+                {formatCurrency(stats.Net)}
+              </p>
+            </Card>
+            <Card className="ring-border bg-background p-3">
+              <span className="flex gap-2 items-center text-xl font-semibold">
+                <Badge variant="secondary">In</Badge>
+                {formatCurrency(stats.Income)}
+              </span>
+              <span className="flex gap-2 items-center text-xl font-semibold">
+                <Badge variant="secondary">Out</Badge>
+                {formatCurrency(stats.Expenses)}
+              </span>
+            </Card>
+          </div>
           <Suspense fallback={<TableSkeleton cols={4} rows={10} />}>
             <TransactionsByTag tag={decodedTagId} />
           </Suspense>
