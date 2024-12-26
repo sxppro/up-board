@@ -28,7 +28,6 @@ export const TagCardFallback = ({ id }: { id: string }) => (
 
 const TagCard = async ({ id }: { id: string }) => {
   const stats = await getTagInfo(id);
-  console.log(stats);
 
   return (
     <Card className="flex flex-col ring-border bg-background gap-1 p-0">
