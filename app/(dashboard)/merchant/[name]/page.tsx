@@ -60,12 +60,12 @@ const MerchantPage = async ({ params }: { params: { name: string } }) => {
         </h1>
         <Separator className="mt-2" />
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-2">
         <Card className="ring-border bg-background p-3">
-          <div className="flex gap-1">
-            <p className="text-muted-foreground">Transactions</p>
-          </div>
-          <p className="text-2xl font-semibold">{stats[0]?.Transactions}</p>
+          <p className="text-muted-foreground">Average</p>
+          <p className="text-2xl font-semibold">
+            {formatCurrency(stats[0]?.Net / stats[0]?.Transactions)}
+          </p>
         </Card>
         <Card className="ring-border bg-background p-3">
           <p className="text-muted-foreground">All time</p>
@@ -73,12 +73,19 @@ const MerchantPage = async ({ params }: { params: { name: string } }) => {
             {formatCurrency(stats[0]?.Net)}
           </p>
         </Card>
+        <Card className="ring-border bg-background p-3">
+          <div className="flex gap-1">
+            <p className="text-muted-foreground">Transactions</p>
+          </div>
+          <p className="text-2xl font-semibold">{stats[0]?.Transactions}</p>
+        </Card>
       </div>
       <ExpenseCategoriesBar
         data={chartStats}
         index="FormattedDate"
         categories={['Amount']}
         colors={[`up-${merchantInfo[0].parentCategory}`]}
+        showLegend={false}
       />
       <QueryProvider>
         <TransactionsList transactions={transactions} />
