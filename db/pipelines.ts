@@ -185,6 +185,25 @@ export const filterByDateRange = (
 };
 
 /**
+ * Retrieve transactions by tag
+ * @param tag
+ * @returns
+ */
+export const filterByTag = (tag: string) => [
+  {
+    $match: {
+      'relationships.tags.data.id': tag,
+    },
+  },
+  ...lookupCategoryNames(),
+  {
+    $sort: {
+      'attributes.createdAt': -1,
+    },
+  },
+];
+
+/**
  * Retrieves all unique tags
  * @returns
  */
