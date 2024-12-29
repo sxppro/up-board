@@ -185,6 +185,25 @@ export const filterByDateRange = (
 };
 
 /**
+ * Retrieve transactions by tag
+ * @param tag
+ * @returns
+ */
+export const filterByTag = (tag: string) => [
+  {
+    $match: {
+      'relationships.tags.data.id': tag,
+    },
+  },
+  ...lookupCategoryNames(),
+  {
+    $sort: {
+      'attributes.createdAt': -1,
+    },
+  },
+];
+
+/**
  * Retrieves all unique tags
  * @returns
  */
@@ -1066,10 +1085,9 @@ export const statsIO = (
  * @param monthly
  * @returns
  */
-export const statsByTag = (tagId: string, monthly?: boolean) => [
+export const statsByTag = (tagId: string) => [
   {
     $match: {
-      'attributes.isCategorizable': true,
       'relationships.tags.data.id': tagId,
     },
   },
@@ -1095,9 +1113,15 @@ export const statsByTag = (tagId: string, monthly?: boolean) => [
         $divide: ['$income', 100],
       },
       Expenses: {
-        $abs: {
-          $divide: ['$expense', 100],
-        },
+        $divide: ['$expense', 100],
+      },
+      Net: {
+        $divide: [
+          {
+            $sum: ['$income', '$expense'],
+          },
+          100,
+        ],
       },
       Transactions: '$transactions',
     },

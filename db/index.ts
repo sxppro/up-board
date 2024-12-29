@@ -47,6 +47,7 @@ import { CollectionOptions, Document, MongoBulkWriteError } from 'mongodb';
 import client from './connect';
 import {
   filterByDateRange,
+  filterByTag,
   findDistinctTags,
   groupBalanceByDay,
   groupByCategory,
@@ -1112,7 +1113,9 @@ export const getTransactionsByTag = async (tag: string) => {
       'transactions'
     );
     if (transactions) {
-      const cursor = transactions.find({ 'relationships.tags.data.id': tag });
+      const cursor = transactions.aggregate<DbTransactionResource>(
+        filterByTag(tag)
+      );
       const results = (await cursor.toArray()).map((transaction) =>
         outputTransactionFields(transaction)
       );

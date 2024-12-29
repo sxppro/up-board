@@ -45,7 +45,11 @@ export const columns: ColumnDef<TransactionResourceFiltered>[] = [
           className="h-6 p-0 gap-1 truncate font-medium flex-start"
           asChild
         >
-          <Link href={`/merchant/${row.getValue('description')}`}>
+          <Link
+            href={`/merchant/${encodeURIComponent(
+              row.getValue('description')
+            )}`}
+          >
             {row.getValue('description')}
             {row.original.tags.length > 0 && (
               <Tag className="size-4 fill-fuchsia-600" />
@@ -62,7 +66,18 @@ export const columns: ColumnDef<TransactionResourceFiltered>[] = [
   },
   {
     accessorKey: 'amount',
-    header: () => <div className="text-end">Amount</div>,
+    header: ({ column }) => (
+      <div className="flex justify-end">
+        <Button
+          className="-ml-2 px-2 py-1"
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Amount
+          <ArrowUpDown className="size-4" />
+        </Button>
+      </div>
+    ),
     cell: ({ row }) => {
       const amount = parseFloat(row.getValue('amount'));
       const formatted = formatCurrency(amount);
@@ -71,6 +86,11 @@ export const columns: ColumnDef<TransactionResourceFiltered>[] = [
           {formatted}
         </div>
       );
+    },
+    sortingFn: (rowA, rowB) => {
+      const a = parseFloat(rowA.original.amount);
+      const b = parseFloat(rowB.original.amount);
+      return a > b ? 1 : a < b ? -1 : 0;
     },
   },
   {
@@ -83,18 +103,16 @@ export const columns: ColumnDef<TransactionResourceFiltered>[] = [
   },
   {
     accessorKey: 'time',
-    header: ({ column, header }) => {
-      return (
-        <Button
-          className="-ml-4"
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
-          Time
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
+    header: ({ column, header }) => (
+      <Button
+        className="-ml-2 px-2 py-1"
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+      >
+        Time
+        <ArrowUpDown className="size-4" />
+      </Button>
+    ),
     cell: ({ row }) => {
       const time = Date.parse(row.getValue('time'));
       if (isNaN(time)) return '—';

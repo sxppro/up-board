@@ -49,6 +49,7 @@ export type RetrievalOptions = z.infer<typeof RetrievalOpts>;
 export const TagInfoSchema = z.object({
   Income: z.number(),
   Expenses: z.number(),
+  Net: z.number(),
   Transactions: z.number(),
 });
 export type TagInfo = z.infer<typeof TagInfoSchema>;
