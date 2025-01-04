@@ -182,7 +182,7 @@ export const publicRouter = router({
   getIOStats: publicProcedure
     .input(
       z.object({
-        accountId: z.string().uuid(),
+        accountId: z.string().uuid().optional(),
         dateRange: DateRangeSchema,
         options: RetrievalOpts.optional(),
       })

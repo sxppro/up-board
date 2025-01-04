@@ -8,7 +8,7 @@ import DashboardCard from '../core/dashboard-card';
 
 const currentDate = new Date();
 
-const MonthlyInOut = ({ accountId }: { accountId: string }) => {
+const MonthlyInOut = ({ accountId }: { accountId?: string }) => {
   const { data } = trpc.public.getIOStats.useQuery({
     accountId,
     dateRange: {
@@ -21,8 +21,8 @@ const MonthlyInOut = ({ accountId }: { accountId: string }) => {
   return (
     <DashboardCard>
       <div>
-        <Title>Income & Spending</Title>
-        <Text>Monthly — Past 12 months</Text>
+        <Title>Monthly Inflows & Outflows</Title>
+        <Text>Past 12 months</Text>
       </div>
       <BarChart
         data={data || []}
