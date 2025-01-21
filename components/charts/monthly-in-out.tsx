@@ -27,7 +27,7 @@ const MonthlyInOut = ({ accountId }: { accountId?: string }) => {
       <BarChart
         data={data || []}
         index="FormattedDate"
-        categories={['Income', 'Expenses']}
+        categories={['In', 'Out']}
         colors={['indigo', 'fuchsia']}
         stack={false}
         yAxisWidth={60}

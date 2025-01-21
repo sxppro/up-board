@@ -114,7 +114,7 @@ const Summary = ({ accountId }: SummaryProps) => {
             <div className="flex flex-col gap-2">
               <div className="flex items-baseline gap-2">
                 <span className="text-xl">
-                  {formatCurrency(monthly[0]?.Income)}
+                  {formatCurrency(monthly[0]?.In)}
                 </span>
                 <h2 className="sm:text-sm text-muted-foreground">
                   Total income
@@ -151,7 +151,7 @@ const Summary = ({ accountId }: SummaryProps) => {
                             </span>
                             <span className="text-gray-600 dark:text-gray-400">
                               ({formatCurrency(amount)} /{' '}
-                              {((amount / monthly[0].Income) * 100).toFixed(1)}
+                              {((amount / monthly[0].In) * 100).toFixed(1)}
                               %)
                             </span>
                           </li>
@@ -165,7 +165,7 @@ const Summary = ({ accountId }: SummaryProps) => {
             <div className="flex flex-col gap-2">
               <div className="flex items-baseline gap-2">
                 <span className="text-xl">
-                  {formatCurrency(monthly[0]?.Expenses)}
+                  {formatCurrency(monthly[0]?.Out)}
                 </span>
                 <h2 className="sm:text-sm text-muted-foreground">
                   Total expenses
@@ -204,10 +204,9 @@ const Summary = ({ accountId }: SummaryProps) => {
                               </span>
                               <span className="text-gray-600 dark:text-gray-400">
                                 ({formatCurrency(absAmount)} /{' '}
-                                {(
-                                  (absAmount / monthly[0].Expenses) *
-                                  100
-                                ).toFixed(1)}
+                                {((absAmount / monthly[0].Out) * 100).toFixed(
+                                  1
+                                )}
                                 %)
                               </span>
                             </li>

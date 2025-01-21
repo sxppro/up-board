@@ -65,10 +65,7 @@ const SpendingPage = async ({ searchParams }: PageProps) => {
     undefined,
     true
   );
-  const monthlyChange = calcPercentDiff(
-    monthStats[0]?.Expenses,
-    avgStats[0]?.Expenses
-  );
+  const monthlyChange = calcPercentDiff(monthStats[0]?.Out, avgStats[0]?.Out);
   const categoryStatsHistory = await getCategoryInfoHistory(
     dateRange,
     'parent',
@@ -127,7 +124,7 @@ const SpendingPage = async ({ searchParams }: PageProps) => {
                   )}
                 </div>
                 <p className="text-2xl font-semibold">
-                  {formatCurrency(monthStats[0]?.Expenses)}
+                  {formatCurrency(monthStats[0]?.Out)}
                 </p>
               </Card>
               <Card className="ring-border bg-background p-3">
@@ -135,7 +132,7 @@ const SpendingPage = async ({ searchParams }: PageProps) => {
                   Average per month (last 3 months)
                 </p>
                 <p className="text-2xl font-semibold">
-                  {formatCurrency(avgStats[0]?.Expenses)}
+                  {formatCurrency(avgStats[0]?.Out)}
                 </p>
               </Card>
             </div>

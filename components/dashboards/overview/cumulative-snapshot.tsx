@@ -139,7 +139,7 @@ const CumulativeSnapshot = ({
                   <p className="text-muted-foreground">Month to date</p>
                   {month ? (
                     <p className="text-xl text-foreground h-8">
-                      {formatCurrency(month[0]?.Income)}
+                      {formatCurrency(month[0]?.In)}
                     </p>
                   ) : (
                     <Skeleton className="w-full h-8" />
@@ -152,7 +152,7 @@ const CumulativeSnapshot = ({
                   <p className="text-muted-foreground">Year to date</p>
                   {year ? (
                     <p className="text-xl text-foreground h-8">
-                      {formatCurrency(year[0]?.Income)}
+                      {formatCurrency(year[0]?.In)}
                     </p>
                   ) : (
                     <Skeleton className="w-full h-8" />
@@ -300,7 +300,7 @@ const CumulativeSnapshot = ({
                   <p className="text-muted-foreground">Month to date</p>
                   {month ? (
                     <p className="text-xl text-foreground h-8">
-                      {formatCurrency(month[0]?.Expenses)}
+                      {formatCurrency(month[0]?.Out)}
                     </p>
                   ) : (
                     <Skeleton className="w-full h-8" />
@@ -313,7 +313,7 @@ const CumulativeSnapshot = ({
                   <p className="text-muted-foreground">Year to date</p>
                   {year ? (
                     <p className="text-xl text-foreground h-8">
-                      {formatCurrency(year[0]?.Expenses)}
+                      {formatCurrency(year[0]?.Out)}
                     </p>
                   ) : (
                     <Skeleton className="w-full h-8" />

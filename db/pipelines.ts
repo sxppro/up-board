@@ -1051,10 +1051,10 @@ export const statsIO = (
         _id: 0,
         Year: '$_id.year',
         Month: '$_id.month',
-        Income: {
+        In: {
           $divide: ['$income', 100],
         },
-        Expenses: {
+        Out: {
           $abs: {
             $divide: ['$expense', 100],
           },

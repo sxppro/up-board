@@ -113,16 +113,16 @@ const AccountsPage = async ({ searchParams }: PageProps) => {
                   {account?.accountType === 'TRANSACTIONAL' ? (
                     <AlertDescription>
                       Over the previous 12 months, you spent an average of{' '}
-                      <strong>{formatCurrency(avgMonthStats.Expenses)}</strong>{' '}
-                      per month over{' '}
+                      <strong>{formatCurrency(avgMonthStats.Out)}</strong> per
+                      month over{' '}
                       <strong>{Math.floor(avgMonthStats.Transactions)}</strong>{' '}
                       transactions.
                     </AlertDescription>
                   ) : (
                     <AlertDescription>
                       Over the previous 12 months, you transferred{' '}
-                      <strong>{formatCurrency(avgMonthStats.Expenses)}</strong>{' '}
-                      per month out.
+                      <strong>{formatCurrency(avgMonthStats.Out)}</strong> per
+                      month out.
                     </AlertDescription>
                   )}
                 </Alert>
@@ -132,14 +132,14 @@ const AccountsPage = async ({ searchParams }: PageProps) => {
                   {account?.accountType === 'TRANSACTIONAL' ? (
                     <AlertDescription>
                       You earned an average of{' '}
-                      <strong>{formatCurrency(avgMonthStats.Income)}</strong>{' '}
-                      per month. 🥳
+                      <strong>{formatCurrency(avgMonthStats.In)}</strong> per
+                      month. 🥳
                     </AlertDescription>
                   ) : (
                     <AlertDescription>
                       You saved an average of{' '}
-                      <strong>{formatCurrency(avgMonthStats.Income)}</strong>{' '}
-                      per month. 🥳
+                      <strong>{formatCurrency(avgMonthStats.In)}</strong> per
+                      month. 🥳
                     </AlertDescription>
                   )}
                 </Alert>
