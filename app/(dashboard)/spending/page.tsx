@@ -1,4 +1,3 @@
-import MonthlyInOut from '@/components/charts/monthly-in-out';
 import AnimatedTabs from '@/components/core/animated-tabs';
 import SpendingBarChart from '@/components/dashboards/spending/bar-chart';
 import SpendingDetails from '@/components/dashboards/spending/details';
@@ -161,21 +160,6 @@ const SpendingPage = async ({ searchParams }: PageProps) => {
                 selectedCategory={category}
               />
             </DateProvider>
-          </section>
-          <section
-            aria-labelledby="categories-overview"
-            className="flex flex-col gap-3"
-          >
-            <div>
-              <h1
-                id="categories-overview"
-                className="text-2xl font-semibold tracking-tight"
-              >
-                Cashflow
-              </h1>
-              <Separator className="mt-2" />
-            </div>
-            <MonthlyInOut />
           </section>
         </QueryProvider>
       </LazyMotion>
