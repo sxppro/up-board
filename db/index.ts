@@ -488,8 +488,8 @@ export const getIOStats = async (
       const expenses = parseFloat(faker.finance.amount({ max: 5000 }));
       const data = [
         {
-          Income: income,
-          Expenses: expenses,
+          In: income,
+          Out: expenses,
           Net: income - expenses,
           Transactions: faker.number.int({ max: 100 }),
         },

@@ -1,8 +1,8 @@
 {
   "data": [
     {
-      "Income": 1473.32,
-      "Expenses": 908.89,
+      "In": 1473.32,
+      "Out": 908.89,
       "Net": 564.43,
       "Transactions": 53
     }
