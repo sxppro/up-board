@@ -47,6 +47,9 @@ const Summary = ({ accountId }: SummaryProps) => {
     },
   });
   const { data: income } = trpc.public.getMerchantInfo.useQuery({
+    options: {
+      limit: 5,
+    },
     dateRange: {
       from: dateRange?.from,
       to: dateRange?.to,

@@ -30,12 +30,13 @@ import {
 } from '@/types/custom';
 import { components } from '@/types/up-api';
 import { auth } from '@/utils/auth';
-import { DB_NAME } from '@/utils/constants';
+import { DB_NAME, now } from '@/utils/constants';
 import { outputTransactionFields } from '@/utils/helpers';
 import {
   getTransactionByAccount,
   getTransactionById as getUpTransactionById,
 } from '@/utils/up';
+import { TZDate } from '@date-fns/tz';
 import { faker } from '@faker-js/faker';
 import { UUID } from 'bson';
 import {
@@ -540,29 +541,39 @@ export const getMerchantInfo = async (
         parentCategoryName: parentCategories.get(parentCategory),
       }));
     } else {
-      return [...Array(10)].map(() => {
-        const amount = parseFloat(faker.finance.amount({ min: -1000 }));
-        const category = faker.helpers.arrayElement(
-          categoriesMock.data.filter(
-            ({ relationships }) => relationships.parent.data
-          )
-        );
-        const parentCategory = faker.helpers.arrayElement(
-          categoriesMock.data.filter(
-            ({ relationships }) => !relationships.parent.data
-          )
-        );
-        return {
-          name: faker.company.name(),
-          absAmount: Math.abs(amount),
-          amount,
-          transactions: faker.number.int({ max: 100 }),
-          category: category.id,
-          categoryName: category.attributes.name,
-          parentCategory: parentCategory.id,
-          parentCategoryName: parentCategory.attributes.name,
-        };
-      });
+      const merchants = transactionsMock.data.map(
+        ({ attributes }) => attributes.description
+      );
+      return merchants
+        .map((merchant) => {
+          const amount = parseFloat(
+            faker.finance.amount({
+              min: type === 'income' ? 0 : -1000,
+              max: type === 'expense' ? 0 : undefined,
+            })
+          );
+          const category = faker.helpers.arrayElement(
+            categoriesMock.data.filter(
+              ({ relationships }) => relationships.parent.data
+            )
+          );
+          const parentCategory = faker.helpers.arrayElement(
+            categoriesMock.data.filter(
+              ({ relationships }) => !relationships.parent.data
+            )
+          );
+          return {
+            name: merchant,
+            absAmount: Math.abs(amount),
+            amount,
+            transactions: faker.number.int({ max: 100 }),
+            category: category.id,
+            categoryName: category.attributes.name,
+            parentCategory: parentCategory.id,
+            parentCategoryName: parentCategory.attributes.name,
+          };
+        })
+        .slice(0, options.limit);
     }
   } catch (err) {
     console.error(err);
@@ -945,7 +956,40 @@ export const getTransactionsByDay = async (
       );
       return results;
     } else {
-      return [];
+      let transactions = transactionsMock.data.filter(
+        ({ attributes, relationships }) =>
+          accountId
+            ? relationships.account.data.id === accountId
+            : dateRange
+            ? new Date(attributes.createdAt) >= dateRange.from &&
+              new Date(attributes.createdAt) <= dateRange.to
+            : true
+      );
+      if (options?.limit) {
+        transactions = transactions.slice(0, options.limit);
+      }
+      if (options?.match) {
+        if (options.match['attributes.description']) {
+          transactions = transactions.filter(
+            ({ attributes }) =>
+              options.match &&
+              attributes.description === options.match['attributes.description']
+          );
+        } else if (options.match['relationships.parentCategory.data.id']) {
+          transactions = transactions.filter(
+            ({ relationships }) =>
+              options.match &&
+              relationships.parentCategory.data.id ===
+                options.match['relationships.parentCategory.data.id']
+          );
+        }
+      }
+      return transactions.length > 0
+        ? ([{ timestamp: now, transactions }] as {
+            timestamp: TZDate;
+            transactions: any[];
+          }[])
+        : [];
     }
   } catch (err) {
     console.error(err);
