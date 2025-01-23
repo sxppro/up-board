@@ -783,7 +783,8 @@ export const getCategoryInfo = async (
           absAmount: Math.abs(amount),
           transactions: faker.number.int({ max: 100 }),
         }))
-        .sort((a, b) => (a.amount < b.amount ? 1 : -1));
+        .sort((a, b) => (a.amount < b.amount ? 1 : -1))
+        .slice(0, options.limit);
     }
   } catch (err) {
     console.error(err);
@@ -876,7 +877,19 @@ export const getCumulativeIO = async (
       const results = await cursor.toArray();
       return results;
     } else {
-      return [];
+      const days = eachDayOfInterval({
+        start: dateRange.from,
+        end: dateRange.to,
+      });
+      let lastAmount = 0;
+      return days.map((day) => {
+        const amount = parseFloat(faker.finance.amount({ min: 0 }));
+        lastAmount += amount;
+        return {
+          Timestamp: day,
+          AmountCumulative: lastAmount,
+        };
+      });
     }
   } catch (err) {
     console.error(err);
