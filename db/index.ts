@@ -914,13 +914,20 @@ export const getTagInfo = async (tag: string): Promise<TagInfo | undefined> => {
       return results[0];
     } else {
       if (tagsMock.data.includes(tag)) {
+        const income = faker.number.float({
+          min: 0,
+          max: 1000,
+          fractionDigits: 2,
+        });
+        const expenses = faker.number.float({
+          min: 0,
+          max: 1000,
+          fractionDigits: 2,
+        });
         const data = {
-          Income: faker.number.float({ min: 0, max: 1000, fractionDigits: 2 }),
-          Expenses: faker.number.float({
-            min: 0,
-            max: 1000,
-            fractionDigits: 2,
-          }),
+          Income: income,
+          Expenses: expenses,
+          Net: income - expenses,
           Transactions: faker.number.int({ max: 100 }),
         };
         const res = TagInfoSchema.safeParse(getMockData('getTagInfo', data));
