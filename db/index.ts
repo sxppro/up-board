@@ -540,7 +540,29 @@ export const getMerchantInfo = async (
         parentCategoryName: parentCategories.get(parentCategory),
       }));
     } else {
-      return [];
+      return [...Array(10)].map(() => {
+        const amount = parseFloat(faker.finance.amount({ min: -1000 }));
+        const category = faker.helpers.arrayElement(
+          categoriesMock.data.filter(
+            ({ relationships }) => relationships.parent.data
+          )
+        );
+        const parentCategory = faker.helpers.arrayElement(
+          categoriesMock.data.filter(
+            ({ relationships }) => !relationships.parent.data
+          )
+        );
+        return {
+          name: faker.company.name(),
+          absAmount: Math.abs(amount),
+          amount,
+          transactions: faker.number.int({ max: 100 }),
+          category: category.id,
+          categoryName: category.attributes.name,
+          parentCategory: parentCategory.id,
+          parentCategoryName: parentCategory.attributes.name,
+        };
+      });
     }
   } catch (err) {
     console.error(err);
@@ -579,6 +601,18 @@ export const getMerchantInfoHistory = async (
       const results = await cursor.toArray();
       return results;
     } else {
+      const months = eachMonthOfInterval({
+        start: dateRange.from,
+        end: dateRange.to,
+      });
+      return months.map((date) => ({
+        Year: date.getFullYear(),
+        Month: date.getMonth() + 1,
+        Day: date.getDate(),
+        Timestamp: date,
+        Amount: parseFloat(faker.finance.amount({ min: -1000 })),
+        Balance: parseFloat(faker.finance.amount({ min: 0 })),
+      }));
       return [];
     }
   } catch (err) {
