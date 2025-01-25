@@ -35,36 +35,24 @@ const CumulativeSnapshot = ({
   accountId,
   savAccountId,
 }: CumulativeSnapshotProps) => {
-  const [selectedTab, setSelectedTab] = useState(0);
+  const [incomeTab, setIncomeTab] = useState(0);
+  const [expensesTab, setExpensesTab] = useState(0);
   const { thisMonthLastYear, lastYear, monthToDate, yearToDate } =
     getDateRanges();
-  const { data: mtdIncome, dataUpdatedAt: dataUpdatedAtIncome } =
+  const { data: incomeData, dataUpdatedAt: incomeUpdatedAt } =
     trpc.public.getCumulativeIO.useQuery({
       accountId,
-      dateRange: monthToDate,
-      compareDateRange: thisMonthLastYear,
+      dateRange: incomeTab === 0 ? monthToDate : yearToDate,
+      compareDateRange: incomeTab === 0 ? thisMonthLastYear : lastYear,
       type: 'income',
     });
-  const { data: ytdIncome } = trpc.public.getCumulativeIO.useQuery({
-    accountId,
-    dateRange: yearToDate,
-    compareDateRange: lastYear,
-    type: 'income',
-  });
-  const { data: mtdExpenses, dataUpdatedAt: dataUpdatedAtExpenses } =
+  const { data: expensesData, dataUpdatedAt: expensesUpdatedAt } =
     trpc.public.getCumulativeIO.useQuery({
       accountId,
-      dateRange: monthToDate,
-      compareDateRange: thisMonthLastYear,
+      dateRange: expensesTab === 0 ? monthToDate : yearToDate,
+      compareDateRange: expensesTab === 0 ? thisMonthLastYear : lastYear,
       type: 'expense',
     });
-  const { data: ytdExpenses } = trpc.public.getCumulativeIO.useQuery({
-    accountId,
-    dateRange: yearToDate,
-    compareDateRange: lastYear,
-    type: 'expense',
-  });
-  ``;
   const { data: month } = trpc.public.getIOStats.useQuery({
     accountId,
     dateRange: monthToDate,
@@ -90,7 +78,7 @@ const CumulativeSnapshot = ({
     accountId,
   });
   const { data: expenseCategories } = trpc.public.getCategoryInfo.useQuery({
-    dateRange: selectedTab === 0 ? monthToDate : yearToDate,
+    dateRange: expensesTab === 0 ? monthToDate : yearToDate,
     type: 'child',
     options: {
       limit: 4,
@@ -101,7 +89,7 @@ const CumulativeSnapshot = ({
     },
   });
   const { data: merchants } = trpc.public.getMerchantInfo.useQuery({
-    dateRange: selectedTab === 0 ? monthToDate : yearToDate,
+    dateRange: expensesTab === 0 ? monthToDate : yearToDate,
     type: 'expense',
     options: {
       limit: 4,
@@ -124,15 +112,18 @@ const CumulativeSnapshot = ({
               Income
             </h1>
             <p className="text-sm text-muted-foreground">
-              {dataUpdatedAtIncome
-                ? `Updated ${format(dataUpdatedAtIncome, 'HH:mm')}`
+              {incomeUpdatedAt
+                ? `Updated ${format(incomeUpdatedAt, 'HH:mm')}`
                 : 'Fetching...'}
             </p>
           </div>
           <Separator className="mt-2" />
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
-          <TabGroup className="xl:col-span-2">
+          <TabGroup
+            className="xl:col-span-2"
+            onIndexChange={(index) => setIncomeTab(index)}
+          >
             <TabList className="space-x-0 items-center border-b">
               <Tab className="flex-1 sm:flex-none pl-4 pr-12 py-3 border-b-2 border-transparent">
                 <div className="flex flex-col gap-1 items-start">
@@ -166,10 +157,10 @@ const CumulativeSnapshot = ({
             </TabList>
             <TabPanels>
               <TabPanel>
-                {mtdIncome ? (
+                {incomeData ? (
                   <LineChart
                     className="h-64 sm:h-80"
-                    data={mtdIncome}
+                    data={incomeData}
                     index="FormattedDate"
                     categories={['This year', 'Last year']}
                     valueFormatter={(number: number) =>
@@ -185,10 +176,10 @@ const CumulativeSnapshot = ({
                 )}
               </TabPanel>
               <TabPanel>
-                {ytdIncome ? (
+                {incomeData ? (
                   <LineChart
                     className="h-64 sm:h-80"
-                    data={ytdIncome}
+                    data={incomeData}
                     index="FormattedDate"
                     categories={['This year', 'Last year']}
                     valueFormatter={(number: number) =>
@@ -282,8 +273,8 @@ const CumulativeSnapshot = ({
               Expenses
             </h1>
             <p className="text-sm text-muted-foreground">
-              {dataUpdatedAtExpenses
-                ? `Updated ${format(dataUpdatedAtExpenses, 'HH:mm')}`
+              {expensesUpdatedAt
+                ? `Updated ${format(expensesUpdatedAt, 'HH:mm')}`
                 : 'Fetching...'}
             </p>
           </div>
@@ -292,7 +283,7 @@ const CumulativeSnapshot = ({
         <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
           <TabGroup
             className="xl:col-span-2"
-            onIndexChange={(index) => setSelectedTab(index)}
+            onIndexChange={(index) => setExpensesTab(index)}
           >
             <TabList className="space-x-0 items-center border-b">
               <Tab className="flex-1 sm:flex-none pl-4 pr-12 py-3 border-b-2 border-transparent">
@@ -327,10 +318,10 @@ const CumulativeSnapshot = ({
             </TabList>
             <TabPanels>
               <TabPanel>
-                {mtdExpenses ? (
+                {expensesData ? (
                   <LineChart
                     className="h-64 sm:h-80"
-                    data={mtdExpenses}
+                    data={expensesData}
                     index="FormattedDate"
                     categories={['This year', 'Last year']}
                     valueFormatter={(number: number) =>
@@ -346,10 +337,10 @@ const CumulativeSnapshot = ({
                 )}
               </TabPanel>
               <TabPanel>
-                {ytdExpenses ? (
+                {expensesData ? (
                   <LineChart
                     className="h-64 sm:h-80"
-                    data={ytdExpenses}
+                    data={expensesData}
                     index="FormattedDate"
                     categories={['This year', 'Last year']}
                     valueFormatter={(number: number) =>
