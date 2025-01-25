@@ -119,7 +119,9 @@ const SpendingPage = async ({ searchParams }: PageProps) => {
                           : ''
                       )}
                     >
-                      {`${monthlyChange.toFixed(1)}%`}
+                      {`${monthlyChange > 0 ? '+' : ''}${monthlyChange.toFixed(
+                        1
+                      )}%`}
                     </Badge>
                   )}
                 </div>
