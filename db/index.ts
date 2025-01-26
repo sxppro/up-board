@@ -30,7 +30,7 @@ import {
 } from '@/types/custom';
 import { components } from '@/types/up-api';
 import { auth } from '@/utils/auth';
-import { DB_NAME, now } from '@/utils/constants';
+import { DB_NAME, now, YEARS_IN_ONE_DECADE } from '@/utils/constants';
 import { outputTransactionFields } from '@/utils/helpers';
 import {
   getTransactionByAccount,
@@ -40,9 +40,11 @@ import { TZDate } from '@date-fns/tz';
 import { faker } from '@faker-js/faker';
 import { UUID } from 'bson';
 import {
+  Duration,
   eachDayOfInterval,
   eachMonthOfInterval,
   eachYearOfInterval,
+  intervalToDuration,
 } from 'date-fns';
 import { CollectionOptions, Document, MongoBulkWriteError } from 'mongodb';
 import client from './connect';
@@ -64,6 +66,14 @@ import {
 } from './pipelines';
 
 faker.seed(17);
+
+/**
+ * ! Hard limit of 10 years for historical data
+ * @param duration
+ * @returns
+ */
+const checkDuration = (duration: Duration) =>
+  !duration.years || duration.years <= YEARS_IN_ONE_DECADE;
 
 /**
  * Utility to check transactions between Up and db
@@ -375,19 +385,28 @@ export const getAccountBalanceHistorical = async (
         const startingBalance = parseFloat(
           faker.finance.amount({ max: 10000 })
         );
-        const days = eachDayOfInterval({
+        const duration = intervalToDuration({
           start: dateRange.from,
           end: dateRange.to,
         });
-        return days.map((date) => ({
-          Year: date.getFullYear(),
-          Month: date.getMonth() + 1,
-          Day: date.getDate(),
-          Timestamp: date,
-          Amount: parseFloat(faker.finance.amount({ min: -1000 })),
-          Balance:
-            startingBalance + parseFloat(faker.finance.amount({ min: -1000 })),
-        }));
+        if (checkDuration(duration)) {
+          const days = eachDayOfInterval({
+            start: dateRange.from,
+            end: dateRange.to,
+          });
+          return days.map((date) => ({
+            Year: date.getFullYear(),
+            Month: date.getMonth() + 1,
+            Day: date.getDate(),
+            Timestamp: date,
+            Amount: parseFloat(faker.finance.amount({ min: -1000 })),
+            Balance:
+              startingBalance +
+              parseFloat(faker.finance.amount({ min: -1000 })),
+          }));
+        } else {
+          throw new Error('Request timeframe exceeds limit');
+        }
       }
       return [];
     }
@@ -465,25 +484,37 @@ export const getIOStats = async (
       return results;
     } else {
       if (options?.groupBy && dateRange && dateRange.from < dateRange.to) {
-        const dates =
-          options.groupBy === 'yearly'
-            ? eachYearOfInterval({ start: dateRange.from, end: dateRange.to })
-            : options.groupBy === 'monthly'
-            ? eachMonthOfInterval({ start: dateRange.from, end: dateRange.to })
-            : eachDayOfInterval({ start: dateRange.from, end: dateRange.to });
-
-        return dates.map((date) => {
-          const income = parseFloat(faker.finance.amount({ max: 5000 }));
-          const expenses = parseFloat(faker.finance.amount({ max: 5000 }));
-          return {
-            In: income,
-            Out: expenses,
-            Net: income - expenses,
-            Transactions: faker.number.int({ max: 100 }),
-            Month: date.getMonth() + 1,
-            Year: date.getFullYear(),
-          };
+        const { groupBy } = options;
+        const duration = intervalToDuration({
+          start: dateRange.from,
+          end: dateRange.to,
         });
+        if (checkDuration(duration)) {
+          const dates =
+            groupBy === 'yearly'
+              ? eachYearOfInterval({ start: dateRange.from, end: dateRange.to })
+              : groupBy === 'monthly'
+              ? eachMonthOfInterval({
+                  start: dateRange.from,
+                  end: dateRange.to,
+                })
+              : eachDayOfInterval({ start: dateRange.from, end: dateRange.to });
+
+          return dates.map((date) => {
+            const income = parseFloat(faker.finance.amount({ max: 5000 }));
+            const expenses = parseFloat(faker.finance.amount({ max: 5000 }));
+            return {
+              In: income,
+              Out: expenses,
+              Net: income - expenses,
+              Transactions: faker.number.int({ max: 100 }),
+              Month: date.getMonth() + 1,
+              Year: date.getFullYear(),
+            };
+          });
+        } else {
+          throw new Error('Request timeframe exceeds limit');
+        }
       }
       const income = parseFloat(faker.finance.amount({ max: 5000 }));
       const expenses = parseFloat(faker.finance.amount({ max: 5000 }));
@@ -612,19 +643,26 @@ export const getMerchantInfoHistory = async (
       const results = await cursor.toArray();
       return results;
     } else {
-      const months = eachMonthOfInterval({
+      const duration = intervalToDuration({
         start: dateRange.from,
         end: dateRange.to,
       });
-      return months.map((date) => ({
-        Year: date.getFullYear(),
-        Month: date.getMonth() + 1,
-        Day: date.getDate(),
-        Timestamp: date,
-        Amount: parseFloat(faker.finance.amount({ min: -1000 })),
-        Balance: parseFloat(faker.finance.amount({ min: 0 })),
-      }));
-      return [];
+      if (checkDuration(duration)) {
+        const months = eachMonthOfInterval({
+          start: dateRange.from,
+          end: dateRange.to,
+        });
+        return months.map((date) => ({
+          Year: date.getFullYear(),
+          Month: date.getMonth() + 1,
+          Day: date.getDate(),
+          Timestamp: date,
+          Amount: parseFloat(faker.finance.amount({ min: -1000 })),
+          Balance: parseFloat(faker.finance.amount({ min: 0 })),
+        }));
+      } else {
+        throw new Error('Request timeframe exceeds limit');
+      }
     }
   } catch (err) {
     console.error(err);
@@ -816,33 +854,41 @@ export const getCategoryInfoHistory = async (
       return results;
     } else {
       if (dateRange.from < dateRange.to) {
-        const months = eachMonthOfInterval({
+        const duration = intervalToDuration({
           start: dateRange.from,
           end: dateRange.to,
         });
-        return months.map((date) => ({
-          categories: categoriesMock.data
-            .filter(({ relationships }) =>
-              type === 'parent'
-                ? relationships.parent.data === null
-                : relationships.parent.data !== null
-            )
-            .map(({ id, attributes }) => {
-              const amount = parseFloat(
-                faker.finance.amount({ min: -5000, max: 5000 })
-              );
-              return {
-                category: id,
-                categoryName: attributes.name,
-                amount,
-                absAmount: Math.abs(amount),
-                transactions: faker.number.int({ max: 100 }),
-              };
-            }),
-          day: date.getDate(),
-          month: date.getMonth() + 1,
-          year: date.getFullYear(),
-        }));
+        if (checkDuration(duration)) {
+          const months = eachMonthOfInterval({
+            start: dateRange.from,
+            end: dateRange.to,
+          });
+          return months.map((date) => ({
+            categories: categoriesMock.data
+              .filter(({ relationships }) =>
+                type === 'parent'
+                  ? relationships.parent.data === null
+                  : relationships.parent.data !== null
+              )
+              .map(({ id, attributes }) => {
+                const amount = parseFloat(
+                  faker.finance.amount({ min: -5000, max: 5000 })
+                );
+                return {
+                  category: id,
+                  categoryName: attributes.name,
+                  amount,
+                  absAmount: Math.abs(amount),
+                  transactions: faker.number.int({ max: 100 }),
+                };
+              }),
+            day: date.getDate(),
+            month: date.getMonth() + 1,
+            year: date.getFullYear(),
+          }));
+        } else {
+          throw new Error('Request timeframe exceeds limit');
+        }
       }
       return [];
     }
@@ -877,19 +923,27 @@ export const getCumulativeIO = async (
       const results = await cursor.toArray();
       return results;
     } else {
-      const days = eachDayOfInterval({
+      const duration = intervalToDuration({
         start: dateRange.from,
         end: dateRange.to,
       });
-      let lastAmount = 0;
-      return days.map((day) => {
-        const amount = parseFloat(faker.finance.amount({ min: 0 }));
-        lastAmount += amount;
-        return {
-          Timestamp: day,
-          AmountCumulative: lastAmount,
-        };
-      });
+      if (checkDuration(duration)) {
+        const days = eachDayOfInterval({
+          start: dateRange.from,
+          end: dateRange.to,
+        });
+        let lastAmount = 0;
+        return days.map((day) => {
+          const amount = parseFloat(faker.finance.amount({ min: 0 }));
+          lastAmount += amount;
+          return {
+            Timestamp: day,
+            AmountCumulative: lastAmount,
+          };
+        });
+      } else {
+        throw new Error('Request timeframe exceeds limit');
+      }
     }
   } catch (err) {
     console.error(err);
