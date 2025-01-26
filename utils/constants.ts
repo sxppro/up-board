@@ -8,6 +8,12 @@ export const colours: { [key: string]: string } = {
   Uncategorised: 'up-uncategorised',
 };
 
+export const DAYS_IN_ONE_YEAR = 365;
+
+export const MONTHS_IN_ONE_YEAR = 12;
+
+export const YEARS_IN_ONE_DECADE = 10;
+
 export const DB_NAME = 'up';
 
 export const TZ = 'Australia/Melbourne';
