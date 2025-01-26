@@ -1,5 +1,8 @@
-import { BalanceHistory } from '@/server/schemas';
-import { DateRangePresets, DbTransactionResource } from '@/types/custom';
+import {
+  BalanceHistory,
+  TransactionCategoryInfoHistoryRaw,
+} from '@/server/schemas';
+import { DbTransactionResource } from '@/types/custom';
 import { tz } from '@date-fns/tz';
 import { clsx, type ClassValue } from 'clsx';
 import {
@@ -112,6 +115,28 @@ export const formatDateWithTime = (date: Date | string) => {
     return `Yesterday, ${format(date, 'p', { in: tz(TZ) })}`;
   return format(date, 'dd/LL/yy, p', { in: tz(TZ) });
 };
+
+/**
+ * Format historical data for Tremor bar chart
+ * @param data
+ * @returns
+ */
+export const formatHistoricalData = (
+  data: TransactionCategoryInfoHistoryRaw[]
+) =>
+  data.map(({ month, year, categories }) => {
+    const date =
+      month && year
+        ? format(new Date(year, month - 1), 'LLL yy')
+        : format(new Date(year, 0, 1), 'yyyy');
+    const remappedElem: any = {
+      FormattedDate: date,
+    };
+    categories.map(
+      ({ amount, categoryName }) => (remappedElem[categoryName] = amount)
+    );
+    return remappedElem;
+  });
 
 /**
  * Capitalise first letter of string
@@ -254,17 +279,13 @@ export const getDateRanges = () => {
     thisYear,
     thisMonthLastYear,
     lastYear,
+    last24hours,
+    last7days,
+    last30days,
+    last3months,
+    last6months,
+    last12months,
     monthToDate,
     yearToDate,
-    map: new Map(
-      Object.entries({
-        [DateRangePresets.TODAY]: last24hours,
-        [DateRangePresets.WEEK]: last7days,
-        [DateRangePresets.MONTH]: last30days,
-        [DateRangePresets.THREE_MONTHS]: last3months,
-        [DateRangePresets.SIX_MONTHS]: last6months,
-        [DateRangePresets.YEAR]: last12months,
-      })
-    ),
   };
 };

@@ -6,11 +6,11 @@ import {
   TransactionCategoryOption,
 } from '@/server/schemas';
 import { TZ } from '@/utils/constants';
-import { getDateRanges } from '@/utils/helpers';
+import { formatHistoricalData, getDateRanges } from '@/utils/helpers';
 import { useDate } from '@/utils/hooks';
 import { TZDate } from '@date-fns/tz';
 import { EventProps } from '@tremor/react';
-import { endOfMonth, format, parse, startOfMonth } from 'date-fns';
+import { endOfMonth, parse, startOfMonth } from 'date-fns';
 
 interface SpendingBarChart {
   stats: TransactionCategoryInfoHistoryRaw[];
@@ -30,19 +30,7 @@ const SpendingBarChart = ({
 }: SpendingBarChart) => {
   const { setDate } = useDate();
   const { thisMonth } = getDateRanges();
-  const chartStats = stats.map(({ month, year, categories }) => {
-    const date =
-      month && year
-        ? format(new Date(year, month - 1), 'LLL yy')
-        : format(new Date(year, 0, 1), 'yyyy');
-    const remappedElem: any = {
-      FormattedDate: date,
-    };
-    categories.map(
-      ({ amount, categoryName }) => (remappedElem[categoryName] = amount)
-    );
-    return remappedElem;
-  });
+  const chartStats = formatHistoricalData(stats);
   const onValueChange = (e: EventProps & { FormattedDate: string }) => {
     if (e) {
       const { FormattedDate } = e;
