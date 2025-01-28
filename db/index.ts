@@ -27,6 +27,7 @@ import {
   AccountResource,
   CategoryResource,
   DbTransactionResource,
+  SerialisedDbTransactionResource,
 } from '@/types/custom';
 import { components } from '@/types/up-api';
 import { auth } from '@/utils/auth';
@@ -292,7 +293,7 @@ export const searchTransactions = async (search: string) => {
     } else {
       return transactionsMock.data.filter(({ attributes }) =>
         attributes.description.toLowerCase().includes(search.toLowerCase())
-      ) as unknown as ReturnType<typeof outputTransactionFields>[];
+      ) as unknown as SerialisedDbTransactionResource[];
     }
   } catch (err) {
     console.error(err);
@@ -1129,9 +1130,10 @@ const getTransactionsByDate = async (
             ? -1
             : 1
         )
-        .slice(0, options.limit) as unknown as ReturnType<
-        typeof outputTransactionFields
-      >[];
+        .slice(
+          0,
+          options.limit
+        ) as unknown as SerialisedDbTransactionResource[];
     }
   } catch (err) {
     console.error(err);
@@ -1196,7 +1198,7 @@ export const getTransactionsByCategory = async (
               },
             },
           },
-        })) as unknown as ReturnType<typeof outputTransactionFields>[];
+        })) as unknown as SerialisedDbTransactionResource[];
     }
   } catch (err) {
     console.error(err);
@@ -1224,7 +1226,7 @@ const getTransactionById = async (id: string) => {
       return (
         (transactionsMock.data.find(
           ({ id: txId }) => txId === id
-        ) as unknown as ReturnType<typeof outputTransactionFields>) || null
+        ) as unknown as SerialisedDbTransactionResource) || null
       );
     }
   } catch (err) {
@@ -1281,7 +1283,7 @@ export const getTransactionsByTag = async (tag: string) => {
           new Date(a.attributes.createdAt) > new Date(b.attributes.createdAt)
             ? -1
             : 1
-        ) as unknown as ReturnType<typeof outputTransactionFields>[];
+        ) as unknown as SerialisedDbTransactionResource[];
     }
   } catch (err) {
     console.error(err);
