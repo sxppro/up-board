@@ -17,6 +17,7 @@ import {
   calcPercentDiff,
   cn,
   formatCurrency,
+  formatHistoricalData,
   getDateRanges,
 } from '@/utils/helpers';
 import { Card } from '@tremor/react';
@@ -35,16 +36,16 @@ const SpendingPage = async ({ searchParams }: PageProps) => {
     return redirect('/spending');
   }
 
+  const { last3months, last12months, thisMonth } = getDateRanges();
   const dateRange = category
     ? {
-        from: startOfMonth(subMonths(now, 12)),
-        to: now,
+        from: startOfMonth(last12months.from),
+        to: last12months.to,
       }
     : {
-        from: startOfMonth(subMonths(now, 3)),
-        to: now,
+        from: startOfMonth(last3months.from),
+        to: last3months.to,
       };
-  const { thisMonth } = getDateRanges();
   const monthStats = await getIOStats(
     category && {
       match: { 'relationships.parentCategory.data.id': category.id },
@@ -82,6 +83,11 @@ const SpendingPage = async ({ searchParams }: PageProps) => {
       async ({ category }) =>
         await getCategoryInfo(thisMonth, 'child', {}, category)
     )
+  );
+  const spendingChartStats = formatHistoricalData(
+    categoryStatsHistory,
+    dateRange,
+    'monthly'
   );
 
   return (
@@ -149,7 +155,7 @@ const SpendingPage = async ({ searchParams }: PageProps) => {
             />
             <DateProvider start={thisMonth.from} end={thisMonth.to}>
               <SpendingBarChart
-                stats={categoryStatsHistory}
+                stats={spendingChartStats}
                 categories={categories}
                 selectedCategory={category}
               />

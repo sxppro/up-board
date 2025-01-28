@@ -1,19 +1,16 @@
 'use client';
 
 import ExpenseCategoriesBar from '@/components/charts/expense-categories-bar';
-import {
-  TransactionCategoryInfoHistoryRaw,
-  TransactionCategoryOption,
-} from '@/server/schemas';
+import { TransactionCategoryOption } from '@/server/schemas';
 import { TZ } from '@/utils/constants';
-import { formatHistoricalData, getDateRanges } from '@/utils/helpers';
+import { getDateRanges } from '@/utils/helpers';
 import { useDate } from '@/utils/hooks';
 import { TZDate } from '@date-fns/tz';
 import { EventProps } from '@tremor/react';
 import { endOfMonth, parse, startOfMonth } from 'date-fns';
 
 interface SpendingBarChart {
-  stats: TransactionCategoryInfoHistoryRaw[];
+  stats: any[];
   categories: TransactionCategoryOption[];
   selectedCategory?: TransactionCategoryOption;
 }
@@ -30,7 +27,6 @@ const SpendingBarChart = ({
 }: SpendingBarChart) => {
   const { setDate } = useDate();
   const { thisMonth } = getDateRanges();
-  const chartStats = formatHistoricalData(stats);
   const onValueChange = (e: EventProps & { FormattedDate: string }) => {
     if (e) {
       const { FormattedDate } = e;
@@ -43,7 +39,7 @@ const SpendingBarChart = ({
 
   return (
     <ExpenseCategoriesBar
-      data={chartStats}
+      data={stats}
       categories={
         selectedCategory
           ? [selectedCategory.name]

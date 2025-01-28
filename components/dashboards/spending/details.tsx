@@ -31,17 +31,18 @@ const SpendingDetails = ({
   selectedCategory,
 }: SpendingDetailsProps) => {
   const { date } = useDate();
-  const { data, isError } = trpc.public.getTransactionsByDay.useQuery(
-    {
-      dateRange: date,
-      options: {
-        match: {
-          'relationships.parentCategory.data.id': selectedCategory?.id || '',
+  const { data: transactions, isError } =
+    trpc.public.getTransactionsByDay.useQuery(
+      {
+        dateRange: date,
+        options: {
+          match: {
+            'relationships.parentCategory.data.id': selectedCategory?.id || '',
+          },
         },
       },
-    },
-    { enabled: !!selectedCategory }
-  );
+      { enabled: !!selectedCategory }
+    );
   const { data: selectedSubcategory } = trpc.public.getCategoryInfo.useQuery(
     {
       dateRange: date || {},
@@ -74,8 +75,9 @@ const SpendingDetails = ({
                   </div>
                   <BarList
                     data={selectedSubcategoryIn.map(
-                      ({ categoryName, absAmount }) => ({
+                      ({ category, categoryName, absAmount }) => ({
                         name: categoryName,
+                        href: `/spending/${encodeURIComponent(category)}`,
                         value: absAmount,
                       })
                     )}
@@ -93,8 +95,9 @@ const SpendingDetails = ({
                   </div>
                   <BarList
                     data={selectedSubcategoryOut.map(
-                      ({ categoryName, absAmount }) => ({
+                      ({ category, categoryName, absAmount }) => ({
                         name: categoryName,
+                        href: `/spending/${encodeURIComponent(category)}`,
                         value: absAmount,
                       })
                     )}
@@ -118,8 +121,9 @@ const SpendingDetails = ({
         )}
       </div>
       <div className="flex flex-col">
-        {data ? (
-          <TransactionsList transactions={data} />
+        {transactions ? (
+          // Transactions grouped by last 7 days
+          <TransactionsList transactions={transactions} />
         ) : isError ? (
           <p className="text-muted-foreground">
             Failed to retrieve transactions.

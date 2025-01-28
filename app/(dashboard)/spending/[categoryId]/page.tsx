@@ -2,6 +2,7 @@ import ExpenseCategoriesBar from '@/components/charts/expense-categories-bar';
 import { Separator } from '@/components/ui/separator';
 import { getCategoryById, getCategoryInfoHistory } from '@/db';
 import { formatHistoricalData, getDateRanges } from '@/utils/helpers';
+import { startOfMonth } from 'date-fns';
 import { redirect } from 'next/navigation';
 
 const SpendingSubcategoryPage = async ({
@@ -17,15 +18,23 @@ const SpendingSubcategoryPage = async ({
 
   if (categoryDetails) {
     const { last12months } = getDateRanges();
+    const roundedDateRange = {
+      from: startOfMonth(last12months.from),
+      to: last12months.to,
+    };
     const categoryStatsHistory = await getCategoryInfoHistory(
-      last12months,
+      roundedDateRange,
       'child',
       {
         groupBy: 'monthly',
         match: { 'relationships.category.data.id': categoryDetails.id },
       }
     );
-    const chartStats = formatHistoricalData(categoryStatsHistory);
+    const chartStats = formatHistoricalData(
+      categoryStatsHistory,
+      roundedDateRange,
+      'monthly'
+    );
 
     return (
       <section
