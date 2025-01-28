@@ -1,6 +1,7 @@
 import {
   DateRange,
   RetrievalOptions,
+  TransactionCategoryType,
   TransactionIOEnum,
   TransactionRetrievalOptions,
 } from '@/server/schemas';
@@ -202,6 +203,39 @@ export const filterByTag = (tag: string) => [
     },
   },
 ];
+
+/**
+ * Retrieve transactions by category
+ * @param category
+ * @returns
+ */
+export const filterByCategory = (
+  category: string,
+  type: TransactionCategoryType,
+  options?: RetrievalOptions
+) => {
+  const { sort, limit } = options || {};
+  return [
+    {
+      $match: {
+        ...(type === 'child'
+          ? { 'relationships.category.data.id': category }
+          : { 'relationships.parentCategory.data.id': category }),
+      },
+    },
+    ...lookupCategoryNames(),
+    ...(sort
+      ? [{ $sort: sort }]
+      : [
+          {
+            $sort: {
+              'attributes.createdAt': -1,
+            },
+          },
+        ]),
+    ...(limit ? [{ $limit: limit }] : []),
+  ];
+};
 
 /**
  * Retrieves all unique tags

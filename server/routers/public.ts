@@ -236,7 +236,7 @@ export const publicRouter = router({
     )
     .query(async ({ input }) => {
       const { category, type, dateRange } = input;
-      return await getTransactionsByCategory(category, type, dateRange);
+      return await getTransactionsByCategory(category, type);
     }),
   getTransactionsByDate: publicProcedure
     .input(TransactionRetrievalOptionsSchema)

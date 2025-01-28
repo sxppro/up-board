@@ -50,6 +50,7 @@ import {
 import { CollectionOptions, Document, MongoBulkWriteError } from 'mongodb';
 import client from './connect';
 import {
+  filterByCategory,
   filterByDateRange,
   filterByTag,
   findDistinctTags,
@@ -1148,8 +1149,7 @@ const getTransactionsByDate = async (
  */
 export const getTransactionsByCategory = async (
   category: string,
-  type: TransactionCategoryType,
-  dateRange?: DateRange
+  type: TransactionCategoryType
 ) => {
   try {
     const transactions = await connectToCollection<DbTransactionResource>(
@@ -1157,19 +1157,9 @@ export const getTransactionsByCategory = async (
       'transactions'
     );
     if (transactions) {
-      const cursor = transactions
-        .find({
-          ...(type === 'child'
-            ? { 'relationships.category.data.id': category }
-            : { 'relationships.parentCategory.data.id': category }),
-          ...(dateRange && {
-            'attributes.createdAt': {
-              $gte: dateRange.from,
-              $lte: dateRange.to,
-            },
-          }),
-        })
-        .sort({ 'attributes.createdAt': -1 });
+      const cursor = transactions.aggregate<DbTransactionResource>(
+        filterByCategory(category, type)
+      );
       const results = (await cursor.toArray()).map((transaction) =>
         outputTransactionFields(transaction)
       );
