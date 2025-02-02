@@ -25,7 +25,7 @@ const DashboardPage = async () => {
 
   return (
     <QueryProvider>
-      <Summary accountId={accounts.at(0)?.id || ''} />
+      <Summary />
       <CumulativeSnapshot
         accountId={accounts.at(0)?.id || ''}
         savAccountId={savAccounts.at(0)?.id || ''}

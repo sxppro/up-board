@@ -525,9 +525,7 @@ export const groupByCategory = (
             'uncategorised',
           ],
         },
-        amount: {
-          $toDecimal: '$attributes.amount.value',
-        },
+        amount: '$attributes.amount.valueInBaseUnits',
       },
     },
     // Group documents by category and calculate the total amount and count
@@ -567,10 +565,10 @@ export const groupByCategory = (
           $ifNull: ['$category.attributes.name', 'Uncategorised'],
         },
         parentCategory: '$category.relationships.parent.data.id',
-        amount: { $toDouble: '$amount' },
+        amount: { $divide: ['$amount', 100] },
         absAmount: {
           $abs: {
-            $toDouble: '$amount',
+            $divide: ['$amount', 100],
           },
         },
         transactions: 1,

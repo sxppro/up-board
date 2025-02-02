@@ -37,7 +37,7 @@ const CumulativeSnapshot = ({
 }: CumulativeSnapshotProps) => {
   const [incomeTab, setIncomeTab] = useState(0);
   const [expensesTab, setExpensesTab] = useState(0);
-  const { thisMonthLastYear, lastYear, monthToDate, yearToDate } =
+  const { thisMonthLastYear, last30days, lastYear, monthToDate, yearToDate } =
     getDateRanges();
   const { data: incomeData, dataUpdatedAt: incomeUpdatedAt } =
     trpc.public.getCumulativeIO.useQuery({
@@ -64,12 +64,12 @@ const CumulativeSnapshot = ({
   const { data: transactionalBalance } = trpc.public.getAccountBalance.useQuery(
     {
       accountId,
-      dateRange: monthToDate,
+      dateRange: last30days,
     }
   );
   const { data: savingsBalance } = trpc.public.getAccountBalance.useQuery({
     accountId: savAccountId,
-    dateRange: monthToDate,
+    dateRange: last30days,
   });
   const { data: savingsAcc } = trpc.public.getAccountById.useQuery({
     accountId: savAccountId,

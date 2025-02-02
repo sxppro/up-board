@@ -19,21 +19,18 @@ import {
 } from '@/components/ui/tremor/accordion';
 import { AvailableChartColors, chartColors } from '@/utils/charts';
 import { colours, now } from '@/utils/constants';
-import { cn, formatCurrency } from '@/utils/helpers';
+import { cn, formatCurrency, getDateRanges } from '@/utils/helpers';
 import { trpc } from '@/utils/trpc';
 import { subDays, subMonths, subYears } from 'date-fns';
 import { useState } from 'react';
 import { DateRange } from 'react-day-picker';
 
-interface SummaryProps {
-  accountId: string;
-}
-
-const Summary = ({ accountId }: SummaryProps) => {
+const Summary = () => {
   const [dateRange, setDateRange] = useState<DateRange>({
     from: subDays(now, 30),
     to: now,
   });
+  const { last24hours } = getDateRanges();
   const { data: expenses } = trpc.public.getCategoryInfo.useQuery({
     dateRange: {
       from: dateRange?.from,
@@ -57,7 +54,6 @@ const Summary = ({ accountId }: SummaryProps) => {
     type: 'income',
   });
   const { data: monthly } = trpc.public.getIOStats.useQuery({
-    accountId,
     dateRange: {
       from: dateRange?.from,
       to: dateRange?.to,
@@ -66,7 +62,7 @@ const Summary = ({ accountId }: SummaryProps) => {
 
   const onValueChange = (value: string) => {
     if (value === '24h') {
-      setDateRange({ from: subDays(now, 1), to: now });
+      setDateRange(last24hours);
     } else if (value === '7d') {
       setDateRange({ from: subDays(now, 7), to: now });
     } else if (value === '30d') {
