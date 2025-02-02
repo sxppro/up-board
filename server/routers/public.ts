@@ -56,7 +56,7 @@ export const publicRouter = router({
         return {
           ...rest,
           Timestamp,
-          FormattedDate: format(Timestamp, 'dd LLL'),
+          FormattedDate: format(Timestamp, 'd LLL'),
         };
       });
     }),
