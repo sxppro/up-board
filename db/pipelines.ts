@@ -5,6 +5,7 @@ import {
   TransactionIOEnum,
   TransactionRetrievalOptions,
 } from '@/server/schemas';
+import { AccountType } from '@/types/custom';
 import { TZ } from '@/utils/constants';
 import { tz, TZDate } from '@date-fns/tz';
 import { startOfMonth } from 'date-fns';
@@ -273,12 +274,43 @@ export const findDistinctTags = () => [
  * @param accountId
  * @returns
  */
-export const groupBalanceByDay = (dateRange: DateRange, accountId: string) => [
-  {
-    $match: {
-      'relationships.account.data.id': accountId,
-    },
-  },
+export const groupBalanceByDay = (
+  dateRange: DateRange,
+  accountId?: string,
+  accountType?: AccountType
+) => [
+  ...(accountId
+    ? [
+        {
+          $match: {
+            'relationships.account.data.id': accountId,
+          },
+        },
+      ]
+    : []),
+  ...(accountType
+    ? [
+        {
+          $lookup: {
+            from: 'accounts',
+            localField: 'relationships.account.data.id',
+            foreignField: '_id',
+            as: 'account',
+          },
+        },
+        {
+          $unwind: {
+            path: '$account',
+            preserveNullAndEmptyArrays: false,
+          },
+        },
+        {
+          $match: {
+            'account.attributes.accountType': accountType,
+          },
+        },
+      ]
+    : []),
   {
     $group: {
       _id: {

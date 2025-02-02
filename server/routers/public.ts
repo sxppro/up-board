@@ -13,6 +13,7 @@ import {
   getTransactionsByDay,
 } from '@/db';
 import { filterTransactionFields, getTransactions } from '@/db/helpers';
+import { AccountType } from '@/types/custom';
 import { TRPCError } from '@trpc/server';
 import { format } from 'date-fns';
 import { z } from 'zod';
@@ -39,15 +40,17 @@ export const publicRouter = router({
     .input(
       z.object({
         dateRange: DateRangeSchema,
-        accountId: z.string().uuid(),
+        accountId: z.string().uuid().optional(),
+        accountType: z.custom<AccountType>().optional(),
       })
     )
     .output(z.array(BalanceHistorySchema.extend({ FormattedDate: z.string() })))
     .query(async ({ input }) => {
-      const { dateRange, accountId } = input;
+      const { dateRange, accountId, accountType } = input;
       const accountBalance = await getAccountBalanceHistorical(
         dateRange,
-        accountId
+        accountId,
+        accountType
       );
       return accountBalance.map(({ Timestamp, ...rest }) => {
         return {

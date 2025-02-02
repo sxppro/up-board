@@ -25,6 +25,7 @@ import {
 } from '@/server/schemas';
 import {
   AccountResource,
+  AccountType,
   CategoryResource,
   DbTransactionResource,
   SerialisedDbTransactionResource,
@@ -361,7 +362,8 @@ export const getAccounts = async (
 };
 
 /**
- * Retrieves account balance between 2 dates
+ * Retrieves historical account balance between 2 dates,
+ * for all accounts or specific account or account type
  * @param start
  * @param end
  * @param accountId
@@ -369,7 +371,8 @@ export const getAccounts = async (
  */
 export const getAccountBalanceHistorical = async (
   dateRange: DateRange,
-  accountId: string
+  accountId?: string,
+  accountType?: AccountType
 ) => {
   try {
     const transactions = await connectToCollection<DbTransactionResource>(
@@ -378,7 +381,7 @@ export const getAccountBalanceHistorical = async (
     );
     if (transactions) {
       const cursor = transactions.aggregate<BalanceHistory>(
-        groupBalanceByDay(dateRange, accountId)
+        groupBalanceByDay(dateRange, accountId, accountType)
       );
       const results = await cursor.toArray();
       return results;
