@@ -245,7 +245,7 @@ const CumulativeSnapshot = ({
                   </PopoverTrigger>
                   <PopoverContent className="w-auto">
                     <p className="text-sm">
-                      Total balance of all savings accounts
+                      Current balance of all saver accounts
                     </p>
                   </PopoverContent>
                 </Popover>
