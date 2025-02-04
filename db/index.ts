@@ -309,7 +309,7 @@ export const searchTransactions = async (search: string) => {
  * @returns
  */
 export const getAccounts = async (
-  accountType?: components['schemas']['AccountTypeEnum'],
+  accountType?: AccountType,
   options?: RetrievalOptions
 ) => {
   try {

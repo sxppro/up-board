@@ -62,19 +62,24 @@ const CumulativeSnapshot = ({
     accountId,
     dateRange: yearToDate,
   });
-  const { data: transactionalBalance } = trpc.public.getAccountBalance.useQuery(
-    {
+  const { data: transactionalBalanceHistory } =
+    trpc.public.getAccountBalance.useQuery({
       accountId,
       dateRange: last30days,
-    }
+    });
+  const { data: savingsBalanceHistory } =
+    trpc.public.getAccountBalance.useQuery({
+      accountId: savAccountId,
+      dateRange: last30days,
+    });
+  const { data: savingsAccounts } = trpc.public.getAccounts.useQuery({
+    accountType: 'SAVER',
+  });
+  // Total savings
+  const savingsBalance = savingsAccounts?.reduce(
+    (acc, { balance }) => acc + balance,
+    0
   );
-  const { data: savingsBalance } = trpc.public.getAccountBalance.useQuery({
-    accountId: savAccountId,
-    dateRange: last30days,
-  });
-  const { data: savingsAcc } = trpc.public.getAccountById.useQuery({
-    accountId: savAccountId,
-  });
   const { data: transactionalAcc } = trpc.public.getAccountById.useQuery({
     accountId,
   });
@@ -213,14 +218,14 @@ const CumulativeSnapshot = ({
                   </PopoverContent>
                 </Popover>
               </div>
-              {transactionalBalance && transactionalAcc ? (
+              {transactionalBalanceHistory && transactionalAcc ? (
                 <>
                   <p className="text-2xl">
                     {formatCurrency(transactionalAcc.balance)}
                   </p>
                   <SparkAreaChart
                     className="w-full"
-                    data={transactionalBalance}
+                    data={transactionalBalanceHistory}
                     index="FormattedDate"
                     categories={['Balance']}
                   />
@@ -240,19 +245,17 @@ const CumulativeSnapshot = ({
                   </PopoverTrigger>
                   <PopoverContent className="w-auto">
                     <p className="text-sm">
-                      Current balance of largest saver account
+                      Total balance of all savings accounts
                     </p>
                   </PopoverContent>
                 </Popover>
               </div>
-              {savingsBalance && savingsAcc ? (
+              {savingsBalanceHistory && savingsBalance ? (
                 <>
-                  <p className="text-2xl">
-                    {formatCurrency(savingsAcc.balance)}
-                  </p>
+                  <p className="text-2xl">{formatCurrency(savingsBalance)}</p>
                   <SparkAreaChart
                     className="w-full"
-                    data={savingsBalance}
+                    data={savingsBalanceHistory}
                     index="FormattedDate"
                     categories={['Balance']}
                   />

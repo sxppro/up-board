@@ -1,6 +1,7 @@
 import {
   getAccountBalanceHistorical,
   getAccountById,
+  getAccounts,
   getCategories,
   getCategoryInfo,
   getCategoryInfoHistory,
@@ -74,6 +75,17 @@ export const publicRouter = router({
         throw new TRPCError({ code: 'NOT_FOUND' });
       }
       return account;
+    }),
+  getAccounts: publicProcedure
+    .input(
+      z.object({
+        accountType: z.custom<AccountType>().optional(),
+        options: RetrievalOpts.optional(),
+      })
+    )
+    .query(async ({ input }) => {
+      const { accountType, options } = input;
+      return await getAccounts(accountType, options);
     }),
   getCategories: publicProcedure
     .input(TransactionCategoryTypeSchema)
