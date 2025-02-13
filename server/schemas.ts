@@ -56,17 +56,6 @@ export type TagInfo = z.infer<typeof TagInfoSchema>;
 
 export const TransactionIdSchema = z.string().uuid();
 
-/**
- * @deprecated Use AccountType instead
- */
-export const TransactionAccountTypeSchema = z.enum([
-  'transactional',
-  'savings',
-]);
-export type TransactionAccountType = z.infer<
-  typeof TransactionAccountTypeSchema
->;
-
 export const TransactionCategoryOptionSchema = z.object({
   id: z.string(),
   name: z.string(),
