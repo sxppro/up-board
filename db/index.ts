@@ -21,7 +21,6 @@ import {
   type TransactionCategoryInfoHistoryRaw,
   type TransactionCategoryOption,
   type TransactionCategoryType,
-  type TransactionRetrievalOptions,
 } from '@/server/schemas';
 import {
   AccountResource,
@@ -1083,8 +1082,8 @@ export const getTransactionsByDay = async (
  * @returns
  */
 const getTransactionsByDate = async (
-  options: TransactionRetrievalOptions,
-  accountId?: string
+  options: RetrievalOptions,
+  type?: TransactionIOEnum
 ) => {
   try {
     const transactions = await connectToCollection<DbTransactionResource>(
@@ -1093,19 +1092,18 @@ const getTransactionsByDate = async (
     );
     if (transactions) {
       const cursor = transactions.aggregate<DbTransactionResource>(
-        filterByDateRange(options, accountId)
+        filterByDateRange(options, type)
       );
       const results = (await cursor.toArray()).map((transaction) =>
         outputTransactionFields(transaction)
       );
       return results;
     } else {
-      const { transactionType } = options;
+      const { match } = options;
       return transactionsMock.data
-        .filter(({ attributes }) =>
-          transactionType === 'transactions'
-            ? attributes.isCategorizable
-            : !attributes.isCategorizable
+        .filter(
+          ({ attributes }) =>
+            match?.isCategorizable === attributes.isCategorizable
         )
         .map(({ relationships, ...rest }) => ({
           ...rest,

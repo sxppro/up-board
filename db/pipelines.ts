@@ -3,7 +3,6 @@ import {
   RetrievalOptions,
   TransactionCategoryType,
   TransactionIOEnum,
-  TransactionRetrievalOptions,
 } from '@/server/schemas';
 import { AccountType } from '@/types/custom';
 import { TZ } from '@/utils/constants';
@@ -150,38 +149,27 @@ const lookupCategoryNames = () => [
  * @returns
  */
 export const filterByDateRange = (
-  options: TransactionRetrievalOptions,
-  accountId?: string
+  options: RetrievalOptions,
+  type?: TransactionIOEnum
 ) => {
-  const { dateRange, sort, sortDir, limit, type, transactionType } = options;
-  const sortBy =
-    sort === 'amount'
-      ? 'attributes.amount.valueInBaseUnits'
-      : 'attributes.createdAt';
-  const dir = sortDir === 'asc' ? 1 : -1;
+  const { sort, match, limit } = options;
   return [
     {
       $match: {
-        'attributes.createdAt': {
-          $gte: dateRange.from,
-          $lt: dateRange.to,
-        },
-        ...(transactionType
-          ? {
-              'attributes.isCategorizable':
-                transactionType === 'transactions' ? true : false,
-            }
-          : {}),
-        ...(accountId ? { 'relationships.account.data.id': accountId } : {}),
+        ...(match && match),
         ...(type && filterIO(type)),
       },
     },
     ...lookupCategoryNames(),
-    {
-      $sort: {
-        [sortBy]: dir,
-      },
-    },
+    ...(sort
+      ? [{ $sort: sort }]
+      : [
+          {
+            $sort: {
+              'attributes.createdAt': -1,
+            },
+          },
+        ]),
     ...(limit ? [{ $limit: limit }] : []),
   ];
 };
@@ -262,6 +250,34 @@ export const findDistinctTags = () => [
       tags: {
         $sortArray: { input: '$tags', sortBy: 1 },
       },
+    },
+  },
+];
+
+/**
+ * Account details grouped by account type
+ * @param accountType
+ * @returns
+ */
+export const groupAccountsByType = (accountType: AccountType) => [
+  {
+    $match: {
+      'attributes.accountType': accountType,
+    },
+  },
+  {
+    $group: {
+      _id: 0,
+      balance: {
+        $sum: {
+          $divide: ['$attributes.balance.valueInBaseUnits', 100],
+        },
+      },
+    },
+  },
+  {
+    $project: {
+      _id: 0,
     },
   },
 ];

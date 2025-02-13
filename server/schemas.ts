@@ -146,22 +146,6 @@ export type TransactionResourceFiltered = z.infer<
   typeof TransactionResourceFilteredSchema
 >;
 
-/**
- * TODO: Remove this schema and use RetrievalOpts instead
- * @deprecated Use RetrievalOpts instead
- */
-export const TransactionRetrievalOptionsSchema = RetrievalOpts.extend({
-  account: TransactionAccountTypeSchema,
-  dateRange: DateRangeSchema,
-  transactionType: TransactionTypeSchema,
-  sort: z.enum(['time', 'amount']),
-  sortDir: z.enum(['asc', 'desc']),
-  type: TransactionIO.optional(),
-});
-export type TransactionRetrievalOptions = z.infer<
-  typeof TransactionRetrievalOptionsSchema
->;
-
 export const TransactionTagsModificationSchema = z.object({
   transactionId: TransactionIdSchema,
   tags: z

@@ -13,7 +13,7 @@ import {
   getTransactionsByCategory,
   getTransactionsByDay,
 } from '@/db';
-import { filterTransactionFields, getTransactions } from '@/db/helpers';
+import { filterTransactionFields } from '@/db/helpers';
 import { AccountType } from '@/types/custom';
 import { TRPCError } from '@trpc/server';
 import { format } from 'date-fns';
@@ -32,7 +32,6 @@ import {
   TransactionIdSchema,
   TransactionIO,
   TransactionResourceFilteredSchema,
-  TransactionRetrievalOptionsSchema,
 } from '../schemas';
 import { publicProcedure, router } from '../trpc';
 
@@ -252,10 +251,5 @@ export const publicRouter = router({
     .query(async ({ input }) => {
       const { category, type, dateRange } = input;
       return await getTransactionsByCategory(category, type);
-    }),
-  getTransactionsByDate: publicProcedure
-    .input(TransactionRetrievalOptionsSchema)
-    .query(async ({ input }) => {
-      return await getTransactions(input);
     }),
 });
