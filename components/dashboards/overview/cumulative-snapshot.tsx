@@ -29,13 +29,9 @@ import { useState } from 'react';
 
 interface CumulativeSnapshotProps {
   accountId: string; // Transaction account id
-  savAccountId: string;
 }
 
-const CumulativeSnapshot = ({
-  accountId,
-  savAccountId,
-}: CumulativeSnapshotProps) => {
+const CumulativeSnapshot = ({ accountId }: CumulativeSnapshotProps) => {
   const [incomeTab, setIncomeTab] = useState(0);
   const [expensesTab, setExpensesTab] = useState(0);
   const { thisMonthLastYear, last30days, lastYear, monthToDate, yearToDate } =

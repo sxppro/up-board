@@ -16,20 +16,11 @@ const DashboardPage = async () => {
     },
     limit: 1,
   });
-  const savAccounts = await getAccounts('SAVER', {
-    sort: {
-      'attributes.balance.valueInBaseUnits': -1,
-    },
-    limit: 1,
-  });
 
   return (
     <QueryProvider>
       <Summary />
-      <CumulativeSnapshot
-        accountId={accounts.at(0)?.id || ''}
-        savAccountId={savAccounts.at(0)?.id || ''}
-      />
+      <CumulativeSnapshot accountId={accounts.at(0)?.id || ''} />
     </QueryProvider>
   );
 };
