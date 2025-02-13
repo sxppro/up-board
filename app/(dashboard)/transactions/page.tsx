@@ -22,11 +22,13 @@ const TransactionsPage = async ({ searchParams }: PageProps) => {
   const searchTerm = Array.isArray(search) ? search[0] : search;
   const { last3months } = getDateRanges();
   const transactions = await getTransactionsByDate({
-    account: 'transactional',
-    transactionType: 'transactions',
-    dateRange: { from: startOfMonth(last3months.from), to: last3months.to },
-    sort: 'time',
-    sortDir: 'desc',
+    match: {
+      'attributes.isCategorizable': true,
+      'attributes.createdAt': {
+        $gte: startOfMonth(last3months.from),
+        $lte: last3months.to,
+      },
+    },
   });
 
   return (
