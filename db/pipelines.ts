@@ -255,34 +255,6 @@ export const findDistinctTags = () => [
 ];
 
 /**
- * Account details grouped by account type
- * @param accountType
- * @returns
- */
-export const groupAccountsByType = (accountType: AccountType) => [
-  {
-    $match: {
-      'attributes.accountType': accountType,
-    },
-  },
-  {
-    $group: {
-      _id: 0,
-      balance: {
-        $sum: {
-          $divide: ['$attributes.balance.valueInBaseUnits', 100],
-        },
-      },
-    },
-  },
-  {
-    $project: {
-      _id: 0,
-    },
-  },
-];
-
-/**
  * Account balance over time
  * ! Note: timezone is currently hard-coded
  * @param from
