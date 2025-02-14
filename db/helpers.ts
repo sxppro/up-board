@@ -1,29 +1,7 @@
-import {
-  TransactionResourceFiltered,
-  TransactionRetrievalOptions,
-} from '@/server/schemas';
+import { TransactionResourceFiltered } from '@/server/schemas';
 import { components } from '@/types/up-api';
-import { getCategoryById, getTransactionsByDate } from '.';
+import { getCategoryById } from '.';
 
-/**
- * Retrieves transactions using various options
- * @param retrievalOpts
- * @returns
- */
-export const getTransactions = async (
-  retrievalOpts: TransactionRetrievalOptions
-) => {
-  const { account } = retrievalOpts;
-  const transactions = await getTransactionsByDate(
-    retrievalOpts,
-    account === 'transactional'
-      ? process.env.UP_TRANS_ACC
-      : account === 'savings'
-      ? process.env.UP_SAVINGS_ACC
-      : ''
-  );
-  return await filterTransactionFields(transactions);
-};
 /**
  * Filters properties from raw transaction
  * object to be returned to client

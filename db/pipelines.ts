@@ -1,9 +1,10 @@
 import {
   DateRange,
   RetrievalOptions,
+  TransactionCategoryType,
   TransactionIOEnum,
-  TransactionRetrievalOptions,
 } from '@/server/schemas';
+import { AccountType } from '@/types/custom';
 import { TZ } from '@/utils/constants';
 import { tz, TZDate } from '@date-fns/tz';
 import { startOfMonth } from 'date-fns';
@@ -148,38 +149,27 @@ const lookupCategoryNames = () => [
  * @returns
  */
 export const filterByDateRange = (
-  options: TransactionRetrievalOptions,
-  accountId?: string
+  options: RetrievalOptions,
+  type?: TransactionIOEnum
 ) => {
-  const { dateRange, sort, sortDir, limit, type, transactionType } = options;
-  const sortBy =
-    sort === 'amount'
-      ? 'attributes.amount.valueInBaseUnits'
-      : 'attributes.createdAt';
-  const dir = sortDir === 'asc' ? 1 : -1;
+  const { sort, match, limit } = options;
   return [
     {
       $match: {
-        'attributes.createdAt': {
-          $gte: dateRange.from,
-          $lt: dateRange.to,
-        },
-        ...(transactionType
-          ? {
-              'attributes.isCategorizable':
-                transactionType === 'transactions' ? true : false,
-            }
-          : {}),
-        ...(accountId ? { 'relationships.account.data.id': accountId } : {}),
+        ...(match && match),
         ...(type && filterIO(type)),
       },
     },
     ...lookupCategoryNames(),
-    {
-      $sort: {
-        [sortBy]: dir,
-      },
-    },
+    ...(sort
+      ? [{ $sort: sort }]
+      : [
+          {
+            $sort: {
+              'attributes.createdAt': -1,
+            },
+          },
+        ]),
     ...(limit ? [{ $limit: limit }] : []),
   ];
 };
@@ -202,6 +192,39 @@ export const filterByTag = (tag: string) => [
     },
   },
 ];
+
+/**
+ * Retrieve transactions by category
+ * @param category
+ * @returns
+ */
+export const filterByCategory = (
+  category: string,
+  type: TransactionCategoryType,
+  options?: RetrievalOptions
+) => {
+  const { sort, limit } = options || {};
+  return [
+    {
+      $match: {
+        ...(type === 'child'
+          ? { 'relationships.category.data.id': category }
+          : { 'relationships.parentCategory.data.id': category }),
+      },
+    },
+    ...lookupCategoryNames(),
+    ...(sort
+      ? [{ $sort: sort }]
+      : [
+          {
+            $sort: {
+              'attributes.createdAt': -1,
+            },
+          },
+        ]),
+    ...(limit ? [{ $limit: limit }] : []),
+  ];
+};
 
 /**
  * Retrieves all unique tags
@@ -239,12 +262,43 @@ export const findDistinctTags = () => [
  * @param accountId
  * @returns
  */
-export const groupBalanceByDay = (dateRange: DateRange, accountId: string) => [
-  {
-    $match: {
-      'relationships.account.data.id': accountId,
-    },
-  },
+export const groupBalanceByDay = (
+  dateRange: DateRange,
+  accountId?: string,
+  accountType?: AccountType
+) => [
+  ...(accountId
+    ? [
+        {
+          $match: {
+            'relationships.account.data.id': accountId,
+          },
+        },
+      ]
+    : []),
+  ...(accountType
+    ? [
+        {
+          $lookup: {
+            from: 'accounts',
+            localField: 'relationships.account.data.id',
+            foreignField: '_id',
+            as: 'account',
+          },
+        },
+        {
+          $unwind: {
+            path: '$account',
+            preserveNullAndEmptyArrays: false,
+          },
+        },
+        {
+          $match: {
+            'account.attributes.accountType': accountType,
+          },
+        },
+      ]
+    : []),
   {
     $group: {
       _id: {
@@ -491,9 +545,7 @@ export const groupByCategory = (
             'uncategorised',
           ],
         },
-        amount: {
-          $toDecimal: '$attributes.amount.value',
-        },
+        amount: '$attributes.amount.valueInBaseUnits',
       },
     },
     // Group documents by category and calculate the total amount and count
@@ -533,10 +585,10 @@ export const groupByCategory = (
           $ifNull: ['$category.attributes.name', 'Uncategorised'],
         },
         parentCategory: '$category.relationships.parent.data.id',
-        amount: { $toDouble: '$amount' },
+        amount: { $divide: ['$amount', 100] },
         absAmount: {
           $abs: {
-            $toDouble: '$amount',
+            $divide: ['$amount', 100],
           },
         },
         transactions: 1,
@@ -1051,10 +1103,10 @@ export const statsIO = (
         _id: 0,
         Year: '$_id.year',
         Month: '$_id.month',
-        Income: {
+        In: {
           $divide: ['$income', 100],
         },
-        Expenses: {
+        Out: {
           $abs: {
             $divide: ['$expense', 100],
           },

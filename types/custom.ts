@@ -1,6 +1,7 @@
 import { BarChartProps, Color } from '@tremor/react';
 import { components } from './up-api';
 
+import { outputTransactionFields } from '@/utils/helpers';
 import type { Binary } from 'bson';
 import type { DateRange } from 'react-day-picker';
 
@@ -19,6 +20,8 @@ export interface AccountResource
   _id: string;
 }
 
+export type AccountType = components['schemas']['AccountTypeEnum'];
+
 export interface CategoryResource
   extends Omit<components['schemas']['CategoryResource'], 'id'> {
   _id: string;
@@ -32,6 +35,10 @@ export interface DbTransactionResource
   _id: Binary;
   attributes: TransactionResourceAttributes;
 }
+
+export type SerialisedDbTransactionResource = ReturnType<
+  typeof outputTransactionFields
+>;
 
 export type DateRangeContext = {
   date: DateRange | undefined;

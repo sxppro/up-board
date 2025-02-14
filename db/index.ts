@@ -21,31 +21,36 @@ import {
   type TransactionCategoryInfoHistoryRaw,
   type TransactionCategoryOption,
   type TransactionCategoryType,
-  type TransactionRetrievalOptions,
 } from '@/server/schemas';
 import {
   AccountResource,
+  AccountType,
   CategoryResource,
   DbTransactionResource,
+  SerialisedDbTransactionResource,
 } from '@/types/custom';
 import { components } from '@/types/up-api';
 import { auth } from '@/utils/auth';
-import { DB_NAME } from '@/utils/constants';
+import { DB_NAME, now, YEARS_IN_ONE_DECADE } from '@/utils/constants';
 import { outputTransactionFields } from '@/utils/helpers';
 import {
   getTransactionByAccount,
   getTransactionById as getUpTransactionById,
 } from '@/utils/up';
+import { TZDate } from '@date-fns/tz';
 import { faker } from '@faker-js/faker';
 import { UUID } from 'bson';
 import {
+  Duration,
   eachDayOfInterval,
   eachMonthOfInterval,
   eachYearOfInterval,
+  intervalToDuration,
 } from 'date-fns';
 import { CollectionOptions, Document, MongoBulkWriteError } from 'mongodb';
 import client from './connect';
 import {
+  filterByCategory,
   filterByDateRange,
   filterByTag,
   findDistinctTags,
@@ -63,6 +68,14 @@ import {
 } from './pipelines';
 
 faker.seed(17);
+
+/**
+ * ! Hard limit of 10 years for historical data
+ * @param duration
+ * @returns
+ */
+const checkDuration = (duration: Duration) =>
+  !duration.years || duration.years <= YEARS_IN_ONE_DECADE;
 
 /**
  * Utility to check transactions between Up and db
@@ -281,7 +294,7 @@ export const searchTransactions = async (search: string) => {
     } else {
       return transactionsMock.data.filter(({ attributes }) =>
         attributes.description.toLowerCase().includes(search.toLowerCase())
-      ) as unknown as ReturnType<typeof outputTransactionFields>[];
+      ) as unknown as SerialisedDbTransactionResource[];
     }
   } catch (err) {
     console.error(err);
@@ -295,7 +308,7 @@ export const searchTransactions = async (search: string) => {
  * @returns
  */
 export const getAccounts = async (
-  accountType?: components['schemas']['AccountTypeEnum'],
+  accountType?: AccountType,
   options?: RetrievalOptions
 ) => {
   try {
@@ -348,7 +361,8 @@ export const getAccounts = async (
 };
 
 /**
- * Retrieves account balance between 2 dates
+ * Retrieves historical account balance between 2 dates,
+ * for all accounts or specific account or account type
  * @param start
  * @param end
  * @param accountId
@@ -356,7 +370,8 @@ export const getAccounts = async (
  */
 export const getAccountBalanceHistorical = async (
   dateRange: DateRange,
-  accountId: string
+  accountId?: string,
+  accountType?: AccountType
 ) => {
   try {
     const transactions = await connectToCollection<DbTransactionResource>(
@@ -365,7 +380,7 @@ export const getAccountBalanceHistorical = async (
     );
     if (transactions) {
       const cursor = transactions.aggregate<BalanceHistory>(
-        groupBalanceByDay(dateRange, accountId)
+        groupBalanceByDay(dateRange, accountId, accountType)
       );
       const results = await cursor.toArray();
       return results;
@@ -374,19 +389,28 @@ export const getAccountBalanceHistorical = async (
         const startingBalance = parseFloat(
           faker.finance.amount({ max: 10000 })
         );
-        const days = eachDayOfInterval({
+        const duration = intervalToDuration({
           start: dateRange.from,
           end: dateRange.to,
         });
-        return days.map((date) => ({
-          Year: date.getFullYear(),
-          Month: date.getMonth() + 1,
-          Day: date.getDate(),
-          Timestamp: date,
-          Amount: parseFloat(faker.finance.amount({ min: -1000 })),
-          Balance:
-            startingBalance + parseFloat(faker.finance.amount({ min: -1000 })),
-        }));
+        if (checkDuration(duration)) {
+          const days = eachDayOfInterval({
+            start: dateRange.from,
+            end: dateRange.to,
+          });
+          return days.map((date) => ({
+            Year: date.getFullYear(),
+            Month: date.getMonth() + 1,
+            Day: date.getDate(),
+            Timestamp: date,
+            Amount: parseFloat(faker.finance.amount({ min: -1000 })),
+            Balance:
+              startingBalance +
+              parseFloat(faker.finance.amount({ min: -1000 })),
+          }));
+        } else {
+          throw new Error('Request timeframe exceeds limit');
+        }
       }
       return [];
     }
@@ -464,32 +488,44 @@ export const getIOStats = async (
       return results;
     } else {
       if (options?.groupBy && dateRange && dateRange.from < dateRange.to) {
-        const dates =
-          options.groupBy === 'yearly'
-            ? eachYearOfInterval({ start: dateRange.from, end: dateRange.to })
-            : options.groupBy === 'monthly'
-            ? eachMonthOfInterval({ start: dateRange.from, end: dateRange.to })
-            : eachDayOfInterval({ start: dateRange.from, end: dateRange.to });
-
-        return dates.map((date) => {
-          const income = parseFloat(faker.finance.amount({ max: 5000 }));
-          const expenses = parseFloat(faker.finance.amount({ max: 5000 }));
-          return {
-            Income: income,
-            Expenses: expenses,
-            Net: income - expenses,
-            Transactions: faker.number.int({ max: 100 }),
-            Month: date.getMonth() + 1,
-            Year: date.getFullYear(),
-          };
+        const { groupBy } = options;
+        const duration = intervalToDuration({
+          start: dateRange.from,
+          end: dateRange.to,
         });
+        if (checkDuration(duration)) {
+          const dates =
+            groupBy === 'yearly'
+              ? eachYearOfInterval({ start: dateRange.from, end: dateRange.to })
+              : groupBy === 'monthly'
+              ? eachMonthOfInterval({
+                  start: dateRange.from,
+                  end: dateRange.to,
+                })
+              : eachDayOfInterval({ start: dateRange.from, end: dateRange.to });
+
+          return dates.map((date) => {
+            const income = parseFloat(faker.finance.amount({ max: 5000 }));
+            const expenses = parseFloat(faker.finance.amount({ max: 5000 }));
+            return {
+              In: income,
+              Out: expenses,
+              Net: income - expenses,
+              Transactions: faker.number.int({ max: 100 }),
+              Month: date.getMonth() + 1,
+              Year: date.getFullYear(),
+            };
+          });
+        } else {
+          throw new Error('Request timeframe exceeds limit');
+        }
       }
       const income = parseFloat(faker.finance.amount({ max: 5000 }));
       const expenses = parseFloat(faker.finance.amount({ max: 5000 }));
       const data = [
         {
-          Income: income,
-          Expenses: expenses,
+          In: income,
+          Out: expenses,
           Net: income - expenses,
           Transactions: faker.number.int({ max: 100 }),
         },
@@ -540,7 +576,39 @@ export const getMerchantInfo = async (
         parentCategoryName: parentCategories.get(parentCategory),
       }));
     } else {
-      return [];
+      const merchants = transactionsMock.data.map(
+        ({ attributes }) => attributes.description
+      );
+      return merchants
+        .map((merchant) => {
+          const amount = parseFloat(
+            faker.finance.amount({
+              min: type === 'income' ? 0 : -1000,
+              max: type === 'expense' ? 0 : undefined,
+            })
+          );
+          const category = faker.helpers.arrayElement(
+            categoriesMock.data.filter(
+              ({ relationships }) => relationships.parent.data
+            )
+          );
+          const parentCategory = faker.helpers.arrayElement(
+            categoriesMock.data.filter(
+              ({ relationships }) => !relationships.parent.data
+            )
+          );
+          return {
+            name: merchant,
+            absAmount: Math.abs(amount),
+            amount,
+            transactions: faker.number.int({ max: 100 }),
+            category: category.id,
+            categoryName: category.attributes.name,
+            parentCategory: parentCategory.id,
+            parentCategoryName: parentCategory.attributes.name,
+          };
+        })
+        .slice(0, options.limit);
     }
   } catch (err) {
     console.error(err);
@@ -579,7 +647,26 @@ export const getMerchantInfoHistory = async (
       const results = await cursor.toArray();
       return results;
     } else {
-      return [];
+      const duration = intervalToDuration({
+        start: dateRange.from,
+        end: dateRange.to,
+      });
+      if (checkDuration(duration)) {
+        const months = eachMonthOfInterval({
+          start: dateRange.from,
+          end: dateRange.to,
+        });
+        return months.map((date) => ({
+          Year: date.getFullYear(),
+          Month: date.getMonth() + 1,
+          Day: date.getDate(),
+          Timestamp: date,
+          Amount: parseFloat(faker.finance.amount({ min: -1000 })),
+          Balance: parseFloat(faker.finance.amount({ min: 0 })),
+        }));
+      } else {
+        throw new Error('Request timeframe exceeds limit');
+      }
     }
   } catch (err) {
     console.error(err);
@@ -738,7 +825,8 @@ export const getCategoryInfo = async (
           absAmount: Math.abs(amount),
           transactions: faker.number.int({ max: 100 }),
         }))
-        .sort((a, b) => (a.amount < b.amount ? 1 : -1));
+        .sort((a, b) => (a.amount < b.amount ? 1 : -1))
+        .slice(0, options.limit);
     }
   } catch (err) {
     console.error(err);
@@ -770,33 +858,41 @@ export const getCategoryInfoHistory = async (
       return results;
     } else {
       if (dateRange.from < dateRange.to) {
-        const months = eachMonthOfInterval({
+        const duration = intervalToDuration({
           start: dateRange.from,
           end: dateRange.to,
         });
-        return months.map((date) => ({
-          categories: categoriesMock.data
-            .filter(({ relationships }) =>
-              type === 'parent'
-                ? relationships.parent.data === null
-                : relationships.parent.data !== null
-            )
-            .map(({ id, attributes }) => {
-              const amount = parseFloat(
-                faker.finance.amount({ min: -5000, max: 5000 })
-              );
-              return {
-                category: id,
-                categoryName: attributes.name,
-                amount,
-                absAmount: Math.abs(amount),
-                transactions: faker.number.int({ max: 100 }),
-              };
-            }),
-          day: date.getDate(),
-          month: date.getMonth() + 1,
-          year: date.getFullYear(),
-        }));
+        if (checkDuration(duration)) {
+          const months = eachMonthOfInterval({
+            start: dateRange.from,
+            end: dateRange.to,
+          });
+          return months.map((date) => ({
+            categories: categoriesMock.data
+              .filter(({ relationships }) =>
+                type === 'parent'
+                  ? relationships.parent.data === null
+                  : relationships.parent.data !== null
+              )
+              .map(({ id, attributes }) => {
+                const amount = parseFloat(
+                  faker.finance.amount({ min: -5000, max: 5000 })
+                );
+                return {
+                  category: id,
+                  categoryName: attributes.name,
+                  amount,
+                  absAmount: Math.abs(amount),
+                  transactions: faker.number.int({ max: 100 }),
+                };
+              }),
+            day: date.getDate(),
+            month: date.getMonth() + 1,
+            year: date.getFullYear(),
+          }));
+        } else {
+          throw new Error('Request timeframe exceeds limit');
+        }
       }
       return [];
     }
@@ -831,7 +927,27 @@ export const getCumulativeIO = async (
       const results = await cursor.toArray();
       return results;
     } else {
-      return [];
+      const duration = intervalToDuration({
+        start: dateRange.from,
+        end: dateRange.to,
+      });
+      if (checkDuration(duration)) {
+        const days = eachDayOfInterval({
+          start: dateRange.from,
+          end: dateRange.to,
+        });
+        let lastAmount = 0;
+        return days.map((day) => {
+          const amount = parseFloat(faker.finance.amount({ min: 0 }));
+          lastAmount += amount;
+          return {
+            Timestamp: day,
+            AmountCumulative: lastAmount,
+          };
+        });
+      } else {
+        throw new Error('Request timeframe exceeds limit');
+      }
     }
   } catch (err) {
     console.error(err);
@@ -856,13 +972,20 @@ export const getTagInfo = async (tag: string): Promise<TagInfo | undefined> => {
       return results[0];
     } else {
       if (tagsMock.data.includes(tag)) {
+        const income = faker.number.float({
+          min: 0,
+          max: 1000,
+          fractionDigits: 2,
+        });
+        const expenses = faker.number.float({
+          min: 0,
+          max: 1000,
+          fractionDigits: 2,
+        });
         const data = {
-          Income: faker.number.float({ min: 0, max: 1000, fractionDigits: 2 }),
-          Expenses: faker.number.float({
-            min: 0,
-            max: 1000,
-            fractionDigits: 2,
-          }),
+          Income: income,
+          Expenses: expenses,
+          Net: income - expenses,
           Transactions: faker.number.int({ max: 100 }),
         };
         const res = TagInfoSchema.safeParse(getMockData('getTagInfo', data));
@@ -911,7 +1034,40 @@ export const getTransactionsByDay = async (
       );
       return results;
     } else {
-      return [];
+      let transactions = transactionsMock.data.filter(
+        ({ attributes, relationships }) =>
+          accountId
+            ? relationships.account.data.id === accountId
+            : dateRange
+            ? new Date(attributes.createdAt) >= dateRange.from &&
+              new Date(attributes.createdAt) <= dateRange.to
+            : true
+      );
+      if (options?.limit) {
+        transactions = transactions.slice(0, options.limit);
+      }
+      if (options?.match) {
+        if (options.match['attributes.description']) {
+          transactions = transactions.filter(
+            ({ attributes }) =>
+              options.match &&
+              attributes.description === options.match['attributes.description']
+          );
+        } else if (options.match['relationships.parentCategory.data.id']) {
+          transactions = transactions.filter(
+            ({ relationships }) =>
+              options.match &&
+              relationships.parentCategory.data.id ===
+                options.match['relationships.parentCategory.data.id']
+          );
+        }
+      }
+      return transactions.length > 0
+        ? ([{ timestamp: now, transactions }] as {
+            timestamp: TZDate;
+            transactions: any[];
+          }[])
+        : [];
     }
   } catch (err) {
     console.error(err);
@@ -926,8 +1082,8 @@ export const getTransactionsByDay = async (
  * @returns
  */
 const getTransactionsByDate = async (
-  options: TransactionRetrievalOptions,
-  accountId?: string
+  options: RetrievalOptions,
+  type?: TransactionIOEnum
 ) => {
   try {
     const transactions = await connectToCollection<DbTransactionResource>(
@@ -936,19 +1092,18 @@ const getTransactionsByDate = async (
     );
     if (transactions) {
       const cursor = transactions.aggregate<DbTransactionResource>(
-        filterByDateRange(options, accountId)
+        filterByDateRange(options, type)
       );
       const results = (await cursor.toArray()).map((transaction) =>
         outputTransactionFields(transaction)
       );
       return results;
     } else {
-      const { transactionType } = options;
+      const { match } = options;
       return transactionsMock.data
-        .filter(({ attributes }) =>
-          transactionType === 'transactions'
-            ? attributes.isCategorizable
-            : !attributes.isCategorizable
+        .filter(
+          ({ attributes }) =>
+            match?.isCategorizable === attributes.isCategorizable
         )
         .map(({ relationships, ...rest }) => ({
           ...rest,
@@ -977,9 +1132,10 @@ const getTransactionsByDate = async (
             ? -1
             : 1
         )
-        .slice(0, options.limit) as unknown as ReturnType<
-        typeof outputTransactionFields
-      >[];
+        .slice(
+          0,
+          options.limit
+        ) as unknown as SerialisedDbTransactionResource[];
     }
   } catch (err) {
     console.error(err);
@@ -994,8 +1150,7 @@ const getTransactionsByDate = async (
  */
 export const getTransactionsByCategory = async (
   category: string,
-  type: TransactionCategoryType,
-  dateRange?: DateRange
+  type: TransactionCategoryType
 ) => {
   try {
     const transactions = await connectToCollection<DbTransactionResource>(
@@ -1003,19 +1158,9 @@ export const getTransactionsByCategory = async (
       'transactions'
     );
     if (transactions) {
-      const cursor = transactions
-        .find({
-          ...(type === 'child'
-            ? { 'relationships.category.data.id': category }
-            : { 'relationships.parentCategory.data.id': category }),
-          ...(dateRange && {
-            'attributes.createdAt': {
-              $gte: dateRange.from,
-              $lte: dateRange.to,
-            },
-          }),
-        })
-        .sort({ 'attributes.createdAt': -1 });
+      const cursor = transactions.aggregate<DbTransactionResource>(
+        filterByCategory(category, type)
+      );
       const results = (await cursor.toArray()).map((transaction) =>
         outputTransactionFields(transaction)
       );
@@ -1044,7 +1189,7 @@ export const getTransactionsByCategory = async (
               },
             },
           },
-        })) as unknown as ReturnType<typeof outputTransactionFields>[];
+        })) as unknown as SerialisedDbTransactionResource[];
     }
   } catch (err) {
     console.error(err);
@@ -1072,7 +1217,7 @@ const getTransactionById = async (id: string) => {
       return (
         (transactionsMock.data.find(
           ({ id: txId }) => txId === id
-        ) as unknown as ReturnType<typeof outputTransactionFields>) || null
+        ) as unknown as SerialisedDbTransactionResource) || null
       );
     }
   } catch (err) {
@@ -1129,7 +1274,7 @@ export const getTransactionsByTag = async (tag: string) => {
           new Date(a.attributes.createdAt) > new Date(b.attributes.createdAt)
             ? -1
             : 1
-        ) as unknown as ReturnType<typeof outputTransactionFields>[];
+        ) as unknown as SerialisedDbTransactionResource[];
     }
   } catch (err) {
     console.error(err);

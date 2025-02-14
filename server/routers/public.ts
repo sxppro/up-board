@@ -1,6 +1,7 @@
 import {
   getAccountBalanceHistorical,
   getAccountById,
+  getAccounts,
   getCategories,
   getCategoryInfo,
   getCategoryInfoHistory,
@@ -12,7 +13,8 @@ import {
   getTransactionsByCategory,
   getTransactionsByDay,
 } from '@/db';
-import { filterTransactionFields, getTransactions } from '@/db/helpers';
+import { filterTransactionFields } from '@/db/helpers';
+import { AccountType } from '@/types/custom';
 import { TRPCError } from '@trpc/server';
 import { format } from 'date-fns';
 import { z } from 'zod';
@@ -30,7 +32,6 @@ import {
   TransactionIdSchema,
   TransactionIO,
   TransactionResourceFilteredSchema,
-  TransactionRetrievalOptionsSchema,
 } from '../schemas';
 import { publicProcedure, router } from '../trpc';
 
@@ -39,21 +40,23 @@ export const publicRouter = router({
     .input(
       z.object({
         dateRange: DateRangeSchema,
-        accountId: z.string().uuid(),
+        accountId: z.string().uuid().optional(),
+        accountType: z.custom<AccountType>().optional(),
       })
     )
     .output(z.array(BalanceHistorySchema.extend({ FormattedDate: z.string() })))
     .query(async ({ input }) => {
-      const { dateRange, accountId } = input;
+      const { dateRange, accountId, accountType } = input;
       const accountBalance = await getAccountBalanceHistorical(
         dateRange,
-        accountId
+        accountId,
+        accountType
       );
       return accountBalance.map(({ Timestamp, ...rest }) => {
         return {
           ...rest,
           Timestamp,
-          FormattedDate: format(Timestamp, 'dd LLL'),
+          FormattedDate: format(Timestamp, 'd LLL'),
         };
       });
     }),
@@ -71,6 +74,17 @@ export const publicRouter = router({
         throw new TRPCError({ code: 'NOT_FOUND' });
       }
       return account;
+    }),
+  getAccounts: publicProcedure
+    .input(
+      z.object({
+        accountType: z.custom<AccountType>().optional(),
+        options: RetrievalOpts.optional(),
+      })
+    )
+    .query(async ({ input }) => {
+      const { accountType, options } = input;
+      return await getAccounts(accountType, options);
     }),
   getCategories: publicProcedure
     .input(TransactionCategoryTypeSchema)
@@ -182,7 +196,7 @@ export const publicRouter = router({
   getIOStats: publicProcedure
     .input(
       z.object({
-        accountId: z.string().uuid(),
+        accountId: z.string().uuid().optional(),
         dateRange: DateRangeSchema,
         options: RetrievalOpts.optional(),
       })
@@ -236,11 +250,6 @@ export const publicRouter = router({
     )
     .query(async ({ input }) => {
       const { category, type, dateRange } = input;
-      return await getTransactionsByCategory(category, type, dateRange);
-    }),
-  getTransactionsByDate: publicProcedure
-    .input(TransactionRetrievalOptionsSchema)
-    .query(async ({ input }) => {
-      return await getTransactions(input);
+      return await getTransactionsByCategory(category, type);
     }),
 });

@@ -163,7 +163,11 @@ const PopoverContent = ({ tx }: { tx: TransactionResourceFiltered }) => {
         </div>
         <div className="flex gap-1">
           {tx.tags.length > 0 ? (
-            tx.tags.map((tag) => <Badge key={tag}>{tag}</Badge>)
+            tx.tags.map((tag) => (
+              <Badge key={tag}>
+                <Link href={`/tags/${encodeURIComponent(tag)}`}>{tag}</Link>
+              </Badge>
+            ))
           ) : (
             <p className="text-muted-foreground text-sm">No tags.</p>
           )}

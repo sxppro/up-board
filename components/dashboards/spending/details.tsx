@@ -16,8 +16,8 @@ import {
 import { cn, formatCurrency } from '@/utils/helpers';
 import { useDate } from '@/utils/hooks';
 import { trpc } from '@/utils/trpc';
-import { CircleNotch } from '@phosphor-icons/react';
-import { BarList } from '@tremor/react';
+import { CircleNotch, Minus, Plus } from '@phosphor-icons/react';
+import { BarList, Card } from '@tremor/react';
 
 interface SpendingDetailsProps {
   categoryStats: TransactionCategoryInfo[];
@@ -31,17 +31,18 @@ const SpendingDetails = ({
   selectedCategory,
 }: SpendingDetailsProps) => {
   const { date } = useDate();
-  const { data, isError } = trpc.public.getTransactionsByDay.useQuery(
-    {
-      dateRange: date,
-      options: {
-        match: {
-          'relationships.parentCategory.data.id': selectedCategory?.id || '',
+  const { data: transactions, isError } =
+    trpc.public.getTransactionsByDay.useQuery(
+      {
+        dateRange: date,
+        options: {
+          match: {
+            'relationships.parentCategory.data.id': selectedCategory?.id || '',
+          },
         },
       },
-    },
-    { enabled: !!selectedCategory }
-  );
+      { enabled: !!selectedCategory }
+    );
   const { data: selectedSubcategory } = trpc.public.getCategoryInfo.useQuery(
     {
       dateRange: date || {},
@@ -51,21 +52,65 @@ const SpendingDetails = ({
     },
     { enabled: !!selectedCategory }
   );
+  // Split selectedSubcategory into money in and money out
+  const selectedSubcategoryIn = selectedSubcategory?.filter(
+    ({ amount }) => amount > 0
+  );
+  const selectedSubcategoryOut = selectedSubcategory?.filter(
+    ({ amount }) => amount < 0
+  );
 
   return selectedCategory ? (
     <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
       <div className="xl:col-span-2 flex flex-col gap-2">
         <h2 className="text-lg font-semibold">Subcategories</h2>
         {selectedSubcategory ? (
-          <BarList
-            data={selectedSubcategory.map(({ categoryName, absAmount }) => ({
-              name: categoryName,
-              value: absAmount,
-            }))}
-            color={`up-${selectedCategory.id}`}
-            valueFormatter={formatCurrency}
-            showAnimation
-          />
+          selectedSubcategoryIn && selectedSubcategoryOut ? (
+            <>
+              {selectedSubcategoryIn.length > 0 && (
+                <Card className="ring-border bg-background p-3 flex flex-col gap-2">
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <Plus className="size-4" />
+                    <h3>Money In</h3>
+                  </div>
+                  <BarList
+                    data={selectedSubcategoryIn.map(
+                      ({ category, categoryName, absAmount }) => ({
+                        name: categoryName,
+                        href: `/spending/${encodeURIComponent(category)}`,
+                        value: absAmount,
+                      })
+                    )}
+                    color={`up-${selectedCategory.id}`}
+                    valueFormatter={formatCurrency}
+                    showAnimation
+                  />
+                </Card>
+              )}
+              {selectedSubcategoryOut.length > 0 && (
+                <Card className="ring-border bg-background p-3 flex flex-col gap-2">
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <Minus className="size-4" />
+                    <h3>Money Out</h3>
+                  </div>
+                  <BarList
+                    data={selectedSubcategoryOut.map(
+                      ({ category, categoryName, absAmount }) => ({
+                        name: categoryName,
+                        href: `/spending/${encodeURIComponent(category)}`,
+                        value: absAmount,
+                      })
+                    )}
+                    color={`up-${selectedCategory.id}`}
+                    valueFormatter={formatCurrency}
+                    showAnimation
+                  />
+                </Card>
+              )}
+            </>
+          ) : (
+            ''
+          )
         ) : (
           <div className="flex flex-col gap-1">
             <Skeleton className="w-full h-8" />
@@ -76,8 +121,9 @@ const SpendingDetails = ({
         )}
       </div>
       <div className="flex flex-col">
-        {data ? (
-          <TransactionsList transactions={data} />
+        {transactions ? (
+          // Transactions grouped by last 7 days
+          <TransactionsList transactions={transactions} />
         ) : isError ? (
           <p className="text-muted-foreground">
             Failed to retrieve transactions.
@@ -98,9 +144,13 @@ const SpendingDetails = ({
     <div>
       <h2 className="text-lg font-semibold">This month</h2>
       <Accordion type="single" collapsible>
-        {categoryStats.map(({ category, categoryName, absAmount }, index) => {
+        {categoryStats.map(({ category, categoryName, amount }, index) => {
           return (
-            <AccordionItem key={category} value={category}>
+            <AccordionItem
+              key={category}
+              value={category}
+              disabled={categoryName === 'Uncategorised'}
+            >
               <AccordionTrigger className="py-2 gap-2">
                 <div
                   className={cn(
@@ -110,13 +160,13 @@ const SpendingDetails = ({
                 />
                 <div className="flex-1 flex justify-between text-base">
                   <p>{categoryName}</p>
-                  <p>{formatCurrency(absAmount)}</p>
+                  <p>{formatCurrency(amount)}</p>
                 </div>
               </AccordionTrigger>
               <AccordionContent>
                 <ul role="list">
                   {subCategoryStats[index].map(
-                    ({ category, categoryName, absAmount }) => (
+                    ({ category, categoryName, amount }) => (
                       <li
                         key={category}
                         className="w-full flex h-8 items-center overflow-hidden"
@@ -124,7 +174,7 @@ const SpendingDetails = ({
                         <p className="flex-1 text-subtle truncate">
                           {categoryName}
                         </p>
-                        <span>{formatCurrency(absAmount)}</span>
+                        <span>{formatCurrency(amount)}</span>
                       </li>
                     )
                   )}

@@ -56,14 +56,6 @@ export type TagInfo = z.infer<typeof TagInfoSchema>;
 
 export const TransactionIdSchema = z.string().uuid();
 
-export const TransactionAccountTypeSchema = z.enum([
-  'transactional',
-  'savings',
-]);
-export type TransactionAccountType = z.infer<
-  typeof TransactionAccountTypeSchema
->;
-
 export const TransactionCategoryOptionSchema = z.object({
   id: z.string(),
   name: z.string(),
@@ -143,22 +135,6 @@ export type TransactionResourceFiltered = z.infer<
   typeof TransactionResourceFilteredSchema
 >;
 
-/**
- * TODO: Remove this schema and use RetrievalOpts instead
- * @deprecated Use RetrievalOpts instead
- */
-export const TransactionRetrievalOptionsSchema = RetrievalOpts.extend({
-  account: TransactionAccountTypeSchema,
-  dateRange: DateRangeSchema,
-  transactionType: TransactionTypeSchema,
-  sort: z.enum(['time', 'amount']),
-  sortDir: z.enum(['asc', 'desc']),
-  type: TransactionIO.optional(),
-});
-export type TransactionRetrievalOptions = z.infer<
-  typeof TransactionRetrievalOptionsSchema
->;
-
 export const TransactionTagsModificationSchema = z.object({
   transactionId: TransactionIdSchema,
   tags: z
@@ -189,8 +165,8 @@ export type AccountInfo = z.infer<typeof AccountInfoSchema>;
 export const AccountMonthlyInfoSchema = z.object({
   Year: z.number().optional(),
   Month: z.number().optional(),
-  Income: z.number(),
-  Expenses: z.number(),
+  In: z.number(),
+  Out: z.number(),
   Net: z.number(),
   Transactions: z.number(),
   FormattedDate: z.string().optional(),

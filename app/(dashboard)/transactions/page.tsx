@@ -3,7 +3,10 @@ import TableSkeleton from '@/components/core/table-skeleton';
 import QueryProvider from '@/components/providers/query-provider';
 import TransactionTable from '@/components/tables/transaction-table';
 import { Separator } from '@/components/ui/separator';
+import { getTransactionsByDate } from '@/db';
 import { PageProps } from '@/types/custom';
+import { getDateRanges } from '@/utils/helpers';
+import { startOfMonth } from 'date-fns';
 import { Metadata } from 'next';
 import { Suspense } from 'react';
 
@@ -17,6 +20,16 @@ export const revalidate = 0;
 const TransactionsPage = async ({ searchParams }: PageProps) => {
   const { search } = searchParams;
   const searchTerm = Array.isArray(search) ? search[0] : search;
+  const { last3months } = getDateRanges();
+  const transactions = await getTransactionsByDate({
+    match: {
+      'attributes.isCategorizable': true,
+      'attributes.createdAt': {
+        $gte: startOfMonth(last3months.from),
+        $lte: last3months.to,
+      },
+    },
+  });
 
   return (
     <QueryProvider>
@@ -34,7 +47,7 @@ const TransactionsPage = async ({ searchParams }: PageProps) => {
           <Separator className="mt-2" />
         </div>
         <Suspense fallback={<TableSkeleton cols={1} rows={10} />}>
-          <TransactionTable search={searchTerm} />
+          <TransactionTable transactions={transactions} search={searchTerm} />
         </Suspense>
       </section>
     </QueryProvider>

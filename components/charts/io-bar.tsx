@@ -38,11 +38,11 @@ const IOBar = ({ children, accountId }: IOBarProps & PropsWithChildren) => {
             ? [
                 {
                   Index: 'Money In',
-                  Value: data[0].Income,
+                  Value: data[0].In,
                 },
                 {
                   Index: 'Money Out',
-                  Value: data[0].Expenses,
+                  Value: data[0].Out,
                 },
               ]
             : []

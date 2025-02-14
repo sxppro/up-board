@@ -1,10 +1,10 @@
 import { siteConfig } from '@/app/siteConfig';
 import TableSkeleton from '@/components/core/table-skeleton';
 import QueryProvider from '@/components/providers/query-provider';
-import TransactionsByTag from '@/components/tables/transaction-table-tag';
+import TransactionTable from '@/components/tables/transaction-table';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { getTagInfo } from '@/db';
+import { getTagInfo, getTransactionsByTag } from '@/db';
 import { formatCurrency } from '@/utils/helpers';
 import { Card } from '@tremor/react';
 import { X } from 'lucide-react';
@@ -28,6 +28,7 @@ const TagPage = async ({ params }: TagPageProps) => {
   const { tagId } = params;
   const decodedTagId = decodeURIComponent(tagId);
   const stats = await getTagInfo(decodedTagId);
+  const transactions = await getTransactionsByTag(decodedTagId);
 
   return (
     <QueryProvider>
@@ -67,7 +68,7 @@ const TagPage = async ({ params }: TagPageProps) => {
             </Card>
           </div>
           <Suspense fallback={<TableSkeleton cols={4} rows={10} />}>
-            <TransactionsByTag tag={decodedTagId} />
+            <TransactionTable transactions={transactions} />
           </Suspense>
         </section>
       ) : (

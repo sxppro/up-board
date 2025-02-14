@@ -8,6 +8,8 @@ export const colours: { [key: string]: string } = {
   Uncategorised: 'up-uncategorised',
 };
 
+export const YEARS_IN_ONE_DECADE = 10;
+
 export const DB_NAME = 'up';
 
 export const TZ = 'Australia/Melbourne';

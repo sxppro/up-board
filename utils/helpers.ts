@@ -1,9 +1,16 @@
-import { BalanceHistory } from '@/server/schemas';
-import { DateRangePresets, DbTransactionResource } from '@/types/custom';
+import {
+  DateRange,
+  DateRangeGroupBy,
+  TransactionCategoryInfoHistoryRaw,
+} from '@/server/schemas';
+import { DbTransactionResource } from '@/types/custom';
 import { tz } from '@date-fns/tz';
 import { clsx, type ClassValue } from 'clsx';
 import {
   differenceInDays,
+  eachDayOfInterval,
+  eachMonthOfInterval,
+  eachYearOfInterval,
   endOfMonth,
   endOfYear,
   format,
@@ -114,6 +121,81 @@ export const formatDateWithTime = (date: Date | string) => {
 };
 
 /**
+ * Format historical time-series data for Tremor bar chart
+ * ! Assumes data is given in oldest to newest order
+ * @param data
+ * @returns
+ */
+export const formatHistoricalData = (
+  data: TransactionCategoryInfoHistoryRaw[],
+  dateRange: DateRange,
+  groupBy: DateRangeGroupBy
+) => {
+  const dayMonthYearFormat = 'dd LLL yy';
+  const monthYearFormat = 'LLL yy';
+  const yearFormat = 'yyyy';
+  // Add entry for missing time period or uses existing data
+  const fillMappedData = (formattedDate: string) => {
+    const existingData = mappedData.find(
+      ({ FormattedDate }) => FormattedDate === formattedDate
+    );
+    return {
+      ...(existingData ? existingData : {}),
+      FormattedDate: formattedDate,
+    };
+  };
+
+  // Mapped data that may contain gaps between periods
+  // e.g. months with no data
+  const mappedData = data.map(({ month, year, categories }) => {
+    const date =
+      month && year
+        ? format(new Date(year, month - 1), monthYearFormat)
+        : format(new Date(year, 0), yearFormat);
+    const remappedElem: any = {
+      FormattedDate: date,
+    };
+    categories.map(
+      ({ amount, categoryName }) => (remappedElem[categoryName] = amount)
+    );
+    return remappedElem;
+  });
+
+  // Fill in gaps in time-series data
+  if (data.length > 0) {
+    if (groupBy === 'daily') {
+      // Daily
+      const res = eachDayOfInterval({
+        start: dateRange.from,
+        end: dateRange.to,
+      })
+        .map((date) => format(date, dayMonthYearFormat))
+        .map(fillMappedData);
+      return res;
+    } else if (groupBy === 'monthly') {
+      // Monthly
+      const res = eachMonthOfInterval({
+        start: dateRange.from,
+        end: dateRange.to,
+      })
+        .map((date) => format(date, monthYearFormat))
+        .map(fillMappedData);
+      return res;
+    } else {
+      // Yearly
+      const res = eachYearOfInterval({
+        start: dateRange.from,
+        end: dateRange.to,
+      })
+        .map((date) => format(date, yearFormat))
+        .map(fillMappedData);
+      return res;
+    }
+  }
+  return mappedData;
+};
+
+/**
  * Capitalise first letter of string
  * @param str
  * @returns
@@ -129,23 +211,6 @@ export const capitalise = (str: string) =>
  * @returns
  */
 export const calcPercentDiff = (a: number, b: number) => ((a - b) / b) * 100;
-
-/**
- * Adds property `FormattedDate`, date string from day, month, year values
- * @param data
- * @returns
- */
-export const addFormattedDate = (data: BalanceHistory[] | undefined) => {
-  return data
-    ? data.map(({ Day, Month, Year, ...rest }) => {
-        const date = new Date(Year, Month - 1, Day);
-        return {
-          ...rest,
-          FormattedDate: format(date, 'dd LLL yy'),
-        };
-      })
-    : [];
-};
 
 /**
  * Merges HTML class names
@@ -254,17 +319,13 @@ export const getDateRanges = () => {
     thisYear,
     thisMonthLastYear,
     lastYear,
+    last24hours,
+    last7days,
+    last30days,
+    last3months,
+    last6months,
+    last12months,
     monthToDate,
     yearToDate,
-    map: new Map(
-      Object.entries({
-        [DateRangePresets.TODAY]: last24hours,
-        [DateRangePresets.WEEK]: last7days,
-        [DateRangePresets.MONTH]: last30days,
-        [DateRangePresets.THREE_MONTHS]: last3months,
-        [DateRangePresets.SIX_MONTHS]: last6months,
-        [DateRangePresets.YEAR]: last12months,
-      })
-    ),
   };
 };
