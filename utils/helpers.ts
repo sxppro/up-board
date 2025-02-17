@@ -3,7 +3,7 @@ import {
   DateRangeGroupBy,
   TransactionCategoryInfoHistoryRaw,
 } from '@/server/schemas';
-import { DbTransactionResource } from '@/types/custom';
+import { DbTransactionResource } from '@/types/db';
 import { tz } from '@date-fns/tz';
 import { clsx, type ClassValue } from 'clsx';
 import {

@@ -22,13 +22,12 @@ import {
   type TransactionCategoryOption,
   type TransactionCategoryType,
 } from '@/server/schemas';
+import { AccountType, SerialisedDbTransactionResource } from '@/types/custom';
 import {
-  AccountResource,
-  AccountType,
-  CategoryResource,
+  DbAccountResource,
+  DbCategoryResource,
   DbTransactionResource,
-  SerialisedDbTransactionResource,
-} from '@/types/custom';
+} from '@/types/db';
 import { components } from '@/types/up-api';
 import { auth } from '@/utils/auth';
 import { DB_NAME, now, YEARS_IN_ONE_DECADE } from '@/utils/constants';
@@ -313,7 +312,7 @@ export const getAccounts = async (
   options?: RetrievalOptions
 ) => {
   try {
-    const accounts = await connectToCollection<AccountResource>(
+    const accounts = await connectToCollection<DbAccountResource>(
       DB_NAME,
       'accounts'
     );
@@ -428,7 +427,7 @@ export const getAccountBalanceHistorical = async (
  */
 export const getAccountById = async (accountId: string) => {
   try {
-    const accounts = await connectToCollection<AccountResource>(
+    const accounts = await connectToCollection<DbAccountResource>(
       DB_NAME,
       'accounts'
     );
@@ -682,7 +681,7 @@ export const getMerchantInfoHistory = async (
  */
 export const getCategoryById = async (id: string) => {
   try {
-    const categories = await connectToCollection<CategoryResource>(
+    const categories = await connectToCollection<DbCategoryResource>(
       DB_NAME,
       'categories'
     );

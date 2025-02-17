@@ -1,4 +1,4 @@
-import type { DbTransactionResource } from '@/types/custom';
+import type { DbTransactionResource } from '@/types/db';
 import { now } from '@/utils/constants';
 import { endOfDay, startOfDay } from 'date-fns';
 import type { SortDirection } from 'mongodb';
