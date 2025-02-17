@@ -82,7 +82,7 @@ const checkDuration = (duration: Duration) =>
  * @param accountId
  * @returns
  */
-export const checkTransactions = async (accountId: string) => {
+export const checkTransactionsByAccount = async (accountId: string) => {
   try {
     const transactions = await getTransactionByAccount(accountId);
     console.log(`Transactions: ${transactions.length}`);
@@ -90,6 +90,7 @@ export const checkTransactions = async (accountId: string) => {
     const db = database.collection<DbTransactionResource>('transactions');
     const diff: any = [];
 
+    // TODO: Project out any other attributes to verify
     const existingTransactions = await db
       .find({
         'relationships.account.data.id': accountId,
