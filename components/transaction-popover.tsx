@@ -140,10 +140,22 @@ const PopoverContent = ({ tx }: { tx: TransactionResourceFiltered }) => {
             <Separator />
             <div className="flex flex-col text-sm gap-2">
               <PopoverContentCell label="Category">
-                <p>{tx.parentCategoryName}</p>
+                <Link
+                  href={`/spending?category=${encodeURIComponent(
+                    tx.parentCategory
+                  )}`}
+                  className="underline"
+                >
+                  {tx.parentCategoryName}
+                </Link>
               </PopoverContentCell>
               <PopoverContentCell label="Subcategory">
-                <p>{tx.categoryName}</p>
+                <Link
+                  href={`/spending/${encodeURIComponent(tx.category)}`}
+                  className="underline"
+                >
+                  {tx.categoryName}
+                </Link>
               </PopoverContentCell>
             </div>
           </>
