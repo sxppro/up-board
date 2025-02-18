@@ -4,7 +4,6 @@ import { formatCurrency } from '@/utils/helpers';
 import { trpc } from '@/utils/trpc';
 import { BarChart, Text, Title } from '@tremor/react';
 import { startOfMonth, subYears } from 'date-fns';
-import DashboardCard from '../core/dashboard-card';
 import { Skeleton } from '../ui/skeleton';
 
 const currentDate = new Date();
@@ -20,7 +19,7 @@ const MonthlyInOut = ({ accountId }: { accountId?: string }) => {
   });
 
   return (
-    <DashboardCard>
+    <div className="h-full border rounded-tremor-default flex flex-col items-start gap-2 p-4">
       <div>
         <Title>Monthly Inflows & Outflows</Title>
         <Text>Past 12 months</Text>
@@ -39,7 +38,7 @@ const MonthlyInOut = ({ accountId }: { accountId?: string }) => {
           showAnimation
         />
       )}
-    </DashboardCard>
+    </div>
   );
 };
 
