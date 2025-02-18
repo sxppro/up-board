@@ -69,7 +69,7 @@ export const ProviderDropdownDesktop = () => {
                   Up
                 </p>
                 <p className="whitespace-nowrap text-xs text-gray-700 dark:text-gray-300">
-                  Administrator
+                  Account
                 </p>
               </div>
               <RiExpandUpDownLine
