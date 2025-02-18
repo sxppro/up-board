@@ -69,7 +69,7 @@ const CumulativeSnapshot = ({ accountId }: CumulativeSnapshotProps) => {
       dateRange: last30days,
     });
   const { data: savingsAccounts } = trpc.public.getAccounts.useQuery({
-    accountType: 'SAVER',
+    options: { match: { 'attributes.accountType': 'SAVER' } },
   });
   // Total savings
   const savingsBalance = savingsAccounts?.reduce(

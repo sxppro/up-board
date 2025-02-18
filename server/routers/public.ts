@@ -78,13 +78,12 @@ export const publicRouter = router({
   getAccounts: publicProcedure
     .input(
       z.object({
-        accountType: z.custom<AccountType>().optional(),
         options: RetrievalOpts.optional(),
       })
     )
     .query(async ({ input }) => {
-      const { accountType, options } = input;
-      return await getAccounts(accountType, options);
+      const { options } = input;
+      return await getAccounts(options);
     }),
   getCategories: publicProcedure
     .input(TransactionCategoryTypeSchema)

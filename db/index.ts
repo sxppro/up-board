@@ -307,19 +307,14 @@ export const searchTransactions = async (search: string) => {
  * @param accountType transactional or saver
  * @returns
  */
-export const getAccounts = async (
-  accountType?: AccountType,
-  options?: RetrievalOptions
-) => {
+export const getAccounts = async (options?: RetrievalOptions) => {
   try {
     const accounts = await connectToCollection<DbAccountResource>(
       DB_NAME,
       'accounts'
     );
     if (accounts) {
-      const cursor = accounts.find(
-        accountType ? { 'attributes.accountType': accountType } : {}
-      );
+      const cursor = accounts.find(options?.match ? options.match : {});
       if (options) {
         const { sort, limit } = options;
         sort && cursor.sort(sort);
@@ -338,9 +333,13 @@ export const getAccounts = async (
         .toArray();
       return results;
     } else {
-      return accountType
+      return options?.match && options.match?.['attributes.accountType']
         ? accountsMock.data
-            .filter(({ attributes }) => attributes.accountType === accountType)
+            .filter(
+              ({ attributes }) =>
+                attributes.accountType ===
+                options.match?.['attributes.accountType']
+            )
             .map(({ id, attributes }) => ({
               id,
               displayName: attributes.displayName,

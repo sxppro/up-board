@@ -26,7 +26,7 @@ export const metadata: Metadata = {
 const AccountsPage = async ({ searchParams }: PageProps) => {
   const { id } = searchParams;
   const queryAccountId = Array.isArray(id) ? id[0] : id;
-  const accounts = await getAccounts(undefined, {
+  const accounts = await getAccounts({
     // Order by transactional accounts first
     sort: { 'attributes.accountType': -1, 'attributes.displayName': 1 },
   });

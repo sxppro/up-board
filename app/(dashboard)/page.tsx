@@ -10,7 +10,8 @@ export const metadata: Metadata = {
 };
 
 const DashboardPage = async () => {
-  const accounts = await getAccounts('TRANSACTIONAL', {
+  const accounts = await getAccounts({
+    match: { 'attributes.accountType': 'TRANSACTIONAL' },
     sort: {
       'attributes.balance.valueInBaseUnits': -1,
     },
