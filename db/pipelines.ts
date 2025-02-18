@@ -428,6 +428,10 @@ export const groupMerchantByDay = (
         step: 1,
         unit: 'month',
         bounds:
+          /**
+           * ! Must be in UTC because MongoDB does not account for DST when densifying groups
+           * ! (filling in missing groups)
+           */
           earliestTx && earliestTx < dateRange.from
             ? [startOfMonth(earliestTx, { in: tz('+00:00') }), dateRange.to]
             : [dateRange.from, dateRange.to],

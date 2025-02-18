@@ -34,6 +34,10 @@ const MerchantPage = async ({ params }: { params: { name: string } }) => {
     match: { 'attributes.description': merchant },
   });
   const statsHistorical = await getMerchantInfoHistory(merchant, {
+    /**
+     * ! Must be in UTC because MongoDB does not account for DST when densifying groups
+     * ! (filling in missing groups)
+     */
     from: startOfMonth(subMonths(now, 12), { in: tz('+00:00') }),
     to: now,
   });

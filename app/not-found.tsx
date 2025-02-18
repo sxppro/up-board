@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import { RiArrowRightLine } from '@remixicon/react';
+import { ArrowRight } from '@phosphor-icons/react/dist/ssr';
 import Link from 'next/link';
 import { siteConfig } from './siteConfig';
 
@@ -16,8 +16,8 @@ export default function NotFound() {
       <Button asChild className="group mt-8" variant="ghost">
         <Link href={siteConfig.baseLinks.home}>
           Go to the home page
-          <RiArrowRightLine
-            className="ml-1.5 size-5 text-gray-900 dark:text-gray-50"
+          <ArrowRight
+            className="ml-1 size-5 text-gray-900 dark:text-gray-50"
             aria-hidden="true"
           />
         </Link>
