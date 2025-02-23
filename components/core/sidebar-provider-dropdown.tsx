@@ -15,15 +15,14 @@ import { RiArrowRightSLine, RiExpandUpDownLine } from '@remixicon/react';
 import React from 'react';
 import { ModalAddProvider } from './modal-add-provider';
 
-const workspaces = [
+const accounts = [
   {
     value: 'up',
     name: 'Up',
     initials: 'UP',
-    role: 'Administrator',
+    role: 'Account',
     color: 'bg-orange-600 dark:bg-orange-500',
   },
-  // Add more workspaces...
 ];
 
 export const ProviderDropdownDesktop = () => {
@@ -91,27 +90,25 @@ export const ProviderDropdownDesktop = () => {
           className="min-w-[calc(var(--radix-dropdown-menu-trigger-width))] max-h-[var(--radix-popper-available-height)]"
         >
           <DropdownMenuGroup>
-            <DropdownMenuLabel>
-              Workspaces ({workspaces.length})
-            </DropdownMenuLabel>
-            {workspaces.map((workspace) => (
-              <DropdownMenuItem key={workspace.value}>
+            <DropdownMenuLabel>Accounts ({accounts.length})</DropdownMenuLabel>
+            {accounts.map((account) => (
+              <DropdownMenuItem key={account.value}>
                 <div className="flex w-full items-center gap-x-2.5">
                   <span
                     className={cn(
-                      workspace.color,
+                      account.color,
                       'flex aspect-square size-8 items-center justify-center rounded p-2 text-xs font-medium text-white'
                     )}
                     aria-hidden="true"
                   >
-                    {workspace.initials}
+                    {account.initials}
                   </span>
                   <div>
                     <p className="text-sm font-medium text-gray-900 dark:text-gray-50">
-                      {workspace.name}
+                      {account.name}
                     </p>
                     <p className="text-xs text-gray-700 dark:text-gray-400">
-                      {workspace.role}
+                      {account.role}
                     </p>
                   </div>
                 </div>
@@ -191,27 +188,25 @@ export const ProviderDropdownMobile = () => {
           }}
         >
           <DropdownMenuGroup>
-            <DropdownMenuLabel>
-              Workspaces ({workspaces.length})
-            </DropdownMenuLabel>
-            {workspaces.map((workspace) => (
-              <DropdownMenuItem key={workspace.value}>
+            <DropdownMenuLabel>Accounts ({accounts.length})</DropdownMenuLabel>
+            {accounts.map((account) => (
+              <DropdownMenuItem key={account.value}>
                 <div className="flex w-full items-center gap-x-2.5">
                   <span
                     className={cn(
-                      workspace.color,
+                      account.color,
                       'flex size-8 items-center justify-center rounded p-2 text-xs font-medium text-white'
                     )}
                     aria-hidden="true"
                   >
-                    {workspace.initials}
+                    {account.initials}
                   </span>
                   <div>
                     <p className="text-sm font-medium text-gray-900 dark:text-gray-50">
-                      {workspace.name}
+                      {account.name}
                     </p>
                     <p className="text-xs text-gray-700 dark:text-gray-300">
-                      {workspace.role}
+                      {account.role}
                     </p>
                   </div>
                 </div>
@@ -222,7 +217,7 @@ export const ProviderDropdownMobile = () => {
           <ModalAddProvider
             onSelect={handleDialogItemSelect}
             onOpenChange={handleDialogItemOpenChange}
-            itemName="Add workspace"
+            itemName="Add account"
           />
         </DropdownMenuContent>
       </DropdownMenu>
