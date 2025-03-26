@@ -38,17 +38,13 @@ This application is built with:
 
 ## Screenshots
 
-### Homepage
+### Overview
 
-![Homepage](./media/homepage.png)
+![Overview](./media/overview.png)
 
-### Transaction account
+### Accounts
 
-![Transaction account](./media/transactional.png)
-
-### Saver account
-
-![Saver account](./media/saver.png)
+![Accounts](./media/accounts.png)
 
 ### Transactions
 
@@ -57,3 +53,9 @@ This application is built with:
 ### Transaction details
 
 ![Transaction details](./media/transaction-details.png)
+
+### Spending, tag and merchant insights
+
+![Spending](./media/spending.png)
+![Merchant](./media/merchant.png)
+![Tags](./media/tags.png)

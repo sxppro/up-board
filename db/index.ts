@@ -1100,9 +1100,10 @@ const getTransactionsByDate = async (
     } else {
       const { match } = options;
       return transactionsMock.data
-        .filter(
-          ({ attributes }) =>
-            match?.isCategorizable === attributes.isCategorizable
+        .filter(({ attributes }) =>
+          match
+            ? match['attributes.isCategorizable'] === attributes.isCategorizable
+            : true
         )
         .map(({ relationships, ...rest }) => ({
           ...rest,
