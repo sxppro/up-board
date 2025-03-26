@@ -1,14 +1,7 @@
 'use client';
 
 import { CategoryBar } from '@/components/charts/tremor/category-bar';
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import DateRangeSelect from '@/components/date-range-select';
 import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
@@ -18,19 +11,13 @@ import {
   AccordionTrigger,
 } from '@/components/ui/tremor/accordion';
 import { AvailableChartColors, chartColors } from '@/utils/charts';
-import { colours, now } from '@/utils/constants';
-import { cn, formatCurrency, getDateRanges } from '@/utils/helpers';
+import { colours } from '@/utils/constants';
+import { cn, formatCurrency } from '@/utils/helpers';
+import { useDateRange } from '@/utils/hooks';
 import { trpc } from '@/utils/trpc';
-import { subDays, subMonths, subYears } from 'date-fns';
-import { useState } from 'react';
-import { DateRange } from 'react-day-picker';
 
 const Summary = () => {
-  const [dateRange, setDateRange] = useState<DateRange>({
-    from: subDays(now, 30),
-    to: now,
-  });
-  const { last24hours } = getDateRanges();
+  const { dateRange } = useDateRange();
   const { data: expenses } = trpc.public.getCategoryInfo.useQuery({
     dateRange: {
       from: dateRange?.from,
@@ -60,22 +47,6 @@ const Summary = () => {
     },
   });
 
-  const onValueChange = (value: string) => {
-    if (value === '24h') {
-      setDateRange(last24hours);
-    } else if (value === '7d') {
-      setDateRange({ from: subDays(now, 7), to: now });
-    } else if (value === '30d') {
-      setDateRange({ from: subDays(now, 30), to: now });
-    } else if (value === '3m') {
-      setDateRange({ from: subMonths(now, 3), to: now });
-    } else if (value === '6m') {
-      setDateRange({ from: subMonths(now, 6), to: now });
-    } else if (value === '12m') {
-      setDateRange({ from: subYears(now, 1), to: now });
-    }
-  };
-
   return (
     <section aria-labelledby="overview-summary" className="flex flex-col gap-4">
       <div>
@@ -86,24 +57,8 @@ const Summary = () => {
           >
             Summary
           </h1>
-          <Select
-            defaultValue="30d"
-            onValueChange={(selection) => onValueChange(selection)}
-          >
-            <SelectTrigger className="py-0 px-2 sm:py-2 sm:px-3 w-[180px]">
-              <SelectValue placeholder="Last 30 days" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectItem value="24h">Last 24 hours</SelectItem>
-                <SelectItem value="7d">Last 7 days</SelectItem>
-                <SelectItem value="30d">Last 30 days</SelectItem>
-                <SelectItem value="3m">Last 3 months</SelectItem>
-                <SelectItem value="6m">Last 6 months</SelectItem>
-                <SelectItem value="12m">Last 12 months</SelectItem>
-              </SelectGroup>
-            </SelectContent>
-          </Select>
+          {/* TODO: Replace with DateRangeSelect */}
+          <DateRangeSelect />
         </div>
         <Separator className="my-2" />
       </div>

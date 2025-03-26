@@ -7,7 +7,7 @@
 
 import { DateRangePresets } from '@/types/custom';
 import { cn } from '@/utils/helpers';
-import { useQueryState } from 'nuqs';
+import { useDateRange } from '@/utils/hooks';
 import {
   Select,
   SelectContent,
@@ -17,39 +17,14 @@ import {
   SelectValue,
 } from './ui/select';
 
-export default function DateRangeSelect({
-  defaultValue,
-  selected,
-  className,
-}: {
-  defaultValue?: string;
-  selected?: string;
-  className?: string;
-}) {
-  const [_, setDateRange] = useQueryState('range', {
-    defaultValue: defaultValue || DateRangePresets.MONTH,
-    shallow: false,
-  });
+export default function DateRangeSelect({ className }: { className?: string }) {
+  const { range, setRange } = useDateRange();
 
-  const onValueChange = (value: string) => {
-    if (value === DateRangePresets.TODAY) {
-      setDateRange(DateRangePresets.TODAY);
-    } else if (value === DateRangePresets.WEEK) {
-      setDateRange(DateRangePresets.WEEK);
-    } else if (value === DateRangePresets.MONTH) {
-      setDateRange(DateRangePresets.MONTH);
-    } else if (value === DateRangePresets.THREE_MONTHS) {
-      setDateRange(DateRangePresets.THREE_MONTHS);
-    } else if (value === DateRangePresets.SIX_MONTHS) {
-      setDateRange(DateRangePresets.SIX_MONTHS);
-    } else if (value === DateRangePresets.YEAR) {
-      setDateRange(DateRangePresets.YEAR);
-    }
-  };
+  const onValueChange = (value: string) => setRange(value);
+
   return (
     <Select
-      defaultValue={defaultValue || DateRangePresets.MONTH}
-      value={selected}
+      defaultValue={range || DateRangePresets.MONTH}
       onValueChange={(selection) => onValueChange(selection)}
     >
       <SelectTrigger
