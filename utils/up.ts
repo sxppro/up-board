@@ -122,14 +122,19 @@ export const deleteTags = async (id: string, tags: string[]) => {
 
 /**
  * Retrieves transactions between start and end dates
+ * @param accountId account
  * @param start start date
  * @param end end date
  * @returns list of transactions
  */
-export const getTransactionsByDate = async (start: Date, end: Date) => {
+export const getTransactionsByDate = async (
+  accountId: string,
+  start: Date,
+  end: Date
+) => {
   const { data, error } = await upGET('/accounts/{accountId}/transactions', {
     params: {
-      path: { accountId: process.env.UP_TRANS_ACC || '' },
+      path: { accountId },
       query: {
         'filter[since]': start.toISOString(),
         'filter[until]': end.toISOString(),

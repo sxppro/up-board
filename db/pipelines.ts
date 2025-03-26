@@ -1029,9 +1029,7 @@ export const statsIO = (
           'relationships.account.data.id': accountId,
         }),
         // TODO: Toggle filtering transfers
-        ...(!accountId ||
-        accountId === process.env.UP_TRANS_ACC ||
-        accountType === 'TRANSACTIONAL'
+        ...(!accountId || accountType === 'TRANSACTIONAL'
           ? {
               'attributes.isCategorizable': true,
             }
