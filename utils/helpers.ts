@@ -1,12 +1,32 @@
 import {
-  AccountBalanceHistory,
-  TransactionResourceFiltered,
+  DateRange,
+  DateRangeGroupBy,
+  TransactionCategoryInfoHistoryRaw,
 } from '@/server/schemas';
-import { DbTransactionResource } from '@/types/custom';
-import type { components } from '@/types/up-api';
+import { DbTransactionResource } from '@/types/db';
+import { tz } from '@date-fns/tz';
 import { clsx, type ClassValue } from 'clsx';
-import { format } from 'date-fns';
+import {
+  differenceInDays,
+  eachDayOfInterval,
+  eachMonthOfInterval,
+  eachYearOfInterval,
+  endOfMonth,
+  endOfYear,
+  format,
+  formatDistanceStrict,
+  isThisYear,
+  isToday,
+  isYesterday,
+  startOfMonth,
+  startOfYear,
+  subDays,
+  subMonths,
+  subYears,
+} from 'date-fns';
+import { enAU } from 'date-fns/locale';
 import { twMerge } from 'tailwind-merge';
+import { now, TZ } from './constants';
 
 export const getBaseUrl = () => {
   if (typeof window !== 'undefined')
@@ -43,7 +63,7 @@ export const debounce = (callback: Function, wait: number) => {
  * @returns number formatted in AUD
  */
 export const formatCurrency = (
-  number: number,
+  number?: number,
   decimals: boolean = true,
   compact: boolean = false
 ) =>
@@ -54,25 +74,143 @@ export const formatCurrency = (
     maximumFractionDigits: decimals ? undefined : 0,
     ...(compact && { notation: 'compact', compactDisplay: 'short' }),
   })
-    .format(number)
+    .format(number ?? 0)
     .toString();
 
 /**
- * Adds property `FormattedDate`, date string from day, month, year values
+ * Append '+' to formatted currency if
+ * absolute amount is equal to original amount
+ * @param absAmount absolute monetary amount
+ * @param amount monetary amount
+ * @returns
+ */
+export const formatCurrencyAbsolute = (absAmount: number, amount: number) =>
+  `${amount === absAmount ? '+' : ''}${formatCurrency(absAmount)}`;
+
+/**
+ * Format date depending on distance to now
+ * @param date date to format
+ * @returns formatted date string
+ */
+export const formatDate = (date: Date | string) => {
+  if (isToday(date, { in: tz(TZ) })) return 'Today';
+  if (isYesterday(date, { in: tz(TZ) })) return 'Yesterday';
+  if (differenceInDays(now, date, { in: tz(TZ) }) > 7)
+    return isThisYear(date, { in: tz(TZ) })
+      ? format(date, 'do MMMM', { in: tz(TZ) })
+      : format(date, 'do MMMM yyyy', { in: tz(TZ) });
+  return formatDistanceStrict(date, now, {
+    addSuffix: true,
+    roundingMethod: 'floor',
+    locale: enAU,
+    in: tz(TZ),
+  });
+};
+
+/**
+ * Format date with time
+ * @param date date to format
+ * @returns formatted date string
+ */
+export const formatDateWithTime = (date: Date | string) => {
+  if (isToday(date, { in: tz(TZ) }))
+    return `Today, ${format(date, 'p', { in: tz(TZ) })}`;
+  if (isYesterday(date, { in: tz(TZ) }))
+    return `Yesterday, ${format(date, 'p', { in: tz(TZ) })}`;
+  return format(date, 'dd/LL/yy, p', { in: tz(TZ) });
+};
+
+/**
+ * Format historical time-series data for Tremor bar chart
+ * ! Assumes data is given in oldest to newest order
  * @param data
  * @returns
  */
-export const addFormattedDate = (data: AccountBalanceHistory[] | undefined) => {
-  return data
-    ? data.map(({ Day, Month, Year, ...rest }) => {
-        const date = new Date(Year, Month - 1, Day);
-        return {
-          ...rest,
-          FormattedDate: format(date, 'dd LLL yy'),
-        };
+export const formatHistoricalData = (
+  data: TransactionCategoryInfoHistoryRaw[],
+  dateRange: DateRange,
+  groupBy: DateRangeGroupBy
+) => {
+  const dayMonthYearFormat = 'dd LLL yy';
+  const monthYearFormat = 'LLL yy';
+  const yearFormat = 'yyyy';
+  // Add entry for missing time period or uses existing data
+  const fillMappedData = (formattedDate: string) => {
+    const existingData = mappedData.find(
+      ({ FormattedDate }) => FormattedDate === formattedDate
+    );
+    return {
+      ...(existingData ? existingData : {}),
+      FormattedDate: formattedDate,
+    };
+  };
+
+  // Mapped data that may contain gaps between periods
+  // e.g. months with no data
+  const mappedData = data.map(({ month, year, categories }) => {
+    const date =
+      month && year
+        ? format(new Date(year, month - 1), monthYearFormat)
+        : format(new Date(year, 0), yearFormat);
+    const remappedElem: any = {
+      FormattedDate: date,
+    };
+    categories.map(
+      ({ amount, categoryName }) => (remappedElem[categoryName] = amount)
+    );
+    return remappedElem;
+  });
+
+  // Fill in gaps in time-series data
+  if (data.length > 0) {
+    if (groupBy === 'daily') {
+      // Daily
+      const res = eachDayOfInterval({
+        start: dateRange.from,
+        end: dateRange.to,
       })
-    : [];
+        .map((date) => format(date, dayMonthYearFormat))
+        .map(fillMappedData);
+      return res;
+    } else if (groupBy === 'monthly') {
+      // Monthly
+      const res = eachMonthOfInterval({
+        start: dateRange.from,
+        end: dateRange.to,
+      })
+        .map((date) => format(date, monthYearFormat))
+        .map(fillMappedData);
+      return res;
+    } else {
+      // Yearly
+      const res = eachYearOfInterval({
+        start: dateRange.from,
+        end: dateRange.to,
+      })
+        .map((date) => format(date, yearFormat))
+        .map(fillMappedData);
+      return res;
+    }
+  }
+  return mappedData;
 };
+
+/**
+ * Capitalise first letter of string
+ * @param str
+ * @returns
+ */
+export const capitalise = (str: string) =>
+  str.charAt(0).toLocaleUpperCase() + str.slice(1).toLocaleLowerCase();
+
+/**
+ * Percentage difference of a
+ * relative to b
+ * @param a
+ * @param b
+ * @returns
+ */
+export const calcPercentDiff = (a: number, b: number) => ((a - b) / b) * 100;
 
 /**
  * Merges HTML class names
@@ -82,38 +220,6 @@ export const addFormattedDate = (data: AccountBalanceHistory[] | undefined) => {
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
-
-/**
- * Filters properties from raw transaction
- * object to be returned to client
- * @param transactions array of raw transaction objects
- * @returns
- */
-export const filterTransactionFields = (
-  transactions?: components['schemas']['TransactionResource'][]
-): TransactionResourceFiltered[] => {
-  return (
-    transactions?.map((transaction) => {
-      const { id, attributes, relationships } = transaction;
-      return {
-        id,
-        description: attributes.description,
-        rawText: attributes.rawText,
-        message: attributes.message,
-        amount: attributes.amount.value,
-        amountRaw: attributes.amount.valueInBaseUnits / 100,
-        time: attributes.createdAt,
-        status: attributes.status,
-        category: relationships.category.data?.id ?? 'uncategorised',
-        parentCategory:
-          relationships.parentCategory.data?.id ?? 'uncategorised',
-        tags: relationships.tags.data.map(({ id }) => id),
-        // @ts-expect-error due to Up Banking API not being updated yet
-        deepLinkURL: attributes.deepLinkURL,
-      };
-    }) || []
-  );
-};
 
 /**
  * Remaps db transaction document
@@ -135,10 +241,91 @@ export const outputTransactionFields = (transaction: DbTransactionResource) => {
 };
 
 /**
- *
+ * Map search params
  */
 export const getSearchParams = (
   ...params: (string | string[] | undefined)[]
 ) => {
   return params.map((param) => (Array.isArray(param) ? param[0] : param));
+};
+
+/**
+ * Utility date ranges
+ * @returns
+ */
+export const getDateRanges = () => {
+  const thisMonth = {
+    from: startOfMonth(now),
+    to: endOfMonth(now),
+  };
+
+  const thisMonthLastYear = {
+    from: subYears(thisMonth.from, 1),
+    to: subYears(thisMonth.to, 1),
+  };
+
+  const thisYear = {
+    from: startOfYear(now),
+    to: endOfYear(now),
+  };
+
+  const lastYear = {
+    from: subYears(thisYear.from, 1),
+    to: subYears(thisYear.to, 1),
+  };
+
+  const monthToDate = {
+    from: startOfMonth(now),
+    to: now,
+  };
+
+  const yearToDate = {
+    from: startOfYear(now),
+    to: now,
+  };
+
+  const last24hours = {
+    from: subDays(now, 1),
+    to: now,
+  };
+
+  const last7days = {
+    from: subDays(now, 7),
+    to: now,
+  };
+
+  const last30days = {
+    from: subDays(now, 30),
+    to: now,
+  };
+
+  const last3months = {
+    from: subMonths(now, 3),
+    to: now,
+  };
+
+  const last6months = {
+    from: subMonths(now, 6),
+    to: now,
+  };
+
+  const last12months = {
+    from: subYears(now, 1),
+    to: now,
+  };
+
+  return {
+    thisMonth,
+    thisYear,
+    thisMonthLastYear,
+    lastYear,
+    last24hours,
+    last7days,
+    last30days,
+    last3months,
+    last6months,
+    last12months,
+    monthToDate,
+    yearToDate,
+  };
 };

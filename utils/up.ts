@@ -3,9 +3,9 @@
  */
 
 import { insertTransactions } from '@/db';
+import { filterTransactionFields } from '@/db/helpers';
 import { paths } from '@/types/up-api';
 import createClient from 'openapi-fetch';
-import { filterTransactionFields } from './helpers';
 
 const {
   GET: upGET,
@@ -36,6 +36,24 @@ const getNextPage = async (link: string, store = []): Promise<never[]> => {
   } else {
     return store.concat(data);
   }
+};
+
+/**
+ * Retrieves attachment by id
+ * @param id attachment id
+ * @returns attachment details, including file link
+ */
+export const getAttachment = async (id: string) => {
+  return await upGET('/attachments/{id}', {
+    params: {
+      path: {
+        id,
+      },
+    },
+    headers: {
+      Authorization: `Bearer ${process.env.UP_TOKEN}`,
+    },
+  });
 };
 
 /**
@@ -104,14 +122,19 @@ export const deleteTags = async (id: string, tags: string[]) => {
 
 /**
  * Retrieves transactions between start and end dates
+ * @param accountId account
  * @param start start date
  * @param end end date
  * @returns list of transactions
  */
-export const getTransactionsByDate = async (start: Date, end: Date) => {
+export const getTransactionsByDate = async (
+  accountId: string,
+  start: Date,
+  end: Date
+) => {
   const { data, error } = await upGET('/accounts/{accountId}/transactions', {
     params: {
-      path: { accountId: process.env.UP_TRANS_ACC || '' },
+      path: { accountId },
       query: {
         'filter[since]': start.toISOString(),
         'filter[until]': end.toISOString(),
@@ -140,7 +163,10 @@ export const getTransactionsByDate = async (start: Date, end: Date) => {
  * @param accountId account ID
  * @returns list of transactions
  */
-export const getTransactionByAccount = async (accountId: string) => {
+export const getTransactionByAccount = async (
+  accountId: string,
+  insert: boolean = false
+) => {
   const { data, error } = await upGET('/accounts/{accountId}/transactions', {
     params: {
       path: { accountId },
@@ -157,9 +183,11 @@ export const getTransactionByAccount = async (accountId: string) => {
   const transactions = data.links.next
     ? data.data.concat(await getNextPage(data.links.next))
     : data.data;
-  const insert = await insertTransactions(transactions);
-  console.log(`Inserted: ${insert?.insertedCount} documents`);
-  return filterTransactionFields(transactions);
+  if (insert) {
+    const insertResult = await insertTransactions(transactions);
+    console.log(`Inserted: ${insertResult?.insertedCount} documents`);
+  }
+  return transactions;
 };
 
 /**

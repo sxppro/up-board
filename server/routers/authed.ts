@@ -1,7 +1,8 @@
 import { getTransactionById, replaceTransactions } from '@/db';
-import { filterTransactionFields } from '@/utils/helpers';
-import { addTags, deleteTags, getTags } from '@/utils/up';
+import { filterTransactionFields } from '@/db/helpers';
+import { addTags, deleteTags, getAttachment, getTags } from '@/utils/up';
 import { TRPCError } from '@trpc/server';
+import { z } from 'zod';
 import {
   TransactionIdSchema,
   TransactionResourceFilteredSchema,
@@ -19,11 +20,14 @@ export const authedRouter = router({
       const { transactionId, tags } = input;
       const { error, response } = await addTags(transactionId, tags);
       if (error) {
-        console.error(error);
+        console.error(error, response);
         throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' });
-      }
-      const res = await replaceTransactions([transactionId]);
-      if (!response.ok || res !== 1) {
+      } else if (response.ok) {
+        const res = await replaceTransactions([transactionId]);
+        if (res !== 1) {
+          throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' });
+        }
+      } else {
         throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' });
       }
     }),
@@ -33,11 +37,14 @@ export const authedRouter = router({
       const { transactionId, tags } = input;
       const { error, response } = await deleteTags(transactionId, tags);
       if (error) {
-        console.error(error);
+        console.error(error, response);
         throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' });
-      }
-      const res = await replaceTransactions([transactionId]);
-      if (!response.ok || res !== 1) {
+      } else if (response.ok) {
+        const res = await replaceTransactions([transactionId]);
+        if (res !== 1) {
+          throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' });
+        }
+      } else {
         throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' });
       }
     }),
@@ -49,6 +56,16 @@ export const authedRouter = router({
       if (!transaction) {
         throw new TRPCError({ code: 'NOT_FOUND' });
       }
-      return filterTransactionFields([transaction])[0];
+      return (await filterTransactionFields([transaction]))[0];
+    }),
+  getAttachment: authedProcedure
+    .input(z.string().uuid())
+    .query(async ({ input }) => {
+      const { data, error } = await getAttachment(input);
+      if (error || !data) {
+        console.error(error);
+        throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' });
+      }
+      return data.data;
     }),
 });

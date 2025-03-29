@@ -1,20 +1,13 @@
 'use client';
 
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
+import { DataTable } from '@/components/tables/data-table';
+import { DataTablePagination } from '@/components/tables/data-table/pagination';
 import { TransactionCategoryOption } from '@/server/schemas';
 import { cn } from '@/utils/helpers';
 import {
   ColumnDef,
   ColumnFiltersState,
   SortingState,
-  flexRender,
   getCoreRowModel,
   getFilteredRowModel,
   getPaginationRowModel,
@@ -22,7 +15,6 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import { useState } from 'react';
-import { DataTablePagination } from './data-table-pagination';
 import { DataTableToolbar } from './data-table-toolbar';
 
 interface DataTableProps<TData, TValue> {
@@ -33,7 +25,7 @@ interface DataTableProps<TData, TValue> {
   search?: string;
 }
 
-export const DataTable = <TData, TValue>({
+export const TransactionsDataTable = <TData, TValue>({
   data,
   columns,
   options,
@@ -41,7 +33,17 @@ export const DataTable = <TData, TValue>({
   search,
 }: DataTableProps<TData, TValue>) => {
   const [sorting, setSorting] = useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>(
+    search
+      ? [
+          {
+            id: 'description',
+            value: search,
+          },
+        ]
+      : []
+  );
+
   const table = useReactTable({
     data,
     columns,
@@ -53,14 +55,8 @@ export const DataTable = <TData, TValue>({
     getSortedRowModel: getSortedRowModel(),
     initialState: {
       pagination: {
-        pageSize: 8,
+        pageSize: 25,
       },
-      columnFilters: [
-        {
-          id: 'description',
-          value: search,
-        },
-      ],
     },
     state: {
       columnFilters,
@@ -71,55 +67,11 @@ export const DataTable = <TData, TValue>({
   return (
     <div className={cn('w-full space-y-4', className)}>
       <DataTableToolbar table={table} options={options} />
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id}>
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
-                  </TableHead>
-                ))}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && 'selected'}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
-                  No results.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </div>
-      <DataTablePagination table={table} />
+      <DataTable
+        table={table}
+        className={{ container: '-mx-4 sm:-mx-6 lg:-mx-10' }}
+      />
+      <DataTablePagination table={table} itemName="transaction" />
     </div>
   );
 };

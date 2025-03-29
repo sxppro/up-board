@@ -1,52 +1,13 @@
-import { Color } from '@tremor/react';
+import { outputTransactionFields } from '@/utils/helpers';
+import { BarChartProps, Color } from '@tremor/react';
+import type { DateRange } from 'react-day-picker';
 import { components } from './up-api';
 
-import type { Binary } from 'bson';
-import type { DateRange } from 'react-day-picker';
+export type AccountType = components['schemas']['AccountTypeEnum'];
 
-interface TransactionResourceAttributes
-  extends Omit<
-    components['schemas']['TransactionResource']['attributes'],
-    'createdAt' | 'settledAt'
-  > {
-  createdAt: Date;
-  settledAt: Date | null;
-}
-
-// Account info as stored in db
-export interface AccountResource
-  extends Omit<components['schemas']['AccountResource'], 'id'> {
-  _id: string;
-}
-
-// Account info returned to client
-export interface AccountInfo {
-  id: string;
-  displayName: string;
-  accountType: components['schemas']['AccountTypeEnum'];
-}
-
-export interface DbTransactionResource
-  extends Omit<
-    components['schemas']['TransactionResource'],
-    'id' | 'attributes'
-  > {
-  _id: Binary;
-  attributes: TransactionResourceAttributes;
-}
-
-export interface FilteredTransactionResource {
-  id: string;
-  description: string;
-  rawText: string | null;
-  amount: string;
-  amountRaw: number;
-  time: string;
-  status: string;
-  category: string;
-  parentCategory: string;
-  tags: string[];
-}
+export type SerialisedDbTransactionResource = ReturnType<
+  typeof outputTransactionFields
+>;
 
 export type DateRangeContext = {
   date: DateRange | undefined;
@@ -62,6 +23,19 @@ export type PageProps = {
   params: { slug: string };
   searchParams: { [key: string]: string | string[] | undefined };
 };
+
+export type BarChartConfig = Omit<BarChartProps, 'categories'> & {
+  categories: any[];
+};
+
+export enum DateRangePresets {
+  TODAY = '24h',
+  WEEK = '7d',
+  MONTH = '30d',
+  THREE_MONTHS = '3m',
+  SIX_MONTHS = '6m',
+  YEAR = '12m',
+}
 
 export type StatCardInfo = {
   title?: string;

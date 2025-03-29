@@ -1,14 +1,10 @@
-## Up Board
+<h1>Up Board</h1>
 
 Personalised insights and data visualisation for your Up account.
 
-### Learn More
+## Usage
 
-To read more about Up's API, please go to https://developer.up.com.au/.
-
-### Usage
-
-#### Generating mock data
+### Generate mock data
 
 1. Install [tsx](https://www.npmjs.com/package/tsx) as a global dependency
 2. Add `type: "module"` to `package.json` locally
@@ -16,9 +12,23 @@ To read more about Up's API, please go to https://developer.up.com.au/.
 
 Categories data is obtained from `https://api.up.com.au/api/v1/categories` endpoint.
 
-### Tech
+### Update Up API schema
 
-- Next.js (this application)
+```zsh
+npx openapi-typescript https://raw.githubusercontent.com/up-banking/api/refs/heads/master/v1/openapi.json -o types/up-api.d.ts
+
+pnpm exec openapi-typescript https://raw.githubusercontent.com/up-banking/api/refs/heads/master/v1/openapi.json -o types/up-api.d.ts
+
+# 🚀 https://raw.githubusercontent.com/up-banking/api/refs/heads/master/v1/openapi.json -> types/up-api.d.ts
+```
+
+## Notes
+
+To read more about Up's API, please go to https://developer.up.com.au/.
+
+This application is built with:
+
+- Next.js (this repository)
   - Tailwind + [shadcn/ui](https://ui.shadcn.com/) + [tremor](https://www.tremor.so/)
 - MongoDB
   - Stores transactions, accounts, categories
@@ -26,24 +36,26 @@ Categories data is obtained from `https://api.up.com.au/api/v1/categories` endpo
   - Consumes Up webhook event to sync new, deleted or settled transactions
   - Periodically syncs changes to transaction categories and tags
 
-### Screenshots
+## Screenshots
 
-**Homepage**
+### Overview
 
-![Homepage](./media/homepage.png)
+![Overview](./media/overview.png)
 
-**Transaction account**
+### Accounts
 
-![Transaction account](./media/transactional.png)
+![Accounts](./media/accounts.png)
 
-**Saver account**
-
-![Saver account](./media/saver.png)
-
-**Transactions**
+### Transactions
 
 ![Transactions](./media/transactions.png)
 
-**Transaction details**
+### Transaction details
 
 ![Transaction details](./media/transaction-details.png)
+
+### Spending, tag and merchant insights
+
+![Spending](./media/spending.png)
+![Merchant](./media/merchant.png)
+![Tags](./media/tags.png)
