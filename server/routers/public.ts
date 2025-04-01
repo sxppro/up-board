@@ -147,18 +147,18 @@ export const publicRouter = router({
       z.object({
         dateRange: DateRangeSchema,
         compareDateRange: DateRangeSchema.optional(),
-        accountId: z.string(),
+        accountId: z.string().optional(),
         type: TransactionIO,
       })
     )
     .query(async ({ input }) => {
       const { dateRange, compareDateRange, accountId, type } = input;
-      const results = await getCumulativeIO(accountId, dateRange, type);
+      const results = await getCumulativeIO(type, dateRange, accountId);
       if (compareDateRange) {
         const compareResults = await getCumulativeIO(
-          accountId,
+          type,
           compareDateRange,
-          type
+          accountId
         );
         return compareResults.map(
           ({ Timestamp, AmountCumulative, ...rest }, index) => {

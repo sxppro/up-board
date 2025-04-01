@@ -1191,8 +1191,8 @@ export const statsByTag = (tagId: string) => [
  */
 export const sumIOByDay = (
   dateRange: DateRange,
-  accountId: string,
-  type: TransactionIOEnum
+  type: TransactionIOEnum,
+  accountId?: string
 ) => {
   // $densify doesn't play nicely with timezone offsets for some reason, anyway ...
   const utcFrom = new TZDate(
@@ -1209,7 +1209,9 @@ export const sumIOByDay = (
           $gte: dateRange.from,
           $lte: dateRange.to,
         },
-        'relationships.account.data.id': accountId,
+        ...(accountId && {
+          'relationships.account.data.id': accountId,
+        }),
         ...filterIO(type),
       },
     },
