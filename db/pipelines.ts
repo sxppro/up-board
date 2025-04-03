@@ -529,7 +529,7 @@ export const groupByCategory = (
         'attributes.isCategorizable': true,
         // ! Exclude income
         'attributes.transactionType': {
-          $nin: ['Salary', 'Direct Credit'],
+          $nin: ['Salary'],
         },
         ...(accountId && { 'relationships.account.data.id': accountId }),
         ...(parentCategory && {
@@ -642,7 +642,7 @@ export const groupByCategoryAndDate = (
         'attributes.isCategorizable': true,
         // ! Exclude income
         'attributes.transactionType': {
-          $nin: ['Salary', 'Direct Credit'],
+          $nin: ['Salary'],
         },
         ...(match && match),
       },
