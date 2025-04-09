@@ -12,13 +12,13 @@ export default function manifest(): MetadataRoute.Manifest {
     start_url: '/',
     icons: [
       {
-        src: '/android-chrome-192x192.png',
-        sizes: '192x192',
+        src: '/icon-512x512.png',
+        sizes: '512x512',
         type: 'image/png',
       },
       {
-        src: '/android-chrome-512x512.png',
-        sizes: '512x512',
+        src: '/icon-1024x1024.png',
+        sizes: '1024x1024',
         type: 'image/png',
       },
     ],

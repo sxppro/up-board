@@ -19,7 +19,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://upboard.app'),
+  metadataBase: new URL('https://beta.upboard.app'),
   title: siteConfig.name,
   description: siteConfig.description,
   authors: [
@@ -38,8 +38,8 @@ export const metadata: Metadata = {
     siteName: siteConfig.name,
   },
   icons: {
-    icon: '/favicon.ico',
-    shortcut: '/favicon-16x16.png',
+    icon: '/icon.png',
+    shortcut: '/apple-touch-icon.png',
     apple: '/apple-touch-icon.png',
   },
 };

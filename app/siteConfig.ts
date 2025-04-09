@@ -1,6 +1,6 @@
 export const siteConfig = {
   name: 'Up Board',
-  url: 'https://upboard.app',
+  url: 'https://beta.upboard.app',
   description: 'Personalised insights and visualisations for your Up account',
   baseLinks: {
     home: '/',
