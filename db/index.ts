@@ -910,9 +910,9 @@ export const getCategoryInfoHistory = async (
  * @returns
  */
 export const getCumulativeIO = async (
-  accountId: string,
+  type: TransactionIOEnum,
   dateRange: DateRange,
-  type: TransactionIOEnum
+  accountId?: string
 ) => {
   try {
     const transactions = await connectToCollection<DbTransactionResource>(
@@ -921,7 +921,7 @@ export const getCumulativeIO = async (
     );
     if (transactions) {
       const cursor = transactions.aggregate<CumulativeIO>(
-        sumIOByDay(dateRange, accountId, type)
+        sumIOByDay(dateRange, type, accountId)
       );
       const results = await cursor.toArray();
       return results;

@@ -38,29 +38,25 @@ const CumulativeSnapshot = ({ accountId }: CumulativeSnapshotProps) => {
     getDateRanges();
   const { data: incomeData, dataUpdatedAt: incomeUpdatedAt } =
     trpc.public.getCumulativeIO.useQuery({
-      accountId,
       dateRange: incomeTab === 0 ? monthToDate : yearToDate,
       compareDateRange: incomeTab === 0 ? thisMonthLastYear : lastYear,
       type: 'income',
     });
   const { data: expensesData, dataUpdatedAt: expensesUpdatedAt } =
     trpc.public.getCumulativeIO.useQuery({
-      accountId,
       dateRange: expensesTab === 0 ? monthToDate : yearToDate,
       compareDateRange: expensesTab === 0 ? thisMonthLastYear : lastYear,
       type: 'expense',
     });
   const { data: month } = trpc.public.getIOStats.useQuery({
-    accountId,
     dateRange: monthToDate,
   });
   const { data: year } = trpc.public.getIOStats.useQuery({
-    accountId,
     dateRange: yearToDate,
   });
   const { data: transactionalBalanceHistory } =
     trpc.public.getAccountBalance.useQuery({
-      accountId,
+      accountType: 'TRANSACTIONAL',
       dateRange: last30days,
     });
   const { data: savingsBalanceHistory } =
