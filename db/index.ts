@@ -144,8 +144,8 @@ const connectToCollection = async <T extends Document>(
   collection: string,
   collectionOpts?: CollectionOptions
 ) => {
-  const session = await auth();
-  if (session) {
+  const { session, isCron } = await auth();
+  if (session || isCron) {
     const database = client.db(db);
     return database.collection<T>(collection, collectionOpts);
   } else {
@@ -497,11 +497,14 @@ export const getIOStats = async (
             groupBy === 'yearly'
               ? eachYearOfInterval({ start: dateRange.from, end: dateRange.to })
               : groupBy === 'monthly'
-              ? eachMonthOfInterval({
-                  start: dateRange.from,
-                  end: dateRange.to,
-                })
-              : eachDayOfInterval({ start: dateRange.from, end: dateRange.to });
+                ? eachMonthOfInterval({
+                    start: dateRange.from,
+                    end: dateRange.to,
+                  })
+                : eachDayOfInterval({
+                    start: dateRange.from,
+                    end: dateRange.to,
+                  });
 
           return dates.map((date) => {
             const income = parseFloat(faker.finance.amount({ max: 5000 }));
@@ -812,8 +815,8 @@ export const getCategoryInfo = async (
           parentCategory
             ? relationships.parent.data?.id === parentCategory
             : type === 'parent'
-            ? relationships.parent.data === null
-            : relationships.parent.data !== null
+              ? relationships.parent.data === null
+              : relationships.parent.data !== null
       );
       return faker.helpers
         .arrayElements(filteredCategories, { min: 3, max: 10 })
@@ -1038,9 +1041,9 @@ export const getTransactionsByDay = async (
           accountId
             ? relationships.account.data.id === accountId
             : dateRange
-            ? new Date(attributes.createdAt) >= dateRange.from &&
-              new Date(attributes.createdAt) <= dateRange.to
-            : true
+              ? new Date(attributes.createdAt) >= dateRange.from &&
+                new Date(attributes.createdAt) <= dateRange.to
+              : true
       );
       if (options?.limit) {
         transactions = transactions.slice(0, options.limit);
