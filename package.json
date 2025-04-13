@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "ts": "tsc --noEmit",
-    "prepare": "husky"
+    "prepare": "husky",
+    "email:dev": "email dev --dir ./components/emails"
   },
   "dependencies": {
     "@date-fns/tz": "^1.1.2",
@@ -60,6 +61,7 @@
     "react": "18.2.0",
     "react-day-picker": "^8.10.1",
     "react-dom": "18.2.0",
+    "react-email": "^4.0.7",
     "resend": "^4.2.0",
     "tailwind-merge": "^2.5.4",
     "tailwind-variants": "^0.2.1",
