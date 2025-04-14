@@ -2,10 +2,11 @@ import { Merchant, TransactionCategoryInfo } from '@/server/schemas';
 import tailwindConfig from '@/tailwind.config';
 import { AvailableChartColorsKeys, getColorClassName } from '@/utils/charts';
 import { colours } from '@/utils/constants';
-import { cn, formatCurrency, formatCurrencyAbsolute } from '@/utils/helpers';
+import { cn, formatCurrencyAbsolute } from '@/utils/helpers';
 import {
   Body,
   Column,
+  ColumnProps,
   Container,
   Head,
   Heading,
@@ -21,6 +22,7 @@ import {
 interface MonthlySummaryProps {
   dateRangeText: string; // e.g. March 2025
   categorySpending: TransactionCategoryInfo[]; // Top spending categories
+  subcategorySpending: TransactionCategoryInfo[]; // Top spending subcategories
   merchantSpending: Merchant[]; // Top spending merchants
 }
 
@@ -32,17 +34,20 @@ interface SpendBarProps {
 
 interface SpendGridTileProps {
   category: string; // Category name
+  absSpending?: number; // Absolute value of amount spent in category
   spending?: number; // Amount spent in this category
-  totalSpending?: number; // Total amount spent over all categories
+  totalSpending?: number; // Absolute value of total amount spent over all categories
 }
 
 const MonthlySummary = ({
   dateRangeText,
   categorySpending,
+  subcategorySpending,
   merchantSpending,
 }: MonthlySummaryProps) => {
   // ! Assumes spending is sorted by absAmount descending
   const categorySpendingMax = categorySpending[0];
+  const subcategorySpendingMax = subcategorySpending[0];
   const merchantSpendingMax = merchantSpending[0];
   return (
     <Html lang="en">
@@ -66,24 +71,66 @@ const MonthlySummary = ({
             </Section>
 
             {/* Spend grid */}
-            <Section className="my-4">
-              <Row cellSpacing={16} cellPadding={12}>
-                <SpendGridTile category="Good Life" />
-                <SpendGridTile category="Personal" />
-              </Row>
-              <Row cellSpacing={16} cellPadding={12} className="-mt-4">
-                <SpendGridTile category="Home" />
-                <SpendGridTile category="Transport" />
-              </Row>
-            </Section>
+            {categorySpending && categorySpending.length > 0 ? (
+              <Section className="w-[calc(100%_+_2rem)] my-4 -mx-4">
+                {categorySpending[0] ? (
+                  <Row cellSpacing={16} cellPadding={12}>
+                    <SpendGridTile
+                      category={categorySpending[0].categoryName}
+                      absSpending={categorySpending[0].absAmount}
+                      spending={categorySpending[0].amount}
+                      totalSpending={categorySpendingMax.absAmount}
+                    />
+                    {categorySpending[1] ? (
+                      <SpendGridTile
+                        category={categorySpending[1].categoryName}
+                        absSpending={categorySpending[1].absAmount}
+                        spending={categorySpending[1].amount}
+                        totalSpending={categorySpendingMax.absAmount}
+                      />
+                    ) : null}
+                  </Row>
+                ) : null}
+                {categorySpending[2] ? (
+                  <Row cellSpacing={16} cellPadding={12} className="-mt-4">
+                    <SpendGridTile
+                      category={categorySpending[2].categoryName}
+                      absSpending={categorySpending[2].absAmount}
+                      spending={categorySpending[2].amount}
+                      totalSpending={categorySpendingMax.absAmount}
+                    />
+                    {categorySpending[3] ? (
+                      <SpendGridTile
+                        category={categorySpending[3].categoryName}
+                        absSpending={categorySpending[3].absAmount}
+                        spending={categorySpending[3].amount}
+                        totalSpending={categorySpendingMax.absAmount}
+                      />
+                    ) : null}
+                  </Row>
+                ) : null}
+                {categorySpending[4] ? (
+                  <Row cellSpacing={16} cellPadding={12} className="-mt-4">
+                    <SpendGridTile
+                      className="pt-3"
+                      colSpan={2}
+                      category={categorySpending[4].categoryName}
+                      absSpending={categorySpending[4].absAmount}
+                      spending={categorySpending[4].amount}
+                      totalSpending={categorySpendingMax.absAmount}
+                    />
+                  </Row>
+                ) : null}
+              </Section>
+            ) : null}
 
             {/* Top subcategories */}
-            {categorySpending && categorySpending.length > 0 ? (
+            {subcategorySpending && subcategorySpending.length > 0 ? (
               <Section className="my-6">
                 <Text className="text-3xl font-medium">
                   What you spent on ...
                 </Text>
-                {categorySpending.map(
+                {subcategorySpending.map(
                   ({
                     category,
                     categoryName,
@@ -103,7 +150,7 @@ const MonthlySummary = ({
                           parentCategoryName ? colours[parentCategoryName] : ''
                         }
                         percentage={
-                          (absAmount / categorySpendingMax.absAmount) * 100
+                          (absAmount / subcategorySpendingMax.absAmount) * 100
                         }
                         spending={absAmount}
                       />
@@ -115,7 +162,7 @@ const MonthlySummary = ({
 
             {/* Top merchants */}
             {merchantSpending && merchantSpending.length > 0 ? (
-              <Section className="my-6">
+              <Section className="my-6 max-w-full">
                 <Text className="text-3xl font-medium">
                   Who you spent with ...
                 </Text>
@@ -123,7 +170,7 @@ const MonthlySummary = ({
                   ({ name, absAmount, amount, parentCategoryName }) => (
                     <div key={name}>
                       <div className="flex justify-between mt-4 mb-1">
-                        <Text className="text-md m-0">{name}</Text>
+                        <Text className="text-md m-0 truncate">{name}</Text>
                         <Text className="text-md m-0">
                           {formatCurrencyAbsolute(absAmount, amount)}
                         </Text>
@@ -172,16 +219,25 @@ const SpendBar = ({ barColor, percentage, spending }: SpendBarProps) => {
 
 const SpendGridTile = ({
   category,
+  absSpending = 0,
   spending = 0,
   totalSpending = spending,
-}: SpendGridTileProps) => {
+  className,
+  ...rest
+}: SpendGridTileProps & ColumnProps) => {
   const barColor = colours[category];
-  const percentage = (spending / totalSpending) * 100;
+  const percentage = (absSpending / totalSpending) * 100;
   return (
-    <Column className="w-1/2 pt-12 sm:pt-24 border border-solid border-slate-200 rounded-2xl shadow">
+    <Column
+      {...rest}
+      className={cn(
+        'w-1/2 pt-12 sm:pt-24 border border-solid border-slate-200 rounded-2xl shadow',
+        className
+      )}
+    >
       <div className="h-full flex flex-col justify-end gap-2">
         <Text className="text-4xl font-medium m-0">
-          {formatCurrency(spending)}
+          {formatCurrencyAbsolute(absSpending, spending, true, true)}
         </Text>
         <Text className="text-lg m-0">{category}</Text>
         <SpendBar
@@ -197,6 +253,44 @@ const SpendGridTile = ({
 MonthlySummary.PreviewProps = {
   dateRangeText: 'March 2025',
   categorySpending: [
+    {
+      category: 'personal',
+      categoryName: 'Personal',
+      absAmount: 2349.0,
+      amount: -2349.0,
+      transactions: 25,
+    },
+    {
+      category: 'good-life',
+      categoryName: 'Good Life',
+      absAmount: 1198.0,
+      amount: -1198.0,
+      transactions: 20,
+    },
+    {
+      category: 'uncategorised',
+      categoryName: 'Uncategorised',
+      absAmount: 234.59,
+      amount: 234.59,
+      transactions: 2,
+      parentCategory: 'uncategorised',
+    },
+    {
+      category: 'transport',
+      categoryName: 'Transport',
+      absAmount: 90.0,
+      amount: -90.0,
+      transactions: 3,
+    },
+    {
+      category: 'home',
+      categoryName: 'Home',
+      absAmount: 25.49,
+      amount: -25.49,
+      transactions: 5,
+    },
+  ],
+  subcategorySpending: [
     {
       category: 'homeware-and-appliances',
       categoryName: 'Homeware & Appliances',
