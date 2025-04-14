@@ -805,7 +805,12 @@ export const getCategoryInfo = async (
         groupByCategory(dateRange, type, options || {}, parentCategory)
       );
       const results = await cursor.toArray();
-      return results;
+      const parentCategories = await mapCategories('parent');
+      return results.map(({ parentCategory, ...rest }) => ({
+        ...rest,
+        parentCategory,
+        parentCategoryName: parentCategories.get(parentCategory || ''),
+      }));
     } else {
       const amount = parseFloat(
         faker.finance.amount({ min: -5000, max: 5000 })

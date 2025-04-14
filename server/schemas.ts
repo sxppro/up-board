@@ -77,6 +77,7 @@ export const TransactionCategoryInfoSchema = z.object({
   amount: z.number(),
   transactions: z.number(),
   parentCategory: z.string().optional(),
+  parentCategoryName: z.string().optional(),
 });
 export type TransactionCategoryInfo = z.infer<
   typeof TransactionCategoryInfoSchema
