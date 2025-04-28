@@ -71,62 +71,62 @@ const MonthlySummary = ({
             </Section>
 
             {/* Spend grid */}
-            {categorySpending && categorySpending.length > 0 ? (
-              <Section className="w-[calc(100%_+_2rem)] my-4 -mx-4">
-                {categorySpending[0] ? (
-                  <Row cellSpacing={16} cellPadding={12}>
-                    <SpendGridTile
-                      category={categorySpending[0].categoryName}
-                      absSpending={categorySpending[0].absAmount}
-                      spending={categorySpending[0].amount}
-                      totalSpending={categorySpendingMax.absAmount}
-                    />
-                    {categorySpending[1] ? (
-                      <SpendGridTile
-                        category={categorySpending[1].categoryName}
-                        absSpending={categorySpending[1].absAmount}
-                        spending={categorySpending[1].amount}
-                        totalSpending={categorySpendingMax.absAmount}
-                      />
-                    ) : null}
+            {categorySpending?.length > 0 && (
+              <Section className="my-4">
+                {[0, 2, 4].map((startIdx) => (
+                  <Row
+                    key={startIdx}
+                    cellPadding={12}
+                    className={startIdx > 0 ? 'mt-4' : ''}
+                    style={{
+                      borderSpacing: '16px 0px',
+                    }}
+                  >
+                    {/* Last tile will be 2 col span */}
+                    {startIdx === 4 ? (
+                      categorySpending[startIdx] && (
+                        <SpendGridTile
+                          className="pt-3 sm:pt-3"
+                          colSpan={2}
+                          category={categorySpending[startIdx].categoryName}
+                          absSpending={categorySpending[startIdx].absAmount}
+                          spending={categorySpending[startIdx].amount}
+                          totalSpending={categorySpendingMax.absAmount}
+                        />
+                      )
+                    ) : (
+                      <>
+                        {categorySpending[startIdx] && (
+                          <SpendGridTile
+                            className="mr-4"
+                            category={categorySpending[startIdx].categoryName}
+                            absSpending={categorySpending[startIdx].absAmount}
+                            spending={categorySpending[startIdx].amount}
+                            totalSpending={categorySpendingMax.absAmount}
+                          />
+                        )}
+                        {categorySpending[startIdx + 1] && (
+                          <SpendGridTile
+                            category={
+                              categorySpending[startIdx + 1].categoryName
+                            }
+                            absSpending={
+                              categorySpending[startIdx + 1].absAmount
+                            }
+                            spending={categorySpending[startIdx + 1].amount}
+                            totalSpending={categorySpendingMax.absAmount}
+                          />
+                        )}
+                      </>
+                    )}
                   </Row>
-                ) : null}
-                {categorySpending[2] ? (
-                  <Row cellSpacing={16} cellPadding={12} className="-mt-4">
-                    <SpendGridTile
-                      category={categorySpending[2].categoryName}
-                      absSpending={categorySpending[2].absAmount}
-                      spending={categorySpending[2].amount}
-                      totalSpending={categorySpendingMax.absAmount}
-                    />
-                    {categorySpending[3] ? (
-                      <SpendGridTile
-                        category={categorySpending[3].categoryName}
-                        absSpending={categorySpending[3].absAmount}
-                        spending={categorySpending[3].amount}
-                        totalSpending={categorySpendingMax.absAmount}
-                      />
-                    ) : null}
-                  </Row>
-                ) : null}
-                {categorySpending[4] ? (
-                  <Row cellSpacing={16} cellPadding={12} className="-mt-4">
-                    <SpendGridTile
-                      className="pt-3"
-                      colSpan={2}
-                      category={categorySpending[4].categoryName}
-                      absSpending={categorySpending[4].absAmount}
-                      spending={categorySpending[4].amount}
-                      totalSpending={categorySpendingMax.absAmount}
-                    />
-                  </Row>
-                ) : null}
+                ))}
               </Section>
-            ) : null}
+            )}
 
             {/* Top subcategories */}
             {subcategorySpending && subcategorySpending.length > 0 ? (
-              <Section className="my-6">
+              <Section className="my-6 px-4">
                 <Text className="text-3xl font-medium">
                   What you spent on ...
                 </Text>
@@ -162,7 +162,7 @@ const MonthlySummary = ({
 
             {/* Top merchants */}
             {merchantSpending && merchantSpending.length > 0 ? (
-              <Section className="my-6 max-w-full">
+              <Section className="my-6 px-4 max-w-full">
                 <Text className="text-3xl font-medium">
                   Who you spent with ...
                 </Text>
