@@ -250,7 +250,8 @@ const SpendGridTile = ({
   ...rest
 }: SpendGridTileProps & ColumnProps) => {
   const barColor = colours[category];
-  const percentage = (absSpending / totalSpending) * 100;
+  const percentage =
+    totalSpending === 0 ? 0 : (absSpending / totalSpending) * 100;
   return (
     <Column
       {...rest}
