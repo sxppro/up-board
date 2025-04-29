@@ -5,6 +5,7 @@ import {
 } from 'next';
 import { NextAuthOptions, getServerSession } from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
+import { headers } from 'next/headers';
 
 if (
   !process.env.GOOGLE_ID ||
@@ -46,15 +47,20 @@ export async function getCurrentUser() {
 }
 
 /**
- * Server-side helper for authing requests
+ * Server-side helper for authenticating user
+ * sessions and email cron jobs
  * @param args
  * @returns
  */
-export function auth(
+export async function auth(
   ...args:
     | [GetServerSidePropsContext['req'], GetServerSidePropsContext['res']]
     | [NextApiRequest, NextApiResponse]
     | []
 ) {
-  return getServerSession(...args, authOptions);
+  return {
+    session: await getServerSession(...args, authOptions),
+    isCron:
+      headers().get('authorization') === `Bearer ${process.env.CRON_SECRET}`,
+  };
 }
