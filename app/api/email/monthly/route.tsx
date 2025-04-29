@@ -6,6 +6,7 @@ import { Resend } from 'resend';
 
 const handler = async (req: Request) => {
   if (
+    req.headers.get('authorization') !== `Bearer ${process.env.CRON_SECRET}` ||
     req.headers.get('Authorization') !== `Bearer ${process.env.CRON_SECRET}`
   ) {
     return new Response('', { status: 401 });
