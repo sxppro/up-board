@@ -1,5 +1,4 @@
 import { Merchant, TransactionCategoryInfo } from '@/server/schemas';
-import tailwindConfig from '@/tailwind.config';
 import { AvailableChartColorsKeys, getColorClassName } from '@/utils/charts';
 import { colours } from '@/utils/constants';
 import { cn, formatCurrencyAbsolute } from '@/utils/helpers';
@@ -16,6 +15,7 @@ import {
   Row,
   Section,
   Tailwind,
+  TailwindConfig,
   Text,
 } from '@react-email/components';
 
@@ -39,6 +39,27 @@ interface SpendGridTileProps {
   totalSpending?: number; // Absolute value of total amount spent over all categories
 }
 
+/**
+ * Lite version of tailwind.config.js
+ * ! Only used for email rendering
+ */
+const tailwindConfig: TailwindConfig = {
+  darkMode: ['class'],
+  theme: {
+    extend: {
+      colors: {
+        up: {
+          'good-life': '#F3DC61',
+          personal: '#EF8E4B',
+          home: '#BD79BD',
+          transport: '#6491C9',
+          uncategorised: '#A0AEC0',
+        },
+      },
+    },
+  },
+};
+
 const MonthlySummary = ({
   dateRangeText,
   categorySpending,
@@ -53,7 +74,7 @@ const MonthlySummary = ({
     <Html lang="en">
       <Tailwind config={tailwindConfig}>
         <Head />
-        <Preview>Up Board — March 2025</Preview>
+        <Preview>Up Board — {dateRangeText}</Preview>
         <Body className="bg-slate-50 text-slate-900 font-sans">
           <Container className="mx-auto w-full max-w-[600px] p-6">
             {/* Heading */}
