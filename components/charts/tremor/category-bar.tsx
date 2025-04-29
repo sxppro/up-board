@@ -37,8 +37,10 @@ const getMarkerBgColor = (
   return getColorClassName(colors[values.length - 1], 'bg');
 };
 
-const getPositionLeft = (value: number | undefined, maxValue: number): number =>
-  value ? (value / maxValue) * 100 : 0;
+const getPositionLeft = (
+  value: number | undefined,
+  maxValue: number
+): number => (value ? (value / maxValue) * 100 : 0);
 
 const sumNumericArray = (arr: number[]) =>
   arr.reduce((prefixSum, num) => prefixSum + num, 0);
@@ -155,31 +157,32 @@ const CategoryBar = React.forwardRef<HTMLDivElement, CategoryBarProps>(
         {showLabels ? <BarLabels values={values} /> : null}
         <div className="relative flex h-2 w-full items-center">
           <div className="flex h-full flex-1 items-center gap-0.5 overflow-hidden rounded-full">
-            {values.map((value, index) => {
-              const barColor = colors[index] ?? 'gray';
-              const percentage = (value / maxValue) * 100;
-              return (
-                <div
-                  key={`item-${index}`}
-                  className={cn(
-                    'h-full rounded-full',
-                    getColorClassName(
-                      barColor as AvailableChartColorsKeys,
-                      'bg'
-                    ),
-                    percentage === 0 && 'hidden'
-                  )}
-                  style={{ width: `${percentage}%` }}
-                />
-              );
-            })}
             {values.length === 0 ? (
               <div
                 key={`item-fallback`}
                 className="h-full rounded-full border border-dashed border-gray-500"
                 style={{ width: '100%' }}
               />
-            ) : null}
+            ) : (
+              values.map((value, index) => {
+                const barColor = colors[index] ?? 'gray';
+                const percentage = (value / maxValue) * 100;
+                return (
+                  <div
+                    key={`item-${index}`}
+                    className={cn(
+                      'h-full rounded-full',
+                      getColorClassName(
+                        barColor as AvailableChartColorsKeys,
+                        'bg'
+                      ),
+                      percentage === 0 && 'hidden'
+                    )}
+                    style={{ width: `${percentage}%` }}
+                  />
+                );
+              })
+            )}
           </div>
 
           {marker !== undefined ? (

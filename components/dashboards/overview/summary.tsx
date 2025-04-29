@@ -57,7 +57,6 @@ const Summary = () => {
           >
             Summary
           </h1>
-          {/* TODO: Replace with DateRangeSelect */}
           <DateRangeSelect />
         </div>
         <Separator className="my-2" />

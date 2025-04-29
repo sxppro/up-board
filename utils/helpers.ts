@@ -84,8 +84,13 @@ export const formatCurrency = (
  * @param amount monetary amount
  * @returns
  */
-export const formatCurrencyAbsolute = (absAmount: number, amount: number) =>
-  `${amount === absAmount ? '+' : ''}${formatCurrency(absAmount)}`;
+export const formatCurrencyAbsolute = (
+  absAmount: number,
+  ...opts: Parameters<typeof formatCurrency>
+) => {
+  const [amount, ...rest] = opts;
+  return `${amount === absAmount ? '+' : ''}${formatCurrency(absAmount, ...rest)}`;
+};
 
 /**
  * Format date depending on distance to now
