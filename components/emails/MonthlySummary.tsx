@@ -74,7 +74,10 @@ const MonthlySummary = ({
     <Html lang="en">
       <Tailwind config={tailwindConfig}>
         <Head />
-        <Preview>Up Board — {dateRangeText}</Preview>
+        <Preview>
+          Where your money went in {dateRangeText}, including total spending by
+          category and merchant.
+        </Preview>
         <Body className="bg-slate-50 text-slate-900 font-sans">
           <Container className="mx-auto w-full max-w-[600px] p-6">
             {/* Heading */}
