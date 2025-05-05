@@ -1,6 +1,7 @@
 'use client';
 
 import AccountBalanceHistory from '@/components/charts/account-balance-history';
+import { Button } from '@/components/ui/button';
 import {
   Popover,
   PopoverContent,
@@ -15,6 +16,7 @@ import {
   getDateRanges,
 } from '@/utils/helpers';
 import { trpc } from '@/utils/trpc';
+import { Info } from '@phosphor-icons/react';
 import {
   LineChart,
   SparkAreaChart,
@@ -25,6 +27,7 @@ import {
   TabPanels,
 } from '@tremor/react';
 import { format } from 'date-fns';
+import Link from 'next/link';
 import { useState } from 'react';
 
 interface CumulativeSnapshotProps {
@@ -356,11 +359,16 @@ const CumulativeSnapshot = ({ accountId }: CumulativeSnapshotProps) => {
           <div className="flex flex-col py-4 sm:p-4">
             <div className="flex-1 flex flex-col gap-1">
               <div className="flex gap-0.5">
+                <span className="font-bold">Top Categories</span>
                 <Popover>
                   <PopoverTrigger asChild>
-                    <span className="font-bold underline underline-offset-4 cursor-pointer">
-                      Top Categories
-                    </span>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-auto w-auto rounded-full p-1"
+                    >
+                      <Info />
+                    </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-auto">
                     <p className="text-sm">
@@ -392,9 +400,17 @@ const CumulativeSnapshot = ({ accountId }: CumulativeSnapshotProps) => {
                                   : 'bg-up-uncategorised'
                               )}
                             />
-                            <p className="text-subtle truncate">
-                              {categoryName}
-                            </p>
+                            <Button
+                              variant="link"
+                              className="h-6 p-0 text-subtle text-base truncate underline"
+                              asChild
+                            >
+                              <Link
+                                href={`/spending/${encodeURIComponent(category)}`}
+                              >
+                                {categoryName}
+                              </Link>
+                            </Button>
                           </div>
                           <span>
                             {formatCurrencyAbsolute(absAmount, amount)}
