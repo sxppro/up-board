@@ -130,8 +130,8 @@ const lookupCategoryNames = () => [
   },
   {
     $addFields: {
-      'relationships.category.data.id': '$categoryNames.category',
-      'relationships.parentCategory.data.id': '$categoryNames.parentCategory',
+      'relationships.category.data.name': '$categoryNames.category',
+      'relationships.parentCategory.data.name': '$categoryNames.parentCategory',
     },
   },
   {

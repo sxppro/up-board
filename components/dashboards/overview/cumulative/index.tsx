@@ -8,12 +8,7 @@ import {
 } from '@/components/ui/popover';
 import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
-import {
-  cn,
-  formatCurrency,
-  formatCurrencyAbsolute,
-  getDateRanges,
-} from '@/utils/helpers';
+import { formatCurrency, getDateRanges } from '@/utils/helpers';
 import { trpc } from '@/utils/trpc';
 import {
   LineChart,
@@ -26,6 +21,8 @@ import {
 } from '@tremor/react';
 import { format } from 'date-fns';
 import { useState } from 'react';
+import TopCategories from './top-categories';
+import TopMerchants from './top-merchants';
 
 interface CumulativeSnapshotProps {
   accountId: string; // Transaction account id
@@ -74,28 +71,6 @@ const CumulativeSnapshot = ({ accountId }: CumulativeSnapshotProps) => {
   );
   const { data: transactionalAcc } = trpc.public.getAccountById.useQuery({
     accountId,
-  });
-  const { data: expenseCategories } = trpc.public.getCategoryInfo.useQuery({
-    dateRange: expensesTab === 0 ? monthToDate : yearToDate,
-    type: 'child',
-    options: {
-      limit: 4,
-      sort: {
-        amount: 1,
-        transactions: -1,
-      },
-    },
-  });
-  const { data: merchants } = trpc.public.getMerchantInfo.useQuery({
-    dateRange: expensesTab === 0 ? monthToDate : yearToDate,
-    type: 'expense',
-    options: {
-      limit: 4,
-      sort: {
-        amount: 1,
-        transactions: -1,
-      },
-    },
   });
 
   return (
@@ -354,91 +329,13 @@ const CumulativeSnapshot = ({ accountId }: CumulativeSnapshotProps) => {
             </TabPanels>
           </TabGroup>
           <div className="flex flex-col py-4 sm:p-4">
-            <div className="flex-1 flex flex-col gap-1">
-              <div className="flex gap-0.5">
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <span className="font-bold underline underline-offset-4 cursor-pointer">
-                      Top Categories
-                    </span>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto">
-                    <p className="text-sm">
-                      Categories ordered by total expenditure
-                    </p>
-                  </PopoverContent>
-                </Popover>
-              </div>
-              <div className="flex flex-col gap-1">
-                {expenseCategories
-                  ? expenseCategories.map(
-                      ({
-                        category,
-                        categoryName,
-                        amount,
-                        absAmount,
-                        parentCategory,
-                      }) => (
-                        <div
-                          key={category}
-                          className="w-full flex h-8 items-center"
-                        >
-                          <div className="flex flex-1 gap-2 overflow-hidden">
-                            <div
-                              className={cn(
-                                'inline-block h-6 w-1 rounded-full',
-                                parentCategory
-                                  ? `bg-up-${parentCategory}`
-                                  : 'bg-up-uncategorised'
-                              )}
-                            />
-                            <p className="text-subtle truncate">
-                              {categoryName}
-                            </p>
-                          </div>
-                          <span>
-                            {formatCurrencyAbsolute(absAmount, amount)}
-                          </span>
-                        </div>
-                      )
-                    )
-                  : [...Array(4).keys()].map((i) => (
-                      <Skeleton key={i} className="h-8" />
-                    ))}
-              </div>
-            </div>
+            <TopCategories
+              dateRange={expensesTab === 0 ? monthToDate : yearToDate}
+            />
             <Separator className="my-4" />
-            <div className="flex-1 flex flex-col gap-1">
-              <div className="flex gap-0.5">
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <span className="font-bold underline underline-offset-4 cursor-pointer">
-                      Top Merchants
-                    </span>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto">
-                    <p className="text-sm">
-                      Merchants ordered by total expenditure
-                    </p>
-                  </PopoverContent>
-                </Popover>
-              </div>
-              <div className="flex flex-col gap-1">
-                {merchants
-                  ? merchants.map(({ name, amount, absAmount }) => (
-                      <div
-                        key={name}
-                        className="w-full flex h-8 items-center overflow-hidden"
-                      >
-                        <p className="flex-1 text-subtle truncate">{name}</p>
-                        <span>{formatCurrencyAbsolute(absAmount, amount)}</span>
-                      </div>
-                    ))
-                  : [...Array(4).keys()].map((i) => (
-                      <Skeleton key={i} className="h-8" />
-                    ))}
-              </div>
-            </div>
+            <TopMerchants
+              dateRange={expensesTab === 0 ? monthToDate : yearToDate}
+            />
           </div>
         </div>
       </section>

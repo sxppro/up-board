@@ -42,7 +42,7 @@ export const columns: ColumnDef<TransactionResourceFiltered>[] = [
       <div className="flex gap-2">
         <Button
           variant="link"
-          className="h-6 p-0 gap-1 truncate font-medium flex-start"
+          className="h-6 p-0 gap-1 truncate font-semibold flex-start underline"
           asChild
         >
           <Link
@@ -97,7 +97,19 @@ export const columns: ColumnDef<TransactionResourceFiltered>[] = [
     accessorKey: 'category',
     header: 'Category',
     cell: ({ row }) => (
-      <div className="w-[150px] truncate">{row.getValue('category')}</div>
+      <div className="w-[150px] truncate">
+        <Button
+          variant="link"
+          className="h-6 p-0 gap-1 font-normal flex-start underline"
+          asChild
+        >
+          <Link
+            href={`/spending/${encodeURIComponent(row.getValue('category'))}`}
+          >
+            {row.original.categoryName}
+          </Link>
+        </Button>
+      </div>
     ),
     filterFn: (row, id, value) => value.includes(row.getValue(id)),
   },
