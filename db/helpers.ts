@@ -15,8 +15,7 @@ export const filterTransactionFields = async (
     transactions?.map(async (transaction) => {
       const { id, attributes, relationships } = transaction;
       const category = relationships.category.data?.id ?? 'uncategorised';
-      const categoryDetails = await getCategoryById(category);
-      return {
+      const filteredTransaction = {
         id,
         attachment: relationships.attachment.data?.id ?? null,
         amount: attributes.amount.value,
@@ -25,11 +24,8 @@ export const filterTransactionFields = async (
         isCategorizable: attributes.isCategorizable,
         message: attributes.message,
         category,
-        categoryName: categoryDetails?.name ?? 'Uncategorised',
         parentCategory:
           relationships.parentCategory.data?.id ?? 'uncategorised',
-        parentCategoryName:
-          categoryDetails?.parentCategoryName ?? 'Uncategorised',
         note: attributes.note?.text ?? null,
         rawText: attributes.rawText,
         status: attributes.status,
@@ -39,6 +35,30 @@ export const filterTransactionFields = async (
         // @ts-expect-error due to Up Banking API not being updated yet
         deepLinkURL: attributes.deepLinkURL,
       };
+      if (
+        // @ts-expect-error Some pipeline queries will include category names
+        // because of lookupCategoryNames(), so only do the category name lookup
+        // if the category names are not already present
+        !relationships.category.data?.name ||
+        // @ts-expect-error
+        !relationships.parentCategory.data?.name
+      ) {
+        const categoryDetails = await getCategoryById(category);
+        return {
+          ...filteredTransaction,
+          categoryName: categoryDetails?.name ?? 'Uncategorised',
+          parentCategoryName:
+            categoryDetails?.parentCategoryName ?? 'Uncategorised',
+        };
+      } else {
+        return {
+          ...filteredTransaction,
+          // @ts-expect-error
+          categoryName: relationships.category.data.name,
+          // @ts-expect-error
+          parentCategoryName: relationships.parentCategory.data.name,
+        };
+      }
     }) || []
   );
 };

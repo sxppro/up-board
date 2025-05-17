@@ -12,6 +12,15 @@ interface UserProfileProps {
   user?: Pick<User, 'name' | 'image' | 'email'>;
 }
 
+const getInitials = (string?: string | null) =>
+  string
+    ? string
+        .split(' ')
+        .map((substr) => substr.at(0))
+        .slice(0, 2)
+        .join('')
+    : 'HI';
+
 export const UserProfileDesktop = ({ user }: UserProfileProps) => {
   return (
     <UserProfileDropdown user={user}>
@@ -26,7 +35,7 @@ export const UserProfileDesktop = ({ user }: UserProfileProps) => {
         <span className="flex items-center gap-3">
           <Avatar className="size-8">
             <AvatarImage src={`${user?.image}`} alt={`${user?.name}`} />
-            <AvatarFallback>DE</AvatarFallback>
+            <AvatarFallback>{getInitials(user?.name)}</AvatarFallback>
           </Avatar>
           <span>{user?.name || 'Demo'}</span>
         </span>
@@ -51,7 +60,7 @@ export const UserProfileMobile = ({ user }: UserProfileProps) => {
       >
         <Avatar className="size-8">
           <AvatarImage src={`${user?.image}`} alt={`${user?.name}`} />
-          <AvatarFallback>DE</AvatarFallback>
+          <AvatarFallback>{getInitials(user?.name)}</AvatarFallback>
         </Avatar>
       </Button>
     </UserProfileDropdown>
