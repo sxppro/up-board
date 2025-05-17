@@ -62,6 +62,7 @@ const TopCategories = ({ dateRange }: TopCategoriesProps) => {
     ...category,
     name: category.categoryName,
     value: category.absAmount,
+    href: `/spending/${encodeURIComponent(category.category)}`,
     colour: category.parentCategoryName
       ? `bg-${colours[category.parentCategoryName]} bg-opacity-60`
       : `bg-${colours['Uncategorised']} bg-opacity-60`,

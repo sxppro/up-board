@@ -1,4 +1,4 @@
-import CumulativeSnapshot from '@/components/dashboards/overview/cumulative/index';
+import CumulativeSnapshot from '@/components/dashboards/overview/cumulative';
 import Summary from '@/components/dashboards/overview/summary';
 import QueryProvider from '@/components/providers/query-provider';
 import { getAccounts } from '@/db';

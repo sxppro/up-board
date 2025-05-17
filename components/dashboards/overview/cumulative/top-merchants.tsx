@@ -61,6 +61,7 @@ const TopMerchants = ({ dateRange }: TopMerchantsProps) => {
   const chartData = allMerchants?.map((merchant) => ({
     ...merchant,
     value: merchant.absAmount,
+    href: `/spending/${encodeURIComponent(merchant.name)}`,
     colour: merchant.parentCategoryName
       ? `bg-${colours[merchant.parentCategoryName]} bg-opacity-60`
       : `bg-${colours['Uncategorised']} bg-opacity-60`,
