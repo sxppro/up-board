@@ -9,6 +9,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/tremor/accordion';
+import { BarList } from '@/components/ui/tremor/bar-list';
 import {
   TransactionCategoryInfo,
   TransactionCategoryOption,
@@ -17,7 +18,7 @@ import { cn, formatCurrency } from '@/utils/helpers';
 import { useDate } from '@/utils/hooks';
 import { trpc } from '@/utils/trpc';
 import { CircleNotch, Minus, Plus } from '@phosphor-icons/react';
-import { BarList, Card } from '@tremor/react';
+import { Card } from '@tremor/react';
 
 interface SpendingDetailsProps {
   categoryStats: TransactionCategoryInfo[];
@@ -71,7 +72,7 @@ const SpendingDetails = ({
                 <Card className="ring-border bg-background p-3 flex flex-col gap-2">
                   <div className="flex items-center gap-2 text-muted-foreground">
                     <Plus className="size-4" />
-                    <h3>Money In</h3>
+                    <h3>In</h3>
                   </div>
                   <BarList
                     data={selectedSubcategoryIn.map(
@@ -91,7 +92,7 @@ const SpendingDetails = ({
                 <Card className="ring-border bg-background p-3 flex flex-col gap-2">
                   <div className="flex items-center gap-2 text-muted-foreground">
                     <Minus className="size-4" />
-                    <h3>Money Out</h3>
+                    <h3>Out</h3>
                   </div>
                   <BarList
                     data={selectedSubcategoryOut.map(
@@ -101,7 +102,7 @@ const SpendingDetails = ({
                         value: absAmount,
                       })
                     )}
-                    color={`up-${selectedCategory.id}`}
+                    colour={`bg-up-${selectedCategory.id} bg-opacity-60`}
                     valueFormatter={formatCurrency}
                     showAnimation
                   />

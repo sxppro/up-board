@@ -26,17 +26,17 @@ import { CircleNotch, Info } from '@phosphor-icons/react';
 import Link from 'next/link';
 import { useState } from 'react';
 
-interface TopMerchantsProps {
+interface TopCategoriesProps {
   dateRange: DateRange;
 }
 
-const DESCRIPTION = 'Merchants ordered by total expenditure, excluding refunds';
+const DESCRIPTION = 'Categories ordered by total expenditure';
 
-const TopMerchants = ({ dateRange }: TopMerchantsProps) => {
+const TopCategories = ({ dateRange }: TopCategoriesProps) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const { data: topMerchants } = trpc.public.getMerchantInfo.useQuery({
+  const { data: topCategories } = trpc.public.getCategoryInfo.useQuery({
     dateRange,
-    type: 'expense',
+    type: 'child',
     options: {
       limit: 4,
       sort: {
@@ -45,10 +45,10 @@ const TopMerchants = ({ dateRange }: TopMerchantsProps) => {
       },
     },
   });
-  const { data: allMerchants } = trpc.public.getMerchantInfo.useQuery(
+  const { data: allCategories } = trpc.public.getCategoryInfo.useQuery(
     {
       dateRange,
-      type: 'expense',
+      type: 'child',
       options: {
         sort: {
           amount: 1,
@@ -58,18 +58,19 @@ const TopMerchants = ({ dateRange }: TopMerchantsProps) => {
     },
     { enabled: isDialogOpen }
   );
-  const chartData = allMerchants?.map((merchant) => ({
-    ...merchant,
-    value: merchant.absAmount,
-    colour: merchant.parentCategoryName
-      ? `bg-${colours[merchant.parentCategoryName]} bg-opacity-60`
+  const chartData = allCategories?.map((category) => ({
+    ...category,
+    name: category.categoryName,
+    value: category.absAmount,
+    colour: category.parentCategoryName
+      ? `bg-${colours[category.parentCategoryName]} bg-opacity-60`
       : `bg-${colours['Uncategorised']} bg-opacity-60`,
   }));
 
   return (
     <div className="flex-1 flex flex-col gap-1">
       <div className="flex gap-0.5">
-        <span className="font-bold">Top Merchants</span>
+        <span className="font-bold">Top Categories</span>
         <Popover>
           <PopoverTrigger asChild>
             <Button
@@ -81,7 +82,7 @@ const TopMerchants = ({ dateRange }: TopMerchantsProps) => {
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-auto">
-            <p className="text-sm">{DESCRIPTION}</p>
+            <p className="text-sm">Categories ordered by total expenditure</p>
           </PopoverContent>
         </Popover>
 
@@ -96,7 +97,7 @@ const TopMerchants = ({ dateRange }: TopMerchantsProps) => {
           </DialogTrigger>
           <DialogContent className="sm:max-w-md">
             <DialogHeader>
-              <DialogTitle>Top Merchants</DialogTitle>
+              <DialogTitle>Top Categories</DialogTitle>
               <DialogDescription>{DESCRIPTION}</DialogDescription>
             </DialogHeader>
             <div className="h-96 overflow-y-scroll">
@@ -123,31 +124,39 @@ const TopMerchants = ({ dateRange }: TopMerchantsProps) => {
       </div>
 
       <div className="flex flex-col gap-1">
-        {topMerchants
-          ? topMerchants.map(({ name, amount, absAmount, parentCategory }) => (
-              <div key={name} className="w-full flex h-8 items-center">
-                <div className="flex flex-1 gap-2 overflow-hidden">
-                  <div
-                    className={cn(
-                      'inline-block h-6 w-1 rounded-full',
-                      parentCategory
-                        ? `bg-up-${parentCategory}`
-                        : 'bg-up-uncategorised'
-                    )}
-                  />
-                  <Button
-                    variant="link"
-                    className="h-6 p-0 text-subtle text-base truncate underline"
-                    asChild
-                  >
-                    <Link href={`/merchant/${encodeURIComponent(name)}`}>
-                      {name}
-                    </Link>
-                  </Button>
+        {topCategories
+          ? topCategories.map(
+              ({
+                category,
+                categoryName,
+                amount,
+                absAmount,
+                parentCategory,
+              }) => (
+                <div key={category} className="w-full flex h-8 items-center">
+                  <div className="flex flex-1 gap-2 overflow-hidden">
+                    <div
+                      className={cn(
+                        'inline-block h-6 w-1 rounded-full',
+                        parentCategory
+                          ? `bg-up-${parentCategory}`
+                          : 'bg-up-uncategorised'
+                      )}
+                    />
+                    <Button
+                      variant="link"
+                      className="h-6 p-0 text-subtle text-base truncate underline"
+                      asChild
+                    >
+                      <Link href={`/spending/${encodeURIComponent(category)}`}>
+                        {categoryName}
+                      </Link>
+                    </Button>
+                  </div>
+                  <span>{formatCurrencyAbsolute(absAmount, amount)}</span>
                 </div>
-                <span>{formatCurrencyAbsolute(absAmount, amount)}</span>
-              </div>
-            ))
+              )
+            )
           : [...Array(4).keys()].map((i) => (
               <Skeleton key={i} className="h-8" />
             ))}
@@ -156,4 +165,4 @@ const TopMerchants = ({ dateRange }: TopMerchantsProps) => {
   );
 };
 
-export default TopMerchants;
+export default TopCategories;
