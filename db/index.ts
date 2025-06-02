@@ -1088,7 +1088,7 @@ export const getTransactionsByDay = async (
  * @param options
  * @returns
  */
-const getTransactionsByDate = async (
+export const getTransactions = async (
   options: RetrievalOptions,
   type?: TransactionIOEnum
 ) => {
@@ -1210,7 +1210,7 @@ export const getTransactionsByCategory = async (
  * @param id transaction id
  * @returns transaction document
  */
-const getTransactionById = async (id: string) => {
+export const getTransactionById = async (id: string) => {
   try {
     const transactions = await connectToCollection<DbTransactionResource>(
       DB_NAME,
@@ -1336,5 +1336,3 @@ export const getTags = async () => {
     return { tags: [] };
   }
 };
-
-export { getTransactionById, getTransactionsByDate };

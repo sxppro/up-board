@@ -3,7 +3,7 @@ import TableSkeleton from '@/components/core/table-skeleton';
 import QueryProvider from '@/components/providers/query-provider';
 import TransactionTable from '@/components/tables/transaction-table';
 import { Separator } from '@/components/ui/separator';
-import { getTransactionsByDate } from '@/db';
+import { getTransactions } from '@/db';
 import { PageProps } from '@/types/custom';
 import { getDateRanges } from '@/utils/helpers';
 import { startOfMonth } from 'date-fns';
@@ -21,7 +21,7 @@ const TransactionsPage = async ({ searchParams }: PageProps) => {
   const { search } = searchParams;
   const searchTerm = Array.isArray(search) ? search[0] : search;
   const { last3months } = getDateRanges();
-  const transactions = await getTransactionsByDate({
+  const transactions = await getTransactions({
     match: {
       'attributes.isCategorizable': true,
       'attributes.createdAt': {
