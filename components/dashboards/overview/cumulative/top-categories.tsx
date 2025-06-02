@@ -26,13 +26,9 @@ import { CircleNotch, Info } from '@phosphor-icons/react';
 import Link from 'next/link';
 import { useState } from 'react';
 
-interface TopCategoriesProps {
-  dateRange: DateRange;
-}
-
 const DESCRIPTION = 'Categories ordered by total expenditure';
 
-const TopCategories = ({ dateRange }: TopCategoriesProps) => {
+const TopCategories = ({ dateRange }: { dateRange: DateRange }) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { data: topCategories } = trpc.public.getCategoryInfo.useQuery({
     dateRange,
