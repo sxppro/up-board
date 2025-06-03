@@ -825,9 +825,15 @@ export const getCategoryInfo = async (
       );
       return faker.helpers
         .arrayElements(filteredCategories, { min: 3, max: 10 })
-        .map(({ id, attributes }) => ({
+        .map(({ id, attributes, relationships }) => ({
           category: id,
           categoryName: attributes.name,
+          parentCategory: relationships.parent.data?.id,
+          parentCategoryName:
+            relationships.parent.data?.id &&
+            categoriesMock.data.find(
+              ({ id }) => id === relationships.parent.data?.id
+            )?.attributes.name,
           amount,
           absAmount: Math.abs(amount),
           transactions: faker.number.int({ max: 100 }),

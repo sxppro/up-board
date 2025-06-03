@@ -1,12 +1,18 @@
-import { getCategoryInfo, getIOStats, getTransactions } from '@/db';
+import {
+  getCategoryInfo,
+  getIOStats,
+  getMerchantInfo,
+  getTransactions,
+} from '@/db';
 import { filterTransactionFields } from '@/db/helpers';
 import { DateRange } from '@/server/schemas';
+import { colours } from '@/utils/constants';
 import { formatCurrency } from '@/utils/helpers';
 import { Title } from '@tremor/react';
 import { PropsWithChildren } from 'react';
 import QueryProvider from '../../../providers/query-provider';
 import TransactionTable from '../../../tables/transaction-table';
-import TopMerchantsBar from './top-merchants-bar';
+import TopItemsBar from './top-items-bar';
 
 interface PeriodInReviewProps {
   dateRange: DateRange;
@@ -40,13 +46,21 @@ const PeriodInReview = async ({
     limit: 1,
   });
   const largestTx = (await filterTransactionFields(largestTxRaw))[0];
+  const merchantInfo = await getMerchantInfo(
+    {
+      sort: {
+        amount: 1,
+        transactions: -1,
+      },
+    },
+    dateRange,
+    'expense'
+  );
   const subcategorySpending = await getCategoryInfo(dateRange, 'child', {
     sort: {
       amount: 1,
     },
   });
-  console.log(io);
-  console.log(subcategorySpending);
 
   return (
     <QueryProvider>
@@ -70,9 +84,33 @@ const PeriodInReview = async ({
           </p>
         </section>
         {/* Top merchants */}
-        <TopMerchantsBar dateRange={dateRange} />
+        <TopItemsBar
+          title="Top Merchants"
+          description="Merchants ordered by spending, excluding refunds"
+          data={merchantInfo.map((merchant) => ({
+            ...merchant,
+            value: merchant.absAmount,
+            href: `/merchant/${encodeURIComponent(merchant.name)}`,
+            colour: merchant.parentCategoryName
+              ? `bg-${colours[merchant.parentCategoryName]} bg-opacity-60`
+              : `bg-${colours['Uncategorised']} bg-opacity-60`,
+          }))}
+        />
         {/* Top categories */}
-        <section aria-label="categories ordered by total expenditure"></section>
+        <TopItemsBar
+          className="xl:col-span-2"
+          title="Top Categories"
+          description="Categories ordered by total net spending"
+          data={subcategorySpending.map((category) => ({
+            ...category,
+            name: category.categoryName,
+            value: category.absAmount,
+            href: `/spending/${encodeURIComponent(category.category)}`,
+            colour: category.parentCategoryName
+              ? `bg-${colours[category.parentCategoryName]} bg-opacity-60`
+              : `bg-${colours['Uncategorised']} bg-opacity-60`,
+          }))}
+        />
 
         <TransactionTable
           className="col-span-full"

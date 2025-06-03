@@ -12,59 +12,48 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Skeleton } from '@/components/ui/skeleton';
-import { BarList } from '@/components/ui/tremor/bar-list';
-import { DateRange } from '@/server/schemas';
-import { colours } from '@/utils/constants';
-import { formatCurrency } from '@/utils/helpers';
-import { trpc } from '@/utils/trpc';
+import { BarList, BarListProps } from '@/components/ui/tremor/bar-list';
+import { cn, formatCurrency } from '@/utils/helpers';
 import { CircleNotch } from '@phosphor-icons/react';
 import { Text, Title } from '@tremor/react';
 import { useState } from 'react';
 
-const DESCRIPTION = 'Merchants ordered by spending, excluding refunds';
+interface TopItemsBarProps extends Pick<BarListProps, 'data'> {
+  title: string;
+  description: string;
+  className?: string;
+}
 
-const TopMerchantsBar = ({ dateRange }: { dateRange: DateRange }) => {
+const TopItemsBar = ({
+  className,
+  data,
+  description,
+  title,
+}: TopItemsBarProps) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-
-  const { data: allMerchants } = trpc.public.getMerchantInfo.useQuery({
-    dateRange,
-    type: 'expense',
-    options: {
-      sort: {
-        amount: 1,
-        transactions: -1,
-      },
-    },
-  });
-
-  const chartData = allMerchants?.map((merchant) => ({
-    ...merchant,
-    value: merchant.absAmount,
-    href: `/merchant/${encodeURIComponent(merchant.name)}`,
-    colour: merchant.parentCategoryName
-      ? `bg-${colours[merchant.parentCategoryName]} bg-opacity-60`
-      : `bg-${colours['Uncategorised']} bg-opacity-60`,
-  }));
 
   return (
     <section
-      aria-label={DESCRIPTION}
-      className="relative h-full border rounded-tremor-default flex flex-col gap-4 p-4"
+      aria-label={description}
+      className={cn(
+        'relative h-full border rounded-tremor-default flex flex-col gap-4 p-4',
+        className
+      )}
     >
       <div>
-        <Title>Top Merchants</Title>
-        <Text>{DESCRIPTION}</Text>
+        <Title>{title}</Title>
+        <Text>{description}</Text>
       </div>
-      {chartData ? (
+      {data ? (
         <BarList
-          data={chartData.slice(0, 5)}
+          data={data.slice(0, 6)}
           valueFormatter={(number: number) => formatCurrency(number)}
           showAnimation
         />
       ) : (
-        <Skeleton className="w-full h-48" />
+        <Skeleton className="w-full h-56" />
       )}
-      {chartData && chartData.length > 5 && (
+      {data && data.length > 6 && (
         <div className="absolute inset-x-0 bottom-0 flex justify-center rounded-b-tremor-default bg-gradient-to-t from-tremor-background to-transparent py-7 dark:from-dark-tremor-background">
           <Button
             className="h-8"
@@ -77,13 +66,13 @@ const TopMerchantsBar = ({ dateRange }: { dateRange: DateRange }) => {
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Top Merchants</DialogTitle>
-            <DialogDescription>{DESCRIPTION}</DialogDescription>
+            <DialogTitle>{title}</DialogTitle>
+            <DialogDescription>{description}</DialogDescription>
           </DialogHeader>
           <ScrollableContent className="h-96">
-            {chartData ? (
+            {data ? (
               <BarList
-                data={chartData}
+                data={data}
                 valueFormatter={(number: number) => formatCurrency(number)}
                 showAnimation
               />
@@ -105,4 +94,4 @@ const TopMerchantsBar = ({ dateRange }: { dateRange: DateRange }) => {
   );
 };
 
-export default TopMerchantsBar;
+export default TopItemsBar;
