@@ -49,10 +49,12 @@ const TopMerchantsBar = ({ dateRange }: { dateRange: DateRange }) => {
   return (
     <section
       aria-label={DESCRIPTION}
-      className="relative h-full border rounded-tremor-default flex flex-col gap-2 p-4"
+      className="relative h-full border rounded-tremor-default flex flex-col gap-4 p-4"
     >
-      <Title>Top Merchants</Title>
-      <Text>{DESCRIPTION}</Text>
+      <div>
+        <Title>Top Merchants</Title>
+        <Text>{DESCRIPTION}</Text>
+      </div>
       {chartData ? (
         <BarList
           data={chartData.slice(0, 5)}

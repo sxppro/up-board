@@ -6,21 +6,25 @@ const ScrollableContent = ({
   children,
 }: { className?: string } & PropsWithChildren) => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const gradientRef = useRef<HTMLDivElement>(null);
+  const bottomGradientRef = useRef<HTMLDivElement>(null);
+  const topGradientRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const scrollContainer = scrollContainerRef.current;
-    const gradientElement = gradientRef.current;
-    if (!scrollContainer || !gradientElement) return;
+    const topGradient = topGradientRef.current;
+    const bottomGradient = bottomGradientRef.current;
+    if (!scrollContainer || !bottomGradient || !topGradient) return;
 
     const handleScroll = () => {
       const maxScroll =
         scrollContainer.scrollHeight - scrollContainer.clientHeight;
       const currentScroll = scrollContainer.scrollTop;
 
-      const newOpacity = Math.min((maxScroll - currentScroll) / 100, 1);
+      const topOpacity = Math.min(currentScroll / 100, 1);
+      const bottomOpacity = Math.min((maxScroll - currentScroll) / 100, 1);
 
-      gradientElement.style.opacity = newOpacity.toString();
+      topGradient.style.opacity = topOpacity.toString();
+      bottomGradient.style.opacity = bottomOpacity.toString();
     };
 
     scrollContainer.addEventListener('scroll', handleScroll, { passive: true });
@@ -36,7 +40,12 @@ const ScrollableContent = ({
         {children}
       </div>
       <div
-        ref={gradientRef}
+        ref={topGradientRef}
+        className="pointer-events-none absolute top-0 left-0 h-16 w-full bg-gradient-to-b from-background"
+        style={{ opacity: 0 }}
+      />
+      <div
+        ref={bottomGradientRef}
         className="pointer-events-none absolute bottom-0 left-0 h-16 w-full bg-gradient-to-t from-background"
         style={{ opacity: 1 }}
       />
