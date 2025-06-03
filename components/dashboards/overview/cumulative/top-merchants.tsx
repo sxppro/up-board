@@ -1,5 +1,6 @@
 'use client';
 
+import ScrollableContent from '@/components/core/scrollable-content';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -96,7 +97,7 @@ const TopMerchants = ({ dateRange }: { dateRange: DateRange }) => {
               <DialogTitle>Top Merchants</DialogTitle>
               <DialogDescription>{DESCRIPTION}</DialogDescription>
             </DialogHeader>
-            <div className="h-96 overflow-y-scroll">
+            <ScrollableContent className="h-96">
               {chartData ? (
                 <BarList
                   data={chartData}
@@ -109,7 +110,7 @@ const TopMerchants = ({ dateRange }: { dateRange: DateRange }) => {
                   <p className="text-lg tracking-tight">Loading data</p>
                 </div>
               )}
-            </div>
+            </ScrollableContent>
             <DialogFooter>
               <DialogClose asChild>
                 <Button>Go back</Button>

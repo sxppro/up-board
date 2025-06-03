@@ -1,6 +1,6 @@
 'use client';
 
-import ScrollableContent from '@/components/core/scrollable-container';
+import ScrollableContent from '@/components/core/scrollable-content';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
