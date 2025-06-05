@@ -24,7 +24,7 @@ interface TopItemsBarProps extends Pick<BarListProps, 'data'> {
   className?: string;
 }
 
-const TopItemsBar = ({
+const TopItemsBarList = ({
   className,
   data,
   description,
@@ -94,4 +94,4 @@ const TopItemsBar = ({
   );
 };
 
-export default TopItemsBar;
+export default TopItemsBarList;

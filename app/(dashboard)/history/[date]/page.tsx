@@ -1,4 +1,4 @@
-import PeriodInReview from '@/components/dashboards/overview/history/period-in-review';
+import PeriodInReview from '@/components/dashboards/history/period-in-review';
 import { getDateRanges } from '@/utils/helpers';
 import { endOfMonth, endOfYear, parse } from 'date-fns';
 

@@ -10,9 +10,9 @@ import { colours } from '@/utils/constants';
 import { formatCurrency } from '@/utils/helpers';
 import { Title } from '@tremor/react';
 import { PropsWithChildren } from 'react';
-import QueryProvider from '../../../providers/query-provider';
-import TransactionTable from '../../../tables/transaction-table';
-import TopItemsBar from './top-items-bar';
+import QueryProvider from '../../providers/query-provider';
+import TransactionTable from '../../tables/transaction-table';
+import TopItemsBarList from './top-items-bar-list';
 
 interface PeriodInReviewProps {
   dateRange: DateRange;
@@ -61,6 +61,8 @@ const PeriodInReview = async ({
       amount: 1,
     },
   });
+  const hourlySpending = await getIOStats({ groupBy: 'hourly' }, dateRange);
+  console.log(hourlySpending);
 
   return (
     <QueryProvider>
@@ -84,7 +86,7 @@ const PeriodInReview = async ({
           </p>
         </section>
         {/* Top merchants */}
-        <TopItemsBar
+        <TopItemsBarList
           title="Top Merchants"
           description="Merchants ordered by spending, excluding refunds"
           data={merchantInfo.map((merchant) => ({
@@ -97,7 +99,7 @@ const PeriodInReview = async ({
           }))}
         />
         {/* Top categories */}
-        <TopItemsBar
+        <TopItemsBarList
           className="xl:col-span-2"
           title="Top Categories"
           description="Categories ordered by total net spending"
