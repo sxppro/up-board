@@ -1,3 +1,5 @@
+import ExpenseCategoriesBar from '@/components/charts/expense-categories-bar';
+import ExpenseCategoriesDonut from '@/components/charts/expense-categories-donut';
 import {
   getCategoryInfo,
   getIOStats,
@@ -49,49 +51,55 @@ const PeriodInReview = async ({
   const merchantInfo = await getMerchantInfo(
     {
       sort: {
-        amount: 1,
+        absAmount: -1,
         transactions: -1,
       },
     },
-    dateRange,
-    'expense'
+    dateRange
   );
+  const categorySpending = await getCategoryInfo(dateRange, 'parent', {
+    sort: {
+      absAmount: -1,
+    },
+  });
   const subcategorySpending = await getCategoryInfo(dateRange, 'child', {
     sort: {
-      amount: 1,
+      absAmount: -1,
     },
   });
   const hourlySpending = await getIOStats({ groupBy: 'hourly' }, dateRange);
-  console.log(hourlySpending);
 
   return (
     <QueryProvider>
       <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-        <section aria-label="period in review" className="xl:col-span-2">
+        <section aria-label="Period in review" className="xl:col-span-2">
           {children}
         </section>
         {/* Largest transaction */}
         <section
-          aria-label="largest transaction"
-          className="h-full border rounded-tremor-default flex flex-col gap-2 p-4"
+          aria-label="Spending by category"
+          className="h-full border rounded-tremor-default flex flex-col gap-4 p-4"
         >
-          <Title>Largest Transaction</Title>
-          <p className="font-bold text-7xl/loose sm:text-6xl/loose py-16">
-            {largestTx?.amountRaw
-              ? formatCurrency(largestTx.amountRaw, false)
-              : '—'}
-          </p>
-          <p className="font-medium text-end">
-            {largestTx?.description ? largestTx.description : '—'}
-          </p>
+          <Title>Spending Overview</Title>
+          <ExpenseCategoriesDonut
+            className="h-64 text-2xl font-semibold"
+            data={categorySpending?.map(
+              ({ categoryName, absAmount, amount }) => ({
+                name: categoryName,
+                value: amount < 0 ? absAmount : 0,
+              })
+            )}
+            index="name"
+            colors={categorySpending?.map(({ category }) => `up-${category}`)}
+          />
         </section>
         {/* Top merchants */}
         <TopItemsBarList
-          title="Top Merchants"
-          description="Merchants ordered by spending, excluding refunds"
+          title="Spending by Merchant"
+          description="Merchants ordered by total net spending"
           data={merchantInfo.map((merchant) => ({
             ...merchant,
-            value: merchant.absAmount,
+            value: merchant.amount,
             href: `/merchant/${encodeURIComponent(merchant.name)}`,
             colour: merchant.parentCategoryName
               ? `bg-${colours[merchant.parentCategoryName]} bg-opacity-60`
@@ -101,18 +109,45 @@ const PeriodInReview = async ({
         {/* Top categories */}
         <TopItemsBarList
           className="xl:col-span-2"
-          title="Top Categories"
+          title="Spending by Category"
           description="Categories ordered by total net spending"
           data={subcategorySpending.map((category) => ({
             ...category,
             name: category.categoryName,
-            value: category.absAmount,
+            value: category.amount,
             href: `/spending/${encodeURIComponent(category.category)}`,
             colour: category.parentCategoryName
               ? `bg-${colours[category.parentCategoryName]} bg-opacity-60`
               : `bg-${colours['Uncategorised']} bg-opacity-60`,
           }))}
         />
+        {/* Transactions by hour */}
+        <section
+          aria-label="Transactions by hour"
+          className="h-full border rounded-tremor-default flex flex-col gap-4 p-4 xl:col-span-2"
+        >
+          <Title>Transactions by Hour</Title>
+          <ExpenseCategoriesBar
+            data={hourlySpending}
+            categories={['In', 'Out']}
+            index="Hour"
+          />
+        </section>
+        {/* Largest transaction */}
+        <section
+          aria-label="Largest transaction"
+          className="h-full border rounded-tremor-default flex flex-col gap-4 p-4"
+        >
+          <Title>Largest Transaction</Title>
+          <p className="font-bold text-7xl/loose sm:text-6xl/loose py-8">
+            {largestTx?.amountRaw
+              ? formatCurrency(largestTx.amountRaw, false)
+              : '—'}
+          </p>
+          <p className="font-medium text-end">
+            {largestTx?.description ? largestTx.description : '—'}
+          </p>
+        </section>
 
         <TransactionTable
           className="col-span-full"

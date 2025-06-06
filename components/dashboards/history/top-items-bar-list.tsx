@@ -47,7 +47,9 @@ const TopItemsBarList = ({
       {data ? (
         <BarList
           data={data.slice(0, 6)}
-          valueFormatter={(number: number) => formatCurrency(number)}
+          valueFormatter={(number: number) =>
+            `${number > 0 ? '+' : ''}${formatCurrency(number, true, false, 'never')}`
+          }
           showAnimation
         />
       ) : (
@@ -73,7 +75,9 @@ const TopItemsBarList = ({
             {data ? (
               <BarList
                 data={data}
-                valueFormatter={(number: number) => formatCurrency(number)}
+                valueFormatter={(number: number) =>
+                  `${number > 0 ? '+' : ''}${formatCurrency(number, true, false, 'never')}`
+                }
                 showAnimation
               />
             ) : (
