@@ -23,7 +23,12 @@ export const DateRangeSchema = z.object({
 });
 export type DateRange = z.infer<typeof DateRangeSchema>;
 
-export const DateRangeGroupBySchema = z.enum(['daily', 'monthly', 'yearly']);
+export const DateRangeGroupBySchema = z.enum([
+  'hourly',
+  'daily',
+  'monthly',
+  'yearly',
+]);
 export type DateRangeGroupBy = z.infer<typeof DateRangeGroupBySchema>;
 
 export const Merchant = z.object({
