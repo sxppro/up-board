@@ -8,9 +8,10 @@ import {
 } from '@/db';
 import { filterTransactionFields } from '@/db/helpers';
 import { DateRange } from '@/server/schemas';
-import { colours } from '@/utils/constants';
+import { colours, now } from '@/utils/constants';
 import { formatCurrency } from '@/utils/helpers';
 import { Title } from '@tremor/react';
+import { format, setHours } from 'date-fns';
 import { PropsWithChildren } from 'react';
 import QueryProvider from '../../providers/query-provider';
 import TransactionTable from '../../tables/transaction-table';
@@ -128,15 +129,22 @@ const PeriodInReview = async ({
         >
           <Title>Transactions by Hour</Title>
           <ExpenseCategoriesBar
-            data={hourlySpending}
+            data={hourlySpending.map((spending) => ({
+              ...spending,
+              Hour: format(
+                setHours(now, spending.Hour || 0).setMinutes(0),
+                'HH:mm'
+              ),
+            }))}
             categories={['In', 'Out']}
+            colors={['indigo', 'fuchsia']}
             index="Hour"
           />
         </section>
         {/* Largest transaction */}
         <section
           aria-label="Largest transaction"
-          className="h-full border rounded-tremor-default flex flex-col gap-4 p-4"
+          className="h-full border rounded-tremor-default flex flex-col justify-between gap-4 p-4"
         >
           <Title>Largest Transaction</Title>
           <p className="font-bold text-7xl/loose sm:text-6xl/loose py-8">

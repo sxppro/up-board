@@ -171,6 +171,7 @@ export type AccountInfo = z.infer<typeof AccountInfoSchema>;
 export const AccountMonthlyInfoSchema = z.object({
   Year: z.number().optional(),
   Month: z.number().optional(),
+  Hour: z.number().optional(),
   In: z.number(),
   Out: z.number(),
   Net: z.number(),

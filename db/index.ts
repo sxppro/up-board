@@ -514,6 +514,7 @@ export const getIOStats = async (
               Out: expenses,
               Net: income - expenses,
               Transactions: faker.number.int({ max: 100 }),
+              Hour: date.getHours(),
               Month: date.getMonth() + 1,
               Year: date.getFullYear(),
             };
