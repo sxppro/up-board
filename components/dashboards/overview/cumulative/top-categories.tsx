@@ -1,5 +1,6 @@
 'use client';
 
+import ScrollableContent from '@/components/core/scrollable-content';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -26,13 +27,9 @@ import { CircleNotch, Info } from '@phosphor-icons/react';
 import Link from 'next/link';
 import { useState } from 'react';
 
-interface TopCategoriesProps {
-  dateRange: DateRange;
-}
-
 const DESCRIPTION = 'Categories ordered by total expenditure';
 
-const TopCategories = ({ dateRange }: TopCategoriesProps) => {
+const TopCategories = ({ dateRange }: { dateRange: DateRange }) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { data: topCategories } = trpc.public.getCategoryInfo.useQuery({
     dateRange,
@@ -101,7 +98,7 @@ const TopCategories = ({ dateRange }: TopCategoriesProps) => {
               <DialogTitle>Top Categories</DialogTitle>
               <DialogDescription>{DESCRIPTION}</DialogDescription>
             </DialogHeader>
-            <div className="h-96 overflow-y-scroll">
+            <ScrollableContent className="h-96">
               {chartData ? (
                 <BarList
                   data={chartData}
@@ -114,7 +111,7 @@ const TopCategories = ({ dateRange }: TopCategoriesProps) => {
                   <p className="text-lg tracking-tight">Loading data</p>
                 </div>
               )}
-            </div>
+            </ScrollableContent>
             <DialogFooter>
               <DialogClose asChild>
                 <Button>Go back</Button>

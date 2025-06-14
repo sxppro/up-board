@@ -65,13 +65,15 @@ export const debounce = (callback: Function, wait: number) => {
 export const formatCurrency = (
   number?: number,
   decimals: boolean = true,
-  compact: boolean = false
+  compact: boolean = false,
+  signDisplay: 'auto' | 'never' = 'auto'
 ) =>
   Intl.NumberFormat('default', {
     style: 'currency',
     currency: 'AUD',
     currencyDisplay: 'narrowSymbol',
     maximumFractionDigits: decimals ? undefined : 0,
+    signDisplay,
     ...(compact && { notation: 'compact', compactDisplay: 'short' }),
   })
     .format(number ?? 0)

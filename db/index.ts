@@ -514,6 +514,7 @@ export const getIOStats = async (
               Out: expenses,
               Net: income - expenses,
               Transactions: faker.number.int({ max: 100 }),
+              Hour: date.getHours(),
               Month: date.getMonth() + 1,
               Year: date.getFullYear(),
             };
@@ -825,9 +826,15 @@ export const getCategoryInfo = async (
       );
       return faker.helpers
         .arrayElements(filteredCategories, { min: 3, max: 10 })
-        .map(({ id, attributes }) => ({
+        .map(({ id, attributes, relationships }) => ({
           category: id,
           categoryName: attributes.name,
+          parentCategory: relationships.parent.data?.id,
+          parentCategoryName:
+            relationships.parent.data?.id &&
+            categoriesMock.data.find(
+              ({ id }) => id === relationships.parent.data?.id
+            )?.attributes.name,
           amount,
           absAmount: Math.abs(amount),
           transactions: faker.number.int({ max: 100 }),
@@ -1088,7 +1095,7 @@ export const getTransactionsByDay = async (
  * @param options
  * @returns
  */
-const getTransactionsByDate = async (
+export const getTransactions = async (
   options: RetrievalOptions,
   type?: TransactionIOEnum
 ) => {
@@ -1210,7 +1217,7 @@ export const getTransactionsByCategory = async (
  * @param id transaction id
  * @returns transaction document
  */
-const getTransactionById = async (id: string) => {
+export const getTransactionById = async (id: string) => {
   try {
     const transactions = await connectToCollection<DbTransactionResource>(
       DB_NAME,
@@ -1336,5 +1343,3 @@ export const getTags = async () => {
     return { tags: [] };
   }
 };
-
-export { getTransactionById, getTransactionsByDate };

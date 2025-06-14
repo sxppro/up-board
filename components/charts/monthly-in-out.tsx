@@ -1,19 +1,18 @@
 'use client';
 
+import { now } from '@/utils/constants';
 import { formatCurrency } from '@/utils/helpers';
 import { trpc } from '@/utils/trpc';
 import { BarChart, Text, Title } from '@tremor/react';
 import { startOfMonth, subYears } from 'date-fns';
 import { Skeleton } from '../ui/skeleton';
 
-const currentDate = new Date();
-
 const MonthlyInOut = ({ accountId }: { accountId?: string }) => {
   const { data, isLoading } = trpc.public.getIOStats.useQuery({
     accountId,
     dateRange: {
-      from: startOfMonth(subYears(currentDate, 1)),
-      to: currentDate,
+      from: startOfMonth(subYears(now, 1)),
+      to: now,
     },
     options: { groupBy: 'monthly' },
   });

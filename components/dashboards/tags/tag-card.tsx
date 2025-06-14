@@ -56,7 +56,10 @@ const TagCard = async ({ id }: { id: string }) => {
         )}
         asChild
       >
-        <Link className="flex items-center gap-x-1" href={`/tags/${id}`}>
+        <Link
+          className="flex items-center gap-x-1"
+          href={`/tags/${encodeURIComponent(id)}`}
+        >
           More details
           <ArrowRight className="size-8" />
         </Link>
