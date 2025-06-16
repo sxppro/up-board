@@ -60,6 +60,7 @@ const TopItemsBarList = ({
           <Button
             className="h-8"
             onClick={() => setIsDialogOpen(!isDialogOpen)}
+            variant="secondary"
           >
             View more
           </Button>

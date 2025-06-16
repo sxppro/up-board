@@ -11,7 +11,7 @@ import { DateRange } from '@/server/schemas';
 import { colours, now } from '@/utils/constants';
 import { formatCurrency } from '@/utils/helpers';
 import { Title } from '@tremor/react';
-import { format, setHours } from 'date-fns';
+import { format, setHours, setMinutes } from 'date-fns';
 import { PropsWithChildren } from 'react';
 import QueryProvider from '../../providers/query-provider';
 import TransactionTable from '../../tables/transaction-table';
@@ -132,7 +132,7 @@ const PeriodInReview = async ({
             data={hourlySpending.map((spending) => ({
               ...spending,
               Hour: format(
-                setHours(now, spending.Hour || 0).setMinutes(0),
+                setMinutes(setHours(now, spending.Hour || 0), 0),
                 'HH:mm'
               ),
             }))}
