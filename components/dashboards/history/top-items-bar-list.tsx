@@ -11,10 +11,15 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
 import { Skeleton } from '@/components/ui/skeleton';
 import { BarList, BarListProps } from '@/components/ui/tremor/bar-list';
 import { cn, formatCurrency } from '@/utils/helpers';
-import { CircleNotch } from '@phosphor-icons/react';
+import { CircleNotch, Info } from '@phosphor-icons/react';
 import { Text, Title } from '@tremor/react';
 import { useState } from 'react';
 
@@ -22,6 +27,7 @@ interface TopItemsBarProps extends Pick<BarListProps, 'data'> {
   title: string;
   description: string;
   className?: string;
+  tooltip?: string;
 }
 
 const TopItemsBarList = ({
@@ -29,6 +35,7 @@ const TopItemsBarList = ({
   data,
   description,
   title,
+  tooltip,
 }: TopItemsBarProps) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
@@ -41,7 +48,25 @@ const TopItemsBarList = ({
       )}
     >
       <div>
-        <Title>{title}</Title>
+        <div className="flex items-center gap-1">
+          <Title>{title}</Title>
+          {tooltip ? (
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-6 w-6 rounded-full p-1"
+                >
+                  <Info />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto">
+                <p className="text-sm">{tooltip}</p>
+              </PopoverContent>
+            </Popover>
+          ) : null}
+        </div>
         <Text>{description}</Text>
       </div>
       {data ? (

@@ -35,7 +35,7 @@ const PeriodInReview = async ({
       },
     },
   });
-  const largestTxRaw = await getTransactions({
+  const largestTransactions = await getTransactions({
     match: {
       'attributes.isCategorizable': true,
       'attributes.createdAt': {
@@ -46,11 +46,17 @@ const PeriodInReview = async ({
     sort: {
       'attributes.amount.valueInBaseUnits': 1,
     },
-    limit: 1,
+    limit: 20,
   });
-  const largestTx = (await filterTransactionFields(largestTxRaw))[0];
+  const largestTx = (await filterTransactionFields(largestTransactions))[0];
   const merchantInfo = await getMerchantInfo(
     {
+      // Exclude income
+      match: {
+        'attributes.transactionType': {
+          $nin: ['Salary'],
+        },
+      },
       sort: {
         absAmount: -1,
         transactions: -1,
@@ -76,7 +82,7 @@ const PeriodInReview = async ({
         <section aria-label="Period in review" className="xl:col-span-2">
           {children}
         </section>
-        {/* Largest transaction */}
+        {/* Spending donut chart */}
         <section
           aria-label="Spending by category"
           className="h-full border rounded-tremor-default flex flex-col gap-4 p-4"
@@ -97,6 +103,7 @@ const PeriodInReview = async ({
         {/* Top merchants */}
         <TopItemsBarList
           title="Spending by Merchant"
+          tooltip="Excludes income"
           description="Merchants ordered by total net spending"
           data={merchantInfo.map((merchant) => ({
             ...merchant,
@@ -111,6 +118,7 @@ const PeriodInReview = async ({
         <TopItemsBarList
           className="xl:col-span-2"
           title="Spending by Category"
+          tooltip="Excludes income"
           description="Categories ordered by total net spending"
           data={subcategorySpending.map((category) => ({
             ...category,
