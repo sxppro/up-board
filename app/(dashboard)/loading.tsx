@@ -9,7 +9,7 @@ const DashboardPageLoading = () => {
         <div className="h-full flex flex-col items-center justify-center gap-2 m-auto">
           <CircleNotch className="h-8 w-8 animate-spin" />
           <h1 className="text-xl tracking-tight">
-            Loading account information
+            Loading your account information...
           </h1>
         </div>
       </div>

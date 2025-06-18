@@ -108,7 +108,7 @@ const TopCategories = ({ dateRange }: { dateRange: DateRange }) => {
               ) : (
                 <div className="flex flex-col items-center justify-center h-full gap-2">
                   <CircleNotch className="size-8 animate-spin" />
-                  <p className="text-lg tracking-tight">Loading data</p>
+                  <p className="text-lg tracking-tight">Loading data...</p>
                 </div>
               )}
             </ScrollableContent>

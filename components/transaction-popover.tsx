@@ -305,7 +305,9 @@ const TransactionPopover = ({ children, id }: TransactionPopoverProps) => {
               {isLoading ? (
                 <>
                   <CircleNotch className="size-8 animate-spin" />
-                  <p className="text-xl tracking-tight">Loading transaction</p>
+                  <p className="text-xl tracking-tight">
+                    Loading transaction...
+                  </p>
                 </>
               ) : isError ? (
                 <>
