@@ -6,16 +6,16 @@ import {
   getMerchantInfo,
   getTransactions,
 } from '@/db';
-import { filterTransactionFields } from '@/db/helpers';
 import { DateRange } from '@/server/schemas';
 import { colours, now } from '@/utils/constants';
-import { formatCurrency } from '@/utils/helpers';
+import { CircleNotch } from '@phosphor-icons/react/dist/ssr';
 import { Title } from '@tremor/react';
 import { format, setHours, setMinutes } from 'date-fns';
-import { PropsWithChildren } from 'react';
+import { PropsWithChildren, Suspense } from 'react';
 import QueryProvider from '../../providers/query-provider';
 import TransactionTable from '../../tables/transaction-table';
 import TopItemsBarList from './top-items-bar-list';
+import TopTransactionsMarquee from './top-transactions-marquee';
 
 interface PeriodInReviewProps {
   dateRange: DateRange;
@@ -35,20 +35,6 @@ const PeriodInReview = async ({
       },
     },
   });
-  const largestTransactions = await getTransactions({
-    match: {
-      'attributes.isCategorizable': true,
-      'attributes.createdAt': {
-        $gte: dateRange.from,
-        $lte: dateRange.to,
-      },
-    },
-    sort: {
-      'attributes.amount.valueInBaseUnits': 1,
-    },
-    limit: 20,
-  });
-  const largestTx = (await filterTransactionFields(largestTransactions))[0];
   const merchantInfo = await getMerchantInfo(
     {
       // Exclude income
@@ -100,6 +86,19 @@ const PeriodInReview = async ({
             colors={categorySpending?.map(({ category }) => `up-${category}`)}
           />
         </section>
+        {/* Top transactions marquee */}
+        <Suspense
+          fallback={
+            <div className="h-40 flex flex-col items-center justify-center gap-2 m-auto xl:col-span-3">
+              <CircleNotch className="h-8 w-8 animate-spin" />
+              <p className="text-xl tracking-tight">
+                Loading your top transactions...
+              </p>
+            </div>
+          }
+        >
+          <TopTransactionsMarquee dateRange={dateRange} />
+        </Suspense>
         {/* Top merchants */}
         <TopItemsBarList
           title="Spending by Merchant"
@@ -148,21 +147,6 @@ const PeriodInReview = async ({
             colors={['indigo', 'fuchsia']}
             index="Hour"
           />
-        </section>
-        {/* Largest transaction */}
-        <section
-          aria-label="Largest transaction"
-          className="h-full border rounded-tremor-default flex flex-col justify-between gap-4 p-4"
-        >
-          <Title>Largest Transaction</Title>
-          <p className="font-bold text-7xl/loose sm:text-6xl/loose py-8">
-            {largestTx?.amountRaw
-              ? formatCurrency(largestTx.amountRaw, false)
-              : '—'}
-          </p>
-          <p className="font-medium text-end">
-            {largestTx?.description ? largestTx.description : '—'}
-          </p>
         </section>
 
         <TransactionTable
