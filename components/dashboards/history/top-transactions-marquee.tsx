@@ -15,7 +15,7 @@ const TransactionCard = ({ tx }: { tx: TransactionResourceFiltered }) => {
         decoration={'left'}
         decorationColor={`up-${parentCategory}`}
         className={cn(
-          'h-16 w-64 flex items-center justify-between cursor-pointer overflow-hidden rounded-xl px-4 py-2 transition',
+          'h-16 w-64 flex items-center justify-between cursor-pointer overflow-hidden rounded-xl px-4 py-2 gap-1 transition',
           // light styles
           'bg-gray-950/[.01] hover:bg-gray-950/[.05]',
           // dark styles
