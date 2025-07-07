@@ -1,4 +1,3 @@
-import ExpenseCategoriesBar from '@/components/charts/expense-categories-bar';
 import ExpenseCategoriesDonut from '@/components/charts/expense-categories-donut';
 import {
   getCategoryInfo,
@@ -17,6 +16,7 @@ import QueryProvider from '../../providers/query-provider';
 import TransactionTable from '../../tables/transaction-table';
 import TopItemsBarList from './top-items-bar-list';
 import TopTransactionsMarquee from './top-transactions-marquee';
+import TransactionsByHour from './transactions-by-hour';
 
 interface PeriodInReviewProps {
   dateRange: DateRange;
@@ -165,24 +165,15 @@ const PeriodInReview = async ({
           }))}
         />
         {/* Transactions by hour */}
-        <section
-          aria-label="Transactions by hour"
-          className="h-full border rounded-tremor-default flex flex-col gap-4 p-4 xl:col-span-2"
-        >
-          <Title>Transactions by Hour</Title>
-          <ExpenseCategoriesBar
-            data={hourlySpending.map((spending) => ({
-              ...spending,
-              Hour: format(
-                setMinutes(setHours(now, spending.Hour || 0), 0),
-                'HH:mm'
-              ),
-            }))}
-            categories={['In', 'Out']}
-            colors={['indigo', 'fuchsia']}
-            index="Hour"
-          />
-        </section>
+        <TransactionsByHour
+          data={hourlySpending.map((spending) => ({
+            ...spending,
+            Hour: format(
+              setMinutes(setHours(now, spending.Hour || 0), 0),
+              'HH:mm'
+            ),
+          }))}
+        />
 
         <TransactionTable
           className="col-span-full"
