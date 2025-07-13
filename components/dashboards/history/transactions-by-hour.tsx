@@ -9,10 +9,10 @@ const TransactionsByHour = ({ data }: { data: any[] }) => {
   const [category, setCategory] = useState(IO_OPTIONS.IN);
   return (
     <section
-      aria-label="Transactions by hour"
+      aria-label="Transactions by time of day"
       className="h-full border rounded-tremor-default flex flex-col gap-4 p-4 xl:col-span-2"
     >
-      <Title>Transaction Value by Hour</Title>
+      <Title>Transactions by Time of Day</Title>
       <TabGroup
         onIndexChange={(index) => setCategory(Object.values(IO_OPTIONS)[index])}
       >
@@ -22,6 +22,7 @@ const TransactionsByHour = ({ data }: { data: any[] }) => {
         </TabList>
       </TabGroup>
       <ExpenseCategoriesBar
+        className="h-64"
         data={data}
         categories={[category]}
         colors={[category === IO_OPTIONS.IN ? 'indigo' : 'fuchsia']}
