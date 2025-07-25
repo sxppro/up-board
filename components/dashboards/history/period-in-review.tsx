@@ -1,3 +1,4 @@
+import AccountBalanceHistory from '@/components/charts/account-balance-history';
 import ExpenseCategoriesDonut from '@/components/charts/expense-categories-donut';
 import {
   getCategoryInfo,
@@ -149,7 +150,14 @@ const PeriodInReview = async ({
               </div>
             </div>
           </section>
-          <section className="h-full flex flex-col gap-4 p-4"></section>
+          <section className="h-full flex flex-col gap-4">
+            <Title className="p-4">Savings</Title>
+            <AccountBalanceHistory
+              dateRange={dateRange}
+              className="h-64 -m-4"
+              accountType="SAVER"
+            />
+          </section>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
           {/* Top transactions marquee */}

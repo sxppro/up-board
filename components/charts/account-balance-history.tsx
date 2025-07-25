@@ -1,27 +1,31 @@
 'use client';
 
+import { DateRange } from '@/server/schemas';
 import { AccountType } from '@/types/custom';
-import { formatCurrency, getDateRanges } from '@/utils/helpers';
+import { cn, formatCurrency } from '@/utils/helpers';
 import { trpc } from '@/utils/trpc';
 import { AreaChart } from '@tremor/react';
 
 const AccountBalanceHistory = ({
   accountId,
   accountType,
+  className,
+  dateRange,
 }: {
   accountId?: string;
   accountType?: AccountType;
+  className?: string;
+  dateRange: DateRange;
 }) => {
-  const { last12months } = getDateRanges();
   const { data } = trpc.public.getAccountBalance.useQuery({
-    dateRange: last12months,
+    dateRange: dateRange,
     accountId,
     accountType,
   });
 
   return (
     <AreaChart
-      className="w-full min-h-[20rem]"
+      className={cn('w-full min-h-[20rem]', className)}
       data={data || []}
       index="FormattedDate"
       categories={['Balance']}
