@@ -9,7 +9,13 @@ import {
 import { DateRange } from '@/server/schemas';
 import { colours, now } from '@/utils/constants';
 import { cn, formatCurrency } from '@/utils/helpers';
-import { CircleNotch } from '@phosphor-icons/react/dist/ssr';
+import {
+  CircleNotch,
+  Equals,
+  Receipt,
+  TrendDown,
+  TrendUp,
+} from '@phosphor-icons/react/dist/ssr';
 import { Title } from '@tremor/react';
 import { format, setHours, setMinutes } from 'date-fns';
 import Link from 'next/link';
@@ -76,29 +82,82 @@ const PeriodInReview = async ({
         <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 gap-6">
           <section
             aria-label="Period in review"
-            className="flex flex-col gap-2 justify-end xl:col-span-2"
+            className="flex flex-col gap-4 xl:col-span-2"
           >
-            {title}
+            <div className="flex flex-col gap-2">
+              {title}
+              <p className="text-sm text-muted-foreground">
+                {`${format(dateRange.from, 'MMMM d, yyyy')} - ${format(dateRange.to, 'MMMM d, yyyy')}`}
+              </p>
+            </div>
             {io ? (
-              <div className="flex flex-col sm:flex-row p-4 border rounded-tremor-default">
-                <div className="flex-1 flex flex-col gap-1">
-                  <p className="text-sm text-subtle">Money In</p>
-                  <p className="font-semibold">{formatCurrency(io?.In)}</p>
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-2">
+                <div className="flex flex-col gap-3 p-4 border rounded-lg bg-card">
+                  <div className="flex items-center gap-2">
+                    <div className="p-2 rounded-md bg-green-100 dark:bg-green-900/20">
+                      <TrendUp className="h-4 w-4 text-green-600 dark:text-green-400" />
+                    </div>
+                    <p className="text-sm font-medium text-muted-foreground">
+                      Money In
+                    </p>
+                  </div>
+                  <p className="text-2xl font-bold">{formatCurrency(io?.In)}</p>
                 </div>
-                <div className="border-b my-4 sm:border-r sm:mx-4 sm:my-0" />
-                <div className="flex-1 flex flex-col gap-1">
-                  <p className="text-sm text-subtle">Money Out</p>
-                  <p className="font-semibold">{formatCurrency(io?.Out)}</p>
+
+                <div className="flex flex-col gap-3 p-4 border rounded-lg bg-card">
+                  <div className="flex items-center gap-2">
+                    <div className="p-2 rounded-md bg-red-100 dark:bg-red-900/20">
+                      <TrendDown className="h-4 w-4 text-red-600 dark:text-red-400" />
+                    </div>
+                    <p className="text-sm font-medium text-muted-foreground">
+                      Money Out
+                    </p>
+                  </div>
+                  <p className="text-2xl font-bold">
+                    {formatCurrency(io?.Out)}
+                  </p>
                 </div>
-                <div className="border-b my-4 sm:border-r sm:mx-4 sm:my-0" />
-                <div className="flex-1 flex flex-col gap-1">
-                  <p className="text-sm text-subtle">Net</p>
-                  <p className="font-semibold">{formatCurrency(io?.Net)}</p>
+
+                <div className="flex flex-col gap-3 p-4 border rounded-lg bg-card">
+                  <div className="flex items-center gap-2">
+                    <div
+                      className={cn(
+                        'p-2 rounded-md',
+                        io?.Net >= 0
+                          ? 'bg-blue-100 dark:bg-blue-900/20'
+                          : 'bg-orange-100 dark:bg-orange-900/20'
+                      )}
+                    >
+                      <Equals
+                        className={cn(
+                          'h-4 w-4',
+                          io?.Net >= 0
+                            ? 'text-blue-600 dark:text-blue-400'
+                            : 'text-orange-600 dark:text-orange-400'
+                        )}
+                      />
+                    </div>
+                    <p className="text-sm font-medium text-muted-foreground">
+                      Net
+                    </p>
+                  </div>
+                  <p className="text-2xl font-bold">
+                    {formatCurrency(io?.Net)}
+                  </p>
                 </div>
-                <div className="border-b my-4 sm:border-r sm:mx-4 sm:my-0" />
-                <div className="flex-1 flex flex-col gap-1">
-                  <p className="text-sm text-subtle">Transactions</p>
-                  <p className="font-semibold">{io?.Transactions}</p>
+
+                <div className="flex flex-col gap-3 p-4 border rounded-lg bg-card">
+                  <div className="flex items-center gap-2">
+                    <div className="p-2 rounded-md bg-slate-100 dark:bg-slate-800">
+                      <Receipt className="h-4 w-4 text-slate-600 dark:text-slate-400" />
+                    </div>
+                    <p className="text-sm font-medium text-muted-foreground">
+                      Transactions
+                    </p>
+                  </div>
+                  <p className="text-2xl font-bold">
+                    {io?.Transactions.toLocaleString()}
+                  </p>
                 </div>
               </div>
             ) : null}
@@ -108,8 +167,8 @@ const PeriodInReview = async ({
             aria-label="Spending by category"
             className="h-full flex flex-col"
           >
-            <Title>Spending</Title>
-            <div className="flex flex-col sm:flex-row gap-2 items-center">
+            <Title className="py-4 sm:px-4">Spending</Title>
+            <div className="flex-1 flex flex-col sm:flex-row gap-2 items-center">
               <ExpenseCategoriesDonut
                 className="basis-1/2 h-64 text-2xl font-semibold"
                 data={categorySpending?.map(
@@ -151,10 +210,10 @@ const PeriodInReview = async ({
             </div>
           </section>
           <section className="h-full flex flex-col gap-4">
-            <Title className="p-4">Savings</Title>
+            <Title className="py-4 sm:px-4">Savings</Title>
             <AccountBalanceHistory
               dateRange={dateRange}
-              className="h-64 -m-4"
+              className="h-64 w-auto -m-4"
               accountType="SAVER"
             />
           </section>
