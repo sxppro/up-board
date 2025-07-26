@@ -168,44 +168,63 @@ const PeriodInReview = async ({
             className="h-full flex flex-col"
           >
             <Title className="py-4 sm:px-4">Spending</Title>
-            <div className="flex-1 flex flex-col sm:flex-row gap-2 items-center">
-              <ExpenseCategoriesDonut
-                className="basis-1/2 h-64 text-2xl font-semibold"
-                data={categorySpending?.map(
-                  ({ categoryName, absAmount, amount }) => ({
-                    name: categoryName,
-                    value: amount < 0 ? absAmount : 0,
-                  })
-                )}
-                index="name"
-                colors={categorySpending?.map(
-                  ({ category }) => `up-${category}`
-                )}
-              />
-              <div className="w-full grid grid-cols-2 gap-1 basis-1/2">
-                {categorySpending?.map(
-                  ({ category, categoryName, absAmount, amount }) =>
-                    amount < 0 ? (
-                      <Link
-                        href={`/spending?category=${category}`}
-                        key={category}
-                        className="flex flex-col gap-1 border rounded-tremor-default shadow p-2"
-                      >
-                        <div className="flex gap-2 items-center">
+            <div className="flex flex-col lg:flex-row gap-3 items-start lg:items-center">
+              <div className="w-full lg:w-auto lg:flex-shrink-0">
+                <ExpenseCategoriesDonut
+                  className="h-64 w-64 mx-auto text-2xl font-semibold"
+                  data={categorySpending?.map(
+                    ({ categoryName, absAmount, amount }) => ({
+                      name: categoryName,
+                      value: amount < 0 ? absAmount : 0,
+                    })
+                  )}
+                  index="name"
+                  colors={categorySpending?.map(
+                    ({ category }) => `up-${category}`
+                  )}
+                />
+              </div>
+              <div className="w-full flex-1">
+                <div className="space-y-3">
+                  {categorySpending?.map(
+                    ({ category, categoryName, absAmount, amount }) =>
+                      amount < 0 ? (
+                        <Link
+                          href={`/spending?category=${category}`}
+                          key={category}
+                          className="group flex items-center gap-4 p-3 rounded-lg border bg-card hover:bg-accent/5 transition-colors duration-200"
+                          aria-label={`View details for ${categoryName} spending`}
+                        >
                           <div
                             className={cn(
-                              'size-4 rounded',
-                              `bg-${colours[categoryName]} bg-opacity-60`
+                              'size-6 rounded-lg flex-shrink-0',
+                              `bg-${colours[categoryName]} bg-opacity-80`
                             )}
+                            aria-hidden="true"
                           />
-                          <p className="text-sm">{categoryName}</p>
-                        </div>
-                        <div>
-                          <p className=" text-sm font-semibold">{`${((amount / categorySpendingSum) * 100).toFixed(1)}% ・ ${formatCurrency(absAmount, true, true)}`}</p>
-                        </div>
-                      </Link>
-                    ) : null
-                )}
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center justify-between gap-1">
+                              <h4 className="font-medium text-base text-foreground group-hover:text-accent-foreground truncate">
+                                {categoryName}
+                              </h4>
+                              <div>
+                                <span className="text-sm text-muted-foreground mr-2">
+                                  {(
+                                    (amount / categorySpendingSum) *
+                                    100
+                                  ).toFixed(1)}
+                                  %
+                                </span>
+                                <span className="font-semibold text-lg text-foreground flex-shrink-0">
+                                  {formatCurrency(absAmount, true, true)}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        </Link>
+                      ) : null
+                  )}
+                </div>
               </div>
             </div>
           </section>
