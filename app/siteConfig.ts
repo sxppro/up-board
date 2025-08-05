@@ -9,6 +9,7 @@ export const siteConfig = {
     merchants: '/merchants',
     transactions: '/transactions',
     tags: '/tags',
+    history: '/history',
   },
 };
 
