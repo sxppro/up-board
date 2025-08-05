@@ -329,6 +329,8 @@ export const getAccounts = async (options?: RetrievalOptions) => {
           balance: {
             $divide: ['$attributes.balance.valueInBaseUnits', 100],
           },
+          // iso string
+          createdAt: '$attributes.createdAt',
         })
         .toArray();
       return results;
@@ -345,12 +347,14 @@ export const getAccounts = async (options?: RetrievalOptions) => {
               displayName: attributes.displayName,
               accountType: attributes.accountType,
               balance: parseFloat(attributes.balance.value),
+              createdAt: attributes.createdAt,
             }))
         : accountsMock.data.map(({ id, attributes }) => ({
             id,
             displayName: attributes.displayName,
             accountType: attributes.accountType,
             balance: parseFloat(attributes.balance.value),
+            createdAt: attributes.createdAt,
           }));
     }
   } catch (err) {
@@ -442,6 +446,7 @@ export const getAccountById = async (accountId: string) => {
               $toDouble: '$attributes.balance.value',
             },
             accountType: '$attributes.accountType',
+            createdAt: '$attributes.createdAt',
           },
         }
       );
@@ -454,6 +459,7 @@ export const getAccountById = async (accountId: string) => {
             displayName: account.attributes.displayName,
             accountType: account.attributes.accountType,
             balance: parseFloat(account.attributes.balance.value),
+            createdAt: account.attributes.createdAt,
           }
         : null;
     }
@@ -1341,5 +1347,124 @@ export const getTags = async () => {
   } catch (err) {
     console.error(err);
     return { tags: [] };
+  }
+};
+
+/**
+ * Get the earliest account creation date
+ * @returns Date of the first account created
+ */
+export const getEarliestAccountCreationDate =
+  async (): Promise<Date | null> => {
+    try {
+      const accounts = await connectToCollection<DbAccountResource>(
+        DB_NAME,
+        'accounts'
+      );
+      if (accounts) {
+        const cursor = accounts
+          .find({})
+          .sort({ 'attributes.createdAt': 1 })
+          .limit(1);
+        const results = await cursor.toArray();
+        const createdAt = results[0]?.attributes?.createdAt;
+        return createdAt ? new Date(createdAt) : null;
+      } else {
+        // Mock data fallback - use the oldest account in mock data
+        const oldestAccount = accountsMock.data.reduce((oldest, account) => {
+          const accountDate = new Date(account.attributes.createdAt);
+          const oldestDate = new Date(oldest.attributes.createdAt);
+          return accountDate < oldestDate ? account : oldest;
+        });
+        return new Date(oldestAccount.attributes.createdAt);
+      }
+    } catch (err) {
+      console.error(err);
+      return null;
+    }
+  };
+
+/**
+ * Get the earliest transaction date
+ * @param accountId Optional account ID to filter by
+ * @returns Date of the first transaction
+ */
+export const getEarliestTransactionDate = async (
+  accountId?: string
+): Promise<Date | null> => {
+  try {
+    const transactions = await connectToCollection<DbTransactionResource>(
+      DB_NAME,
+      'transactions'
+    );
+    if (transactions) {
+      const match = accountId
+        ? { 'relationships.account.data.id': accountId }
+        : {};
+      const cursor = transactions
+        .find(match)
+        .sort({ 'attributes.createdAt': 1 })
+        .limit(1);
+      const results = await cursor.toArray();
+      const createdAt = results[0]?.attributes?.createdAt;
+      return createdAt ? new Date(createdAt) : null;
+    } else {
+      // Mock data fallback
+      let filteredTransactions = transactionsMock.data;
+      if (accountId) {
+        filteredTransactions = transactionsMock.data.filter(
+          (tx) => tx.relationships.account.data.id === accountId
+        );
+      }
+      if (filteredTransactions.length === 0) return null;
+
+      const oldestTransaction = filteredTransactions.reduce(
+        (oldest, transaction) => {
+          const transactionDate = new Date(transaction.attributes.createdAt);
+          const oldestDate = new Date(oldest.attributes.createdAt);
+          return transactionDate < oldestDate ? transaction : oldest;
+        }
+      );
+      return new Date(oldestTransaction.attributes.createdAt);
+    }
+  } catch (err) {
+    console.error(err);
+    return null;
+  }
+};
+
+/**
+ * Get account timeline bounds (earliest to latest dates for navigation)
+ * @returns Object with earliestAccountDate, earliestTransactionDate, and latestDate
+ */
+export const getAccountTimelineBounds = async () => {
+  try {
+    const [earliestAccountDate, earliestTransactionDate] = await Promise.all([
+      getEarliestAccountCreationDate(),
+      getEarliestTransactionDate(),
+    ]);
+
+    // Use the earlier of account creation or first transaction
+    const startDate =
+      earliestAccountDate && earliestTransactionDate
+        ? earliestAccountDate < earliestTransactionDate
+          ? earliestAccountDate
+          : earliestTransactionDate
+        : earliestAccountDate || earliestTransactionDate;
+
+    return {
+      startDate,
+      endDate: now, // Current date as the latest possible date
+      earliestAccountDate,
+      earliestTransactionDate,
+    };
+  } catch (err) {
+    console.error(err);
+    return {
+      startDate: null,
+      endDate: now,
+      earliestAccountDate: null,
+      earliestTransactionDate: null,
+    };
   }
 };

@@ -165,6 +165,7 @@ export const AccountInfoSchema = z.object({
   displayName: z.string(),
   balance: z.number(),
   accountType: z.string(),
+  createdAt: z.string().datetime(),
 });
 export type AccountInfo = z.infer<typeof AccountInfoSchema>;
 
