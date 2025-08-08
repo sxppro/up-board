@@ -1,3 +1,5 @@
+'use client';
+
 import {
   cn,
   formatCurrency,
@@ -5,7 +7,13 @@ import {
   outputTransactionFields,
 } from '@/utils/helpers';
 import { focusRing } from '@/utils/tremor';
+import {
+  useKnockClient,
+  useNotifications,
+  useNotificationStore,
+} from '@knocklabs/react';
 import { Note, Paperclip, Tag } from '@phosphor-icons/react/dist/ssr';
+import { useEffect } from 'react';
 import TransactionPopover from '../transaction-popover';
 import { Button } from '../ui/button';
 import { Separator } from '../ui/separator';
@@ -22,6 +30,25 @@ interface TransactionsListProps {
  * @returns
  */
 const TransactionsList = ({ transactions }: TransactionsListProps) => {
+  if (!process.env.NEXT_PUBLIC_KNOCK_CHANNEL_ID) {
+    throw new Error(
+      'Environment variable NEXT_PUBLIC_KNOCK_CHANNEL_ID is not defined. Please set it to enable in-app notifications.'
+    );
+  }
+
+  const knockClient = useKnockClient();
+  const feedClient = useNotifications(
+    knockClient,
+    process.env.NEXT_PUBLIC_KNOCK_CHANNEL_ID
+  );
+  const { items, metadata } = useNotificationStore(feedClient);
+
+  useEffect(() => {
+    feedClient.fetch();
+  }, [feedClient]);
+
+  console.log(items);
+
   if (transactions.length === 0) {
     return <p className="text-muted-foreground">No transactions found.</p>;
   }
