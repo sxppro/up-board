@@ -8,6 +8,11 @@ export const colours: { [key: string]: string } = {
   Uncategorised: 'up-uncategorised',
 };
 
+export const IO_OPTIONS = {
+  IN: 'In',
+  OUT: 'Out',
+};
+
 export const YEARS_IN_ONE_DECADE = 10;
 
 export const DB_NAME = 'up';

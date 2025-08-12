@@ -1,6 +1,5 @@
 'use client';
 
-import AccountBalanceHistory from '@/components/charts/account-balance-history';
 import {
   Popover,
   PopoverContent,
@@ -338,18 +337,6 @@ const CumulativeSnapshot = ({ accountId }: CumulativeSnapshotProps) => {
             />
           </div>
         </div>
-      </section>
-      <section aria-labelledby="overview-savings">
-        <div>
-          <h1
-            id="overview-savings"
-            className="text-2xl font-semibold tracking-tight"
-          >
-            Savings
-          </h1>
-          <Separator className="mt-2" />
-        </div>
-        <AccountBalanceHistory accountType="SAVER" />
       </section>
     </>
   );

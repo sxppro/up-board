@@ -23,7 +23,12 @@ export const DateRangeSchema = z.object({
 });
 export type DateRange = z.infer<typeof DateRangeSchema>;
 
-export const DateRangeGroupBySchema = z.enum(['daily', 'monthly', 'yearly']);
+export const DateRangeGroupBySchema = z.enum([
+  'hourly',
+  'daily',
+  'monthly',
+  'yearly',
+]);
 export type DateRangeGroupBy = z.infer<typeof DateRangeGroupBySchema>;
 
 export const Merchant = z.object({
@@ -160,12 +165,14 @@ export const AccountInfoSchema = z.object({
   displayName: z.string(),
   balance: z.number(),
   accountType: z.string(),
+  createdAt: z.string().datetime(),
 });
 export type AccountInfo = z.infer<typeof AccountInfoSchema>;
 
 export const AccountMonthlyInfoSchema = z.object({
   Year: z.number().optional(),
   Month: z.number().optional(),
+  Hour: z.number().optional(),
   In: z.number(),
   Out: z.number(),
   Net: z.number(),

@@ -6,13 +6,9 @@ import { capitalise, cn, formatCurrency } from '@/utils/helpers';
 import { focusRing } from '@/utils/tremor';
 import { trpc } from '@/utils/trpc';
 import { TZDate } from '@date-fns/tz';
-import {
-  ArrowSquareOut,
-  CircleNotch,
-  ClipboardText,
-  X,
-} from '@phosphor-icons/react';
+import { CircleNotch, ClipboardText, X } from '@phosphor-icons/react';
 import { useSession } from 'next-auth/react';
+import Image from 'next/image';
 import Link from 'next/link';
 import {
   CSSProperties,
@@ -23,6 +19,15 @@ import {
 import TransactionTagsCombobox from './core/transaction-tags-combobox';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from './ui/dialog';
 import { Separator } from './ui/separator';
 import {
   Sheet,
@@ -57,12 +62,16 @@ const PopoverContentCell = ({
 );
 
 const PopoverContent = ({ tx }: { tx: TransactionResourceFiltered }) => {
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { toast } = useToast();
   const { data: session } = useSession();
-  const { refetch } = trpc.user.getAttachment.useQuery(tx.attachment || '', {
-    refetchOnWindowFocus: false,
-    enabled: false,
-  });
+  const { data: attachment, isLoading } = trpc.user.getAttachment.useQuery(
+    tx.attachment || '',
+    {
+      refetchOnWindowFocus: false,
+      enabled: isDialogOpen,
+    }
+  );
   const { data: tags } = trpc.user.getTags.useQuery(undefined, {
     enabled: !!session,
   });
@@ -195,20 +204,46 @@ const PopoverContent = ({ tx }: { tx: TransactionResourceFiltered }) => {
       </div>
       <div className="flex flex-col gap-2">
         <h2 className="text-lg font-medium">Attachments</h2>
-        {tx.attachment && session ? (
-          <Button
-            variant="link"
-            className="border"
-            onClick={(e) => {
-              e.preventDefault();
-              refetch().then((data) =>
-                window.open(data.data?.attributes.fileURL || '', '_blank')
-              );
-            }}
-          >
-            View attachment
-            <ArrowSquareOut className="size-4" />
-          </Button>
+        {session && tx.attachment ? (
+          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <DialogTrigger asChild>
+              <Button variant="link" className="border" disabled={isLoading}>
+                {isLoading ? (
+                  <>
+                    Fetching attachment{' '}
+                    <CircleNotch className="size-4 animate-spin" />
+                  </>
+                ) : (
+                  'View attachment'
+                )}
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-md">
+              <DialogHeader>
+                <DialogTitle>Attachment</DialogTitle>
+              </DialogHeader>
+              {attachment?.attributes?.fileURL ? (
+                <div className="relative w-full h-[32rem]">
+                  <Image
+                    className="object-contain"
+                    src={attachment?.attributes.fileURL}
+                    alt="Transaction attachment"
+                    fill
+                  />
+                </div>
+              ) : (
+                <div className="flex flex-col items-center justify-center min-h-[32rem] gap-2">
+                  <CircleNotch className="size-8 animate-spin" />
+                  <p className="text-lg tracking-tight">Loading attachment</p>
+                </div>
+              )}
+              <DialogFooter>
+                <DialogClose asChild>
+                  <Button>Close</Button>
+                </DialogClose>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         ) : (
           <p className="text-muted-foreground text-sm">No attachment.</p>
         )}
@@ -270,7 +305,9 @@ const TransactionPopover = ({ children, id }: TransactionPopoverProps) => {
               {isLoading ? (
                 <>
                   <CircleNotch className="size-8 animate-spin" />
-                  <p className="text-xl tracking-tight">Loading transaction</p>
+                  <p className="text-xl tracking-tight">
+                    Loading transaction...
+                  </p>
                 </>
               ) : isError ? (
                 <>

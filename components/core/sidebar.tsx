@@ -5,6 +5,7 @@ import { cn } from '@/utils/helpers';
 import { focusRing } from '@/utils/tremor';
 import {
   ChartLine,
+  Clock,
   CurrencyDollar,
   Link as LinkIcon,
   ListBullets,
@@ -44,6 +45,11 @@ const navigation = [
     name: 'Tags',
     href: siteConfig.baseLinks.tags,
     icon: Tag,
+  },
+  {
+    name: 'History',
+    href: siteConfig.baseLinks.history,
+    icon: Clock,
   },
 ];
 
