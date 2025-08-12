@@ -18,7 +18,7 @@ const HistoryPage = ({ params }: { params: { date: string } }) => {
       const monthRange = { from: monthYear, to: endOfMonth(monthYear) };
       return (
         <PeriodInReview dateRange={monthRange}>
-          <h1 className="text-4xl sm:text-6xl font-semibold tracking-tight pt-8 sm:pt-12">
+          <h1 className="text-4xl sm:text-6xl font-semibold tracking-tight">
             {monthYear.toLocaleString('default', {
               month: 'long',
               year: 'numeric',
@@ -32,7 +32,7 @@ const HistoryPage = ({ params }: { params: { date: string } }) => {
     const yearRange = { from: year, to: endOfYear(year) };
     return (
       <PeriodInReview dateRange={yearRange}>
-        <h1 className="text-4xl sm:text-6xl font-semibold tracking-tight pt-8 sm:pt-12">
+        <h1 className="text-4xl sm:text-6xl font-semibold tracking-tight">
           {year.toLocaleString('default', {
             year: 'numeric',
           })}

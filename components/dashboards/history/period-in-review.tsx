@@ -1,11 +1,6 @@
 import AccountBalanceHistory from '@/components/charts/account-balance-history';
 import ExpenseCategoriesDonut from '@/components/charts/expense-categories-donut';
-import {
-  getCategoryInfo,
-  getIOStats,
-  getMerchantInfo,
-  getTransactions,
-} from '@/db';
+import { getCategoryInfo, getIOStats, getMerchantInfo } from '@/db';
 import { DateRange } from '@/server/schemas';
 import { colours, now } from '@/utils/constants';
 import { cn, formatCurrency } from '@/utils/helpers';
@@ -21,7 +16,6 @@ import { format, setHours, setMinutes } from 'date-fns';
 import Link from 'next/link';
 import { PropsWithChildren, Suspense } from 'react';
 import QueryProvider from '../../providers/query-provider';
-import TransactionTable from '../../tables/transaction-table';
 import TopItemsBarList from './top-items-bar-list';
 import TopTransactionsMarquee from './top-transactions-marquee';
 import TransactionsByHour from './transactions-by-hour';
@@ -35,15 +29,6 @@ const PeriodInReview = async ({
   children: title,
 }: PeriodInReviewProps & PropsWithChildren) => {
   const io = (await getIOStats({}, dateRange))[0];
-  const transactions = await getTransactions({
-    match: {
-      'attributes.isCategorizable': true,
-      'attributes.createdAt': {
-        $gte: dateRange.from,
-        $lte: dateRange.to,
-      },
-    },
-  });
   const merchantInfo = await getMerchantInfo(
     {
       // Exclude income
@@ -84,7 +69,7 @@ const PeriodInReview = async ({
             aria-label="Period in review"
             className="flex flex-col gap-4 xl:col-span-2"
           >
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col sm:flex-row justify-between gap-2">
               {title}
               <p className="text-sm text-muted-foreground">
                 {`${format(dateRange.from, 'MMMM d, yyyy')} - ${format(dateRange.to, 'MMMM d, yyyy')}`}
@@ -204,7 +189,7 @@ const PeriodInReview = async ({
                           />
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center justify-between gap-1">
-                              <h4 className="font-medium text-base text-foreground group-hover:text-accent-foreground truncate">
+                              <h4 className="font-medium text-base text-foreground underline underline-offset-4 group-hover:text-accent-foreground truncate">
                                 {categoryName}
                               </h4>
                               <div>
@@ -232,7 +217,7 @@ const PeriodInReview = async ({
             <Title className="py-4 sm:px-4">Savings</Title>
             <AccountBalanceHistory
               dateRange={dateRange}
-              className="h-64 w-auto -m-4"
+              className="h-64 w-auto"
               accountType="SAVER"
             />
           </section>
@@ -301,11 +286,6 @@ const PeriodInReview = async ({
               {merchantInfo.length.toLocaleString()}
             </p>
           </section>
-
-          <TransactionTable
-            className="col-span-full"
-            transactions={transactions}
-          />
         </div>
       </div>
     </QueryProvider>
