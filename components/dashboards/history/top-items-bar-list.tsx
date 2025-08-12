@@ -1,0 +1,127 @@
+'use client';
+
+import ScrollableContent from '@/components/core/scrollable-content';
+import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
+import { Skeleton } from '@/components/ui/skeleton';
+import { BarList, BarListProps } from '@/components/ui/tremor/bar-list';
+import { cn, formatCurrency } from '@/utils/helpers';
+import { CircleNotch, Info } from '@phosphor-icons/react';
+import { Text, Title } from '@tremor/react';
+import { useState } from 'react';
+
+interface TopItemsBarProps extends Pick<BarListProps, 'data'> {
+  title: string;
+  description: string;
+  className?: string;
+  tooltip?: string;
+}
+
+const TopItemsBarList = ({
+  className,
+  data,
+  description,
+  title,
+  tooltip,
+}: TopItemsBarProps) => {
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  return (
+    <section
+      aria-label={description}
+      className={cn(
+        'relative h-full border rounded-tremor-default flex flex-col gap-4 p-4',
+        className
+      )}
+    >
+      <div>
+        <div className="flex items-center gap-1">
+          <Title>{title}</Title>
+          {tooltip ? (
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-6 w-6 rounded-full p-1"
+                >
+                  <Info />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto">
+                <p className="text-sm">{tooltip}</p>
+              </PopoverContent>
+            </Popover>
+          ) : null}
+        </div>
+        <Text>{description}</Text>
+      </div>
+      {data ? (
+        <BarList
+          data={data.slice(0, 6)}
+          valueFormatter={(number: number) =>
+            `${number > 0 ? '+' : ''}${formatCurrency(number, true, false, 'never')}`
+          }
+          showAnimation
+        />
+      ) : (
+        <Skeleton className="w-full h-56" />
+      )}
+      {data && data.length > 6 && (
+        <div className="absolute inset-x-0 bottom-0 flex justify-center rounded-b-tremor-default bg-gradient-to-t from-tremor-background to-transparent py-7 dark:from-dark-tremor-background">
+          <Button
+            className="h-8"
+            onClick={() => setIsDialogOpen(!isDialogOpen)}
+            variant="secondary"
+          >
+            View more
+          </Button>
+        </div>
+      )}
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>{title}</DialogTitle>
+            <DialogDescription>{description}</DialogDescription>
+          </DialogHeader>
+          <ScrollableContent className="h-96">
+            {data ? (
+              <BarList
+                data={data}
+                valueFormatter={(number: number) =>
+                  `${number > 0 ? '+' : ''}${formatCurrency(number, true, false, 'never')}`
+                }
+                showAnimation
+              />
+            ) : (
+              <div className="flex flex-col items-center justify-center h-full gap-2">
+                <CircleNotch className="size-8 animate-spin" />
+                <p className="text-lg tracking-tight">Loading data...</p>
+              </div>
+            )}
+          </ScrollableContent>
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button>Go back</Button>
+            </DialogClose>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </section>
+  );
+};
+
+export default TopItemsBarList;

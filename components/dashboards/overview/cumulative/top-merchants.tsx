@@ -1,5 +1,6 @@
 'use client';
 
+import ScrollableContent from '@/components/core/scrollable-content';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -26,13 +27,9 @@ import { CircleNotch, Info } from '@phosphor-icons/react';
 import Link from 'next/link';
 import { useState } from 'react';
 
-interface TopMerchantsProps {
-  dateRange: DateRange;
-}
-
 const DESCRIPTION = 'Merchants ordered by total expenditure, excluding refunds';
 
-const TopMerchants = ({ dateRange }: TopMerchantsProps) => {
+const TopMerchants = ({ dateRange }: { dateRange: DateRange }) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { data: topMerchants } = trpc.public.getMerchantInfo.useQuery({
     dateRange,
@@ -100,7 +97,7 @@ const TopMerchants = ({ dateRange }: TopMerchantsProps) => {
               <DialogTitle>Top Merchants</DialogTitle>
               <DialogDescription>{DESCRIPTION}</DialogDescription>
             </DialogHeader>
-            <div className="h-96 overflow-y-scroll">
+            <ScrollableContent className="h-96">
               {chartData ? (
                 <BarList
                   data={chartData}
@@ -110,10 +107,10 @@ const TopMerchants = ({ dateRange }: TopMerchantsProps) => {
               ) : (
                 <div className="flex flex-col items-center justify-center h-full gap-2">
                   <CircleNotch className="size-8 animate-spin" />
-                  <p className="text-lg tracking-tight">Loading data</p>
+                  <p className="text-lg tracking-tight">Loading data...</p>
                 </div>
               )}
-            </div>
+            </ScrollableContent>
             <DialogFooter>
               <DialogClose asChild>
                 <Button>Go back</Button>

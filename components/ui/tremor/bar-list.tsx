@@ -42,14 +42,21 @@ function BarListInner<T>(
       return data;
     }
     return [...data].sort((a, b) => {
-      return sortOrder === 'ascending' ? a.value - b.value : b.value - a.value;
+      return sortOrder === 'ascending'
+        ? Math.abs(a.value) - Math.abs(b.value)
+        : Math.abs(b.value) - Math.abs(a.value);
     });
   }, [data, sortOrder]);
 
   const widths = React.useMemo(() => {
-    const maxValue = Math.max(...sortedData.map((item) => item.value), 0);
+    const maxValue = Math.max(
+      ...sortedData.map((item) => Math.abs(item.value)),
+      0
+    );
     return sortedData.map((item) =>
-      item.value === 0 ? 0 : Math.max((item.value / maxValue) * 100, 2)
+      item.value === 0
+        ? 0
+        : Math.max((Math.abs(item.value) / maxValue) * 100, 2)
     );
   }, [sortedData]);
 
